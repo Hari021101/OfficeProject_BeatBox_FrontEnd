@@ -3,10 +3,15 @@ import logo from './assets/Logo.png'
 
 function App() {
   return (
-    <div style={{ padding: '2rem', textAlign: 'center' }}>
-      <img src={logo} alt="BeatBox Logo" style={{ width: '250px', borderRadius: '15px' }} />
-      <h1 style={{ marginTop: '1rem', color: '#06b6d4' }}>Welcome to BeatBox</h1>
-      <p>Clean slate ready! Start building here.</p>
+    <div className="container min-vh-100 d-flex flex-column align-items-center justify-content-center">
+      <div className="glass-card p-5 text-center shadow-lg" style={{ maxWidth: '500px' }}>
+        <img src={logo} alt="BeatBox Logo" className="img-fluid rounded-4 mb-4" style={{ width: '220px' }} />
+        <h1 className="gradient-text fw-black mb-3">BeatBox</h1>
+        <p className="text-muted mb-4">Phase 1 Complete: Global Theme, Bootstrap & Redux are active.</p>
+        <button className="btn btn-primary w-100 rounded-pill py-2 fw-bold" style={{ backgroundColor: 'var(--bb-primary)', border: 'none' }}>
+          Get Started
+        </button>
+      </div>
     </div>
   )
 }
