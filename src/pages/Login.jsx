@@ -1,0 +1,144 @@
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
+import logo from '../assets/Logo.png'
+import ParticleBackground from '../components/ui/ParticleBackground'
+
+export default function Login() {
+  const navigate = useNavigate()
+  const [showPwd, setShowPwd] = useState(false)
+  const [formData, setFormData] = useState({ email: '', password: '' })
+
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value })
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    alert("Login Successful! (Dummy Data)")
+    navigate('/')
+  }
+
+  return (
+    <div className="container-fluid min-vh-100 p-0 overflow-hidden" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
+      <div className="row g-0 min-vh-100">
+        
+        {/* LEFT SIDE: Premium Animated Branding Panel */}
+        <div className="col-lg-6 d-none d-lg-flex flex-column justify-content-center align-items-center position-relative login-split-bg">
+          
+          {/* Antigravity Canvas Animation */}
+          <ParticleBackground />
+
+          {/* Abstract background orbs for extra depth */}
+          <div className="bg-glow-orb" style={{ width: '400px', height: '400px', background: 'var(--bb-primary)', top: '10%', left: '10%' }}></div>
+          <div className="bg-glow-orb" style={{ width: '500px', height: '500px', background: 'var(--bb-accent)', bottom: '-10%', right: '-10%', animationDelay: '2s' }}></div>
+          
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }} 
+            animate={{ opacity: 1, x: 0 }} 
+            transition={{ duration: 0.8 }}
+            className="text-center position-relative" 
+            style={{ zIndex: 2 }}
+          >
+            <img src={logo} alt="BeatBox" style={{ width: '150px', borderRadius: '30px', boxShadow: '0 20px 40px rgba(0,0,0,0.5)' }} className="mb-5" />
+            <h1 className="fw-black text-white display-4 mb-3" style={{ letterSpacing: '-1px' }}>
+              Experience <br/><span className="gradient-text">True Sound.</span>
+            </h1>
+            <p className="text-white-50 fs-5 mx-auto" style={{ maxWidth: '400px' }}>
+              Your portal to the ultimate collection of premium audio gear and lifestyle gadgets.
+            </p>
+          </motion.div>
+          
+          {/* Glass overlay border to separate left and right perfectly */}
+          <div className="position-absolute top-0 end-0 h-100 w-100" style={{ borderRight: '1px solid rgba(255,255,255,0.1)', background: 'linear-gradient(90deg, transparent, rgba(0,0,0,0.4))' }}></div>
+        </div>
+
+        {/* RIGHT SIDE: Login Form */}
+        <div className="col-12 col-lg-6 d-flex align-items-center justify-content-center position-relative">
+          
+          {/* Mobile/Tablet Background Animation (Hidden on Desktop) */}
+          <div className="d-lg-none position-absolute top-0 start-0 w-100 h-100 overflow-hidden">
+            <ParticleBackground />
+            <div className="bg-glow-orb" style={{ width: '300px', height: '300px', background: 'var(--bb-primary)', top: '10%', left: '10%' }}></div>
+          </div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="p-4 p-md-5 w-100" 
+            style={{ maxWidth: '480px', zIndex: 1 }}
+          >
+            <div className="mb-5">
+              <h2 className="fw-black mb-2" style={{ fontSize: '2.5rem', letterSpacing: '-1px', color: '#fff' }}>
+                Welcome <span className="gradient-text">Back</span>
+              </h2>
+              <p style={{ fontSize: '1.1rem', color: 'rgba(0, 243, 255, 0.6)' }}>Enter your details to access your account.</p>
+            </div>
+
+            <form onSubmit={handleSubmit}>
+              {/* Email Input */}
+              <div className="mb-4 input-group-custom position-relative">
+                <Mail size={20} className="icon position-absolute top-50 translate-middle-y" style={{ left: '18px' }} />
+                <input 
+                  type="email" name="email"
+                  className="form-control bb-input w-100" 
+                  placeholder="Email address"
+                  value={formData.email} onChange={handleChange} required 
+                />
+              </div>
+
+              {/* Password Input */}
+              <div className="mb-4 input-group-custom position-relative">
+                <Lock size={20} className="icon position-absolute top-50 translate-middle-y" style={{ left: '18px' }} />
+                <input 
+                  type={showPwd ? "text" : "password"} name="password"
+                  className="form-control bb-input w-100" 
+                  placeholder="Password"
+                  value={formData.password} onChange={handleChange} required 
+                />
+                <button type="button" className="btn icon position-absolute top-50 translate-middle-y end-0 border-0 px-3"
+                  onClick={() => setShowPwd(!showPwd)}>
+                  {showPwd ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+
+              {/* Extra Row: Remember Me & Forgot Password */}
+              <div className="d-flex justify-content-between align-items-center mb-5">
+                <div className="form-check d-flex align-items-center gap-2">
+                  <input 
+                    className="form-check-input mt-0" 
+                    type="checkbox" 
+                    id="rememberMe" 
+                    style={{ cursor: 'pointer', backgroundColor: 'transparent', borderColor: 'rgba(0, 243, 255, 0.4)' }} 
+                  />
+                  <label 
+                    className="form-check-label small" 
+                    htmlFor="rememberMe" 
+                    style={{ cursor: 'pointer', color: 'rgba(0, 243, 255, 0.6)', marginTop: '2px' }}
+                  >
+                    Remember me
+                  </label>
+                </div>
+                <Link to="/forgot-password" style={{ color: 'var(--bb-accent)', textDecoration: 'none', fontSize: '0.85rem' }} className="fw-semibold">
+                  Forgot Password?
+                </Link>
+              </div>
+
+              {/* Login Button */}
+              <button type="submit" className="btn btn-glow w-100 mb-4 d-flex align-items-center justify-content-center gap-2" style={{ height: '55px', fontSize: '1.1rem', fontWeight: '600', borderRadius: '12px' }}>
+                Sign In <ArrowRight size={20} />
+              </button>
+            </form>
+
+            <div className="text-center mt-5">
+              <p className="text-muted mb-0">
+                Don't have an account? <Link to="/register" style={{ color: 'var(--bb-primary-light)', textDecoration: 'none' }} className="fw-bold ms-1">Create an account</Link>
+              </p>
+            </div>
+          </motion.div>
+        </div>
+
+      </div>
+    </div>
+  )
+}
