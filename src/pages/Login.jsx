@@ -92,10 +92,10 @@ export default function Login() {
             style={{ maxWidth: '480px', zIndex: 1 }}
           >
             <div className="mb-5">
-              <h2 className="fw-black mb-2" style={{ fontSize: '2.5rem', letterSpacing: '-1px', color: '#fff' }}>
+              <h2 className="fw-black mb-2" style={{ fontSize: '2.5rem', letterSpacing: '-1px', color: 'var(--bb-title-color)' }}>
                 Welcome <span className="gradient-text">Back</span>
               </h2>
-              <p style={{ fontSize: '1.1rem', color: 'rgba(0, 243, 255, 0.6)' }}>Enter your details to access your account.</p>
+              <p style={{ fontSize: '1.1rem', color: 'var(--bb-subtitle-color)' }}>Enter your details to access your account.</p>
             </div>
 
             <form onSubmit={handleSubmit}>
@@ -132,12 +132,12 @@ export default function Login() {
                     className="form-check-input mt-0" 
                     type="checkbox" 
                     id="rememberMe" 
-                    style={{ cursor: 'pointer', backgroundColor: 'transparent', borderColor: 'rgba(0, 243, 255, 0.4)' }} 
+                    style={{ cursor: 'pointer', backgroundColor: 'transparent', borderColor: 'var(--bb-checkbox-border)' }} 
                   />
                   <label 
                     className="form-check-label small" 
                     htmlFor="rememberMe" 
-                    style={{ cursor: 'pointer', color: 'rgba(0, 243, 255, 0.6)', marginTop: '2px' }}
+                    style={{ cursor: 'pointer', color: 'var(--bb-subtitle-color)', marginTop: '2px' }}
                   >
                     Remember me
                   </label>
@@ -168,8 +168,8 @@ export default function Login() {
             </form>
 
             <div className="text-center mt-5">
-              <p className="mb-0" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-                Don't have an account? <Link to="/register" style={{ color: 'var(--bb-primary-light)', textDecoration: 'none' }} className="fw-bold ms-1">Create an account</Link>
+              <p className="mb-0" style={{ color: 'var(--bb-footer-color)' }}>
+                Don't have an account? <Link to="/register" style={{ color: 'var(--bb-link-color)', textDecoration: 'none' }} className="fw-bold ms-1">Create an account</Link>
               </p>
             </div>
           </motion.div>

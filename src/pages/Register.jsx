@@ -106,10 +106,10 @@ export default function Register() {
             style={{ maxWidth: '480px', zIndex: 1 }}
           >
             <div className="mb-4">
-              <h2 className="fw-black mb-2" style={{ fontSize: '2.5rem', letterSpacing: '-1px', color: '#fff' }}>
+              <h2 className="fw-black mb-2" style={{ fontSize: '2.5rem', letterSpacing: '-1px', color: 'var(--bb-title-color)' }}>
                 Create <span className="gradient-text">Account</span>
               </h2>
-              <p style={{ fontSize: '1.1rem', color: 'rgba(0, 243, 255, 0.6)' }}>Sign up to start your journey with BeatBox.</p>
+              <p style={{ fontSize: '1.1rem', color: 'var(--bb-subtitle-color)' }}>Sign up to start your journey with BeatBox.</p>
             </div>
 
             <form onSubmit={handleSubmit}>
@@ -186,8 +186,8 @@ export default function Register() {
             </form>
 
             <div className="text-center mt-4">
-              <p className="mb-0" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-                Already have an account? <Link to="/login" style={{ color: 'var(--bb-primary-light)', textDecoration: 'none' }} className="fw-bold ms-1">Sign In</Link>
+              <p className="mb-0" style={{ color: 'var(--bb-footer-color)' }}>
+                Already have an account? <Link to="/login" style={{ color: 'var(--bb-link-color)', textDecoration: 'none' }} className="fw-bold ms-1">Sign In</Link>
               </p>
             </div>
           </motion.div>

@@ -18,6 +18,13 @@
   /* Typography Colors */
   --bb-text: #ffffff;
   --bb-muted: #8496ae;
+
+  /* Dynamic Theme Contrast Variables */
+  --bb-title-color: #ffffff;
+  --bb-subtitle-color: rgba(0, 243, 255, 0.7);
+  --bb-footer-color: rgba(255, 255, 255, 0.65);
+  --bb-checkbox-border: rgba(0, 243, 255, 0.4);
+  --bb-link-color: var(--bb-primary-light);
   
   /* Utilities */
   --bb-border: rgba(0, 243, 255, 0.15); /* Subtle cyan border by default */
@@ -212,6 +219,13 @@ body {
   --bb-muted: #5e6b7e;         /* Medium slate muted text */
   
   --bb-border: rgba(0, 153, 184, 0.2);
+
+  /* Dynamic Theme Contrast Variables */
+  --bb-title-color: #060b19;
+  --bb-subtitle-color: #4f5e74;
+  --bb-footer-color: #334155;
+  --bb-checkbox-border: #820df2;
+  --bb-link-color: #820df2;
 }
 
 [data-theme="light"] body {
@@ -260,10 +274,6 @@ body {
 
 [data-theme="light"] .input-group-custom .icon {
   color: rgba(11, 15, 25, 0.4);
-}
-
-[data-theme="light"] .login-split-bg {
-  background: linear-gradient(135deg, #f0f2f9, #e6ebf5, #ebe6f5);
 }
 
 [data-theme="light"] .btn-glow {
