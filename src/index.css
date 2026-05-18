@@ -192,3 +192,91 @@ body {
   0% { transform: scale(1); filter: blur(60px); opacity: 0.15; }
   100% { transform: scale(1.1); filter: blur(40px); opacity: 0.25; }
 }
+
+/* ==========================================================================
+   Premium Electric Light Theme Overrides
+   ========================================================================== */
+
+[data-theme="light"] {
+  --bb-bg-navy: #f5f7fb;       /* Soft cool light blue-gray */
+  --bb-surface: rgba(255, 255, 255, 0.7); /* Translucent pure white */
+  --bb-surface-2: #ffffff;
+  
+  --bb-primary: #820df2;       /* Deeper rich purple for legibility */
+  --bb-primary-light: #a453ff; 
+  --bb-primary-glow: rgba(130, 13, 242, 0.2); 
+  --bb-accent: #0099b8;        /* Deeper rich cyan */
+  --bb-accent-glow: rgba(0, 153, 184, 0.2);
+
+  --bb-text: #0b0f19;          /* Deep navy text */
+  --bb-muted: #5e6b7e;         /* Medium slate muted text */
+  
+  --bb-border: rgba(0, 153, 184, 0.2);
+}
+
+[data-theme="light"] body {
+  background-image: 
+    linear-gradient(rgba(0, 153, 184, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 153, 184, 0.04) 1px, transparent 1px);
+}
+
+[data-theme="light"] .glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.08), 
+    inset 0 0 20px rgba(0, 153, 184, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+[data-theme="light"] .bb-input {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #0b0f19 !important;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
+}
+
+[data-theme="light"] .bb-input::placeholder {
+  color: rgba(11, 15, 25, 0.4) !important;
+}
+
+[data-theme="light"] .bb-input:hover {
+  border-color: rgba(0, 153, 184, 0.4) !important;
+  background: #ffffff !important;
+}
+
+[data-theme="light"] .bb-input:focus {
+  background: #ffffff !important;
+  border-color: var(--bb-accent) !important;
+  box-shadow: 0 0 0 4px rgba(0, 153, 184, 0.15), inset 0 0 10px rgba(0, 153, 184, 0.05) !important;
+}
+
+[data-theme="light"] .bb-input:-webkit-autofill,
+[data-theme="light"] .bb-input:-webkit-autofill:hover, 
+[data-theme="light"] .bb-input:-webkit-autofill:focus, 
+[data-theme="light"] .bb-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #0b0f19 !important;
+}
+
+[data-theme="light"] .input-group-custom .icon {
+  color: rgba(11, 15, 25, 0.4);
+}
+
+[data-theme="light"] .login-split-bg {
+  background: linear-gradient(135deg, #f0f2f9, #e6ebf5, #ebe6f5);
+}
+
+[data-theme="light"] .btn-glow {
+  text-shadow: none;
+}
+
+[data-theme="light"] .bg-glow-orb {
+  opacity: 0.15;
+}
+
+/* Theme Toggle Button custom adjustments for light mode */
+[data-theme="light"] .theme-toggle-btn {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #0b0f19 !important;
+}

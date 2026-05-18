@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import App from '../App'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
@@ -6,6 +7,20 @@ import Register from '../pages/Register'
 export default function AppRouter() {
   return (
     <BrowserRouter>
+      <Toaster 
+        position="top-right" 
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#0a0d14',
+            color: '#fff',
+            border: '1px solid rgba(0, 243, 255, 0.25)',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+            borderRadius: '10px',
+            fontSize: '0.95rem'
+          }
+        }} 
+      />
       <Routes>
         {/* If the URL is exactly "/" show the App component */}
         <Route path="/" element={<App />} />

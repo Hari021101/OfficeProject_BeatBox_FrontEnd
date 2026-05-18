@@ -1,25 +1,48 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'framer-motion'
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
 import logo from '../assets/Logo.png'
 import ParticleBackground from '../components/ui/ParticleBackground'
+import ThemeToggle from '../components/ui/ThemeToggle'
+import { loginUser, resetState } from '../redux/authSlice'
+import { toast } from 'react-hot-toast'
 
 export default function Login() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [showPwd, setShowPwd] = useState(false)
   const [formData, setFormData] = useState({ email: '', password: '' })
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  )
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message || "Invalid credentials.")
+      dispatch(resetState())
+    }
+    if (isSuccess && user) {
+      toast.success(`Welcome back, ${user.fullName}!`)
+      navigate('/')
+      dispatch(resetState())
+    }
+  }, [isError, isSuccess, user, message, navigate, dispatch])
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value })
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    alert("Login Successful! (Dummy Data)")
-    navigate('/')
+    dispatch(loginUser({ email: formData.email, password: formData.password }))
   }
 
   return (
     <div className="container-fluid min-vh-100 p-0 overflow-hidden" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
+      {/* Floating Premium Theme Toggle */}
+      <ThemeToggle />
+
       <div className="row g-0 min-vh-100">
         
         {/* LEFT SIDE: Premium Animated Branding Panel */}
@@ -125,13 +148,27 @@ export default function Login() {
               </div>
 
               {/* Login Button */}
-              <button type="submit" className="btn btn-glow w-100 mb-4 d-flex align-items-center justify-content-center gap-2" style={{ height: '55px', fontSize: '1.1rem', fontWeight: '600', borderRadius: '12px' }}>
-                Sign In <ArrowRight size={20} />
+              <button 
+                type="submit" 
+                className="btn btn-glow w-100 mb-4 d-flex align-items-center justify-content-center gap-2" 
+                style={{ height: '55px', fontSize: '1.1rem', fontWeight: '600', borderRadius: '12px' }}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Signing In...
+                  </>
+                ) : (
+                  <>
+                    Sign In <ArrowRight size={20} />
+                  </>
+                )}
               </button>
             </form>
 
             <div className="text-center mt-5">
-              <p className="text-muted mb-0">
+              <p className="mb-0" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
                 Don't have an account? <Link to="/register" style={{ color: 'var(--bb-primary-light)', textDecoration: 'none' }} className="fw-bold ms-1">Create an account</Link>
               </p>
             </div>

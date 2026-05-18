@@ -1,12 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'framer-motion'
 import { Mail, Lock, Eye, EyeOff, ArrowRight, User } from 'lucide-react'
 import logo from '../assets/Logo.png'
 import ParticleBackground from '../components/ui/ParticleBackground'
+import ThemeToggle from '../components/ui/ThemeToggle'
+import { registerUser, resetState } from '../redux/authSlice'
+import { toast } from 'react-hot-toast'
 
 export default function Register() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [showPwd, setShowPwd] = useState(false)
   const [showConfirmPwd, setShowConfirmPwd] = useState(false)
   const [formData, setFormData] = useState({
@@ -16,20 +21,42 @@ export default function Register() {
     confirmPassword: ''
   })
 
+  const { isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  )
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message || "Registration failed.")
+      dispatch(resetState())
+    }
+    if (isSuccess) {
+      toast.success("Account created successfully! Please sign in.")
+      navigate('/login')
+      dispatch(resetState())
+    }
+  }, [isError, isSuccess, message, navigate, dispatch])
+
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value })
 
   const handleSubmit = (e) => {
     e.preventDefault()
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!")
+      toast.error("Passwords do not match!")
       return
     }
-    alert("Registration Successful! (Dummy Data)")
-    navigate('/login')
+    dispatch(registerUser({
+      fullName: formData.fullName,
+      email: formData.email,
+      password: formData.password
+    }))
   }
 
   return (
     <div className="container-fluid min-vh-100 p-0 overflow-hidden" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
+      {/* Floating Premium Theme Toggle */}
+      <ThemeToggle />
+
       <div className="row g-0 min-vh-100">
         
         {/* LEFT SIDE: Premium Animated Branding Panel */}
@@ -139,13 +166,27 @@ export default function Register() {
               </div>
 
               {/* Register Button */}
-              <button type="submit" className="btn btn-glow w-100 mb-4 d-flex align-items-center justify-content-center gap-2" style={{ height: '55px', fontSize: '1.1rem', fontWeight: '600', borderRadius: '12px' }}>
-                Create Account <ArrowRight size={20} />
+              <button 
+                type="submit" 
+                className="btn btn-glow w-100 mb-4 d-flex align-items-center justify-content-center gap-2" 
+                style={{ height: '55px', fontSize: '1.1rem', fontWeight: '600', borderRadius: '12px' }}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Creating Account...
+                  </>
+                ) : (
+                  <>
+                    Create Account <ArrowRight size={20} />
+                  </>
+                )}
               </button>
             </form>
 
             <div className="text-center mt-4">
-              <p className="text-muted mb-0">
+              <p className="mb-0" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
                 Already have an account? <Link to="/login" style={{ color: 'var(--bb-primary-light)', textDecoration: 'none' }} className="fw-bold ms-1">Sign In</Link>
               </p>
             </div>
