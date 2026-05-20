@@ -32,6 +32,25 @@
   --bb-radius-lg: 24px;
 }
 
+/* Dynamic theme helper classes */
+.text-theme-title {
+  color: var(--bb-title-color) !important;
+}
+.text-theme-muted {
+  color: var(--bb-muted) !important;
+}
+.bg-theme-navy {
+  background-color: var(--bb-bg-navy) !important;
+}
+.bg-theme-surface {
+  background-color: var(--bb-surface) !important;
+  border-color: var(--bb-border) !important;
+}
+.bg-theme-surface-2 {
+  background-color: var(--bb-surface-2) !important;
+}
+
+
 * {
   margin: 0;
   padding: 0;
@@ -290,3 +309,421 @@ body {
   border: 1px solid rgba(0, 0, 0, 0.1) !important;
   color: #0b0f19 !important;
 }
+
+/* ==========================================================================
+   Ultra-Premium Component Upgrades
+   ========================================================================== */
+
+/* 1. Category Card Enhancements */
+.category-card {
+  position: relative;
+  background: var(--bb-surface) !important;
+  border: 1px solid var(--bb-border) !important;
+  border-radius: 20px !important;
+  padding: 28px 20px !important;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+  overflow: hidden;
+}
+
+.category-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle at top right, var(--bb-accent-glow), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.category-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: var(--bb-accent) !important;
+  box-shadow: 0 15px 35px var(--bb-accent-glow) !important;
+}
+
+.category-card:hover::before {
+  opacity: 1;
+}
+
+.category-card .image-wrapper {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.005) 100%);
+  border: 1px dashed var(--bb-border);
+  border-radius: 50%;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  position: relative;
+  z-index: 2;
+}
+
+.category-card:hover .image-wrapper {
+  border-color: var(--bb-accent) !important;
+  background: radial-gradient(circle, var(--bb-accent-glow) 0%, transparent 70%);
+  transform: rotate(15deg) scale(1.05);
+}
+
+.category-card .category-img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.25));
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.category-card:hover .category-img {
+  transform: translateY(-4px) scale(1.1);
+  filter: drop-shadow(0 12px 20px var(--bb-accent-glow)) drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+
+.category-card .category-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 50px;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  background: linear-gradient(135deg, var(--bb-primary), var(--bb-primary-light));
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* 2. Best Seller Card Enhancements */
+.bestseller-card {
+  position: relative;
+  background: var(--bb-surface) !important;
+  border: 1px solid var(--bb-border) !important;
+  border-radius: 24px !important;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+  overflow: hidden;
+}
+
+.bestseller-card:hover {
+  transform: translateY(-10px);
+  border-color: var(--bb-accent) !important;
+  box-shadow: 0 20px 45px var(--bb-accent-glow), 0 0 0 1px var(--bb-accent-glow) !important;
+}
+
+.bestseller-card .product-frame {
+  height: 240px;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.02) 0%, transparent 80%);
+  border-bottom: 1px solid var(--bb-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.4s ease;
+}
+
+.bestseller-card:hover .product-frame {
+  background: radial-gradient(circle at center, var(--bb-accent-glow) 0%, transparent 80%);
+}
+
+.bestseller-card .product-img {
+  height: 150px;
+  object-fit: contain;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  filter: drop-shadow(0 10px 25px rgba(0,0,0,0.3));
+}
+
+.bestseller-card:hover .product-img {
+  transform: translateY(-8px) scale(1.08) rotate(-3deg);
+  filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 20px var(--bb-accent-glow));
+}
+
+.bestseller-card .badge-left {
+  background: linear-gradient(135deg, var(--bb-primary), #00d2ff);
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.bestseller-card .rating-pill {
+  background: rgba(6, 11, 25, 0.75) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--bb-border);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.3s ease;
+}
+
+.bestseller-card:hover .rating-pill {
+  background: rgba(0, 243, 255, 0.15) !important;
+  border-color: var(--bb-accent);
+}
+
+.bestseller-card .card-body {
+  padding: 24px !important;
+}
+
+.bestseller-card .btn-add-to-cart {
+  background: linear-gradient(135deg, var(--bb-primary), var(--bb-primary-light)) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+  box-shadow: 0 4px 15px var(--bb-primary-glow);
+}
+
+.bestseller-card:hover .btn-add-to-cart {
+  background: linear-gradient(135deg, var(--bb-accent), #00d2ff) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px var(--bb-accent-glow) !important;
+}
+
+/* 3. Highlights Card Enhancements */
+.highlight-card {
+  position: relative;
+  background: var(--bb-surface) !important;
+  border: 1px solid var(--bb-border) !important;
+  border-radius: 24px !important;
+  padding: 36px 28px !important;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+  overflow: hidden;
+}
+
+.highlight-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle at bottom left, var(--bb-primary-glow), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.highlight-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--bb-primary-light) !important;
+  box-shadow: 0 15px 35px var(--bb-primary-glow) !important;
+}
+
+.highlight-card:hover::before {
+  opacity: 1;
+}
+
+.highlight-card .icon-wrapper {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 2;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: inset 0 2px 8px rgba(255,255,255,0.05);
+}
+
+.highlight-card .icon-glow {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  border-radius: 50%;
+  filter: blur(12px);
+  opacity: 0.1;
+  transition: opacity 0.4s ease;
+}
+
+.highlight-card:hover .icon-wrapper {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.highlight-card:hover .icon-glow {
+  opacity: 0.4;
+}
+
+.highlight-card .title-text {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  transition: color 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.highlight-card:hover .title-text {
+  background: linear-gradient(135deg, var(--bb-title-color), var(--bb-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.highlight-card .desc-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  position: relative;
+  z-index: 2;
+}
+
+/* ==========================================================================
+   Ultra-Premium Floating Island Navbar
+   ========================================================================== */
+
+/* Floating Island Scrolled State */
+.navbar.scrolled-island {
+  margin: 15px auto !important;
+  width: 94% !important;
+  max-width: 1400px !important;
+  border-radius: 50px !important;
+  background: var(--bb-surface) !important;
+  border: 1px solid var(--bb-border) !important;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.35), inset 0 0 15px var(--bb-accent-glow) !important;
+  padding: 10px 28px !important;
+}
+
+[data-theme="light"] .navbar.scrolled-island {
+  box-shadow: 0 15px 35px rgba(31, 38, 135, 0.08), inset 0 0 10px var(--bb-accent-glow) !important;
+}
+
+/* Premium Navigation Links */
+.premium-nav-link {
+  position: relative;
+  color: var(--bb-title-color) !important;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 8px 16px !important;
+  transition: all 0.3s ease;
+  background: transparent !important;
+  border: none !important;
+}
+
+.premium-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--bb-primary), var(--bb-accent));
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+  box-shadow: 0 0 8px var(--bb-accent-glow);
+}
+
+.premium-nav-link:hover {
+  color: var(--bb-accent) !important;
+  transform: translateY(-1px);
+}
+
+.premium-nav-link:hover::after {
+  width: 60%;
+}
+
+/* Premium Navbar Brand Hover */
+.premium-brand {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.premium-brand:hover {
+  transform: scale(1.03);
+  filter: drop-shadow(0 0 8px var(--bb-accent-glow));
+}
+
+/* Megamenu Category Dropdown */
+.premium-dropdown {
+  background: var(--bb-surface) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--bb-border) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.45) !important;
+  padding: 16px !important;
+  min-width: 280px !important;
+  overflow: hidden;
+}
+
+[data-theme="light"] .premium-dropdown {
+  box-shadow: 0 15px 35px rgba(31, 38, 135, 0.08) !important;
+}
+
+.premium-dropdown-item {
+  border-radius: 12px !important;
+  padding: 10px 16px !important;
+  font-size: 0.92rem !important;
+  font-weight: 600 !important;
+  color: var(--bb-title-color) !important;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+  background: transparent !important;
+}
+
+.premium-dropdown-item:hover {
+  background: linear-gradient(90deg, var(--bb-primary-glow), transparent) !important;
+  color: var(--bb-accent) !important;
+  transform: translateX(5px);
+  padding-left: 20px !important;
+}
+
+/* Expanding Search Bar Wrapper */
+.premium-search-input {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid var(--bb-border) !important;
+  color: var(--bb-title-color) !important;
+  font-size: 0.9rem !important;
+  border-radius: 50px !important;
+  padding: 10px 24px !important;
+  padding-right: 44px !important;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+  min-width: 200px;
+}
+
+[data-theme="light"] .premium-search-input {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+.premium-search-input:focus {
+  background: var(--bb-surface-2) !important;
+  border-color: var(--bb-accent) !important;
+  box-shadow: 0 0 25px var(--bb-accent-glow) !important;
+  min-width: 260px !important;
+  outline: none !important;
+}
+
+/* Cart Count Badge Pulse */
+.cart-pulse-badge {
+  background: linear-gradient(135deg, #ff2a6d, #9100ff) !important;
+  box-shadow: 0 0 12px rgba(255, 42, 109, 0.6) !important;
+  animation: pulseBadge 2s infinite ease-in-out;
+}
+
+@keyframes pulseBadge {
+  0% { transform: translate(50%, -50%) scale(1); }
+  50% { transform: translate(50%, -50%) scale(1.15); box-shadow: 0 0 18px rgba(255, 42, 109, 0.8); }
+  100% { transform: translate(50%, -50%) scale(1); }
+}
+
+/* Premium Uniform Glassmorphism Navbar */
+.premium-navbar {
+  background: rgba(6, 11, 25, 0.85) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="light"] .premium-navbar {
+  background: rgba(245, 247, 251, 0.85) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+
+

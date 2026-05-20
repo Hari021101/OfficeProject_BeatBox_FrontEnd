@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sun, Moon } from 'lucide-react'
 
-export default function ThemeToggle() {
+export default function ThemeToggle({ isFloating = true }) {
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('bb_theme') || 'dark'
   })
@@ -20,7 +20,7 @@ export default function ThemeToggle() {
     <motion.button
       onClick={toggleTheme}
       className="btn d-flex align-items-center justify-content-center theme-toggle-btn"
-      style={{
+      style={isFloating ? {
         position: 'absolute',
         top: '24px',
         right: '24px',
@@ -33,10 +33,19 @@ export default function ThemeToggle() {
         border: '1px solid rgba(255, 255, 255, 0.15)',
         cursor: 'pointer',
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
-        color: '#fff',
+        color: 'var(--bb-title-color)',
         transition: 'border 0.3s ease, background 0.3s ease'
+      } : {
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        background: 'rgba(255, 255, 255, 0.05)',
+        border: '1px solid var(--bb-border)',
+        cursor: 'pointer',
+        color: 'var(--bb-title-color)',
+        transition: 'all 0.3s ease'
       }}
-      whileHover={{ scale: 1.1, backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
+      whileHover={{ scale: 1.08, backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
       whileTap={{ scale: 0.95 }}
       aria-label="Toggle Theme"
     >

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { motion } from 'framer-motion'
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
 import logo from '../assets/Logo.png'
 import ParticleBackground from '../components/ui/ParticleBackground'
@@ -55,10 +54,7 @@ export default function Login() {
           <div className="bg-glow-orb" style={{ width: '400px', height: '400px', background: 'var(--bb-primary)', top: '10%', left: '10%' }}></div>
           <div className="bg-glow-orb" style={{ width: '500px', height: '500px', background: 'var(--bb-accent)', bottom: '-10%', right: '-10%', animationDelay: '2s' }}></div>
           
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }} 
-            animate={{ opacity: 1, x: 0 }} 
-            transition={{ duration: 0.8 }}
+          <div 
             className="text-center position-relative" 
             style={{ zIndex: 2 }}
           >
@@ -69,7 +65,7 @@ export default function Login() {
             <p className="text-white-50 fs-5 mx-auto" style={{ maxWidth: '400px' }}>
               Your portal to the ultimate collection of premium audio gear and lifestyle gadgets.
             </p>
-          </motion.div>
+          </div>
           
           {/* Glass overlay border to separate left and right perfectly */}
           <div className="position-absolute top-0 end-0 h-100 w-100" style={{ borderRight: '1px solid rgba(255,255,255,0.1)', background: 'linear-gradient(90deg, transparent, rgba(0,0,0,0.4))' }}></div>
@@ -84,10 +80,7 @@ export default function Login() {
             <div className="bg-glow-orb" style={{ width: '300px', height: '300px', background: 'var(--bb-primary)', top: '10%', left: '10%' }}></div>
           </div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.5, delay: 0.2 }}
+          <div 
             className="p-4 p-md-5 w-100" 
             style={{ maxWidth: '480px', zIndex: 1 }}
           >
@@ -172,7 +165,7 @@ export default function Login() {
                 Don't have an account? <Link to="/register" style={{ color: 'var(--bb-link-color)', textDecoration: 'none' }} className="fw-bold ms-1">Create an account</Link>
               </p>
             </div>
-          </motion.div>
+          </div>
         </div>
 
       </div>

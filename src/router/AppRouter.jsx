@@ -3,12 +3,18 @@ import { Toaster } from 'react-hot-toast'
 import App from '../App'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
+import Home from '../pages/Home'
+import Layout from '../components/layout/Layout'
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Toaster 
         position="top-right" 
+        containerStyle={{
+          zIndex: 99999,
+          top: '125px'
+        }}
         toastOptions={{
           duration: 4000,
           style: {
@@ -22,8 +28,11 @@ export default function AppRouter() {
         }} 
       />
       <Routes>
-        {/* If the URL is exactly "/" show the App component */}
-        <Route path="/" element={<App />} />
+        {/* Main E-Commerce Premium Home Route with Layout */}
+        <Route path="/" element={<Layout><Home /></Layout>} />
+        
+        {/* Splash Welcome intro route */}
+        <Route path="/welcome" element={<App />} />
         
         {/* If the URL is "/login" show the Login component */}
         <Route path="/login" element={<Login />} />
@@ -34,3 +43,4 @@ export default function AppRouter() {
     </BrowserRouter>
   )
 }
+
