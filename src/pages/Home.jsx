@@ -21,6 +21,7 @@ import heroEarbuds from '../assets/hero_earbuds.png'
 import heroSpeaker from '../assets/hero_speaker.png'
 import gamingHeadset from '../assets/gaming_headset.png'
 import wirelessNeckband from '../assets/wireless_neckband.png'
+import smartEarbuds from '../assets/smart_earbuds.png'
 import logo from '../assets/beatbox_logo.png'
 
 export default function Home() {
@@ -62,6 +63,42 @@ export default function Home() {
       image: heroSpeaker,
       color: "rgba(168, 32, 255, 0.4)",
       badge: "Summer Special"
+    },
+    {
+      id: 4,
+      title: "IMMORTAL CYBER PRO",
+      subtitle: "PRO GAMING VIRTUAL 7.1 SURROUND",
+      description: "Level up your gaming with dedicated RGB lights, 50mm dynamic drivers, a professional boom mic, and low-latency cybernetic soundscapes built for esports pros.",
+      price: "₹1,599",
+      oldPrice: "₹4,999",
+      discount: "68% OFF",
+      image: gamingHeadset,
+      color: "rgba(57, 255, 20, 0.35)",
+      badge: "Cyber Launch"
+    },
+    {
+      id: 5,
+      title: "TRIP ATHLETIC NEON",
+      subtitle: "PREMIUM SPORTY COLLAR EARPHONES",
+      description: "Featherlight flexible silicon collar neckband. Features magnetic metal earbud tips, dual EQ modes for heavy bass, and up to 30 hours of continuous athletic playback.",
+      price: "₹999",
+      oldPrice: "₹2,990",
+      discount: "66% OFF",
+      image: wirelessNeckband,
+      color: "rgba(0, 243, 255, 0.3)",
+      badge: "Active Wear"
+    },
+    {
+      id: 6,
+      title: "BEATBOX SMART CAPSULE",
+      subtitle: "ANC TWS WITH OLED TOUCHSCREEN",
+      description: "Take control of your audio experience with a glowing smart touchscreen built directly into the charging case. Adjust equalizers, monitor battery levels, and toggle hybrid ANC with a simple swipe.",
+      price: "₹2,999",
+      oldPrice: "₹9,990",
+      discount: "70% OFF",
+      image: smartEarbuds,
+      color: "rgba(255, 0, 243, 0.35)",
+      badge: "Limited Edition"
     }
   ]
 
@@ -628,12 +665,12 @@ export default function Home() {
         />
       )}
 
-      <div style={{ opacity: isZeroGravity ? 0 : 1, pointerEvents: isZeroGravity ? 'none' : 'auto', transition: 'opacity 0.4s ease', paddingTop: '120px' }}>
+      <div className="storefront-wrapper" style={{ opacity: isZeroGravity ? 0 : 1, pointerEvents: isZeroGravity ? 'none' : 'auto', transition: 'opacity 0.4s ease' }}>
 
         {/* ==================== 1. HERO CAROUSEL SECTION ==================== */}
-        <section className="position-relative py-5 py-lg-0 d-flex align-items-center" style={{ minHeight: 'calc(80vh - 104px)' }}>
+        <section className="position-relative pt-3 pb-5 pt-lg-0 pb-lg-0 d-flex align-items-center" style={{ minHeight: 'calc(80vh - 104px)' }}>
           <div className="container-fluid px-lg-5">
-            <div className="position-relative overflow-hidden rounded-4 p-4 p-md-5 glass-card" style={{ border: '1px solid rgba(0, 243, 255, 0.15)' }}>
+            <div className="position-relative overflow-hidden rounded-4 p-4 p-md-5 glass-card hero-carousel-card" style={{ border: '1px solid rgba(0, 243, 255, 0.15)' }}>
               
               {/* Slide background glow ring */}
               <div className="position-absolute rounded-circle bg-glow-orb" style={{ width: '400px', height: '400px', background: slides[currentSlide].color, top: '20%', right: '20%', filter: 'blur(100px)', opacity: 0.3 }}></div>
@@ -662,40 +699,45 @@ export default function Home() {
 
               </div>
 
-              {/* Slider Nav Controls */}
-              <button 
-                onClick={prevSlide}
-                className="btn btn-outline-secondary position-absolute start-0 top-50 translate-middle-y ms-2 p-2 rounded-circle hover-scale border-0"
-                style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', zIndex: 20, color: 'var(--bb-title-color)' }}
-              >
-                <ChevronLeft size={24} />
-              </button>
-              <button 
-                onClick={nextSlide}
-                className="btn btn-outline-secondary position-absolute end-0 top-50 translate-middle-y me-2 p-2 rounded-circle hover-scale border-0"
-                style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', zIndex: 20, color: 'var(--bb-title-color)' }}
-              >
-                <ChevronRight size={24} />
-              </button>
+              {/* Slider Nav & Indicators Console (Unified Bottom Row) */}
+              <div className="d-flex align-items-center justify-content-center gap-3 mt-4" style={{ zIndex: 30 }}>
+                {/* Left Arrow Button */}
+                <button 
+                  onClick={prevSlide}
+                  className="rounded-circle console-btn d-flex align-items-center justify-content-center"
+                  style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)', width: '36px', height: '36px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' }}
+                >
+                  <ChevronLeft size={18} />
+                </button>
 
-              {/* Slide Indicators / Dots */}
-              <div className="d-flex justify-content-center gap-2 mt-4">
-                {slides.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentSlide(index)}
-                    className="btn p-0 rounded-circle transition-all"
-                    style={{
-                      width: currentSlide === index ? '24px' : '8px',
-                      height: '8px',
-                      backgroundColor: currentSlide === index ? 'var(--bb-accent)' : 'var(--bb-title-color)',
-                      opacity: currentSlide === index ? 1 : 0.2,
-                      border: 'none',
-                      borderRadius: '4px',
-                      transition: 'all 0.3s ease'
-                    }}
-                  ></button>
-                ))}
+                {/* Slide Indicators / Dots */}
+                <div className="d-flex align-items-center gap-2">
+                  {slides.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentSlide(index)}
+                      className="btn p-0 rounded-circle transition-all"
+                      style={{
+                        width: currentSlide === index ? '20px' : '8px',
+                        height: '8px',
+                        backgroundColor: currentSlide === index ? 'var(--bb-accent)' : 'var(--bb-title-color)',
+                        opacity: currentSlide === index ? 1 : 0.2,
+                        border: 'none',
+                        borderRadius: '4px',
+                        transition: 'all 0.3s ease'
+                      }}
+                    ></button>
+                  ))}
+                </div>
+
+                {/* Right Arrow Button */}
+                <button 
+                  onClick={nextSlide}
+                  className="rounded-circle console-btn d-flex align-items-center justify-content-center"
+                  style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)', width: '36px', height: '36px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' }}
+                >
+                  <ChevronRight size={18} />
+                </button>
               </div>
 
             </div>
@@ -858,6 +900,27 @@ export default function Home() {
         }
         .hover-scale:hover {
           transform: translateY(-5px) scale(1.03) !important;
+        }
+        .arrow-hover-scale {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .arrow-hover-scale:hover {
+          transform: scale(1.1) !important;
+        }
+        .console-btn {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .console-btn:hover {
+          transform: scale(1.15) !important;
+        }
+        .hero-carousel-card .console-btn {
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s, border-color 0.3s !important;
+        }
+        .hero-carousel-card:hover .console-btn {
+          opacity: 1;
+          pointer-events: auto;
         }
         @keyframes spin {
           from { transform: rotate(0deg); }
