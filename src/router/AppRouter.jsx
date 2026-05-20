@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import App from '../App'
 import Login from '../pages/Login'
@@ -8,7 +8,7 @@ import Layout from '../components/layout/Layout'
 
 export default function AppRouter() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Toaster 
         position="top-right" 
         containerStyle={{
@@ -40,7 +40,7 @@ export default function AppRouter() {
         {/* If the URL is "/register" show the Register component */}
         <Route path="/register" element={<Register />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 
