@@ -13,15 +13,16 @@ import {
   LogOut, 
   Sparkles,
   Headphones,
-  Tv,
   Speaker,
   Gamepad2,
   Clock
 } from 'lucide-react'
 import logo from '../../assets/beatbox_logo.png'
 import { logout } from '../../redux/authSlice'
+import { selectCartCount } from '../../redux/cartSlice'
 import { toast } from 'react-hot-toast'
 import ThemeToggle from '../ui/ThemeToggle'
+import CartDrawer from '../ui/CartDrawer'
 
 
 export default function Header() {
@@ -30,13 +31,12 @@ export default function Header() {
   const [searchFocused, setSearchFocused] = useState(false)
   const [showCategories, setShowCategories] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [showCart, setShowCart] = useState(false)
   
   const { user } = useSelector((state) => state.auth)
+  const cartCount = useSelector(selectCartCount)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-
-  // For demonstration, mock cart item count or set to 0. Let's make it 3 items initially
-  const [cartCount, setCartCount] = useState(3)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -176,15 +176,15 @@ export default function Header() {
               </li>
 
               <li className="nav-item">
-                <a href="#bestsellers" className="nav-link premium-nav-link py-2">
+                <Link to="/products" className="nav-link premium-nav-link py-2">
                   Best Sellers
-                </a>
+                </Link>
               </li>
               
               <li className="nav-item">
-                <a href="#newlaunches" className="nav-link premium-nav-link py-2">
+                <Link to="/products" className="nav-link premium-nav-link py-2">
                   New Launches
-                </a>
+                </Link>
               </li>
 
               <li className="nav-item">
@@ -232,8 +232,9 @@ export default function Header() {
                 {/* Shopping Cart Trigger */}
                 <button 
                   className="btn border-0 p-2 position-relative text-theme-muted hover-scale"
-                  onClick={() => toast.success("Shopping Cart drawer!")}
+                  onClick={() => setShowCart(true)}
                   style={{ background: 'transparent', transition: 'all 0.2s' }}
+                  aria-label="Open cart"
                 >
                   <ShoppingBag size={20} />
                   {cartCount > 0 && (
@@ -323,6 +324,9 @@ export default function Header() {
           </div>
         </div>
       </nav>
+
+      {/* Cart Drawer */}
+      <CartDrawer isOpen={showCart} onClose={() => setShowCart(false)} />
     </header>
   )
 }

@@ -4,17 +4,28 @@ import App from '../App'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
 import Home from '../pages/Home'
+import ProductListing from '../pages/ProductListing'
+import ProductDetail from '../pages/ProductDetail'
+import Cart from '../pages/Cart'
+import Checkout from '../pages/Checkout'
 import Layout from '../components/layout/Layout'
 
+import { useDispatch } from 'react-redux'
+import { useEffect } from 'react'
+import { fetchCart } from '../redux/cartSlice'
+
 export default function AppRouter() {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(fetchCart())
+  }, [dispatch])
+
   return (
     <HashRouter>
       <Toaster 
         position="top-right" 
-        containerStyle={{
-          zIndex: 99999,
-          top: '125px'
-        }}
+        containerStyle={{ zIndex: 99999, top: '125px' }}
         toastOptions={{
           duration: 4000,
           style: {
@@ -28,17 +39,14 @@ export default function AppRouter() {
         }} 
       />
       <Routes>
-        {/* Main E-Commerce Premium Home Route with Layout */}
         <Route path="/" element={<Layout><Home /></Layout>} />
-        
-        {/* Splash Welcome intro route */}
         <Route path="/welcome" element={<App />} />
-        
-        {/* If the URL is "/login" show the Login component */}
         <Route path="/login" element={<Login />} />
-        
-        {/* If the URL is "/register" show the Register component */}
         <Route path="/register" element={<Register />} />
+        <Route path="/products" element={<Layout><ProductListing /></Layout>} />
+        <Route path="/products/:id" element={<Layout><ProductDetail /></Layout>} />
+        <Route path="/cart" element={<Layout><Cart /></Layout>} />
+        <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
       </Routes>
     </HashRouter>
   )

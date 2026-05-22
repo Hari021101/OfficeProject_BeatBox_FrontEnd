@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchProducts, selectAllProducts, selectProductStatus } from '../redux/productSlice'
+import { addToCart } from '../redux/cartSlice'
+import { IMAGE_MAP } from '../data/products'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { 
   ArrowRight, 
   Star, 
@@ -128,80 +133,20 @@ export default function Home() {
     toast.success(`Selected ${colorName} theme color!`, { id: `color-${productId}` })
   }
 
-  const products = [
-    {
-      id: 1,
-      name: "Rockerz Pro ANC 550",
-      rating: 4.9,
-      reviews: "1,208",
-      price: 1999,
-      oldPrice: 7990,
-      discount: "75% OFF",
-      tag: "Best Seller",
-      image: heroHeadphones,
-      category: "headphones",
-      usp: "60 Hours ANC Playback",
-      colors: [
-        { name: 'purple', code: '#a820ff' },
-        { name: 'cyan', code: '#00f3ff' },
-        { name: 'black', code: '#0a0d14' }
-      ]
-    },
-    {
-      id: 2,
-      name: "Airdopes Cyber 141",
-      rating: 4.8,
-      reviews: "956",
-      price: 1299,
-      oldPrice: 4490,
-      discount: "71% OFF",
-      tag: "Trending",
-      image: heroEarbuds,
-      category: "earbuds",
-      usp: "40ms Low Latency Gaming",
-      colors: [
-        { name: 'cyan', code: '#00f3ff' },
-        { name: 'purple', code: '#a820ff' },
-        { name: 'grey', code: '#8496ae' }
-      ]
-    },
-    {
-      id: 3,
-      name: "Stone Beat Beast 1200",
-      rating: 4.7,
-      reviews: "542",
-      price: 2499,
-      oldPrice: 6990,
-      discount: "64% OFF",
-      tag: "Rugged",
-      image: heroSpeaker,
-      category: "speakers",
-      usp: "14W Signature Sound",
-      colors: [
-        { name: 'carbon', code: '#1a2238' },
-        { name: 'blue', code: '#0d6efd' },
-        { name: 'red', code: '#dc3545' }
-      ]
-    },
-    {
-      id: 4,
-      name: "Immortal Gaming Pro",
-      rating: 4.9,
-      reviews: "822",
-      price: 1599,
-      oldPrice: 4999,
-      discount: "68% OFF",
-      tag: "New Launch",
-      image: gamingHeadset,
-      category: "gaming",
-      usp: "Virtual 7.1 Surround",
-      colors: [
-        { name: 'neon', code: '#39ff14' },
-        { name: 'purple', code: '#a820ff' },
-        { name: 'cyan', code: '#00f3ff' }
-      ]
+  const dispatch = useDispatch()
+  const allProducts = useSelector(selectAllProducts)
+  const productStatus = useSelector(selectProductStatus)
+
+  useEffect(() => {
+    if (productStatus === 'idle') {
+      dispatch(fetchProducts())
     }
-  ]
+  }, [productStatus, dispatch])
+
+  // Use up to 4 products for the homepage showcase, fallback to empty array if still loading
+  const products = allProducts.length > 0 ? allProducts.slice(0, 4) : []
+
+
 
   // 3. COUNTDOWN TIMER STATE FOR DAILY DEALS
   const [timeLeft, setTimeLeft] = useState({ hours: 14, minutes: 32, seconds: 45 })
@@ -222,8 +167,22 @@ export default function Home() {
     return () => clearInterval(interval)
   }, [])
 
-  const handleAddToCart = (productName) => {
-    toast.success(`🎸 Added ${productName} to your Cart!`, {
+  const handleAddToCartClick = (product) => {
+    const selectedColor = selectedColors[product.id] || product.colors[0]?.name;
+    const colorCode = product.colors?.find(c => c.name === selectedColor)?.code || '#000';
+    
+    dispatch(addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      imageKey: product.imageKey,
+      selectedColor,
+      selectedColorCode: colorCode,
+      category: product.category
+    }))
+    
+    toast.success(`🎸 Added ${product.name} to your Cart!`, {
       icon: '🛒',
       style: {
         borderRadius: '10px',
@@ -536,7 +495,7 @@ export default function Home() {
             </div>
 
             <button 
-              onClick={() => handleAddToCart(prod.name)}
+              onClick={() => handleAddToCartClick(prod)}
               className="btn btn-add-to-cart w-100 py-2 d-flex align-items-center justify-content-center gap-2 fw-bold"
             >
               Add to Cart
@@ -624,7 +583,7 @@ export default function Home() {
         </div>
 
         <button 
-          onClick={() => handleAddToCart("Airdopes Cyber 141")}
+          onClick={() => handleAddToCartClick({ name: "Airdopes Cyber 141", price: 1199, imageKey: 'airbuds' })}
           className="btn btn-glow py-3 px-5 fw-bold d-flex align-items-center gap-2"
           style={{ borderRadius: '12px', height: '55px' }}
         >
@@ -769,9 +728,9 @@ export default function Home() {
                 </h3>
                 <p className="text-theme-muted small mb-0">Our top-selling products that bassheads swear by.</p>
               </div>
-              <a href="#shop" className="btn btn-outline-secondary hover-scale text-theme-title border-secondary border-opacity-25 px-4 mt-3 mt-md-0" style={{ borderRadius: '10px' }}>
+              <Link to="/products" className="btn btn-outline-secondary hover-scale text-theme-title border-secondary border-opacity-25 px-4 mt-3 mt-md-0" style={{ borderRadius: '10px' }}>
                 View All Products
-              </a>
+              </Link>
             </div>
 
             {/* Interactive Category Filter Pills Bar (boAt style) */}
