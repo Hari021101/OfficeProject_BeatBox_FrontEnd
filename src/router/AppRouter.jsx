@@ -5,12 +5,13 @@ import Login from '../pages/Login'
 import Register from '../pages/Register'
 import Home from '../pages/Home'
 import Layout from '../components/layout/Layout'
+import Settings from '../pages/Settings'
 
 export default function AppRouter() {
   return (
     <HashRouter>
-      <Toaster 
-        position="top-right" 
+      <Toaster
+        position="top-right"
         containerStyle={{
           zIndex: 99999,
           top: '125px'
@@ -25,20 +26,29 @@ export default function AppRouter() {
             borderRadius: '10px',
             fontSize: '0.95rem'
           }
-        }} 
+        }}
       />
       <Routes>
         {/* Main E-Commerce Premium Home Route with Layout */}
         <Route path="/" element={<Layout><Home /></Layout>} />
-        
+
         {/* Splash Welcome intro route */}
         <Route path="/welcome" element={<App />} />
-        
+
         {/* If the URL is "/login" show the Login component */}
         <Route path="/login" element={<Login />} />
-        
+
         {/* If the URL is "/register" show the Register component */}
         <Route path="/register" element={<Register />} />
+
+        <Route
+          path="/settings"
+          element={
+            <Layout>
+              <Settings />
+            </Layout>
+          }
+        />
       </Routes>
     </HashRouter>
   )

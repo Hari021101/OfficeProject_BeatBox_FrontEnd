@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Search, 
-  User, 
-  Heart, 
-  ShoppingBag, 
-  Menu, 
-  X, 
-  ChevronDown, 
-  LogOut, 
+import {
+  Search,
+  User,
+  Heart,
+  ShoppingBag,
+  Menu,
+  X,
+  ChevronDown,
+  LogOut,
   Sparkles,
   Headphones,
   Tv,
@@ -30,7 +30,7 @@ export default function Header() {
   const [searchFocused, setSearchFocused] = useState(false)
   const [showCategories, setShowCategories] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  
+
   const { user } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -75,14 +75,14 @@ export default function Header() {
   return (
     <header className="fixed-top w-100" style={{ zIndex: 10000 }}>
       {/* 1. TOP MARQUEE BANNER */}
-      <div 
+      <div
         className="d-flex align-items-center justify-content-center text-center px-3"
-        style={{ 
+        style={{
           background: 'linear-gradient(90deg, #7c3aed, #06b6d4, #7c3aed)',
           backgroundSize: '200% 200%',
           animation: 'gradientBG 6s linear infinite',
-          height: '34px', 
-          fontSize: '0.8rem', 
+          height: '34px',
+          fontSize: '0.8rem',
           fontWeight: '700',
           color: '#ffffff',
           letterSpacing: '1px'
@@ -94,7 +94,7 @@ export default function Header() {
       </div>
 
       {/* 2. MAIN NAVBAR */}
-      <nav 
+      <nav
         className="navbar navbar-expand-lg py-3 border-0 border-bottom w-100 premium-navbar"
         style={{
           transition: 'all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1)'
@@ -103,11 +103,11 @@ export default function Header() {
         <div className="container-fluid px-lg-5">
           {/* Logo & Brand */}
           <Link to="/" className="navbar-brand d-flex align-items-center gap-2 me-4 premium-brand">
-            <img 
-              src={logo} 
-              alt="BeatBox Logo" 
+            <img
+              src={logo}
+              alt="BeatBox Logo"
               className="rounded-3"
-              style={{ width: '40px', height: '40px', boxShadow: '0 4px 15px rgba(0, 243, 255, 0.2)' }} 
+              style={{ width: '40px', height: '40px', boxShadow: '0 4px 15px rgba(0, 243, 255, 0.2)' }}
             />
             <span className="fw-black fs-4 tracking-tight text-theme-title mb-0">
               BEAT<span className="gradient-text">BOX</span>
@@ -115,12 +115,12 @@ export default function Header() {
           </Link>
 
           {/* Mobile Toggle Button */}
-          <button 
-            className="navbar-toggler border-0 text-theme-title p-2" 
-            type="button" 
+          <button
+            className="navbar-toggler border-0 text-theme-title p-2"
+            type="button"
             onClick={() => setIsOpen(!isOpen)}
-            aria-controls="navbarNav" 
-            aria-expanded={isOpen} 
+            aria-controls="navbarNav"
+            aria-expanded={isOpen}
             aria-label="Toggle navigation"
             style={{ outline: 'none', boxShadow: 'none' }}
           >
@@ -129,17 +129,17 @@ export default function Header() {
 
           {/* Navbar Links & Widgets */}
           <div className={`collapse navbar-collapse ${isOpen ? 'show mt-3 mt-lg-0' : ''}`} id="navbarNav">
-            
+
             {/* Center: Navigation Links */}
             <ul className="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-2 fw-semibold">
-              
+
               {/* Categories Hover Dropdown */}
-              <li 
+              <li
                 className="nav-item position-relative dropdown"
                 onMouseEnter={() => setShowCategories(true)}
                 onMouseLeave={() => setShowCategories(false)}
               >
-                <button 
+                <button
                   className="nav-link text-theme-title d-flex align-items-center gap-1 border-0 bg-transparent py-2 premium-nav-link"
                   onClick={() => setShowCategories(!showCategories)}
                 >
@@ -148,20 +148,20 @@ export default function Header() {
 
                 <AnimatePresence>
                   {showCategories && (
-                    <motion.ul 
+                    <motion.ul
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 15 }}
                       transition={{ duration: 0.2 }}
                       className="dropdown-menu show premium-dropdown p-3 position-absolute mt-2"
-                      style={{ 
+                      style={{
                         width: '260px'
                       }}
                     >
                       {categories.map((cat, idx) => (
                         <li key={idx} className="mb-1">
-                          <a 
-                            href={cat.href} 
+                          <a
+                            href={cat.href}
                             className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3"
                             onClick={() => setShowCategories(false)}
                           >
@@ -180,7 +180,7 @@ export default function Header() {
                   Best Sellers
                 </a>
               </li>
-              
+
               <li className="nav-item">
                 <a href="#newlaunches" className="nav-link premium-nav-link py-2">
                   New Launches
@@ -196,11 +196,11 @@ export default function Header() {
 
             {/* Right: Search bar & Utility Icons */}
             <div className="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-3">
-              
+
               {/* Search Pill */}
               <form onSubmit={handleSearchSubmit} className="position-relative">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   className="form-control premium-search-input"
                   placeholder="Search drops, headsets..."
                   value={searchQuery}
@@ -208,8 +208,8 @@ export default function Header() {
                   onFocus={() => setSearchFocused(true)}
                   onBlur={() => setSearchFocused(false)}
                 />
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="btn position-absolute top-50 translate-middle-y end-0 border-0 text-theme-muted p-2 pe-3"
                   style={{ background: 'transparent' }}
                 >
@@ -219,9 +219,9 @@ export default function Header() {
 
               {/* Icon Group */}
               <div className="d-flex align-items-center justify-content-center gap-3 mt-2 mt-lg-0 text-theme-title">
-                
+
                 {/* Wishlist Link */}
-                <button 
+                <button
                   className="btn border-0 p-2 position-relative text-theme-muted hover-scale"
                   onClick={() => toast.success("Wishlist coming soon!")}
                   style={{ background: 'transparent', transition: 'all 0.2s' }}
@@ -230,19 +230,19 @@ export default function Header() {
                 </button>
 
                 {/* Shopping Cart Trigger */}
-                <button 
+                <button
                   className="btn border-0 p-2 position-relative text-theme-muted hover-scale"
                   onClick={() => toast.success("Shopping Cart drawer!")}
                   style={{ background: 'transparent', transition: 'all 0.2s' }}
                 >
                   <ShoppingBag size={20} />
                   {cartCount > 0 && (
-                    <span 
+                    <span
                       className="position-absolute translate-middle badge rounded-pill cart-pulse-badge"
-                      style={{ 
-                        top: '4px', 
-                        right: '-2px', 
-                        fontSize: '0.65rem', 
+                      style={{
+                        top: '4px',
+                        right: '-2px',
+                        fontSize: '0.65rem',
                         padding: '3px 6px'
                       }}
                     >
@@ -254,62 +254,161 @@ export default function Header() {
                 {/* Profile / Account Dropdown */}
                 {user ? (
                   <div className="dropdown">
-                    <button 
-                      className="btn border-0 p-2 text-theme-muted d-flex align-items-center gap-1 dropdown-toggle"
+
+                    {/* Trigger Button */}
+                    <button
+                      className="btn border-0 p-2 text-theme-muted d-flex align-items-center gap-2 dropdown-toggle profile-trigger-btn"
                       id="userMenuButton"
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
-                      style={{ background: 'transparent' }}
-                    >
-                      <User size={20} className="text-accent" />
-                      <span className="small d-none d-xl-inline text-theme-muted">{user.fullName.split(' ')[0]}</span>
-                    </button>
-                    <ul 
-                      className="dropdown-menu dropdown-menu-end glass-card p-2 border-1 mt-2 text-white" 
-                      aria-labelledby="userMenuButton"
-                      style={{ 
-                        background: 'var(--bb-surface)', 
-                        borderColor: 'var(--bb-border)',
-                        boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
-                        borderRadius: '12px'
+                      style={{
+                        background: 'transparent'
                       }}
                     >
-                      <li className="px-3 py-2 border-bottom border-secondary mb-1">
-                        <p className="small mb-0 text-theme-title fw-bold">{user.fullName}</p>
-                        <p className="small mb-0 text-theme-muted text-truncate" style={{ fontSize: '0.8rem', maxWidth: '160px' }}>{user.email}</p>
-                      </li>
-                      <li>
-                        <Link 
-                          to="/profile" 
-                          className="dropdown-item text-theme-title py-2 rounded"
-                          style={{ fontSize: '0.9rem', background: 'transparent' }}
-                          onMouseEnter={(e) => e.target.style.background = 'rgba(0, 243, 255, 0.08)'}
-                          onMouseLeave={(e) => e.target.style.background = 'transparent'}
+
+                      {/* Avatar */}
+                      <div
+                        className="rounded-circle d-flex align-items-center justify-content-center"
+                        style={{
+                          width: '34px',
+                          height: '34px',
+                          background:
+                            'linear-gradient(135deg, #00f3ff, #a820ff)',
+                          boxShadow:
+                            '0 0 15px rgba(0,243,255,0.35)'
+                        }}
+                      >
+                        <User size={16} color="#fff" />
+                      </div>
+
+                      {/* Username */}
+                      <div className="d-none d-xl-flex flex-column text-start">
+                        <span
+                          className="fw-bold text-theme-title"
+                          style={{
+                            fontSize: '0.85rem',
+                            lineHeight: '1'
+                          }}
                         >
-                          My Profile
+                          {user.fullName.split(' ')[0]}
+                        </span>
+
+                        <span
+                          className="text-theme-muted"
+                          style={{
+                            fontSize: '0.7rem'
+                          }}
+                        >
+                          Premium User
+                        </span>
+                      </div>
+
+                    </button>
+
+                    {/* Dropdown Menu */}
+                    <ul
+                      className="dropdown-menu dropdown-menu-end p-2 border-0 mt-3 premium-profile-dropdown"
+                      aria-labelledby="userMenuButton"
+                      style={{
+                        width: '280px',
+                        background: 'rgba(10, 15, 30, 0.95)',
+                        backdropFilter: 'blur(20px)',
+                        border:
+                          '1px solid rgba(0,243,255,0.15)',
+                        borderRadius: '18px',
+                        boxShadow:
+                          '0 20px 45px rgba(0,0,0,0.45)'
+                      }}
+                    >
+
+                      {/* User Top Section */}
+                      <li className="px-3 py-3 border-bottom border-secondary border-opacity-25">
+
+                        <div className="d-flex align-items-center gap-3">
+
+                          <div
+                            className="rounded-circle d-flex align-items-center justify-content-center"
+                            style={{
+                              width: '48px',
+                              height: '48px',
+                              background:
+                                'linear-gradient(135deg, #00f3ff, #a820ff)'
+                            }}
+                          >
+                            <User size={22} color="#fff" />
+                          </div>
+
+                          <div>
+                            <h6 className="mb-1 text-theme-title fw-bold">
+                              {user.fullName}
+                            </h6>
+
+                            <p
+                              className="mb-0 text-theme-muted"
+                              style={{
+                                fontSize: '0.75rem'
+                              }}
+                            >
+                              {user.email}
+                            </p>
+                          </div>
+
+                        </div>
+
+                      </li>
+
+                      {/* Menu Links */}
+
+                      <li>
+                        <Link
+                          to="/settings"
+                          className="dropdown-item premium-dropdown-item rounded-3 py-3"
+                        >
+                          ⚙️ Settings
                         </Link>
                       </li>
+
                       <li>
-                        <button 
-                          className="dropdown-item text-danger py-2 rounded d-flex align-items-center gap-2 border-0 bg-transparent w-100"
-                          onClick={handleLogout}
-                          style={{ fontSize: '0.9rem' }}
-                          onMouseEnter={(e) => e.target.style.background = 'rgba(255, 0, 0, 0.08)'}
-                          onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                        <Link
+                          to="/support"
+                          className="dropdown-item premium-dropdown-item rounded-3 py-3"
                         >
-                          <LogOut size={16} /> Logout
-                        </button>
+                          🎧 Support
+                        </Link>
                       </li>
+
+                      {/* Logout */}
+                      <li className="mt-2 pt-2 border-top border-secondary border-opacity-25">
+
+                        <button
+                          className="dropdown-item rounded-3 py-3 text-danger fw-semibold d-flex align-items-center gap-2"
+                          onClick={handleLogout}
+                          style={{
+                            transition: 'all 0.25s ease'
+                          }}
+                        >
+                          <LogOut size={16} />
+                          Logout
+                        </button>
+
+                      </li>
+
                     </ul>
+
                   </div>
                 ) : (
-                  <Link 
-                    to="/login" 
+                  <Link
+                    to="/login"
                     className="btn border-0 p-2 text-theme-muted d-flex align-items-center gap-1 hover-scale"
-                    style={{ background: 'transparent', transition: 'all 0.2s' }}
+                    style={{
+                      background: 'transparent',
+                      transition: 'all 0.2s'
+                    }}
                   >
                     <User size={20} />
-                    <span className="small d-none d-xl-inline text-theme-muted fw-semibold">Login</span>
+                    <span className="small d-none d-xl-inline text-theme-muted fw-semibold">
+                      Login
+                    </span>
                   </Link>
                 )}
 
