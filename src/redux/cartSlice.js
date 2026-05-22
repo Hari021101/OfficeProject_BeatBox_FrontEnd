@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import { cartService } from '../services/cartService';
 import { toast } from 'react-hot-toast';
 
@@ -58,21 +58,24 @@ const cartSlice = createSlice({
 });
 
 // Selectors
-export const selectCartItems = (state) => {
-  return state.cart.items.map(cartItem => {
-    const product = state.products?.items?.find(p => p.id === cartItem.productId);
-    return {
-      cartKey: cartItem.cartItemId,
-      id: cartItem.productId,
-      name: cartItem.productName || (product ? product.name : 'Unknown Product'),
-      price: cartItem.unitPrice,
-      quantity: cartItem.quantity,
-      imageKey: product ? product.imageKey : 'heroHeadphones',
-      selectedColor: null, // Backend doesn't support colors yet
-      selectedColorCode: null
-    };
-  });
-};
+export const selectCartItems = createSelector(
+  [(state) => state.cart.items, (state) => state.products.items],
+  (cartItems, productsItems) => {
+    return cartItems.map(cartItem => {
+      const product = productsItems?.find(p => p.id === cartItem.productId);
+      return {
+        cartKey: cartItem.cartItemId,
+        id: cartItem.productId,
+        name: cartItem.productName || (product ? product.name : 'Unknown Product'),
+        price: cartItem.unitPrice,
+        quantity: cartItem.quantity,
+        imageKey: product ? product.imageKey : 'heroHeadphones',
+        selectedColor: null, // Backend doesn't support colors yet
+        selectedColorCode: null
+      };
+    });
+  }
+);
 
 export const selectCartCount = (state) =>
   state.cart.items.reduce((sum, item) => sum + item.quantity, 0);

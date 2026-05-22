@@ -168,18 +168,18 @@ export default function Home() {
   }, [])
 
   const handleAddToCartClick = (product) => {
-    const selectedColor = selectedColors[product.id] || product.colors[0]?.name;
-    const colorCode = product.colors?.find(c => c.name === selectedColor)?.code || '#000';
+    const selectedColor = selectedColors[product.id] || (product.colors && product.colors[0]?.name) || 'Default';
+    const colorCode = (product.colors && product.colors.find(c => c.name === selectedColor)?.code) || '#000';
     
     dispatch(addToCart({
-      id: product.id,
+      id: product.id || product.name,
       name: product.name,
       price: product.price,
       quantity: 1,
-      imageKey: product.imageKey,
+      imageKey: product.imageKey || 'heroHeadphones',
       selectedColor,
       selectedColorCode: colorCode,
-      category: product.category
+      category: product.category || 'General'
     }))
     
     toast.success(`🎸 Added ${product.name} to your Cart!`, {
@@ -312,7 +312,12 @@ export default function Home() {
         
         <div className="d-flex gap-3">
           <button 
-            onClick={() => handleAddToCart(slides[currentSlide].title)}
+            onClick={() => handleAddToCartClick({
+              id: slides[currentSlide].id,
+              name: slides[currentSlide].title,
+              price: parseFloat(slides[currentSlide].price.replace(/[^0-9.-]+/g,"")),
+              imageKey: 'heroHeadphones'
+            })}
             className="btn btn-glow d-flex align-items-center justify-content-center gap-2 py-3 px-5 fw-bold"
             style={{ borderRadius: '12px', height: '55px' }}
           >

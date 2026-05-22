@@ -686,9 +686,17 @@ body {
   min-width: 200px;
 }
 
+.premium-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
 [data-theme="light"] .premium-search-input {
   background: rgba(255, 255, 255, 0.8) !important;
   border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .premium-search-input::placeholder {
+  color: rgba(11, 15, 25, 0.45) !important;
 }
 
 .premium-search-input:focus {
@@ -752,17 +760,6 @@ body {
   }
 }
 
-.premium-dropdown-item {
-  color: white !important;
-  transition: all 0.25s ease !important;
-  font-weight: 500;
-}
-
-.premium-dropdown-item:hover {
-  background: rgba(0, 243, 255, 0.08) !important;
-  color: #00f3ff !important;
-  transform: translateX(4px);
-}
 
 .dropdown-item.text-danger:hover {
   background: rgba(255, 0, 0, 0.08) !important;
