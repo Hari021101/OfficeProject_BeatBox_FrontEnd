@@ -9,6 +9,7 @@ import ProductDetail from '../pages/ProductDetail'
 import Cart from '../pages/Cart'
 import Checkout from '../pages/Checkout'
 import Layout from '../components/layout/Layout'
+import Settings from '../pages/Settings'
 
 import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
@@ -36,7 +37,7 @@ export default function AppRouter() {
             borderRadius: '10px',
             fontSize: '0.95rem'
           }
-        }} 
+        }}
       />
       <Routes>
         <Route path="/" element={<Layout><Home /></Layout>} />
@@ -47,6 +48,7 @@ export default function AppRouter() {
         <Route path="/products/:id" element={<Layout><ProductDetail /></Layout>} />
         <Route path="/cart" element={<Layout><Cart /></Layout>} />
         <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
+        <Route path="/settings" element={<Layout><Settings /></Layout>} />
       </Routes>
     </HashRouter>
   )
