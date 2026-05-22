@@ -13,6 +13,7 @@ import {
   Zap
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { cartService } from '../services/cartService'
 import AntiGravityPlayground from '../components/ui/AntiGravityPlayground'
 
 // Asset imports
@@ -28,8 +29,8 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const slides = [
     {
-      id: 1,
-      title: "BEATBOX ROCKERZ 550",
+      id: "293E3720-D9AE-4EF8-F584-08DEB6751ACF",
+      title: "BeatBox Sonic Pro X",
       subtitle: "SILENCE THE NOISE, UNLEASH THE BASS",
       description: "Experience true audio purity with high-fidelity 40mm dynamic drivers, hybrid Active Noise Cancellation (ANC), and up to 60 hours of massive playback.",
       price: "₹1,999",
@@ -38,31 +39,31 @@ export default function Home() {
       image: heroHeadphones,
       color: "var(--bb-primary-glow)",
       badge: "Flagship Launch"
-    },
-    {
-      id: 2,
-      title: "AIRDOPES CYBER 141",
-      subtitle: "NEXT-GEN TWS FOR CYBER GAMERS",
-      description: "Equipped with 13mm immersive drivers, BEAST™ mode for 40ms low latency gaming, quad mics with ENx™ technology for clear calls, and a glowing neon charging case.",
-      price: "₹1,299",
-      oldPrice: "₹4,490",
-      discount: "71% OFF",
-      image: heroEarbuds,
-      color: "var(--bb-accent-glow)",
-      badge: "Bestseller"
-    },
-    {
-      id: 3,
-      title: "STONE BEAT BEAST 1200",
-      subtitle: "RUGGED OUTDOOR PARTY SOUND",
-      description: "IPX7 waterproof portable bluetooth speaker. Features dual passive radiators, 14W signature high-bass sound, custom RGB light ring, and active water splash resistance.",
-      price: "₹2,499",
-      oldPrice: "₹6,990",
-      discount: "64% OFF",
-      image: heroSpeaker,
-      color: "rgba(168, 32, 255, 0.4)",
-      badge: "Summer Special"
     }
+    // {
+    //   id: "293E3720-D9AE-4EF8-F584-08DEB6751ACF",
+    //   title: "AIRDOPES CYBER 141",
+    //   subtitle: "NEXT-GEN TWS FOR CYBER GAMERS",
+    //   description: "Equipped with 13mm immersive drivers, BEAST™ mode for 40ms low latency gaming, quad mics with ENx™ technology for clear calls, and a glowing neon charging case.",
+    //   price: "₹1,299",
+    //   oldPrice: "₹4,490",
+    //   discount: "71% OFF",
+    //   image: heroEarbuds,
+    //   color: "var(--bb-accent-glow)",
+    //   badge: "Bestseller"
+    // },
+    // {
+    //   id: "293E3720-D9AE-4EF8-F584-08DEB6751ACF",
+    //   title: "STONE BEAT BEAST 1200",
+    //   subtitle: "RUGGED OUTDOOR PARTY SOUND",
+    //   description: "IPX7 waterproof portable bluetooth speaker. Features dual passive radiators, 14W signature high-bass sound, custom RGB light ring, and active water splash resistance.",
+    //   price: "₹2,499",
+    //   oldPrice: "₹6,990",
+    //   discount: "64% OFF",
+    //   image: heroSpeaker,
+    //   color: "rgba(168, 32, 255, 0.4)",
+    //   badge: "Summer Special"
+    // }
   ]
 
   // Auto slide effect
@@ -93,8 +94,8 @@ export default function Home() {
 
   const products = [
     {
-      id: 1,
-      name: "Rockerz Pro ANC 550",
+      id: "293E3720-D9AE-4EF8-F584-08DEB6751ACF",
+      name: "BeatBox Sonic Pro X",
       rating: 4.9,
       reviews: "1,208",
       price: 1999,
@@ -109,61 +110,61 @@ export default function Home() {
         { name: 'cyan', code: '#00f3ff' },
         { name: 'black', code: '#0a0d14' }
       ]
-    },
-    {
-      id: 2,
-      name: "Airdopes Cyber 141",
-      rating: 4.8,
-      reviews: "956",
-      price: 1299,
-      oldPrice: 4490,
-      discount: "71% OFF",
-      tag: "Trending",
-      image: heroEarbuds,
-      category: "earbuds",
-      usp: "40ms Low Latency Gaming",
-      colors: [
-        { name: 'cyan', code: '#00f3ff' },
-        { name: 'purple', code: '#a820ff' },
-        { name: 'grey', code: '#8496ae' }
-      ]
-    },
-    {
-      id: 3,
-      name: "Stone Beat Beast 1200",
-      rating: 4.7,
-      reviews: "542",
-      price: 2499,
-      oldPrice: 6990,
-      discount: "64% OFF",
-      tag: "Rugged",
-      image: heroSpeaker,
-      category: "speakers",
-      usp: "14W Signature Sound",
-      colors: [
-        { name: 'carbon', code: '#1a2238' },
-        { name: 'blue', code: '#0d6efd' },
-        { name: 'red', code: '#dc3545' }
-      ]
-    },
-    {
-      id: 4,
-      name: "Immortal Gaming Pro",
-      rating: 4.9,
-      reviews: "822",
-      price: 1599,
-      oldPrice: 4999,
-      discount: "68% OFF",
-      tag: "New Launch",
-      image: gamingHeadset,
-      category: "gaming",
-      usp: "Virtual 7.1 Surround",
-      colors: [
-        { name: 'neon', code: '#39ff14' },
-        { name: 'purple', code: '#a820ff' },
-        { name: 'cyan', code: '#00f3ff' }
-      ]
-    }
+    // },
+    // {
+    //   id: "293E3720-D9AE-4EF8-F584-08DEB6751ACF",
+    //   name: "Airdopes Cyber 141",
+    //   rating: 4.8,
+    //   reviews: "956",
+    //   price: 1299,
+    //   oldPrice: 4490,
+    //   discount: "71% OFF",
+    //   tag: "Trending",
+    //   image: heroEarbuds,
+    //   category: "earbuds",
+    //   usp: "40ms Low Latency Gaming",
+    //   colors: [
+    //     { name: 'cyan', code: '#00f3ff' },
+    //     { name: 'purple', code: '#a820ff' },
+    //     { name: 'grey', code: '#8496ae' }
+    //   ]
+    // },
+    // {
+    //   id: "293E3720-D9AE-4EF8-F584-08DEB6751ACF",
+    //   name: "Stone Beat Beast 1200",
+    //   rating: 4.7,
+    //   reviews: "542",
+    //   price: 2499,
+    //   oldPrice: 6990,
+    //   discount: "64% OFF",
+    //   tag: "Rugged",
+    //   image: heroSpeaker,
+    //   category: "speakers",
+    //   usp: "14W Signature Sound",
+    //   colors: [
+    //     { name: 'carbon', code: '#1a2238' },
+    //     { name: 'blue', code: '#0d6efd' },
+    //     { name: 'red', code: '#dc3545' }
+    //   ]
+    // },
+    // {
+    //   id: "293E3720-D9AE-4EF8-F584-08DEB6751ACF",
+    //   name: "Immortal Gaming Pro",
+    //   rating: 4.9,
+    //   reviews: "822",
+    //   price: 1599,
+    //   oldPrice: 4999,
+    //   discount: "68% OFF",
+    //   tag: "New Launch",
+    //   image: gamingHeadset,
+    //   category: "gaming",
+    //   usp: "Virtual 7.1 Surround",
+    //   colors: [
+    //     { name: 'neon', code: '#39ff14' },
+    //     { name: 'purple', code: '#a820ff' },
+    //     { name: 'cyan', code: '#00f3ff' }
+    //   ]
+     }
   ]
 
   // 3. COUNTDOWN TIMER STATE FOR DAILY DEALS
@@ -185,7 +186,10 @@ export default function Home() {
     return () => clearInterval(interval)
   }, [])
 
-  const handleAddToCart = (productName) => {
+ const handleAddToCart = async (productId, productName) => {
+  try {
+    await cartService.addToCart(productId, 1)
+
     toast.success(`🎸 Added ${productName} to your Cart!`, {
       icon: '🛒',
       style: {
@@ -195,7 +199,12 @@ export default function Home() {
         border: '1px solid rgba(0, 243, 255, 0.3)',
       }
     })
+  } catch (error) {
+    console.error(error)
+
+    toast.error('Failed to add item to cart')
   }
+}
 
   // 4. ZERO-GRAVITY (ANTI-GRAVITY) PHYSICS PLAYGROUND STATE
   const [isZeroGravity, setIsZeroGravity] = useState(false)
@@ -316,7 +325,7 @@ export default function Home() {
         
         <div className="d-flex gap-3">
           <button 
-            onClick={() => handleAddToCart(slides[currentSlide].title)}
+            onClick={() => handleAddToCart(products[currentSlide].id, slides[currentSlide].title)}
             className="btn btn-glow d-flex align-items-center justify-content-center gap-2 py-3 px-5 fw-bold"
             style={{ borderRadius: '12px', height: '55px' }}
           >
@@ -499,7 +508,7 @@ export default function Home() {
             </div>
 
             <button 
-              onClick={() => handleAddToCart(prod.name)}
+              onClick={() => handleAddToCart(prod.id, prod.name)}
               className="btn btn-add-to-cart w-100 py-2 d-flex align-items-center justify-content-center gap-2 fw-bold"
             >
               Add to Cart
@@ -587,7 +596,7 @@ export default function Home() {
         </div>
 
         <button 
-          onClick={() => handleAddToCart("Airdopes Cyber 141")}
+          onClick={() => handleAddToCart(products[1].id, "Airdopes Cyber 141")}
           className="btn btn-glow py-3 px-5 fw-bold d-flex align-items-center gap-2"
           style={{ borderRadius: '12px', height: '55px' }}
         >

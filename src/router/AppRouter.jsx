@@ -4,6 +4,10 @@ import App from '../App'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
 import Home from '../pages/Home'
+import Cart from '../pages/Cart'
+import Checkout from '../pages/Checkout'
+import Orders from '../pages/Orders'
+import OrderDetails from '../pages/OrderDetails'
 import Layout from '../components/layout/Layout'
 
 export default function AppRouter() {
@@ -30,6 +34,10 @@ export default function AppRouter() {
       <Routes>
         {/* Main E-Commerce Premium Home Route with Layout */}
         <Route path="/" element={<Layout><Home /></Layout>} />
+        <Route path="/cart" element={<Layout><Cart /></Layout>} />
+        <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
+        <Route path="/orders" element={<Layout><Orders /></Layout>} />
+        <Route path="/orders/:id" element={<Layout><OrderDetails /></Layout>} />
         
         {/* Splash Welcome intro route */}
         <Route path="/welcome" element={<App />} />

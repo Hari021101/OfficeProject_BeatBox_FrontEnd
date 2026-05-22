@@ -22,6 +22,7 @@ import logo from '../../assets/beatbox_logo.png'
 import { logout } from '../../redux/authSlice'
 import { toast } from 'react-hot-toast'
 import ThemeToggle from '../ui/ThemeToggle'
+import { cartService } from '../../services/cartService'
 
 
 export default function Header() {
@@ -35,8 +36,21 @@ export default function Header() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  // For demonstration, mock cart item count or set to 0. Let's make it 3 items initially
-  const [cartCount, setCartCount] = useState(3)
+  const [cartCount, setCartCount] = useState(0)
+
+  useEffect(() => {
+    const loadCartCount = async () => {
+      try {
+        const cart = await cartService.getCart()
+        const items = cart?.items || cart?.cartItems || []
+        setCartCount(items.reduce((sum, item) => sum + (item.quantity || 0), 0))
+      } catch {
+        setCartCount(0)
+      }
+    }
+
+    loadCartCount()
+  }, [user])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -188,6 +202,12 @@ export default function Header() {
               </li>
 
               <li className="nav-item">
+                <Link to="/orders" className="nav-link premium-nav-link py-2 text-theme-title" style={{ textDecoration: 'none' }}>
+                  Orders
+                </Link>
+              </li>
+
+              <li className="nav-item">
                 <a href="#support" className="nav-link premium-nav-link py-2">
                   Support
                 </a>
@@ -232,7 +252,7 @@ export default function Header() {
                 {/* Shopping Cart Trigger */}
                 <button 
                   className="btn border-0 p-2 position-relative text-theme-muted hover-scale"
-                  onClick={() => toast.success("Shopping Cart drawer!")}
+                  onClick={() => navigate('/cart')}
                   style={{ background: 'transparent', transition: 'all 0.2s' }}
                 >
                   <ShoppingBag size={20} />
