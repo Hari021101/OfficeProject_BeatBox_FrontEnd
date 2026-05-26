@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react'
 import logo from '../assets/Logo.png'
 import ParticleBackground from '../components/ui/ParticleBackground'
 import ThemeToggle from '../components/ui/ThemeToggle'
@@ -84,6 +84,32 @@ export default function Login() {
             className="p-4 p-md-5 w-100" 
             style={{ maxWidth: '480px', zIndex: 1 }}
           >
+            {/* Back Button */}
+            <button
+              onClick={() => navigate(-1)}
+              className="btn d-flex align-items-center gap-2 mb-4 fw-semibold"
+              style={{
+                background: 'transparent',
+                border: '1px solid var(--bb-border)',
+                color: 'var(--bb-muted)',
+                borderRadius: '10px',
+                padding: '8px 16px',
+                fontSize: '0.85rem',
+                transition: 'all 0.25s ease',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = 'var(--bb-accent)'
+                e.currentTarget.style.color = 'var(--bb-accent)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = 'var(--bb-border)'
+                e.currentTarget.style.color = 'var(--bb-muted)'
+              }}
+              id="login-back-btn"
+            >
+              <ArrowLeft size={16} /> Back
+            </button>
+
             <div className="mb-5">
               <h2 className="fw-black mb-2" style={{ fontSize: '2.5rem', letterSpacing: '-1px', color: 'var(--bb-title-color)' }}>
                 Welcome <span className="gradient-text">Back</span>

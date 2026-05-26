@@ -1,10 +1,10 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SlidersHorizontal, X, ChevronDown, Search, ArrowUpDown, Tag } from 'lucide-react'
 import { CATEGORIES, IMAGE_MAP } from '../data/products'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectAllProducts, selectProductStatus, fetchProducts } from '../redux/productSlice'
-import { useEffect } from 'react'
 import ProductCard from '../components/ui/ProductCard'
 
 const SORT_OPTIONS = [
@@ -29,7 +29,9 @@ export default function ProductListing() {
   const [activeSort, setActiveSort] = useState('popular')
   const [activePriceRange, setActivePriceRange] = useState('all')
   const [minRating, setMinRating] = useState(0)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchParams] = useSearchParams()
+  const initialQuery = searchParams.get('q') || ''
+  const [searchQuery, setSearchQuery] = useState(initialQuery)
   const [showFilters, setShowFilters] = useState(false)
   const [inStockOnly, setInStockOnly] = useState(false)
 
@@ -42,6 +44,14 @@ export default function ProductListing() {
       dispatch(fetchProducts())
     }
   }, [productStatus, dispatch])
+
+  // Sync URL search params with local state
+  useEffect(() => {
+    const q = searchParams.get('q')
+    if (q !== null && q !== searchQuery) {
+      setSearchQuery(q)
+    }
+  }, [searchParams])
 
   const filtered = useMemo(() => {
     let list = [...allProducts]

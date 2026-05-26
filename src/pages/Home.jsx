@@ -312,12 +312,18 @@ export default function Home() {
         
         <div className="d-flex gap-3">
           <button 
-            onClick={() => handleAddToCartClick({
-              id: slides[currentSlide].id,
-              name: slides[currentSlide].title,
-              price: parseFloat(slides[currentSlide].price.replace(/[^0-9.-]+/g,"")),
-              imageKey: 'heroHeadphones'
-            })}
+            onClick={() => {
+              // Find the real product from DB so we get a valid GUID
+              const realProduct = allProducts.find(p => p.name === slides[currentSlide].title) || allProducts[0];
+              if (realProduct) {
+                handleAddToCartClick({
+                  ...realProduct,
+                  imageKey: 'heroHeadphones'
+                });
+              } else {
+                toast.error("Products not loaded yet");
+              }
+            }}
             className="btn btn-glow d-flex align-items-center justify-content-center gap-2 py-3 px-5 fw-bold"
             style={{ borderRadius: '12px', height: '55px' }}
           >
@@ -588,7 +594,17 @@ export default function Home() {
         </div>
 
         <button 
-          onClick={() => handleAddToCartClick({ name: "Airdopes Cyber 141", price: 1199, imageKey: 'airbuds' })}
+          onClick={() => {
+            const realProduct = allProducts.find(p => p.name.includes("Airdopes")) || allProducts[0];
+            if (realProduct) {
+              handleAddToCartClick({ 
+                ...realProduct, 
+                price: 1199, // Promo price
+              });
+            } else {
+              toast.error("Deal product not loaded yet");
+            }
+          }}
           className="btn btn-glow py-3 px-5 fw-bold d-flex align-items-center gap-2"
           style={{ borderRadius: '12px', height: '55px' }}
         >

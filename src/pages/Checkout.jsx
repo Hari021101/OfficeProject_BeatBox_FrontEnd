@@ -28,6 +28,7 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState('upi')
   const [ordered, setOrdered] = useState(false)
   const [orderId] = useState(`BB${Date.now().toString().slice(-8)}`)
+  const [createdOrderId, setCreatedOrderId] = useState(null)
 
   const shipping = subtotal >= 999 ? 0 : 79
   const gst = Math.round(subtotal * 0.18)
@@ -53,59 +54,42 @@ export default function Checkout() {
     setStep(2)
   }
 
-  // const onPlaceOrder = async () => {
-  //   try {
-  //     const address = `${addressData.address1}, ${addressData.address2 ? addressData.address2 + ', ' : ''}${addressData.city}, ${addressData.state} - ${addressData.pincode}`;
-  //     await orderService.checkout(address);
-  //     setStep(3)
-  //     setOrdered(true)
-  //     dispatch(clearCart())
-  //   } catch (err) {
-  //     toast.error('Failed to place order. Please try again.')
-  //   }
-  // }
-const onPlaceOrder = async () => {
-  try {
+  const onPlaceOrder = async () => {
+    try {
+      const orderData = {
+        shippingAddress: {
+          fullName: addressData.fullName,
+          addressLine1: addressData.address1,
+          addressLine2: addressData.address2 || "",
+          city: addressData.city,
+          state: addressData.state,
+          postalCode: addressData.pincode,
+          country: "India",
+          phone: addressData.phone
+        },
+        paymentMethod: paymentMethod,
+        paymentDetails: {
+          cardNumber: paymentMethod === "card" ? "4111111111111111" : "",
+          expiry: paymentMethod === "card" ? "12/30" : "",
+          cvv: paymentMethod === "card" ? "123" : "",
+          transactionReference: `TXN-${Date.now()}`
+        }
+      };
 
-    const orderData = {
-      shippingAddress: {
-        fullName: addressData.fullName,
-        addressLine1: addressData.address1,
-        addressLine2: addressData.address2 || "",
-        city: addressData.city,
-        state: addressData.state,
-        postalCode: addressData.pincode,
-        country: "India",
-        phone: addressData.phone
-      },
+      const result = await orderService.checkout(orderData);
+      
+      // Use orderId from backend response if available, else keep the local one
+      if (result?.orderId) setCreatedOrderId(result.orderId);
 
-      paymentMethod: paymentMethod,
-
-      paymentDetails: {
-        cardNumber: paymentMethod === "card" ? "4111111111111111" : "",
-        expiry: paymentMethod === "card" ? "12/30" : "",
-        cvv: paymentMethod === "card" ? "123" : "",
-        transactionReference: `TXN-${Date.now()}`
-      }
-    };
-
-    console.log(orderData);
-
-    await orderService.checkout(orderData);
-
-    setStep(3);
-    setOrdered(true);
-    dispatch(clearCart());
-
-    toast.success("Order placed successfully!");
-
-  } catch (err) {
-
-    console.log(err.response?.data);
-
-    toast.error('Failed to place order. Please try again.');
+      setStep(3);
+      setOrdered(true);
+      dispatch(clearCart());
+      toast.success("Order placed successfully!");
+    } catch (err) {
+      console.log(err.response?.data);
+      toast.error('Failed to place order. Please try again.');
+    }
   }
-}
   return (
     <div className="min-vh-100 pb-5" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
       <div className="bg-glow-orb" style={{ width: 400, height: 400, background: 'var(--bb-primary-glow)', top: '5%', left: '-5%', filter: 'blur(130px)' }} />
@@ -312,13 +296,13 @@ const onPlaceOrder = async () => {
                     <p className="text-theme-muted mb-1">Thank you for your purchase.</p>
                     <div className="my-3 px-4 py-2 rounded-2 d-inline-block" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
                       <span className="text-theme-muted small">Order ID: </span>
-                      <span className="fw-black" style={{ color: 'var(--bb-accent)', fontSize: '0.9rem', fontFamily: 'monospace' }}>#{orderId}</span>
+                      <span className="fw-black" style={{ color: 'var(--bb-accent)', fontSize: '0.9rem', fontFamily: 'monospace' }}>#{createdOrderId || orderId}</span>
                     </div>
                     <p className="text-theme-muted small mb-4">Your order will be delivered within <strong className="text-theme-title">3–5 business days</strong>. A confirmation has been sent to your email.</p>
 
                     <div className="d-flex gap-2 flex-column flex-sm-row justify-content-center">
-                      <button onClick={() => navigate('/')} className="btn btn-glow px-4 py-2 fw-bold" style={{ borderRadius: 10 }}>
-                        Back to Home
+                      <button onClick={() => navigate('/orders')} className="btn btn-glow px-4 py-2 fw-bold" style={{ borderRadius: 10 }}>
+                        My Orders
                       </button>
                       <button onClick={() => navigate('/products')} className="btn fw-bold px-4 py-2" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-muted)', borderRadius: 10 }}>
                         Continue Shopping

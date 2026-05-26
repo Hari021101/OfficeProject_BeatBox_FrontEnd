@@ -15,8 +15,9 @@ export const addToCart = createAsyncThunk('cart/addToCart', async (payload, { di
 });
 
 export const updateQuantity = createAsyncThunk('cart/updateQuantity', async (payload, { dispatch }) => {
-  // payload: { cartItemId, quantity }
-  await cartService.updateQuantity(payload.cartItemId, payload.quantity);
+  // payload: { cartItemId, quantity } or { cartKey, quantity }
+  const cartItemId = payload.cartItemId || payload.cartKey;
+  await cartService.updateQuantity(cartItemId, payload.quantity);
   dispatch(fetchCart());
   return payload;
 });

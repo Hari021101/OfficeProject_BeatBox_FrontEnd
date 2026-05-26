@@ -73,7 +73,7 @@ export default function ProductDetail() {
     setAdding(true)
     dispatch(addToCart({
       id: product.id, name: product.name, price: product.price,
-      imageKey: product.imageKey,
+      imageKey: product.imageKey, quantity: quantity,
       selectedColor: selectedColor?.name, selectedColorCode: selectedColor?.code,
       category: product.category,
     }))
@@ -85,16 +85,15 @@ export default function ProductDetail() {
 
   const handleBuyNow = () => {
     if (!product.inStock) return
-    for (let i = 0; i < quantity; i++) {
-      dispatch(addToCart({
-        id: product.id, name: product.name, price: product.price,
-        imageKey: product.imageKey,
-        selectedColor: selectedColor?.name, selectedColorCode: selectedColor?.code,
-        category: product.category,
-      }))
-    }
+    dispatch(addToCart({
+      id: product.id, name: product.name, price: product.price,
+      imageKey: product.imageKey, quantity: quantity,
+      selectedColor: selectedColor?.name, selectedColorCode: selectedColor?.code,
+      category: product.category,
+    }))
     navigate('/checkout')
   }
+
 
   return (
     <div className="min-vh-100 pb-5" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>

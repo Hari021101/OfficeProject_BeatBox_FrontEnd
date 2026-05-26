@@ -8,8 +8,11 @@ import ProductListing from '../pages/ProductListing'
 import ProductDetail from '../pages/ProductDetail'
 import Cart from '../pages/Cart'
 import Checkout from '../pages/Checkout'
+import Orders from '../pages/Orders'
+import OrderDetail from '../pages/OrderDetail'
 import Layout from '../components/layout/Layout'
 import Settings from '../pages/Settings'
+import AdminOrders from '../pages/admin/AdminOrders'
 
 import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
@@ -48,7 +51,10 @@ export default function AppRouter() {
         <Route path="/products/:id" element={<Layout><ProductDetail /></Layout>} />
         <Route path="/cart" element={<Layout><Cart /></Layout>} />
         <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
+        <Route path="/orders" element={<Layout><Orders /></Layout>} />
+        <Route path="/orders/:id" element={<Layout><OrderDetail /></Layout>} />
         <Route path="/settings" element={<Layout><Settings /></Layout>} />
+        <Route path="/admin/orders" element={<Layout><AdminOrders /></Layout>} />
       </Routes>
     </HashRouter>
   )
