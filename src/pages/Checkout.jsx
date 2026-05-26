@@ -53,18 +53,59 @@ export default function Checkout() {
     setStep(2)
   }
 
-  const onPlaceOrder = async () => {
-    try {
-      const address = `${addressData.address1}, ${addressData.address2 ? addressData.address2 + ', ' : ''}${addressData.city}, ${addressData.state} - ${addressData.pincode}`;
-      await orderService.checkout(address);
-      setStep(3)
-      setOrdered(true)
-      dispatch(clearCart())
-    } catch (err) {
-      toast.error('Failed to place order. Please try again.')
-    }
-  }
+  // const onPlaceOrder = async () => {
+  //   try {
+  //     const address = `${addressData.address1}, ${addressData.address2 ? addressData.address2 + ', ' : ''}${addressData.city}, ${addressData.state} - ${addressData.pincode}`;
+  //     await orderService.checkout(address);
+  //     setStep(3)
+  //     setOrdered(true)
+  //     dispatch(clearCart())
+  //   } catch (err) {
+  //     toast.error('Failed to place order. Please try again.')
+  //   }
+  // }
+const onPlaceOrder = async () => {
+  try {
 
+    const orderData = {
+      shippingAddress: {
+        fullName: addressData.fullName,
+        addressLine1: addressData.address1,
+        addressLine2: addressData.address2 || "",
+        city: addressData.city,
+        state: addressData.state,
+        postalCode: addressData.pincode,
+        country: "India",
+        phone: addressData.phone
+      },
+
+      paymentMethod: paymentMethod,
+
+      paymentDetails: {
+        cardNumber: paymentMethod === "card" ? "4111111111111111" : "",
+        expiry: paymentMethod === "card" ? "12/30" : "",
+        cvv: paymentMethod === "card" ? "123" : "",
+        transactionReference: `TXN-${Date.now()}`
+      }
+    };
+
+    console.log(orderData);
+
+    await orderService.checkout(orderData);
+
+    setStep(3);
+    setOrdered(true);
+    dispatch(clearCart());
+
+    toast.success("Order placed successfully!");
+
+  } catch (err) {
+
+    console.log(err.response?.data);
+
+    toast.error('Failed to place order. Please try again.');
+  }
+}
   return (
     <div className="min-vh-100 pb-5" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
       <div className="bg-glow-orb" style={{ width: 400, height: 400, background: 'var(--bb-primary-glow)', top: '5%', left: '-5%', filter: 'blur(130px)' }} />

@@ -1,8 +1,8 @@
 import api from './authService';
 
 export const orderService = {
-  checkout: async (shippingAddress) => {
-    const response = await api.post('/checkout', { shippingAddress });
+  checkout: async (orderData) => {
+    const response = await api.post('/checkout', orderData);
     return response.data;
   },
 
