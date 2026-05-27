@@ -2,16 +2,18 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Star, ShoppingBag, Heart, Zap, Eye } from 'lucide-react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addToCart } from '../../redux/cartSlice'
+import { toggleWishlistItem, selectIsInWishlist } from '../../redux/wishlistSlice'
 import { IMAGE_MAP } from '../../data/products'
 import { toast } from 'react-hot-toast'
 import logo from '../../assets/beatbox_logo.png'
 
 export default function ProductCard({ product, index = 0 }) {
   const dispatch = useDispatch()
+  const { user } = useSelector(state => state.auth)
+  const isWishlisted = useSelector(state => selectIsInWishlist(state, product.id))
   const [selectedColor, setSelectedColor] = useState(product.colors[0])
-  const [wishlisted, setWishlisted] = useState(false)
   const [adding, setAdding] = useState(false)
 
   const handleAddToCart = (e) => {
@@ -33,13 +35,23 @@ export default function ProductCard({ product, index = 0 }) {
     setTimeout(() => setAdding(false), 600)
   }
 
-  const handleWishlist = (e) => {
+  const handleWishlist = async (e) => {
     e.preventDefault()
     e.stopPropagation()
-    setWishlisted(!wishlisted)
-    toast.success(wishlisted ? 'Removed from wishlist' : '❤️ Added to wishlist!', {
-      style: { background: '#060b19', color: '#fff', border: '1px solid rgba(168,32,255,0.3)', borderRadius: '10px' }
-    })
+    
+    if (!user) {
+      toast.error('Please log in to save to wishlist');
+      return;
+    }
+
+    try {
+      await dispatch(toggleWishlistItem(product.id)).unwrap();
+      toast.success(isWishlisted ? 'Removed from wishlist' : '❤️ Added to wishlist!', {
+        style: { background: '#060b19', color: '#fff', border: '1px solid rgba(168,32,255,0.3)', borderRadius: '10px' }
+      });
+    } catch (err) {
+      toast.error('Failed to update wishlist');
+    }
   }
 
   const img = IMAGE_MAP[product.imageKey]
@@ -79,10 +91,10 @@ export default function ProductCard({ product, index = 0 }) {
             <button
               onClick={handleWishlist}
               className="btn p-0 border-0 d-flex align-items-center justify-content-center rounded-circle"
-              style={{ width: 32, height: 32, background: 'rgba(6,11,25,0.7)', backdropFilter: 'blur(8px)', border: '1px solid var(--bb-border)', color: wishlisted ? '#ff4d7d' : 'var(--bb-muted)', transition: 'all 0.25s' }}
+              style={{ width: 32, height: 32, background: 'rgba(6,11,25,0.7)', backdropFilter: 'blur(8px)', border: '1px solid var(--bb-border)', color: isWishlisted ? '#ff4d7d' : 'var(--bb-muted)', transition: 'all 0.25s' }}
               aria-label="Toggle wishlist"
             >
-              <Heart size={14} fill={wishlisted ? '#ff4d7d' : 'none'} stroke={wishlisted ? '#ff4d7d' : 'currentColor'} />
+              <Heart size={14} fill={isWishlisted ? '#ff4d7d' : 'none'} stroke={isWishlisted ? '#ff4d7d' : 'currentColor'} />
             </button>
           </div>
 

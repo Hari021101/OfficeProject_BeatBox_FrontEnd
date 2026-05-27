@@ -5,6 +5,19 @@
     <link rel="icon" type="image/png" href="/favicon.png?v=2" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BeatBox - Premium Audio</title>
+    <script>
+      (function() {
+        try {
+          var savedTheme = localStorage.getItem('bb_theme');
+          if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+          } else {
+            // Default to dark theme if no preference is saved
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

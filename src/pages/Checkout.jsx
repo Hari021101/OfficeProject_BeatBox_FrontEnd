@@ -7,6 +7,8 @@ import { MapPin, CreditCard, CheckCircle, ArrowRight, ArrowLeft, Lock, Truck, Pa
 import { clearCart, selectCartItems, selectCartSubtotal, selectCartCount } from '../redux/cartSlice'
 import { orderService } from '../services/orderService'
 import { toast } from 'react-hot-toast'
+import { fetchAddresses } from '../redux/profileSlice'
+import { useEffect } from 'react'
 import { IMAGE_MAP } from '../data/products'
 import logo from '../assets/beatbox_logo.png'
 
@@ -23,8 +25,12 @@ export default function Checkout() {
   const subtotal = useSelector(selectCartSubtotal)
   const count = useSelector(selectCartCount)
 
+  const { addresses } = useSelector(state => state.profile)
+
   const [step, setStep] = useState(1)
   const [addressData, setAddressData] = useState(null)
+  const [selectedAddressId, setSelectedAddressId] = useState(null)
+  const [showNewAddressForm, setShowNewAddressForm] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState('upi')
   const [ordered, setOrdered] = useState(false)
   const [orderId] = useState(`BB${Date.now().toString().slice(-8)}`)
@@ -35,6 +41,19 @@ export default function Checkout() {
   const total = subtotal + shipping + gst
 
   const { register, handleSubmit, formState: { errors } } = useForm()
+
+  useEffect(() => {
+    dispatch(fetchAddresses())
+  }, [dispatch])
+
+  useEffect(() => {
+    if (addresses && addresses.length > 0) {
+      const defaultAddr = addresses.find(a => a.isDefault) || addresses[0];
+      setSelectedAddressId(defaultAddr.userAddressId);
+    } else {
+      setShowNewAddressForm(true);
+    }
+  }, [addresses])
 
   if (items.length === 0 && !ordered) {
     return (
@@ -50,8 +69,33 @@ export default function Checkout() {
   }
 
   const onAddressSubmit = (data) => {
-    setAddressData(data)
+    setAddressData({
+      fullName: data.fullName,
+      address1: data.address1,
+      address2: data.address2,
+      city: data.city,
+      state: data.state,
+      pincode: data.pincode,
+      phone: data.phone
+    })
     setStep(2)
+  }
+
+  const handleSavedAddressSubmit = () => {
+    if (!selectedAddressId) return;
+    const selected = addresses.find(a => a.userAddressId === selectedAddressId);
+    if (selected) {
+      setAddressData({
+        fullName: selected.fullName,
+        address1: selected.addressLine1,
+        address2: selected.addressLine2,
+        city: selected.city,
+        state: selected.state,
+        pincode: selected.postalCode,
+        phone: selected.phone
+      });
+      setStep(2);
+    }
   }
 
   const onPlaceOrder = async () => {
@@ -149,52 +193,101 @@ export default function Checkout() {
                     <h5 className="fw-black text-theme-title mb-4 d-flex align-items-center gap-2">
                       <MapPin size={18} style={{ color: 'var(--bb-accent)' }} /> Delivery Address
                     </h5>
-                    <form onSubmit={handleSubmit(onAddressSubmit)}>
-                      <div className="row g-3">
-                        <div className="col-12 col-sm-6">
-                          <label className="form-label text-theme-muted small fw-semibold">Full Name *</label>
-                          <input {...register('fullName', { required: 'Full name is required' })} className="form-control checkout-input" placeholder="Arjun Sharma" />
-                          {errors.fullName && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.fullName.message}</p>}
+                    
+                    {addresses && addresses.length > 0 && !showNewAddressForm && (
+                      <div className="mb-4">
+                        <p className="text-theme-muted small fw-semibold mb-3">Select a saved address</p>
+                        <div className="row g-3">
+                          {addresses.map(addr => (
+                            <div key={addr.userAddressId} className="col-12 col-md-6">
+                              <div 
+                                className="p-3 rounded-3 position-relative cursor-pointer h-100" 
+                                style={{ 
+                                  background: selectedAddressId === addr.userAddressId ? 'rgba(0, 243, 255, 0.05)' : 'var(--bb-surface-2)', 
+                                  border: `1px solid ${selectedAddressId === addr.userAddressId ? 'var(--bb-accent)' : 'var(--bb-border)'}`,
+                                  cursor: 'pointer'
+                                }}
+                                onClick={() => setSelectedAddressId(addr.userAddressId)}
+                              >
+                                {addr.isDefault && (
+                                  <span className="badge bg-glow-subtle position-absolute top-0 end-0 m-2 px-2 py-1" style={{ color: 'var(--bb-accent)', fontSize: '0.65rem' }}>
+                                    Default
+                                  </span>
+                                )}
+                                <h6 className="fw-bold text-theme-title mb-1 small">{addr.fullName}</h6>
+                                <p className="text-theme-muted mb-0" style={{ fontSize: '0.75rem' }}>{addr.phone}</p>
+                                <p className="text-theme-title mb-0 mt-2" style={{ fontSize: '0.75rem' }}>
+                                  {addr.addressLine1}, {addr.city}<br/>{addr.state} - {addr.postalCode}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                        <div className="col-12 col-sm-6">
-                          <label className="form-label text-theme-muted small fw-semibold">Phone Number *</label>
-                          <input {...register('phone', { required: 'Phone is required', pattern: { value: /^[6-9]\d{9}$/, message: 'Enter valid 10-digit number' } })} className="form-control checkout-input" placeholder="9876543210" maxLength={10} />
-                          {errors.phone && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.phone.message}</p>}
-                        </div>
-                        <div className="col-12">
-                          <label className="form-label text-theme-muted small fw-semibold">Address Line 1 *</label>
-                          <input {...register('address1', { required: 'Address is required' })} className="form-control checkout-input" placeholder="Flat / House No., Building Name" />
-                          {errors.address1 && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.address1.message}</p>}
-                        </div>
-                        <div className="col-12">
-                          <label className="form-label text-theme-muted small fw-semibold">Address Line 2</label>
-                          <input {...register('address2')} className="form-control checkout-input" placeholder="Street / Area / Locality" />
-                        </div>
-                        <div className="col-12 col-sm-4">
-                          <label className="form-label text-theme-muted small fw-semibold">City *</label>
-                          <input {...register('city', { required: 'City is required' })} className="form-control checkout-input" placeholder="Mumbai" />
-                          {errors.city && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.city.message}</p>}
-                        </div>
-                        <div className="col-12 col-sm-4">
-                          <label className="form-label text-theme-muted small fw-semibold">State *</label>
-                          <select {...register('state', { required: 'State is required' })} className="form-select checkout-input" style={{ color: 'var(--bb-text)' }}>
-                            <option value="">Select State</option>
-                            {['Maharashtra','Tamil Nadu','Karnataka','Delhi','Gujarat','Rajasthan','Uttar Pradesh','West Bengal','Kerala','Telangana'].map(s => (
-                              <option key={s} value={s} style={{ background: 'var(--bb-surface)' }}>{s}</option>
-                            ))}
-                          </select>
-                          {errors.state && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.state.message}</p>}
-                        </div>
-                        <div className="col-12 col-sm-4">
-                          <label className="form-label text-theme-muted small fw-semibold">PIN Code *</label>
-                          <input {...register('pincode', { required: 'PIN code is required', pattern: { value: /^\d{6}$/, message: '6-digit PIN required' } })} className="form-control checkout-input" placeholder="400001" maxLength={6} />
-                          {errors.pincode && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.pincode.message}</p>}
+                        <div className="d-flex justify-content-between mt-4">
+                          <button onClick={() => setShowNewAddressForm(true)} className="btn btn-outline-secondary px-4 py-2 small fw-bold" style={{ borderRadius: 10 }}>
+                            Add New Address
+                          </button>
+                          <button onClick={handleSavedAddressSubmit} className="btn btn-glow px-4 py-2 fw-bold d-flex align-items-center gap-2" style={{ borderRadius: 10 }}>
+                            Continue <ArrowRight size={16} />
+                          </button>
                         </div>
                       </div>
-                      <button type="submit" className="btn btn-glow w-100 py-3 fw-bold d-flex align-items-center justify-content-center gap-2 mt-4" style={{ borderRadius: 12 }}>
-                        Continue to Payment <ArrowRight size={18} />
-                      </button>
-                    </form>
+                    )}
+
+                    {showNewAddressForm && (
+                      <form onSubmit={handleSubmit(onAddressSubmit)}>
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                          <h6 className="fw-bold text-theme-title mb-0">Add New Address</h6>
+                          {addresses && addresses.length > 0 && (
+                            <button type="button" onClick={() => setShowNewAddressForm(false)} className="btn btn-link text-info p-0 small text-decoration-none">Cancel</button>
+                          )}
+                        </div>
+                        <div className="row g-3">
+                          <div className="col-12 col-sm-6">
+                            <label className="form-label text-theme-muted small fw-semibold">Full Name *</label>
+                            <input {...register('fullName', { required: 'Full name is required' })} className="form-control checkout-input" placeholder="Arjun Sharma" />
+                            {errors.fullName && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.fullName.message}</p>}
+                          </div>
+                          <div className="col-12 col-sm-6">
+                            <label className="form-label text-theme-muted small fw-semibold">Phone Number *</label>
+                            <input {...register('phone', { required: 'Phone is required', pattern: { value: /^[6-9]\d{9}$/, message: 'Enter valid 10-digit number' } })} className="form-control checkout-input" placeholder="9876543210" maxLength={10} />
+                            {errors.phone && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.phone.message}</p>}
+                          </div>
+                          <div className="col-12">
+                            <label className="form-label text-theme-muted small fw-semibold">Address Line 1 *</label>
+                            <input {...register('address1', { required: 'Address is required' })} className="form-control checkout-input" placeholder="Flat / House No., Building Name" />
+                            {errors.address1 && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.address1.message}</p>}
+                          </div>
+                          <div className="col-12">
+                            <label className="form-label text-theme-muted small fw-semibold">Address Line 2</label>
+                            <input {...register('address2')} className="form-control checkout-input" placeholder="Street / Area / Locality" />
+                          </div>
+                          <div className="col-12 col-sm-4">
+                            <label className="form-label text-theme-muted small fw-semibold">City *</label>
+                            <input {...register('city', { required: 'City is required' })} className="form-control checkout-input" placeholder="Mumbai" />
+                            {errors.city && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.city.message}</p>}
+                          </div>
+                          <div className="col-12 col-sm-4">
+                            <label className="form-label text-theme-muted small fw-semibold">State *</label>
+                            <select {...register('state', { required: 'State is required' })} className="form-select checkout-input" style={{ color: 'var(--bb-text)' }}>
+                              <option value="">Select State</option>
+                              {['Maharashtra','Tamil Nadu','Karnataka','Delhi','Gujarat','Rajasthan','Uttar Pradesh','West Bengal','Kerala','Telangana'].map(s => (
+                                <option key={s} value={s} style={{ background: 'var(--bb-surface)' }}>{s}</option>
+                              ))}
+                            </select>
+                            {errors.state && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.state.message}</p>}
+                          </div>
+                          <div className="col-12 col-sm-4">
+                            <label className="form-label text-theme-muted small fw-semibold">PIN Code *</label>
+                            <input {...register('pincode', { required: 'PIN code is required', pattern: { value: /^\d{6}$/, message: '6-digit PIN required' } })} className="form-control checkout-input" placeholder="400001" maxLength={6} />
+                            {errors.pincode && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.pincode.message}</p>}
+                          </div>
+                        </div>
+                        <button type="submit" className="btn btn-glow w-100 py-3 fw-bold d-flex align-items-center justify-content-center gap-2 mt-4" style={{ borderRadius: 12 }}>
+                          Continue to Payment <ArrowRight size={18} />
+                        </button>
+                      </form>
+                    )}
                   </div>
                 </motion.div>
               )}

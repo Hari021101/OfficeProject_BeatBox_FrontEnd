@@ -402,7 +402,7 @@ export default function Home() {
 
   const renderProductCard = (prod) => {
     // Dynamically retrieve the current display image based on color swatch state
-    let displayImage = prod.image;
+    let displayImage = IMAGE_MAP[prod.imageKey] || prod.image;
     if (selectedColors[prod.id] === 'black' && prod.id === 1) {
       displayImage = heroHeadphones; // Add alternative dynamic state visual mapping if preferred
     }

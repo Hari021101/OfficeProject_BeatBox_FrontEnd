@@ -21,6 +21,7 @@ import {
 import logo from '../../assets/beatbox_logo.png'
 import { logout } from '../../redux/authSlice'
 import { selectCartCount } from '../../redux/cartSlice'
+import { selectWishlistCount } from '../../redux/wishlistSlice'
 import { selectAllProducts, selectProductStatus, fetchProducts } from '../../redux/productSlice'
 import { toast } from 'react-hot-toast'
 import ThemeToggle from '../ui/ThemeToggle'
@@ -36,6 +37,7 @@ export default function Header() {
   const [showCart, setShowCart] = useState(false)
   const { user } = useSelector((state) => state.auth)
   const cartCount = useSelector(selectCartCount)
+  const wishlistCount = useSelector(selectWishlistCount)
   const allProducts = useSelector(selectAllProducts)
   const productStatus = useSelector(selectProductStatus)
   const dispatch = useDispatch()
@@ -189,7 +191,15 @@ export default function Header() {
                   <li>
                     <Link to="/orders" className="dropdown-item premium-dropdown-item rounded-3 py-2 d-flex align-items-center gap-2"><Package size={15} style={{ color: 'var(--bb-accent)' }} /> My Orders</Link>
                   </li>
-                  <li><Link to="/settings" className="dropdown-item premium-dropdown-item rounded-3 py-2">⚙️ Settings</Link></li>
+                  <li>
+                    <Link to="/wishlist" className="dropdown-item premium-dropdown-item rounded-3 py-2 d-flex align-items-center gap-2">
+                      <Heart size={15} style={{ color: 'var(--bb-danger, #ef4444)' }} /> My Wishlist
+                      {wishlistCount > 0 && (
+                        <span className="badge rounded-pill bg-danger ms-auto">{wishlistCount}</span>
+                      )}
+                    </Link>
+                  </li>
+                  <li><Link to="/settings" className="dropdown-item premium-dropdown-item rounded-3 py-2 d-flex align-items-center gap-2">⚙️ Settings</Link></li>
                   <li><Link to="/support" className="dropdown-item premium-dropdown-item rounded-3 py-2">🎧 Support</Link></li>
                   <li className="mt-2 pt-2 border-top border-secondary border-opacity-25">
                     <button className="dropdown-item rounded-3 py-2 text-danger fw-semibold d-flex align-items-center gap-2" onClick={handleLogout}><LogOut size={15} /> Logout</button>
@@ -393,9 +403,9 @@ export default function Header() {
               <li className="nav-item d-lg-none mt-2 pt-2 border-top border-secondary border-opacity-25">
                 <button 
                   className="nav-link premium-nav-link py-2 d-flex align-items-center gap-2 border-0 bg-transparent w-100 text-start"
-                  onClick={() => { toast.success("Wishlist coming soon!"); setIsOpen(false); }}
+                  onClick={() => { navigate('/wishlist'); setIsOpen(false); }}
                 >
-                  <Heart size={18} className="text-danger" /> Wishlist
+                  <Heart size={18} className="text-danger" /> Wishlist ({wishlistCount})
                 </button>
               </li>
             </ul>
@@ -461,15 +471,6 @@ export default function Header() {
 
               {/* Icon Group */}
               <div className="d-flex align-items-center justify-content-center gap-3 mt-2 mt-lg-0 text-theme-title">
-
-                {/* Wishlist Link */}
-                <button
-                  className="btn border-0 p-2 position-relative text-theme-muted hover-scale d-none d-lg-block"
-                  onClick={() => toast.success("Wishlist coming soon!")}
-                  style={{ background: 'transparent', transition: 'all 0.2s' }}
-                >
-                  <Heart size={20} />
-                </button>
 
                 {/* Shopping Cart Trigger */}
                 <button
@@ -610,6 +611,19 @@ export default function Header() {
                           >
                             <Package size={15} style={{ color: 'var(--bb-accent)' }} />
                             My Orders
+                          </Link>
+                        </li>
+
+                        <li>
+                          <Link
+                            to="/wishlist"
+                            className="dropdown-item premium-dropdown-item rounded-3 py-3 d-flex align-items-center gap-2"
+                          >
+                            <Heart size={15} style={{ color: 'var(--bb-danger, #ef4444)' }} />
+                            My Wishlist
+                            {wishlistCount > 0 && (
+                              <span className="badge rounded-pill bg-danger ms-auto px-2">{wishlistCount}</span>
+                            )}
                           </Link>
                         </li>
 

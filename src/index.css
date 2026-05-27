@@ -738,6 +738,48 @@ body {
   padding-top: 90px;
 }
 
+/* ==========================================================================
+   Mobile Dropdown Drawer
+   ========================================================================== */
+@media (max-width: 991px) {
+  .mobile-dropdown-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background: var(--bb-surface) !important;
+    z-index: 10500;
+    padding: 24px;
+    overflow-y: auto;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+  .mobile-dropdown-drawer:not(.show) {
+    transform: translateX(-100%);
+    display: block !important;
+  }
+  .mobile-dropdown-drawer.show {
+    transform: translateX(0);
+  }
+  
+  [data-theme="light"] .mobile-dropdown-drawer {
+    background: rgba(245, 247, 251, 0.98) !important;
+  }
+
+  .dropdown-mobile-static {
+    position: static !important;
+    transform: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-top: 10px !important;
+  }
+}
+
 /* ================= PROFILE DROPDOWN ================= */
 
 .profile-trigger-btn::after {

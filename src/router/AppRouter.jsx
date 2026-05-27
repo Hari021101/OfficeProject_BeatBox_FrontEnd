@@ -12,6 +12,7 @@ import Orders from '../pages/Orders'
 import OrderDetail from '../pages/OrderDetail'
 import Layout from '../components/layout/Layout'
 import Settings from '../pages/Settings'
+import Wishlist from '../pages/Wishlist'
 import AdminOrders from '../pages/admin/AdminOrders'
 
 import { useDispatch } from 'react-redux'
@@ -54,6 +55,7 @@ export default function AppRouter() {
         <Route path="/orders" element={<Layout><Orders /></Layout>} />
         <Route path="/orders/:id" element={<Layout><OrderDetail /></Layout>} />
         <Route path="/settings" element={<Layout><Settings /></Layout>} />
+        <Route path="/wishlist" element={<Layout><Wishlist /></Layout>} />
         <Route path="/admin/orders" element={<Layout><AdminOrders /></Layout>} />
       </Routes>
     </HashRouter>

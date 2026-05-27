@@ -22,6 +22,20 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Interceptor to automatically log out if token is invalid (401 Unauthorized)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      // Token is invalid or expired, clear it out
+      localStorage.removeItem('bb_token');
+      localStorage.removeItem('bb_user');
+      window.location.href = '#/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const authService = {
   register: async (fullName, email, password) => {
     const response = await api.post('/account/register', {
