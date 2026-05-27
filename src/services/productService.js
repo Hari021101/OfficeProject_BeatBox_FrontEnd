@@ -9,5 +9,13 @@ export const productService = {
   getProductById: async (id) => {
     const response = await api.get(`/product/${id}`);
     return response.data;
-  }
+  },
+  addReview: async (productId, reviewData) => {
+  const response = await api.post(
+    `/product/${productId}/reviews`,
+    reviewData
+  )
+
+  return response.data
+},
 };

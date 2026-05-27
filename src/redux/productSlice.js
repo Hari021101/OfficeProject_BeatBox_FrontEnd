@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { productService } from '../services/productService';
 
-export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
-  return await productService.getAllProducts();
-});
+ export const fetchProducts = createAsyncThunk('products/fetchProducts', async () => {
+   return await productService.getAllProducts();
+ });
 
 const productSlice = createSlice({
   name: 'products',
@@ -46,7 +46,8 @@ const productSlice = createSlice({
           usp: bp.batteryLife ? `${bp.batteryLife} Battery` : 'Signature Sound',
           imageKey: mapImageKey(bp.imageUrl),
           badge: 'Original',
-          inStock: bp.stockQuantity > 0,
+          inStock: (bp.stockQuantity || 0) > 0,
+          stockQuantity: bp.stockQuantity || 0,
           colors: [{ name: bp.color || 'Black', code: '#0a0a0a' }],
           specs: {
             'Battery': bp.batteryLife || 'N/A',
@@ -64,8 +65,8 @@ const productSlice = createSlice({
   }
 });
 
-export const selectAllProducts = (state) => state.products.items;
-export const selectProductStatus = (state) => state.products.status;
+ export const selectAllProducts = (state) => state.products.items;
+ export const selectProductStatus = (state) => state.products.status;
 export const selectProductById = (state, productId) => 
   state.products.items.find(product => product.id === productId);
 

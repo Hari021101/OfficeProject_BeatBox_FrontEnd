@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectAllProducts, fetchProducts, selectProductStatus } from '../redux/productSlice'
 import {
   Star, ShoppingBag, ArrowLeft, Heart, Share2, Zap,
   CheckCircle, Shield, Truck, RotateCcw, ChevronRight, Minus, Plus
@@ -12,38 +11,73 @@ import { getRelatedProducts, IMAGE_MAP } from '../data/products'
 import ProductCard from '../components/ui/ProductCard'
 import { toast } from 'react-hot-toast'
 import logo from '../assets/beatbox_logo.png'
+import { productService } from '../services/productService'
 
 export default function ProductDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const allProducts = useSelector(selectAllProducts)
-  const productStatus = useSelector(selectProductStatus)
-  const product = allProducts.find(p => p.id.toString() === id)
+  //const allProducts = useSelector(selectAllProducts)
+  //const productStatus = useSelector(selectProductStatus)
+  //const product = allProducts.find(p => p.id.toString() === id)
+  const [product, setProduct] = useState(null)
+const [loading, setLoading] = useState(true)
+const [selectedVariant, setSelectedVariant] = useState(null)
 
   // Use a fallback to local getRelatedProducts for now until we have related product logic in backend
   const related = product ? getRelatedProducts(product, 4) : []
+  
+//   useEffect(() => {
+//   if (productStatus === 'idle') {
+//     dispatch(fetchProducts())
+//   }
+// }, [productStatus, dispatch])
 
   useEffect(() => {
-    if (productStatus === 'idle') {
-      dispatch(fetchProducts())
+  const loadProduct = async () => {
+    try {
+      const data = await productService.getProductById(id)
+      setProduct(data)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
     }
-  }, [productStatus, dispatch])
+  }
+
+  loadProduct()
+}, [id])
+
+  // useEffect(() => {
+  //   if (productStatus === 'idle') {
+  //     dispatch(fetchProducts())
+  //   }
+  // }, [productStatus, dispatch])
+  useEffect(() => {
+  if (product?.variants?.length > 0) {
+    setSelectedVariant(product.variants[0])
+  }
+}, [product])
 
   const [selectedColor, setSelectedColor] = useState(null)
   const [quantity, setQuantity] = useState(1)
   const [wishlisted, setWishlisted] = useState(false)
   const [activeTab, setActiveTab] = useState('highlights')
   const [adding, setAdding] = useState(false)
+  const [reviewText, setReviewText] = useState('')
+const [reviewRating, setReviewRating] = useState(5)
 
   // Initialize selectedColor once product is loaded
-  useEffect(() => {
-    if (product && !selectedColor && product.colors?.length > 0) {
-      setSelectedColor(product.colors[0])
-    }
-  }, [product])
+useEffect(() => {
+  if (product && !selectedColor) {
+    setSelectedColor({
+      name: product.color || 'Black',
+      code: '#000000'
+    })
+  }
+}, [product])
 
-  if (productStatus === 'loading') {
+  if (loading) {
     return (
       <div className="min-vh-100 d-flex flex-column align-items-center justify-content-center text-center gap-4 px-4" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
         <div className="spinner-border" style={{ color: 'var(--bb-accent)', width: '3rem', height: '3rem' }} />
@@ -65,11 +99,34 @@ export default function ProductDetail() {
     )
   }
 
-  const img = IMAGE_MAP[product.imageKey] || IMAGE_MAP['heroHeadphones']
-  const savings = product.oldPrice - product.price
+  const submitReview = async () => {
+  try {
+    await productService.addReview(product.id, {
+      rating: Number(reviewRating),
+      comment: reviewText
+    })
+
+    toast.success('Review Added Successfully')
+
+    const updated = await productService.getProductById(id)
+    setProduct(updated)
+
+    setReviewText('')
+    setReviewRating(5)
+  } catch (error) {
+    toast.error('Failed to add review')
+  }
+}
+
+ const img =
+  selectedVariant?.imageUrl ||
+  product.imageUrl
+  const savings =
+  (product.price || 0) -
+  (product.discountPrice || 0)
 
   const handleAddToCart = () => {
-    if (!product.inStock) return
+    if (product.stockQuantity <= 0) return
     setAdding(true)
     dispatch(addToCart({
       id: product.id, name: product.name, price: product.price,
@@ -84,7 +141,7 @@ export default function ProductDetail() {
   }
 
   const handleBuyNow = () => {
-    if (!product.inStock) return
+    if (product.stockQuantity <= 0) return
     dispatch(addToCart({
       id: product.id, name: product.name, price: product.price,
       imageKey: product.imageKey, quantity: quantity,
@@ -94,6 +151,10 @@ export default function ProductDetail() {
     navigate('/checkout')
   }
 
+  const discount =
+  Math.round(
+    ((product.price - product.discountPrice) / product.price) * 100
+  )
 
   return (
     <div className="min-vh-100 pb-5" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
@@ -129,7 +190,7 @@ export default function ProductDetail() {
               style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', minHeight: 380, overflow: 'hidden' }}
             >
               {/* Out of stock badge */}
-              {!product.inStock && (
+              {product.stockQuantity <= 0 && (
                 <div className="position-absolute top-0 end-0 m-3 z-10">
                   <span className="badge px-3 py-2 fw-black" style={{ background: 'rgba(220,53,69,0.9)', letterSpacing: 1, fontSize: '0.75rem' }}>OUT OF STOCK</span>
                 </div>
@@ -138,7 +199,7 @@ export default function ProductDetail() {
               {/* Discount badge */}
               <div className="position-absolute top-0 start-0 m-3 z-10">
                 <span className="badge px-3 py-2 fw-black text-white" style={{ background: 'linear-gradient(135deg,var(--bb-primary),var(--bb-accent))', borderRadius: 50, fontSize: '0.75rem' }}>
-                  <Zap size={11} className="me-1" />{product.discount}% OFF
+                  <Zap size={11} className="me-1" />{discount}% OFF
                 </span>
               </div>
 
@@ -193,13 +254,13 @@ export default function ProductDetail() {
             <div className="d-flex align-items-center gap-3 mb-3">
               <div className="d-flex align-items-center gap-1">
                 {[1,2,3,4,5].map(s => (
-                  <Star key={s} size={16} fill={s <= Math.round(product.rating) ? '#ffc700' : 'none'} stroke={s <= Math.round(product.rating) ? '#ffc700' : 'var(--bb-border)'} />
+                  <Star key={s} size={16} fill={s <= Math.round(product.averageRating) ? '#ffc700' : 'none'} stroke={s <= Math.round(product.averageRating) ? '#ffc700' : 'var(--bb-border)'} />
                 ))}
-                <span className="fw-bold ms-1" style={{ color: '#ffc700' }}>{product.rating}</span>
+                <span className="fw-bold ms-1" style={{ color: '#ffc700' }}>{Number(product.averageRating).toFixed(1)}</span>
               </div>
               <span className="text-theme-muted small">({product.reviewCount.toLocaleString('en-IN')} reviews)</span>
-              <span className={`badge px-2 py-1 small fw-bold ${product.inStock ? 'text-success' : 'text-danger'}`} style={{ background: product.inStock ? 'rgba(39,255,20,0.08)' : 'rgba(220,53,69,0.08)', border: `1px solid ${product.inStock ? 'rgba(39,255,20,0.2)' : 'rgba(220,53,69,0.2)'}` }}>
-                {product.inStock ? '✓ In Stock' : '✗ Out of Stock'}
+              <span className={`badge px-2 py-1 small fw-bold ${product.stockQuantity > 0 ? 'text-success' : 'text-danger'}`} style={{ background: product.stockQuantity > 0 ? 'rgba(39,255,20,0.08)' : 'rgba(220,53,69,0.08)', border: `1px solid ${product.stockQuantity > 0 ? 'rgba(39,255,20,0.2)' : 'rgba(220,53,69,0.2)'}` }}>
+                {product.stockQuantity > 0 ? '✓ In Stock' : '✗ Out of Stock'}
               </span>
             </div>
 
@@ -212,36 +273,42 @@ export default function ProductDetail() {
             {/* Price block */}
             <div className="p-4 rounded-3 mb-4" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
               <div className="d-flex align-items-baseline gap-3 mb-1">
-                <span className="display-5 fw-black text-theme-title" style={{ letterSpacing: '-2px' }}>₹{product.price.toLocaleString('en-IN')}</span>
-                <span className="fs-4 text-decoration-line-through text-theme-muted">₹{product.oldPrice.toLocaleString('en-IN')}</span>
-                <span className="badge text-success fw-bold" style={{ background: 'rgba(39,255,20,0.1)', border: '1px solid rgba(39,255,20,0.2)', fontSize: '0.9rem' }}>{product.discount}% OFF</span>
+                <span className="display-5 fw-black text-theme-title" style={{ letterSpacing: '-2px' }}>₹{product.discountPrice?.toLocaleString('en-IN')}</span>
+                <span className="fs-4 text-decoration-line-through text-theme-muted">₹{product.price.toLocaleString('en-IN')}</span>
+                <span className="badge text-success fw-bold" style={{ background: 'rgba(39,255,20,0.1)', border: '1px solid rgba(39,255,20,0.2)', fontSize: '0.9rem' }}>{discount}% OFF</span>
               </div>
               <p className="text-success small fw-semibold mb-0">You save ₹{savings.toLocaleString('en-IN')} 🎉</p>
             </div>
 
             {/* Color selection */}
-            <div className="mb-4">
-              <p className="text-theme-muted small fw-semibold mb-2">COLOR — <span className="text-theme-title">{selectedColor?.name}</span></p>
-              <div className="d-flex gap-3 flex-wrap">
-                {product.colors.map((clr, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedColor(clr)}
-                    className="btn p-0 rounded-circle"
-                    style={{
-                      width: 28, height: 28, background: clr.code,
-                      outline: selectedColor?.name === clr.name ? '3px solid white' : 'none',
-                      outlineOffset: 3,
-                      boxShadow: selectedColor?.name === clr.name ? `0 0 12px ${clr.code}` : 'none',
-                      border: '2px solid rgba(255,255,255,0.1)',
-                      transition: 'all 0.2s',
-                    }}
-                    aria-label={clr.name}
-                    title={clr.name}
-                  />
-                ))}
-              </div>
-            </div>
+              <div className="mb-4">
+  <p className="text-theme-muted small fw-semibold mb-3">
+    COLOR —
+    <span className="text-theme-title ms-2">
+      {selectedVariant?.colorName}
+    </span>
+  </p>
+
+  <div className="d-flex gap-3">
+    {product.variants?.map((variant, index) => (
+      <button
+        key={index}
+        onClick={() => setSelectedVariant(variant)}
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: '50%',
+          background: variant.colorCode,
+          border:
+            selectedVariant?.colorName === variant.colorName
+              ? '3px solid white'
+              : '1px solid gray',
+          cursor: 'pointer'
+        }}
+      />
+    ))}
+  </div>
+</div>
 
             {/* Quantity */}
             <div className="d-flex align-items-center gap-4 mb-4">
@@ -257,7 +324,7 @@ export default function ProductDetail() {
             <div className="d-flex gap-3 mb-4 flex-wrap">
               <button
                 onClick={handleAddToCart}
-                disabled={!product.inStock || adding}
+                disabled={product.stockQuantity <= 0 || adding}
                 className="btn btn-glow flex-grow-1 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
                 style={{ borderRadius: 12, minWidth: 200, height: 56 }}
               >
@@ -265,7 +332,7 @@ export default function ProductDetail() {
               </button>
               <button
                 onClick={handleBuyNow}
-                disabled={!product.inStock}
+                disabled={product.stockQuantity <= 0}
                 className="btn flex-grow-1 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
                 style={{ borderRadius: 12, minWidth: 180, height: 56, background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }}
               >
@@ -306,7 +373,8 @@ export default function ProductDetail() {
             {[
               { id: 'highlights', label: '✨ Highlights' },
               { id: 'specs', label: '⚙️ Specifications' },
-              { id: 'reviews', label: `⭐ Reviews (${product.reviews.length})` },
+              { id: 'faq', label: '❓ FAQs' },
+              { id: 'reviews', label: `⭐ Reviews (${product.reviewCount || 0})` },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -337,14 +405,40 @@ export default function ProductDetail() {
             >
               {activeTab === 'highlights' && (
                 <div className="row g-3">
-                  {product.highlights.map((h, i) => (
-                    <div key={i} className="col-12 col-md-6">
-                      <div className="d-flex align-items-start gap-3 p-3 rounded-3" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
-                        <CheckCircle size={18} style={{ color: 'var(--bb-accent)', flexShrink: 0, marginTop: 2 }} />
-                        <span className="text-theme-title fw-semibold" style={{ fontSize: '0.9rem' }}>{h}</span>
-                      </div>
-                    </div>
-                  ))}
+                  {[
+  'Premium Sound Quality',
+  'Deep Bass Experience',
+  'Bluetooth 5.4 Connectivity',
+  'Fast Charging Support',
+  '1 Year Warranty',
+  '50 Hours Playback'
+].map((h, i) => (
+  <div key={i} className="col-12 col-md-6">
+    <div
+      className="d-flex align-items-start gap-3 p-3 rounded-3"
+      style={{
+        background: 'var(--bb-surface)',
+        border: '1px solid var(--bb-border)'
+      }}
+    >
+      <CheckCircle
+        size={18}
+        style={{
+          color: 'var(--bb-accent)',
+          flexShrink: 0,
+          marginTop: 2
+        }}
+      />
+
+      <span
+        className="text-theme-title fw-semibold"
+        style={{ fontSize: '0.9rem' }}
+      >
+        {h}
+      </span>
+    </div>
+  </div>
+))}
                   <div className="col-12 mt-2">
                     <p className="text-theme-muted" style={{ lineHeight: 1.8, fontSize: '0.95rem' }}>{product.description}</p>
                   </div>
@@ -352,55 +446,152 @@ export default function ProductDetail() {
               )}
 
               {activeTab === 'specs' && (
-                <div className="rounded-4 overflow-hidden" style={{ border: '1px solid var(--bb-border)' }}>
-                  {Object.entries(product.specs).map(([key, val], i) => (
-                    <div
-                      key={i}
-                      className="d-flex"
-                      style={{ borderBottom: i < Object.entries(product.specs).length - 1 ? '1px solid var(--bb-border)' : 'none', background: i % 2 === 0 ? 'var(--bb-surface)' : 'var(--bb-surface-2)' }}
-                    >
-                      <div className="px-4 py-3 fw-bold text-theme-muted" style={{ minWidth: 180, fontSize: '0.88rem' }}>{key}</div>
-                      <div className="px-4 py-3 text-theme-title fw-semibold flex-grow-1" style={{ fontSize: '0.88rem', borderLeft: '1px solid var(--bb-border)' }}>{val}</div>
-                    </div>
-                  ))}
-                </div>
+               <div
+  className="rounded-4 overflow-hidden"
+  style={{
+    border: '1px solid var(--bb-border)'
+  }}
+>
+  {[
+    ['Brand', product.brand],
+    ['Battery Life', product.batteryLife],
+    ['Connectivity', product.connectivity],
+    ['Color', product.color],
+    ['Category', product.categoryName],
+    ['Stock', product.stockQuantity]
+  ].map(([key, value], i) => (
+    <div
+      key={i}
+      className="d-flex"
+      style={{
+        borderBottom:
+          i < 5
+            ? '1px solid var(--bb-border)'
+            : 'none',
+        background:
+          i % 2 === 0
+            ? 'var(--bb-surface)'
+            : 'var(--bb-surface-2)'
+      }}
+    >
+      <div
+        className="px-4 py-3 fw-bold text-theme-muted"
+        style={{
+          minWidth: 180,
+          fontSize: '0.88rem'
+        }}
+      >
+        {key}
+      </div>
+
+      <div
+        className="px-4 py-3 text-theme-title fw-semibold flex-grow-1"
+        style={{
+          fontSize: '0.88rem',
+          borderLeft: '1px solid var(--bb-border)'
+        }}
+      >
+        {value}
+      </div>
+    </div>
+  ))}
+</div>
               )}
+
+              {activeTab === 'faq' && (
+  <div className="d-flex flex-column gap-3">
+    {product.faqs?.map((faq, index) => (
+      <div
+        key={index}
+        className="p-4 rounded-3"
+        style={{
+          background: 'var(--bb-surface)',
+          border: '1px solid var(--bb-border)'
+        }}
+      >
+        <h6 className="fw-bold text-theme-title mb-2">
+          Q: {faq.question}
+        </h6>
+
+        <p className="text-theme-muted mb-0">
+          A: {faq.answer}
+        </p>
+      </div>
+    ))}
+  </div>
+)}
 
               {activeTab === 'reviews' && (
                 <div className="d-flex flex-column gap-3">
                   {/* Rating summary */}
                   <div className="p-4 rounded-3 mb-2 d-flex align-items-center gap-4" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
                     <div className="text-center">
-                      <div className="display-4 fw-black text-theme-title" style={{ color: '#ffc700' }}>{product.rating}</div>
+                      <div className="display-4 fw-black text-theme-title" style={{ color: '#ffc700' }}>{Number(product.averageRating).toFixed(1)}</div>
                       <div className="d-flex justify-content-center gap-1 my-1">
-                        {[1,2,3,4,5].map(s => <Star key={s} size={14} fill={s <= Math.round(product.rating) ? '#ffc700' : 'none'} stroke='#ffc700' />)}
+                        {[1,2,3,4,5].map(s => <Star key={s} size={14} fill={s <= Math.round(product.averageRating) ? '#ffc700' : 'none'} stroke='#ffc700' />)}
                       </div>
                       <span className="text-theme-muted small">{product.reviewCount.toLocaleString('en-IN')} reviews</span>
                     </div>
-                    <div className="flex-grow-1">
-                      {[5,4,3,2,1].map(s => {
-                        const widths = { 5: 72, 4: 18, 3: 6, 2: 3, 1: 1 }
-                        return (
-                          <div key={s} className="d-flex align-items-center gap-2 mb-1">
-                            <span className="text-theme-muted" style={{ fontSize: '0.75rem', minWidth: 20 }}>{s}★</span>
-                            <div className="flex-grow-1 rounded-pill" style={{ height: 6, background: 'var(--bb-surface-2)' }}>
-                              <div style={{ width: widths[s] + '%', height: '100%', background: '#ffc700', borderRadius: 50 }} />
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
                   </div>
 
-                  {product.reviews.map((review, i) => (
+                  <div
+  className="p-4 rounded-3 mb-3"
+  style={{
+    background: 'var(--bb-surface)',
+    border: '1px solid var(--bb-border)'
+  }}
+>
+  <h5 className="text-theme-title fw-bold mb-3">
+    Write a Review
+  </h5>
+
+  <textarea
+  value={reviewText}
+  onChange={(e) => setReviewText(e.target.value)}
+    className="form-control mb-3"
+    rows="4"
+    placeholder="Write your review..."
+    style={{
+      background: 'var(--bb-surface-2)',
+      border: '1px solid var(--bb-border)',
+      color: 'white'
+    }}
+  />
+
+  <select
+  value={reviewRating}
+  onChange={(e) => setReviewRating(e.target.value)}
+    className="form-select mb-3"
+    style={{
+      background: 'var(--bb-surface-2)',
+      border: '1px solid var(--bb-border)',
+      color: 'white'
+    }}
+  >
+    <option>5</option>
+    <option>4</option>
+    <option>3</option>
+    <option>2</option>
+    <option>1</option>
+  </select>
+
+  <button
+  className="btn btn-glow"
+  onClick={submitReview}
+>
+  Submit Review
+</button>
+</div>
+
+                  {product.reviews?.map((review, i) => (
                     <div key={i} className="p-4 rounded-3" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
                       <div className="d-flex align-items-center justify-content-between mb-2">
                         <div className="d-flex align-items-center gap-3">
                           <div className="d-flex align-items-center justify-content-center rounded-circle fw-black" style={{ width: 36, height: 36, background: 'linear-gradient(135deg,var(--bb-primary),var(--bb-accent))', color: '#fff', fontSize: '0.85rem' }}>
-                            {review.user.charAt(0)}
+                            {review.userName.charAt(0) || 'U'}
                           </div>
                           <div>
-                            <p className="fw-bold text-theme-title mb-0" style={{ fontSize: '0.9rem' }}>{review.user}</p>
+                            <p className="fw-bold text-theme-title mb-0" style={{ fontSize: '0.9rem' }}>{review.userName}</p>
                             <div className="d-flex gap-1">
                               {[1,2,3,4,5].map(s => <Star key={s} size={11} fill={s <= review.rating ? '#ffc700' : 'none'} stroke='#ffc700' />)}
                             </div>
