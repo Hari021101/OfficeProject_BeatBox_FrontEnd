@@ -4,7 +4,7 @@ import { fetchProducts, selectAllProducts, selectProductStatus } from '../redux/
 import { addToCart } from '../redux/cartSlice'
 import { IMAGE_MAP } from '../data/products'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { 
   ArrowRight, 
   Star, 
@@ -134,6 +134,7 @@ export default function Home() {
   }
 
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const allProducts = useSelector(selectAllProducts)
   const productStatus = useSelector(selectProductStatus)
 
@@ -143,8 +144,8 @@ export default function Home() {
     }
   }, [productStatus, dispatch])
 
-  // Use up to 4 products for the homepage showcase, fallback to empty array if still loading
-  const products = allProducts.length > 0 ? allProducts.slice(0, 4) : []
+  const topProducts = allProducts.length > 0 ? allProducts.slice(0, 4) : []
+  const displayProducts = allProducts.length > 0 ? allProducts.filter(prod => activeFilter === 'all' || (prod.category && prod.category.includes(activeFilter))).slice(0, 4) : []
 
 
 
@@ -203,10 +204,10 @@ export default function Home() {
       { id: 'gravity-hero-text', render: () => renderHeroText() },
       { id: 'gravity-hero-image', render: () => renderHeroImage() },
       { id: 'gravity-categories', render: () => renderCategories() },
-      { id: 'gravity-prod-1', render: () => renderProductCard(products[0]) },
-      { id: 'gravity-prod-2', render: () => renderProductCard(products[1]) },
-      { id: 'gravity-prod-3', render: () => renderProductCard(products[2]) },
-      { id: 'gravity-prod-4', render: () => renderProductCard(products[3]) },
+      { id: 'gravity-prod-1', render: () => renderProductCard(topProducts[0]) },
+      { id: 'gravity-prod-2', render: () => renderProductCard(topProducts[1]) },
+      { id: 'gravity-prod-3', render: () => renderProductCard(topProducts[2]) },
+      { id: 'gravity-prod-4', render: () => renderProductCard(topProducts[3]) },
       { id: 'gravity-deal-image', render: () => renderDealImage() },
       { id: 'gravity-deal-details', render: () => renderDealDetails() },
       { id: 'gravity-highlight-1', render: () => renderHighlight(0, <Award size={32} />, "Top Rated Brand", "Millions of music enthusiasts choose BeatBox for outstanding signature high-bass soundscapes.") },
@@ -313,13 +314,9 @@ export default function Home() {
         <div className="d-flex gap-3">
           <button 
             onClick={() => {
-              // Find the real product from DB so we get a valid GUID
               const realProduct = allProducts.find(p => p.name === slides[currentSlide].title) || allProducts[0];
               if (realProduct) {
-                handleAddToCartClick({
-                  ...realProduct,
-                  imageKey: 'heroHeadphones'
-                });
+                navigate(`/products/${realProduct.id}`);
               } else {
                 toast.error("Products not loaded yet");
               }
@@ -327,15 +324,24 @@ export default function Home() {
             className="btn btn-glow d-flex align-items-center justify-content-center gap-2 py-3 px-5 fw-bold"
             style={{ borderRadius: '12px', height: '55px' }}
           >
-            Shop Now <ShoppingBag size={18} />
+            View Product <ArrowRight size={18} />
           </button>
         </div>
       </div>
     </div>
   )
 
-  const renderHeroImage = () => (
-    <div className="position-relative text-center w-100" style={{ zIndex: 5 }}>
+  const renderHeroImage = () => {
+    const realProduct = allProducts.find(p => p.name === slides[currentSlide].title) || allProducts[0];
+    
+    return (
+      <div 
+        className="position-relative text-center w-100 hover-scale transition-all" 
+        style={{ zIndex: 5, cursor: 'pointer' }}
+        onClick={() => {
+          if (realProduct) navigate(`/products/${realProduct.id}`);
+        }}
+      >
       <img 
         src={slides[currentSlide].image} 
         alt={slides[currentSlide].title} 
@@ -363,8 +369,8 @@ export default function Home() {
         <span className="fw-black text-white" style={{ fontSize: '0.75rem', letterSpacing: '0.8px' }}>BEATBOX ORIGINAL</span>
       </div>
     </div>
-  )
-
+    )
+  }
   const renderCategories = () => (
     <div className="row g-4 row-cols-2 row-cols-sm-3 row-cols-md-5 justify-content-center w-100 m-0">
       {[
@@ -375,9 +381,9 @@ export default function Home() {
         { id: 'gaming', name: 'Gaming Headsets', shortName: 'Gaming', image: gamingHeadset, badge: 'CYBER' }
       ].map((cat, idx) => (
         <div key={idx} className="col">
-          <a 
-            href={`#${cat.id}`}
-            className="category-card d-flex flex-column align-items-center justify-content-center text-center text-decoration-none"
+          <button 
+            onClick={() => navigate('/products')}
+            className="category-card btn p-0 border-0 d-flex flex-column align-items-center justify-content-center text-center text-decoration-none w-100"
           >
             {cat.badge && <span className="category-badge">{cat.badge}</span>}
             
@@ -394,7 +400,7 @@ export default function Home() {
             <span className="text-accent small d-flex align-items-center gap-1 mt-2 fw-semibold" style={{ fontSize: '0.75rem' }}>
               Shop Now <ArrowRight size={10} />
             </span>
-          </a>
+          </button>
         </div>
       ))}
     </div>
@@ -408,7 +414,11 @@ export default function Home() {
     }
 
     return (
-      <div className="card bestseller-card border-1 h-100 overflow-hidden text-start">
+      <div 
+        className="card bestseller-card border-1 h-100 overflow-hidden text-start position-relative"
+        onClick={() => navigate(`/products/${prod.id}`)}
+        style={{ cursor: 'pointer' }}
+      >
         {/* Card Badge Tag */}
         <div className="position-absolute top-0 start-0 m-3 z-3">
           <span className="badge badge-left text-white px-2 py-1 fw-bold text-uppercase">
@@ -418,11 +428,13 @@ export default function Home() {
 
         {/* Product Visual Frame with Brand Hologram Seal */}
         <div className="product-frame w-100 position-relative">
-          <img 
-            src={displayImage} 
-            alt={prod.name} 
-            className="product-img"
-          />
+          <Link to={`/products/${prod.id}`} className="d-block w-100 h-100">
+            <img 
+              src={displayImage} 
+              alt={prod.name} 
+              className="product-img"
+            />
+          </Link>
           {/* Subtle BeatBox Hologram Brand Seal */}
           <div 
             className="position-absolute top-0 end-0 m-3 z-3 d-flex align-items-center gap-1.5 px-2 py-1 rounded-pill"
@@ -472,7 +484,10 @@ export default function Home() {
               {prod.colors.map((clr, cIdx) => (
                 <button
                   key={cIdx}
-                  onClick={() => handleColorChange(prod.id, clr.name)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleColorChange(prod.id, clr.name)
+                  }}
                   className="btn p-0 rounded-circle border transition-all hover-scale"
                   style={{
                     width: '18px',
@@ -487,9 +502,11 @@ export default function Home() {
             </div>
 
             {/* Product Name */}
-            <h5 className="fw-bold text-theme-title mb-2 text-truncate" style={{ fontSize: '1rem', letterSpacing: '-0.2px' }}>
-              {prod.name}
-            </h5>
+            <Link to={`/products/${prod.id}`} className="text-decoration-none">
+              <h5 className="fw-bold text-theme-title mb-2 text-truncate hover-text-accent transition-all" style={{ fontSize: '1rem', letterSpacing: '-0.2px' }}>
+                {prod.name}
+              </h5>
+            </Link>
             <span className="text-theme-muted small d-block mb-3">
               Reviews ({prod.reviews})
             </span>
@@ -506,7 +523,10 @@ export default function Home() {
             </div>
 
             <button 
-              onClick={() => handleAddToCartClick(prod)}
+              onClick={(e) => {
+                e.stopPropagation()
+                handleAddToCartClick(prod)
+              }}
               className="btn btn-add-to-cart w-100 py-2 d-flex align-items-center justify-content-center gap-2 fw-bold"
             >
               Add to Cart
@@ -789,8 +809,7 @@ export default function Home() {
             {/* Framer Motion Filtered Grid */}
             <div className="row g-4 row-cols-1 row-cols-sm-2 row-cols-lg-4 justify-content-center">
               <AnimatePresence mode="popLayout">
-                {products
-                  .filter(prod => activeFilter === 'all' || prod.category === activeFilter)
+                {displayProducts
                   .map((prod) => (
                     <motion.div 
                       layout

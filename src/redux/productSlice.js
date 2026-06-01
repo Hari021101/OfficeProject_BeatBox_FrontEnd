@@ -50,11 +50,55 @@ const productSlice = createSlice({
           stockQuantity: bp.stockQuantity || 0,
           colors: [{ name: bp.color || 'Black', code: '#0a0a0a' }],
           specs: {
-            'Battery': bp.batteryLife || 'N/A',
-            'Connectivity': bp.connectivity || 'N/A',
+            'Battery Life': bp.batteryLife || '40 Hours Playback',
+            'Connectivity': bp.connectivity || 'Bluetooth v5.3',
+            'Charging Tech': 'ASAP™ Fast Charge (10 mins = 10 Hours)',
+            'Driver Size': '10mm Bass Drivers',
+            'Water Resistance': 'IPX5 Sweat & Splash Proof',
+            'Low Latency': '40ms BEAST™ Mode',
+            'Microphone': 'Dual Mic with ENx™ Technology',
+            'Charging Port': 'Type-C',
+            'Warranty': '1 Year Standard Warranty'
           },
-          description: bp.description || 'Premium BeatBox audio gear.',
+          description: bp.description || 'Elevate your music experience with an impressive 40 hours of uninterrupted playback, and never miss a beat with our lightning-fast ASAP™ Charge feature. Seamlessly switch between devices with our advanced Dual Pairing feature, and enjoy crystal-clear calls with ENx™ Technology.',
           highlights: ['Premium build quality', 'Signature bass tuning', '1 year warranty'],
+          features: [
+            {
+              id: 'battery',
+              title: '40 HRS of Musical Escape',
+              description: 'Your playlists can now go on and on. With our ASAP™ charge, you can get 10 hours of playback in just 10 minutes.',
+              gradient: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+              iconName: 'Battery'
+            },
+            {
+              id: 'pairing',
+              title: 'Seamless Device Transition',
+              description: 'Experience uninterrupted connectivity with advanced Dual Pairing feature with Bluetooth v5.3 which allows you to effortlessly switch between your smartphone and tablet.',
+              gradient: 'linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%)',
+              iconName: 'Smartphone'
+            },
+            {
+              id: 'calls',
+              title: 'Crystal-Clear Conversations',
+              description: 'Engage in confident and distraction-free conversations with ENx™ Technology. Whether it\'s professional calls or catching up with friends, your voice is heard perfectly.',
+              gradient: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+              iconName: 'Mic'
+            },
+            {
+              id: 'gaming',
+              title: 'Gaming Thrill Unleashed',
+              description: 'Step into the gaming arena with BEAST™ Mode, engineered to minimize latency to an impressive 40ms. Enjoy smooth responsiveness for an enhanced gaming experience.',
+              gradient: 'linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%)',
+              iconName: 'Gamepad2'
+            }
+          ],
+          faqs: [
+            { q: 'How long does it last on a single charge?', a: 'It offers up to 40 hours of continuous playback on a single charge at 60% volume.' },
+            { q: 'Does it support Fast Charging?', a: 'Yes! With ASAP™ Charge technology, just 10 minutes of charging gives you 10 hours of playtime.' },
+            { q: 'Is it water/sweat resistant?', a: 'Yes, it comes with an IPX5 rating, making it completely sweat and splash resistant—perfect for intense workouts.' },
+            { q: 'Can I connect it to two devices simultaneously?', a: 'Absolutely. The Dual Pairing feature allows you to connect it to your laptop and phone at the same time and switch seamlessly.' },
+            { q: 'What is the warranty period?', a: 'It comes with a 1-year standard warranty against manufacturing defects.' }
+          ],
           reviews: [],
         }));
       })

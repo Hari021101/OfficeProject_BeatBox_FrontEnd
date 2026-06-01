@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Star, ShoppingBag, ArrowLeft, Heart, Share2, Zap,
-  CheckCircle, Shield, Truck, RotateCcw, ChevronRight, Minus, Plus
+  CheckCircle, Shield, Truck, RotateCcw, ChevronRight, Minus, Plus,
+  Battery, Smartphone, Mic, Gamepad2, ChevronDown, ChevronUp
 } from 'lucide-react'
 import { addToCart } from '../redux/cartSlice'
 import { getRelatedProducts, IMAGE_MAP } from '../data/products'
@@ -59,13 +60,41 @@ const [selectedVariant, setSelectedVariant] = useState(null)
   }
 }, [product])
 
+  // Scroll to top when product page loads or id changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [id])
+
   const [selectedColor, setSelectedColor] = useState(null)
   const [quantity, setQuantity] = useState(1)
   const [wishlisted, setWishlisted] = useState(false)
-  const [activeTab, setActiveTab] = useState('highlights')
   const [adding, setAdding] = useState(false)
+  const [openFaq, setOpenFaq] = useState(null)
+  const [activeTab, setActiveTab] = useState('specs')
+  
+  // New feature states
+  const [pincode, setPincode] = useState('')
+  const [deliveryStatus, setDeliveryStatus] = useState(null)
+  const [activeImageIndex, setActiveImageIndex] = useState(0)
+  const [showStickyCart, setShowStickyCart] = useState(false)
+  const [showReviewForm, setShowReviewForm] = useState(false)
+  const [reviewRating, setReviewRating] = useState(5)
   const [reviewText, setReviewText] = useState('')
-const [reviewRating, setReviewRating] = useState(5)
+
+  // Sticky Cart Logic
+  const { scrollY } = useScroll()
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    if (latest > 500) setShowStickyCart(true)
+    else setShowStickyCart(false)
+  })
+
+  // Icons mapper for features
+  const IconMap = {
+    Battery,
+    Smartphone,
+    Mic,
+    Gamepad2
+  }
 
   // Initialize selectedColor once product is loaded
 useEffect(() => {
@@ -156,6 +185,39 @@ useEffect(() => {
     ((product.price - product.discountPrice) / product.price) * 100
   )
 
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      toast.success('Link copied to clipboard!', {
+        style: { background: '#060b19', color: '#fff', border: '1px solid rgba(0,243,255,0.3)', borderRadius: '10px' }
+      })
+    } catch (err) {
+      toast.error('Failed to copy link')
+    }
+  }
+
+  const handleCheckDelivery = () => {
+    if (pincode.length !== 6 || isNaN(pincode)) {
+      setDeliveryStatus({ error: true, message: 'Please enter a valid 6-digit pincode.' })
+      return
+    }
+    setDeliveryStatus({ error: false, message: 'Checking...' })
+    setTimeout(() => {
+      setDeliveryStatus({ error: false, message: `Delivery available by ${new Date(Date.now() + 86400000 * 3).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} to ${pincode} 🚚` })
+    }, 800)
+  }
+
+  const handleSubmitReview = (e) => {
+    e.preventDefault()
+    if (!reviewText.trim()) return
+    toast.success('Review submitted successfully for moderation!', {
+      style: { background: '#060b19', color: '#fff', border: '1px solid rgba(39,255,20,0.3)', borderRadius: '10px' }
+    })
+    setShowReviewForm(false)
+    setReviewText('')
+    setReviewRating(5)
+  }
+
   return (
     <div className="min-vh-100 pb-5" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
       {/* Ambient orbs */}
@@ -213,26 +275,28 @@ useEffect(() => {
               <div style={{ position: 'absolute', width: 250, height: 250, background: selectedColor ? selectedColor.code : 'var(--bb-accent)', borderRadius: '50%', filter: 'blur(80px)', opacity: 0.12, zIndex: 0 }} />
 
               <motion.img
-                key={product.imageKey}
+                key={`${product.imageKey}-${activeImageIndex}`}
                 src={img}
                 alt={product.name}
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
+                whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.4 }}
                 className="img-fluid hero-float"
-                style={{ maxHeight: 340, objectFit: 'contain', zIndex: 1, filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))' }}
+                style={{ maxHeight: 340, objectFit: 'contain', zIndex: 1, filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))', transform: `rotate(${activeImageIndex * -5}deg)` }}
               />
             </div>
 
             {/* Thumbnail row (same image for mock) */}
             <div className="d-flex gap-2 mt-3 justify-content-center">
-              {[1, 2, 3].map(i => (
+              {[0, 1, 2].map(i => (
                 <div
                   key={i}
+                  onClick={() => setActiveImageIndex(i)}
                   className="rounded-3 d-flex align-items-center justify-content-center"
-                  style={{ width: 70, height: 70, background: 'var(--bb-surface)', border: `1px solid ${i === 1 ? 'var(--bb-accent)' : 'var(--bb-border)'}`, cursor: 'pointer', overflow: 'hidden', transition: 'border-color 0.2s' }}
+                  style={{ width: 70, height: 70, background: 'var(--bb-surface)', border: `1px solid ${i === activeImageIndex ? 'var(--bb-accent)' : 'var(--bb-border)'}`, cursor: 'pointer', overflow: 'hidden', transition: 'border-color 0.2s' }}
                 >
-                  <img src={img} alt="" style={{ width: 50, height: 50, objectFit: 'contain', opacity: i === 1 ? 1 : 0.5 }} />
+                  <img src={img} alt="" style={{ width: 50, height: 50, objectFit: 'contain', opacity: i === activeImageIndex ? 1 : 0.5, transform: `rotate(${i * -5}deg)` }} />
                 </div>
               ))}
             </div>
@@ -271,11 +335,14 @@ useEffect(() => {
             </div>
 
             {/* Price block */}
-            <div className="p-4 rounded-3 mb-4" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
-              <div className="d-flex align-items-baseline gap-3 mb-1">
-                <span className="display-5 fw-black text-theme-title" style={{ letterSpacing: '-2px' }}>₹{product.discountPrice?.toLocaleString('en-IN')}</span>
-                <span className="fs-4 text-decoration-line-through text-theme-muted">₹{product.price.toLocaleString('en-IN')}</span>
-                <span className="badge text-success fw-bold" style={{ background: 'rgba(39,255,20,0.1)', border: '1px solid rgba(39,255,20,0.2)', fontSize: '0.9rem' }}>{discount}% OFF</span>
+            <div className="p-4 rounded-3 mb-4" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', position: 'relative', overflow: 'hidden' }}>
+              <div className="position-absolute top-0 end-0 py-1 px-3" style={{ background: 'rgba(255,199,0,0.1)', borderBottomLeftRadius: 10 }}>
+                <span className="text-warning fw-bold small flex-shrink-0" style={{ fontSize: '0.7rem' }}>⚡ LIMITED TIME OFFER</span>
+              </div>
+              <div className="d-flex align-items-baseline gap-3 mb-1 mt-2">
+                <span className="display-5 fw-black text-theme-title" style={{ letterSpacing: '-2px' }}>₹{product.price.toLocaleString('en-IN')}</span>
+                <span className="fs-4 text-decoration-line-through text-theme-muted">₹{product.oldPrice.toLocaleString('en-IN')}</span>
+                <span className="badge text-success fw-bold" style={{ background: 'rgba(39,255,20,0.1)', border: '1px solid rgba(39,255,20,0.2)', fontSize: '0.9rem' }}>{product.discount}% OFF</span>
               </div>
               <p className="text-success small fw-semibold mb-0">You save ₹{savings.toLocaleString('en-IN')} 🎉</p>
             </div>
@@ -345,36 +412,109 @@ useEffect(() => {
               >
                 <Heart size={20} fill={wishlisted ? '#ff4d7d' : 'none'} />
               </button>
+              <button
+                onClick={handleShare}
+                className="btn d-flex align-items-center justify-content-center"
+                style={{ width: 56, height: 56, borderRadius: 12, background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-muted)', flexShrink: 0 }}
+                title="Share"
+              >
+                <Share2 size={20} />
+              </button>
             </div>
 
             {/* Trust badges */}
             <div className="row g-2">
               {[
                 { icon: <Shield size={16} />, text: '1 Year Warranty', color: 'var(--bb-accent)' },
-                { icon: <RotateCcw size={16} />, text: '7-Day Returns', color: 'var(--bb-primary-light)' },
-                { icon: <Truck size={16} />, text: 'Free Shipping ≥₹999', color: 'var(--bb-accent)' },
-                { icon: <CheckCircle size={16} />, text: 'Genuine Product', color: '#39ff14' },
+                { icon: <RotateCcw size={16} />, text: '7-Day Replacement', color: 'var(--bb-primary-light)' },
+                { icon: <CheckCircle size={16} />, text: '100% Genuine', color: '#39ff14' },
               ].map((badge, i) => (
-                <div key={i} className="col-6">
-                  <div className="d-flex align-items-center gap-2 p-2 rounded-3" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
-                    <span style={{ color: badge.color }}>{badge.icon}</span>
-                    <span className="text-theme-muted" style={{ fontSize: '0.75rem', fontWeight: 600 }}>{badge.text}</span>
+                <div key={i} className="col-12 col-sm-4">
+                  <div className="d-flex align-items-center gap-2 p-2 rounded-3 h-100 justify-content-center text-center flex-row justify-content-sm-start text-sm-start" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
+                    <span style={{ color: badge.color, background: `color-mix(in srgb, ${badge.color} 15%, transparent)`, padding: '8px', borderRadius: '50%', display: 'inline-flex' }}>{badge.icon}</span>
+                    <span className="text-theme-title" style={{ fontSize: '0.7rem', fontWeight: 600 }}>{badge.text}</span>
                   </div>
                 </div>
               ))}
             </div>
+
+            {/* Delivery Check */}
+            <div className="mt-4 p-4 rounded-3" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
+              <p className="text-theme-title fw-bold mb-3 small d-flex align-items-center gap-2"><Truck size={16} className="text-theme-muted"/> Check Delivery Estimate</p>
+              <div className="d-flex gap-2">
+                <input 
+                  type="text" 
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="Enter 6-digit Pincode" 
+                  className="form-control flex-grow-1"
+                  style={{ background: 'var(--bb-bg-navy)', border: '1px solid var(--bb-border)', color: '#fff', borderRadius: 8, padding: '10px 16px' }}
+                />
+                <button onClick={handleCheckDelivery} className="btn px-4 fw-bold" style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-accent)', border: '1px solid var(--bb-accent)', borderRadius: 8 }}>
+                  Check
+                </button>
+              </div>
+              {deliveryStatus && (
+                <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className={`mb-0 mt-3 small fw-semibold ${deliveryStatus.error ? 'text-danger' : 'text-success'}`}>
+                  {deliveryStatus.message}
+                </motion.p>
+              )}
+            </div>
           </motion.div>
         </div>
+
+        {/* ── IMMERSIVE MARKETING FEATURE SHOWCASE ─── */}
+        {product.features && product.features.length > 0 && (
+          <div className="mb-5 py-5 border-top border-bottom" style={{ borderColor: 'var(--bb-border)' }}>
+            <div className="text-center mb-5">
+              <span className="badge px-3 py-1 fw-bold mb-2 text-white" style={{ background: 'linear-gradient(135deg,var(--bb-primary),var(--bb-accent))', borderRadius: 50 }}>EXPERIENCE TRUE AUDIO</span>
+              <h2 className="display-5 fw-black text-theme-title">Designed for <span className="gradient-text">Perfection</span></h2>
+            </div>
+            
+            <div className="row g-4">
+              {product.features.map((feature, idx) => {
+                const FeatureIcon = IconMap[feature.iconName] || Zap
+                return (
+                  <div key={feature.id} className="col-12 col-md-6">
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="p-5 rounded-4 h-100 d-flex flex-column justify-content-end position-relative overflow-hidden"
+                      style={{ 
+                        background: feature.gradient,
+                        minHeight: '300px',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
+                      }}
+                    >
+                      {/* Large decorative icon in background */}
+                      <FeatureIcon size={180} className="position-absolute" style={{ top: '-20px', right: '-20px', opacity: 0.1, color: '#fff' }} />
+                      
+                      <div className="position-relative z-10 text-white">
+                        <div className="mb-3 d-inline-flex align-items-center justify-content-center bg-white rounded-circle" style={{ width: 48, height: 48, color: '#000' }}>
+                           <FeatureIcon size={24} />
+                        </div>
+                        <h3 className="fw-black mb-2" style={{ fontSize: '1.5rem', textShadow: '0 2px 10px rgba(0,0,0,0.2)' }}>{feature.title}</h3>
+                        <p className="mb-0 fw-medium" style={{ opacity: 0.9, fontSize: '0.95rem', lineHeight: 1.6, textShadow: '0 2px 10px rgba(0,0,0,0.2)' }}>{feature.description}</p>
+                      </div>
+                    </motion.div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* ── DETAIL TABS ─── */}
         <div className="mb-5">
           {/* Tab nav */}
           <div className="d-flex gap-1 mb-4 overflow-x-auto no-scrollbar py-1" style={{ borderBottom: '1px solid var(--bb-border)' }}>
             {[
-              { id: 'highlights', label: '✨ Highlights' },
               { id: 'specs', label: '⚙️ Specifications' },
-              { id: 'faq', label: '❓ FAQs' },
-              { id: 'reviews', label: `⭐ Reviews (${product.reviewCount || 0})` },
+              { id: 'reviews', label: `⭐ Reviews (${product.reviews.length})` },
+              { id: 'faqs', label: '❓ FAQs' }
             ].map(tab => (
               <button
                 key={tab.id}
@@ -403,99 +543,29 @@ useEffect(() => {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.25 }}
             >
-              {activeTab === 'highlights' && (
-                <div className="row g-3">
-                  {[
-  'Premium Sound Quality',
-  'Deep Bass Experience',
-  'Bluetooth 5.4 Connectivity',
-  'Fast Charging Support',
-  '1 Year Warranty',
-  '50 Hours Playback'
-].map((h, i) => (
-  <div key={i} className="col-12 col-md-6">
-    <div
-      className="d-flex align-items-start gap-3 p-3 rounded-3"
-      style={{
-        background: 'var(--bb-surface)',
-        border: '1px solid var(--bb-border)'
-      }}
-    >
-      <CheckCircle
-        size={18}
-        style={{
-          color: 'var(--bb-accent)',
-          flexShrink: 0,
-          marginTop: 2
-        }}
-      />
-
-      <span
-        className="text-theme-title fw-semibold"
-        style={{ fontSize: '0.9rem' }}
-      >
-        {h}
-      </span>
-    </div>
-  </div>
-))}
-                  <div className="col-12 mt-2">
-                    <p className="text-theme-muted" style={{ lineHeight: 1.8, fontSize: '0.95rem' }}>{product.description}</p>
+              {activeTab === 'specs' && (
+                <div className="row g-4">
+                  {/* Detailed Description */}
+                  <div className="col-12 mb-2">
+                     <p className="text-theme-muted fw-medium" style={{ lineHeight: 1.8, fontSize: '0.95rem' }}>{product.description}</p>
+                  </div>
+                  
+                  {/* Two-Column Specification Grid */}
+                  <div className="col-12">
+                    <div className="rounded-4 overflow-hidden" style={{ border: '1px solid var(--bb-border)' }}>
+                      {Object.entries(product.specs).map(([key, val], i) => (
+                        <div
+                          key={i}
+                          className="d-flex flex-column flex-sm-row"
+                          style={{ borderBottom: i < Object.entries(product.specs).length - 1 ? '1px solid var(--bb-border)' : 'none', background: i % 2 === 0 ? 'var(--bb-surface)' : 'var(--bb-surface-2)' }}
+                        >
+                          <div className="px-4 py-3 fw-bold text-theme-muted" style={{ minWidth: 200, fontSize: '0.88rem' }}>{key}</div>
+                          <div className="px-4 py-3 text-theme-title fw-semibold flex-grow-1" style={{ fontSize: '0.88rem', borderLeft: '1px solid var(--bb-border)' }}>{val}</div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              )}
-
-              {activeTab === 'specs' && (
-               <div
-  className="rounded-4 overflow-hidden"
-  style={{
-    border: '1px solid var(--bb-border)'
-  }}
->
-  {[
-    ['Brand', product.brand],
-    ['Battery Life', product.batteryLife],
-    ['Connectivity', product.connectivity],
-    ['Color', product.color],
-    ['Category', product.categoryName],
-    ['Stock', product.stockQuantity]
-  ].map(([key, value], i) => (
-    <div
-      key={i}
-      className="d-flex"
-      style={{
-        borderBottom:
-          i < 5
-            ? '1px solid var(--bb-border)'
-            : 'none',
-        background:
-          i % 2 === 0
-            ? 'var(--bb-surface)'
-            : 'var(--bb-surface-2)'
-      }}
-    >
-      <div
-        className="px-4 py-3 fw-bold text-theme-muted"
-        style={{
-          minWidth: 180,
-          fontSize: '0.88rem'
-        }}
-      >
-        {key}
-      </div>
-
-      <div
-        className="px-4 py-3 text-theme-title fw-semibold flex-grow-1"
-        style={{
-          fontSize: '0.88rem',
-          borderLeft: '1px solid var(--bb-border)'
-        }}
-      >
-        {value}
-      </div>
-    </div>
-  ))}
-</div>
               )}
 
               {activeTab === 'faq' && (
@@ -523,6 +593,41 @@ useEffect(() => {
 
               {activeTab === 'reviews' && (
                 <div className="d-flex flex-column gap-3">
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                     <h4 className="text-theme-title fw-bold m-0">Customer Reviews</h4>
+                     {!showReviewForm && (
+                        <button onClick={() => setShowReviewForm(true)} className="btn btn-sm btn-glow fw-bold px-4" style={{ borderRadius: 8 }}>Write a Review</button>
+                     )}
+                  </div>
+
+                  <AnimatePresence>
+                    {showReviewForm && (
+                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-4 overflow-hidden">
+                        <form onSubmit={handleSubmitReview} className="p-4 rounded-4" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
+                          <h5 className="text-theme-title fw-bold mb-3">Rate this product</h5>
+                          <div className="d-flex gap-2 mb-3">
+                            {[1,2,3,4,5].map(s => (
+                              <Star key={s} size={24} onClick={() => setReviewRating(s)} fill={s <= reviewRating ? '#ffc700' : 'none'} stroke={s <= reviewRating ? '#ffc700' : 'var(--bb-muted)'} style={{ cursor: 'pointer', transition: 'all 0.2s' }} />
+                            ))}
+                          </div>
+                          <textarea 
+                            value={reviewText}
+                            onChange={(e) => setReviewText(e.target.value)}
+                            className="form-control mb-3" 
+                            rows="3" 
+                            placeholder="What did you like or dislike?"
+                            style={{ background: 'var(--bb-bg-navy)', border: '1px solid var(--bb-border)', color: '#fff', borderRadius: 8 }}
+                            required
+                          />
+                          <div className="d-flex gap-2 justify-content-end mt-3">
+                            <button type="button" onClick={() => setShowReviewForm(false)} className="btn btn-sm text-theme-muted fw-bold px-3">Cancel</button>
+                            <button type="submit" className="btn btn-sm btn-glow fw-bold px-4" style={{ borderRadius: 8 }}>Submit Review</button>
+                          </div>
+                        </form>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   {/* Rating summary */}
                   <div className="p-4 rounded-3 mb-2 d-flex align-items-center gap-4" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
                     <div className="text-center">
@@ -604,6 +709,44 @@ useEffect(() => {
                   ))}
                 </div>
               )}
+
+              {activeTab === 'faqs' && (
+                <div className="d-flex flex-column gap-3">
+                  {product.faqs && product.faqs.length > 0 ? (
+                    product.faqs.map((faq, i) => (
+                      <div key={i} className="rounded-3 overflow-hidden" style={{ border: '1px solid var(--bb-border)', background: 'var(--bb-surface)' }}>
+                        <button 
+                          onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                          className="w-100 d-flex align-items-center justify-content-between p-4 border-0 text-start"
+                          style={{ background: 'transparent' }}
+                        >
+                          <span className="fw-bold text-theme-title" style={{ fontSize: '1rem', paddingRight: '20px' }}>Q. {faq.q}</span>
+                          <div className="text-theme-muted">
+                            {openFaq === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                          </div>
+                        </button>
+                        <AnimatePresence>
+                          {openFaq === i && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="px-4 pb-4"
+                            >
+                              <p className="text-theme-muted mb-0 fw-medium" style={{ fontSize: '0.95rem', lineHeight: 1.6 }}>{faq.a}</p>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-5">
+                      <p className="text-theme-muted fw-medium">No frequently asked questions for this product yet.</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -627,6 +770,42 @@ useEffect(() => {
           </div>
         )}
       </div>
+
+      {/* ── STICKY ADD TO CART BAR ─── */}
+      <AnimatePresence>
+        {showStickyCart && (
+          <motion.div 
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className="position-fixed bottom-0 start-0 w-100 py-3 px-3 px-md-5 d-flex align-items-center justify-content-between"
+            style={{ background: 'rgba(6, 11, 25, 0.95)', backdropFilter: 'blur(10px)', borderTop: '1px solid var(--bb-border)', boxShadow: '0 -10px 40px rgba(0,0,0,0.6)', zIndex: 1050 }}
+          >
+            <div className="d-flex align-items-center gap-3">
+              <img src={img} alt={product.name} style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 8, background: 'var(--bb-surface)' }} />
+              <div className="d-none d-sm-block">
+                <p className="text-theme-title fw-bold mb-0 text-truncate" style={{ maxWidth: 250 }}>{product.name}</p>
+                <p className="text-theme-muted small mb-0 fw-semibold">₹{product.price.toLocaleString('en-IN')}</p>
+              </div>
+            </div>
+            <div className="d-flex align-items-center gap-3">
+              <div className="d-none d-md-flex align-items-center rounded-3 px-2 py-1" style={{ border: '1px solid var(--bb-border)', background: 'var(--bb-surface)' }}>
+                <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="btn border-0 p-1 d-flex align-items-center" style={{ color: 'var(--bb-muted)' }}><Minus size={14} /></button>
+                <span className="fw-black text-theme-title px-3" style={{ fontSize: '0.9rem' }}>{quantity}</span>
+                <button onClick={() => setQuantity(q => q + 1)} className="btn border-0 p-1 d-flex align-items-center" style={{ color: 'var(--bb-accent)' }}><Plus size={14} /></button>
+              </div>
+              <button
+                onClick={handleAddToCart}
+                disabled={!product.inStock || adding}
+                className="btn btn-glow fw-bold px-4 py-2"
+                style={{ borderRadius: 8 }}
+              >
+                {adding ? 'Adding...' : `Add to Cart - ₹${(product.price * quantity).toLocaleString('en-IN')}`}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
