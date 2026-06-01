@@ -37,13 +37,14 @@ api.interceptors.response.use(
 );
 
 export const authService = {
-  register: async (fullName, email, password) => {
+  register: async (fullName, email, password, phoneNumber) => {
     const response = await api.post('/account/register', {
       fullName,
       email,
       password,
+      phoneNumber,
     });
-    return response.data; // Returns AuthResponseDto { fullName, email, token }
+    return response.data; // Returns RegisterResponseDto { userId, email, message, requiresEmailVerification }
   },
 
   login: async (email, password) => {

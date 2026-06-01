@@ -147,9 +147,16 @@ export default function ProductDetail() {
     }
   }
 
+  // Three-level fallback: variant URL → backend URL → local bundled asset
   const img =
-    selectedVariant?.imageUrl ||
-    product.imageUrl
+    (selectedVariant?.imageUrl && selectedVariant.imageUrl !== 'string' && selectedVariant.imageUrl.startsWith('http')
+      ? selectedVariant.imageUrl
+      : null) ||
+    (product.imageUrl && product.imageUrl !== 'string' && product.imageUrl.startsWith('http')
+      ? product.imageUrl
+      : null) ||
+    IMAGE_MAP[product.imageKey] ||
+    IMAGE_MAP['heroHeadphones']
   const originalPrice =
     Math.max(product.price || 0,
       product.discountPrice || 0)

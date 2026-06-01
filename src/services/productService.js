@@ -1,14 +1,21 @@
 import api from './authService';
+import { IMAGE_MAP } from '../data/products';
 
-// ─── Derive a local image-key from the backend imageUrl string ────────────────
-const mapImageKey = (url) => {
-  if (!url || url === 'string') return 'heroHeadphones';
-  const lower = url.toLowerCase();
-  if (lower.includes('earbud')) return 'heroEarbuds';
-  if (lower.includes('speaker')) return 'heroSpeaker';
-  if (lower.includes('gaming')) return 'gamingHeadset';
-  if (lower.includes('neckband')) return 'wirelessNeckband';
+// ─── Derive a local image-key from the backend imageUrl string + product name ─
+const mapImageKey = (url = '', name = '') => {
+  const text = `${url} ${name}`.toLowerCase();
+  if (text.includes('earbud') || text.includes('airdopes') || text.includes('tws') || text.includes('earphone')) return 'heroEarbuds';
+  if (text.includes('speaker') || text.includes('stone') || text.includes('grenade') || text.includes('capsule sound')) return 'heroSpeaker';
+  if (text.includes('gaming') || text.includes('immortal') || text.includes('headset')) return 'gamingHeadset';
+  if (text.includes('neckband') || text.includes('collar') || text.includes('trip') || text.includes('rockerz club')) return 'wirelessNeckband';
+  if (text.includes('smart') || text.includes('capsule') || text.includes('storm')) return 'smartEarbuds';
   return 'heroHeadphones';
+};
+
+// ─── Resolve the actual image src: prefer backend URL, fall back to local asset ─
+const resolveImage = (imageUrl, imageKey) => {
+  if (imageUrl && imageUrl !== 'string' && imageUrl.startsWith('http')) return imageUrl;
+  return IMAGE_MAP[imageKey] || IMAGE_MAP['heroHeadphones'];
 };
 
 // ─── Transform raw API product into the shape the UI expects ──────────────────
@@ -56,8 +63,8 @@ const mapProduct = (bp) => {
     deliveryDays: bp.deliveryDays ?? 5,
 
     // Image
-    imageUrl: bp.imageUrl || '',
-    imageKey: mapImageKey(bp.imageUrl),
+    imageKey: mapImageKey(bp.imageUrl, bp.name),
+    imageUrl: resolveImage(bp.imageUrl, mapImageKey(bp.imageUrl, bp.name)),
     images: bp.images ?? [],
 
     // Product attributes

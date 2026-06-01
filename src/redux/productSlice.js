@@ -20,13 +20,13 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        const mapImageKey = (url) => {
-          if (!url || url === 'string') return 'heroHeadphones';
-          const lower = url.toLowerCase();
-          if (lower.includes('earbud')) return 'heroEarbuds';
-          if (lower.includes('speaker')) return 'heroSpeaker';
-          if (lower.includes('gaming')) return 'gamingHeadset';
-          if (lower.includes('neckband')) return 'wirelessNeckband';
+        const mapImageKey = (url = '', name = '') => {
+          const text = `${url} ${name}`.toLowerCase();
+          if (text.includes('earbud') || text.includes('airdopes') || text.includes('tws') || text.includes('earphone')) return 'heroEarbuds';
+          if (text.includes('speaker') || text.includes('stone') || text.includes('grenade') || text.includes('capsule sound')) return 'heroSpeaker';
+          if (text.includes('gaming') || text.includes('immortal') || text.includes('headset')) return 'gamingHeadset';
+          if (text.includes('neckband') || text.includes('collar') || text.includes('trip') || text.includes('rockerz club')) return 'wirelessNeckband';
+          if (text.includes('smart') || text.includes('capsule') || text.includes('storm')) return 'smartEarbuds';
           return 'heroHeadphones';
         };
 
@@ -47,7 +47,7 @@ const productSlice = createSlice({
           reviewCount: bp.reviewCount ?? 0,
           tag: bp.isFeatured ? 'Featured' : 'Popular',
           usp: bp.batteryLife ? `${bp.batteryLife} Battery` : 'Signature Sound',
-          imageKey: mapImageKey(bp.imageUrl),
+          imageKey: mapImageKey(bp.imageUrl, bp.name),
           badge: 'Original',
           inStock: (bp.stockQuantity || 0) > 0,
           stockQuantity: bp.stockQuantity || 0,

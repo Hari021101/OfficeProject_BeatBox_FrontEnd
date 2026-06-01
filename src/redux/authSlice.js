@@ -1,17 +1,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authService } from '../services/authService';
 
-// Thunk for User Registration
+// Thunk for User Registration — returns { userId, email, message } (no JWT yet)
 export const registerUser = createAsyncThunk(
   'auth/register',
-  async ({ fullName, email, password }, thunkAPI) => {
+  async ({ fullName, email, password, phoneNumber }, thunkAPI) => {
     try {
-      return await authService.register(fullName, email, password);
+      return await authService.register(fullName, email, password, phoneNumber);
     } catch (error) {
-      // Handles ASP.NET validation error payloads or plain string messages
-      const message = 
-        (error.response && error.response.data) || 
-        error.message || 
+      const message =
+        (error.response && error.response.data) ||
+        error.message ||
         'Registration failed.';
       return thunkAPI.rejectWithValue(message);
     }
@@ -25,9 +24,9 @@ export const loginUser = createAsyncThunk(
     try {
       return await authService.login(email, password);
     } catch (error) {
-      const message = 
-        (error.response && error.response.data) || 
-        error.message || 
+      const message =
+        (error.response && error.response.data) ||
+        error.message ||
         'Invalid email or password.';
       return thunkAPI.rejectWithValue(message);
     }
@@ -45,6 +44,11 @@ const initialState = {
   isError: false,
   isSuccess: false,
   message: '',
+  // OTP verification flow
+  pendingUserId: null,      // set after register, used to call OTP endpoints
+  pendingEmail: null,
+  pendingPhone: null,
+  otpStep: null,            // null | 'email' | 'phone' | 'done'
 };
 
 const authSlice = createSlice({
@@ -57,6 +61,15 @@ const authSlice = createSlice({
       state.isSuccess = false;
       state.message = '';
     },
+    setOtpStep: (state, action) => {
+      state.otpStep = action.payload;
+    },
+    clearOtpState: (state) => {
+      state.pendingUserId = null;
+      state.pendingEmail = null;
+      state.pendingPhone = null;
+      state.otpStep = null;
+    },
     logout: (state) => {
       authService.logout();
       state.user = null;
@@ -65,24 +78,44 @@ const authSlice = createSlice({
       state.isSuccess = false;
       state.isError = false;
       state.message = '';
-    }
+      state.pendingUserId = null;
+      state.pendingEmail = null;
+      state.pendingPhone = null;
+      state.otpStep = null;
+    },
+    // Called from Register.jsx after phone OTP verified and JWT received
+    setAuthFromOtp: (state, action) => {
+      const { fullName, email, token } = action.payload;
+      authService.login.__skipApi = true; // flag (unused, JWT stored manually below)
+      localStorage.setItem('bb_token', token);
+      localStorage.setItem('bb_user', JSON.stringify({ fullName, email }));
+      state.user = { fullName, email };
+      state.token = token;
+      state.isAuthenticated = true;
+      state.otpStep = 'done';
+    },
   },
   extraReducers: (builder) => {
     builder
-      // Register Actions
+      // Register Actions — succeeds when user is created (OTP step begins)
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
+        state.isError = false;
+        state.message = '';
       })
-      .addCase(registerUser.fulfilled, (state) => {
+      .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        state.pendingUserId = action.payload.userId;
+        state.pendingEmail = action.payload.email;
+        state.otpStep = 'email'; // move to email OTP step
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      
+
       // Login Actions
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
@@ -108,5 +141,5 @@ const authSlice = createSlice({
   }
 });
 
-export const { resetState, logout } = authSlice.actions;
+export const { resetState, logout, setOtpStep, clearOtpState, setAuthFromOtp } = authSlice.actions;
 export default authSlice.reducer;
