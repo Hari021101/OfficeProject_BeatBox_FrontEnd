@@ -37,11 +37,14 @@ const productSlice = createSlice({
           name: bp.name,
           brand: bp.brand || 'BeatBox',
           category: bp.categoryName?.toLowerCase() || 'headphones',
-          price: bp.price,
-          oldPrice: bp.discountPrice ? bp.price : bp.price * 1.4, // Fallback mock
-          discount: bp.discountPrice ? Math.round(((bp.price - bp.discountPrice) / bp.price) * 100) : 30,
-          rating: bp.rating || 4.5,
-          reviewCount: Math.floor(Math.random() * 500) + 50,
+          // bp.price = original/MRP; bp.discountPrice = sale price
+          price: bp.discountPrice ?? bp.price,          // sale price shown on card
+          oldPrice: bp.price,                            // strikethrough price
+          discount: bp.discountPrice
+            ? Math.round(((bp.price - bp.discountPrice) / bp.price) * 100)
+            : 0,
+          rating: bp.averageRating ?? bp.rating ?? 4.5,
+          reviewCount: bp.reviewCount ?? 0,
           tag: bp.isFeatured ? 'Featured' : 'Popular',
           usp: bp.batteryLife ? `${bp.batteryLife} Battery` : 'Signature Sound',
           imageKey: mapImageKey(bp.imageUrl),
@@ -93,11 +96,11 @@ const productSlice = createSlice({
             }
           ],
           faqs: [
-            { q: 'How long does it last on a single charge?', a: 'It offers up to 40 hours of continuous playback on a single charge at 60% volume.' },
-            { q: 'Does it support Fast Charging?', a: 'Yes! With ASAP™ Charge technology, just 10 minutes of charging gives you 10 hours of playtime.' },
-            { q: 'Is it water/sweat resistant?', a: 'Yes, it comes with an IPX5 rating, making it completely sweat and splash resistant—perfect for intense workouts.' },
-            { q: 'Can I connect it to two devices simultaneously?', a: 'Absolutely. The Dual Pairing feature allows you to connect it to your laptop and phone at the same time and switch seamlessly.' },
-            { q: 'What is the warranty period?', a: 'It comes with a 1-year standard warranty against manufacturing defects.' }
+            { question: 'How long does it last on a single charge?', answer: 'It offers up to 40 hours of continuous playback on a single charge at 60% volume.' },
+            { question: 'Does it support Fast Charging?', answer: 'Yes! With ASAP™ Charge technology, just 10 minutes of charging gives you 10 hours of playtime.' },
+            { question: 'Is it water/sweat resistant?', answer: 'Yes, it comes with an IPX5 rating, making it completely sweat and splash resistant—perfect for intense workouts.' },
+            { question: 'Can I connect it to two devices simultaneously?', answer: 'Absolutely. The Dual Pairing feature allows you to connect it to your laptop and phone at the same time and switch seamlessly.' },
+            { question: 'What is the warranty period?', answer: 'It comes with a 1-year standard warranty against manufacturing defects.' }
           ],
           reviews: [],
         }));

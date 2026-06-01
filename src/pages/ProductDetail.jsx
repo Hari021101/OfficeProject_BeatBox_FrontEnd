@@ -736,7 +736,7 @@ export default function ProductDetail() {
                           className="w-100 d-flex align-items-center justify-content-between p-4 border-0 text-start"
                           style={{ background: 'transparent' }}
                         >
-                          <span className="fw-bold text-theme-title" style={{ fontSize: '1rem', paddingRight: '20px' }}>Q. {faq.q}</span>
+                          <span className="fw-bold text-theme-title" style={{ fontSize: '1rem', paddingRight: '20px' }}>Q. {faq.question}</span>
                           <div className="text-theme-muted">
                             {openFaq === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                           </div>
@@ -750,7 +750,7 @@ export default function ProductDetail() {
                               transition={{ duration: 0.2 }}
                               className="px-4 pb-4"
                             >
-                              <p className="text-theme-muted mb-0 fw-medium" style={{ fontSize: '0.95rem', lineHeight: 1.6 }}>{faq.a}</p>
+                              <p className="text-theme-muted mb-0 fw-medium" style={{ fontSize: '0.95rem', lineHeight: 1.6 }}>{faq.answer}</p>
                             </motion.div>
                           )}
                         </AnimatePresence>
@@ -812,11 +812,11 @@ export default function ProductDetail() {
               </div>
               <button
                 onClick={handleAddToCart}
-                disabled={!product.inStock || adding}
+                disabled={product.stockQuantity <= 0 || adding}
                 className="btn btn-glow fw-bold px-4 py-2"
                 style={{ borderRadius: 8 }}
               >
-                {adding ? 'Adding...' : `Add to Cart - ₹${(product.price * quantity).toLocaleString('en-IN')}`}
+                {adding ? 'Adding...' : `Add to Cart - ₹${(salePrice * quantity).toLocaleString('en-IN')}`}
               </button>
             </div>
           </motion.div>
