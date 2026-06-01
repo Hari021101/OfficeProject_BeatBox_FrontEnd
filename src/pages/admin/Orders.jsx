@@ -14,7 +14,7 @@ const STATUS_CONFIG = {
   Cancelled:  { color: '#ef4444', bg: 'rgba(239,68,68,0.08)', icon: XCircle },
 }
 
-export default function AdminOrders() {
+export default function Orders() {
   const [orders, setOrders] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
@@ -75,7 +75,7 @@ export default function AdminOrders() {
 
   if (isLoading) {
     return (
-      <div className="min-vh-100 d-flex justify-content-center align-items-center" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
+      <div className="d-flex justify-content-center align-items-center py-5">
         <div className="spinner-border text-info" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -84,8 +84,7 @@ export default function AdminOrders() {
   }
 
   return (
-    <div className="min-vh-100 pb-5 pt-4" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
-      <div className="container-fluid px-lg-5">
+    <div className="py-2">
         
         {/* Header */}
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
@@ -187,7 +186,6 @@ export default function AdminOrders() {
           </table>
         </div>
 
-      </div>
     </div>
   )
 }

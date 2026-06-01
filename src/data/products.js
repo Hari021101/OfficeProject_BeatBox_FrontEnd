@@ -22,6 +22,8 @@ export const CATEGORIES = [
   { id: 'speakers', label: 'Speakers', emoji: '🔊' },
   { id: 'neckbands', label: 'Neckbands', emoji: '🎶' },
   { id: 'gaming', label: 'Gaming Gear', emoji: '🎮' },
+  { id: 'smart watches', label: 'Smart Watches', emoji: '⌚' },
+  { id: 'wired headphones', label: 'Wired Headphones', emoji: '🔌' },
 ]
 
 export const PRODUCTS = [

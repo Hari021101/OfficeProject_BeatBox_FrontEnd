@@ -1,18 +1,29 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authService } from '../services/authService';
 
-// Thunk for User Registration — returns { userId, email, message } (no JWT yet)
+// Helper to extract a clean string error message from ASP.NET Core responses
+const extractErrorMessage = (error, defaultMsg) => {
+  if (error.response && error.response.data) {
+    const data = error.response.data;
+    if (typeof data === 'string') return data;
+    if (data.errors) {
+      const messages = Object.values(data.errors).flat();
+      if (messages.length > 0) return messages[0];
+    }
+    if (data.message) return data.message;
+    if (data.title) return data.title;
+  }
+  return error.message || defaultMsg;
+};
+
+// Thunk for User Registration
 export const registerUser = createAsyncThunk(
   'auth/register',
-  async ({ fullName, email, password, phoneNumber }, thunkAPI) => {
+  async ({ fullName, identifier, password }, thunkAPI) => {
     try {
-      return await authService.register(fullName, email, password, phoneNumber);
+      return await authService.register(fullName, identifier, password);
     } catch (error) {
-      const message =
-        (error.response && error.response.data) ||
-        error.message ||
-        'Registration failed.';
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(extractErrorMessage(error, 'Registration failed.'));
     }
   }
 );
@@ -20,15 +31,11 @@ export const registerUser = createAsyncThunk(
 // Thunk for User Login
 export const loginUser = createAsyncThunk(
   'auth/login',
-  async ({ email, password }, thunkAPI) => {
+  async ({ identifier, password }, thunkAPI) => {
     try {
-      return await authService.login(email, password);
+      return await authService.login(identifier, password);
     } catch (error) {
-      const message =
-        (error.response && error.response.data) ||
-        error.message ||
-        'Invalid email or password.';
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(extractErrorMessage(error, 'Invalid credentials.'));
     }
   }
 );
@@ -107,8 +114,14 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.pendingUserId = action.payload.userId;
-        state.pendingEmail = action.payload.email;
-        state.otpStep = 'email'; // move to email OTP step
+        // set pendingEmail or pendingPhone based on what they registered with
+        if (action.payload.identifierType === 'email') {
+           state.pendingEmail = action.payload.identifier;
+           state.otpStep = 'email';
+        } else {
+           state.pendingPhone = action.payload.identifier;
+           state.otpStep = 'phone';
+        }
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;

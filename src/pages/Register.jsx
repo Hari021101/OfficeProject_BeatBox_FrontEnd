@@ -72,11 +72,10 @@ function OtpInput({ onComplete }) {
 }
 
 // ─── Step indicator ───────────────────────────────────────────────────────────
-function StepDots({ step }) {
+function StepDots({ step, identifierType }) {
   const steps = [
     { id: 1, label: 'Details' },
-    { id: 2, label: 'Email OTP' },
-    { id: 3, label: 'Phone OTP' },
+    { id: 2, label: identifierType === 'phone' ? 'Phone OTP' : 'Email OTP' },
   ]
   return (
     <div className="d-flex align-items-center justify-content-center gap-2 mb-4">
@@ -110,19 +109,21 @@ function StepDots({ step }) {
 export default function Register() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { isLoading, isError, message, otpStep, pendingUserId, pendingEmail } = useSelector(s => s.auth)
+  const { isLoading, isError, message, otpStep, pendingUserId, pendingEmail, pendingPhone } = useSelector(s => s.auth)
 
   const [showPwd, setShowPwd] = useState(false)
   const [showConfirmPwd, setShowConfirmPwd] = useState(false)
-  const [formData, setFormData] = useState({ fullName: '', email: '', phoneNumber: '', password: '', confirmPassword: '' })
+  
+  const [registerMode, setRegisterMode] = useState('email') // 'email' | 'phone'
+  const [formData, setFormData] = useState({ fullName: '', identifier: '', password: '', confirmPassword: '' })
+  
   const [otpLoading, setOtpLoading] = useState(false)
   const [resendTimer, setResendTimer] = useState(0)
-  const [step, setStep] = useState(1) // 1=form, 2=email OTP, 3=phone OTP
+  const [step, setStep] = useState(1) // 1=form, 2=OTP
 
   // Sync step with redux otpStep
   useEffect(() => {
-    if (otpStep === 'email') setStep(2)
-    if (otpStep === 'phone') setStep(3)
+    if (otpStep === 'email' || otpStep === 'phone') setStep(2)
   }, [otpStep])
 
   // Error toast
@@ -140,6 +141,11 @@ export default function Register() {
     return () => clearTimeout(t)
   }, [resendTimer])
 
+  const handleModeSwitch = (mode) => {
+    setRegisterMode(mode)
+    setFormData(prev => ({ ...prev, identifier: '' }))
+  }
+
   const handleChange = e => setFormData({ ...formData, [e.target.name]: e.target.value })
 
   // ── Step 1: Submit registration form ─────────────────────────────────────
@@ -151,35 +157,23 @@ export default function Register() {
     }
     dispatch(registerUser({
       fullName: formData.fullName,
-      email: formData.email,
+      identifier: formData.identifier,
       password: formData.password,
-      phoneNumber: formData.phoneNumber,
     }))
     setResendTimer(30)
   }
 
-  // ── Step 2: Verify email OTP ──────────────────────────────────────────────
-  const handleEmailOtp = async (code) => {
+  // ── Step 2: Verify OTP → get JWT ───────────────────────────────────
+  const handleOtp = async (code) => {
     try {
       setOtpLoading(true)
-      await otpService.verifyEmailOtp(pendingUserId, code)
-      toast.success('Email verified! Now verify your phone number.')
-      // Send phone OTP
-      await otpService.sendPhoneOtp(pendingUserId, formData.phoneNumber)
-      dispatch(setOtpStep('phone'))
-      setResendTimer(30)
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Invalid OTP. Please try again.')
-    } finally {
-      setOtpLoading(false)
-    }
-  }
-
-  // ── Step 3: Verify phone OTP → get JWT ───────────────────────────────────
-  const handlePhoneOtp = async (code) => {
-    try {
-      setOtpLoading(true)
-      const data = await otpService.verifyPhoneOtp(pendingUserId, code)
+      let data;
+      if (otpStep === 'email') {
+        data = await otpService.verifyEmailOtp(pendingUserId, code)
+      } else {
+        data = await otpService.verifyPhoneOtp(pendingUserId, code)
+      }
+      
       // Store JWT and set auth state
       dispatch(setAuthFromOtp({ fullName: data.fullName, email: data.email, token: data.token }))
       toast.success('🎉 Account verified! Welcome to BeatBox.')
@@ -195,11 +189,11 @@ export default function Register() {
   const handleResend = async () => {
     if (resendTimer > 0) return
     try {
-      if (step === 2) {
+      if (otpStep === 'email') {
         await otpService.sendEmailOtp(pendingUserId)
         toast.success('Email OTP resent!')
       } else {
-        await otpService.sendPhoneOtp(pendingUserId, formData.phoneNumber)
+        await otpService.sendPhoneOtp(pendingUserId, pendingPhone)
         toast.success('Phone OTP resent!')
       }
       setResendTimer(30)
@@ -250,7 +244,7 @@ export default function Register() {
             className="p-4 p-md-5 w-100" style={{ maxWidth: '480px', zIndex: 1 }}
           >
             {/* Step dots */}
-            <StepDots step={step} />
+            <StepDots step={step} identifierType={otpStep || registerMode} />
 
             <AnimatePresence mode="wait">
 
@@ -264,6 +258,39 @@ export default function Register() {
                     <p style={{ fontSize: '1rem', color: 'var(--bb-subtitle-color)' }}>Sign up to start your journey with BeatBox.</p>
                   </div>
 
+                  {/* ── Email / Phone Toggle ───────────────────────────────────── */}
+                  <div
+                    className="d-none rounded-3 p-1 mb-4"
+                    style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}
+                  >
+                    {[
+                      { id: 'email', label: 'Email', Icon: Mail },
+                      { id: 'phone', label: 'Phone', Icon: Phone },
+                    ].map(({ id, label, Icon }) => (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => handleModeSwitch(id)}
+                        className="btn flex-grow-1 d-flex align-items-center justify-content-center gap-2 fw-bold"
+                        style={{
+                          borderRadius: 8,
+                          padding: '10px 0',
+                          fontSize: '0.9rem',
+                          transition: 'all 0.25s ease',
+                          background: registerMode === id
+                            ? 'linear-gradient(135deg, var(--bb-primary), var(--bb-accent))'
+                            : 'transparent',
+                          color: registerMode === id ? '#fff' : 'var(--bb-muted)',
+                          border: 'none',
+                          boxShadow: registerMode === id ? '0 4px 20px rgba(0,243,255,0.25)' : 'none',
+                        }}
+                      >
+                        <Icon size={16} />
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+
                   <form onSubmit={handleSubmit}>
                     {/* Full Name */}
                     <div className="mb-3 input-group-custom position-relative">
@@ -271,24 +298,39 @@ export default function Register() {
                       <input type="text" name="fullName" className="form-control bb-input w-100"
                         placeholder="Full Name" value={formData.fullName} onChange={handleChange} required />
                     </div>
-                    {/* Email */}
-                    <div className="mb-3 input-group-custom position-relative">
-                      <Mail size={20} className="icon position-absolute top-50 translate-middle-y" style={{ left: '18px' }} />
-                      <input type="email" name="email" className="form-control bb-input w-100"
-                        placeholder="Email address" value={formData.email} onChange={handleChange} required />
-                    </div>
-                    {/* Phone */}
-                    <div className="mb-3 input-group-custom position-relative">
-                      <Phone size={20} className="icon position-absolute top-50 translate-middle-y" style={{ left: '18px' }} />
-                      <input type="tel" name="phoneNumber" className="form-control bb-input w-100"
-                        placeholder="Phone Number (e.g. 9876543210)" value={formData.phoneNumber}
-                        onChange={handleChange} required maxLength={15} />
-                    </div>
+                    
+                    {/* Identifier (Email or Phone) */}
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={registerMode}
+                        initial={{ opacity: 0, x: registerMode === 'email' ? -20 : 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: registerMode === 'email' ? 20 : -20 }}
+                        transition={{ duration: 0.2 }}
+                        className="mb-3 input-group-custom position-relative"
+                      >
+                        {registerMode === 'email'
+                          ? <Mail size={20} className="icon position-absolute top-50 translate-middle-y" style={{ left: '18px' }} />
+                          : <Phone size={20} className="icon position-absolute top-50 translate-middle-y" style={{ left: '18px' }} />
+                        }
+                        <input
+                          type={registerMode === 'email' ? 'email' : 'tel'}
+                          name="identifier"
+                          className="form-control bb-input w-100"
+                          placeholder={registerMode === 'email' ? 'Email address' : 'Phone number (e.g. 9876543210)'}
+                          value={formData.identifier}
+                          onChange={handleChange}
+                          required
+                          maxLength={registerMode === 'phone' ? 15 : undefined}
+                        />
+                      </motion.div>
+                    </AnimatePresence>
+
                     {/* Password */}
                     <div className="mb-3 input-group-custom position-relative">
                       <Lock size={20} className="icon position-absolute top-50 translate-middle-y" style={{ left: '18px' }} />
                       <input type={showPwd ? 'text' : 'password'} name="password" className="form-control bb-input w-100"
-                        placeholder="Password" value={formData.password} onChange={handleChange} required />
+                        placeholder="Password" value={formData.password} onChange={handleChange} required minLength={6} />
                       <button type="button" className="btn icon position-absolute top-50 translate-middle-y end-0 border-0 px-3" onClick={() => setShowPwd(!showPwd)}>
                         {showPwd ? <EyeOff size={20} /> : <Eye size={20} />}
                       </button>
@@ -297,7 +339,7 @@ export default function Register() {
                     <div className="mb-4 input-group-custom position-relative">
                       <Lock size={20} className="icon position-absolute top-50 translate-middle-y" style={{ left: '18px' }} />
                       <input type={showConfirmPwd ? 'text' : 'password'} name="confirmPassword" className="form-control bb-input w-100"
-                        placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} required />
+                        placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} required minLength={6} />
                       <button type="button" className="btn icon position-absolute top-50 translate-middle-y end-0 border-0 px-3" onClick={() => setShowConfirmPwd(!showConfirmPwd)}>
                         {showConfirmPwd ? <EyeOff size={20} /> : <Eye size={20} />}
                       </button>
@@ -321,18 +363,25 @@ export default function Register() {
                 </motion.div>
               )}
 
-              {/* ── STEP 2: Email OTP ─────────────────────────────────────────── */}
+              {/* ── STEP 2: OTP (Email or Phone) ─────────────────────────────────────────── */}
               {step === 2 && (
                 <motion.div key="step2" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }}>
                   <div className="text-center mb-4">
                     <div className="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3"
-                      style={{ width: 72, height: 72, background: 'linear-gradient(135deg,rgba(0,243,255,0.15),rgba(168,32,255,0.1))', border: '2px solid rgba(0,243,255,0.3)' }}>
-                      <Mail size={32} style={{ color: 'var(--bb-accent)' }} />
+                      style={{ 
+                        width: 72, height: 72, 
+                        background: otpStep === 'email' ? 'linear-gradient(135deg,rgba(0,243,255,0.15),rgba(168,32,255,0.1))' : 'linear-gradient(135deg,rgba(57,255,20,0.12),rgba(0,243,255,0.08))',
+                        border: `2px solid ${otpStep === 'email' ? 'rgba(0,243,255,0.3)' : 'rgba(57,255,20,0.3)'}` 
+                      }}>
+                      {otpStep === 'email' ? <Mail size={32} style={{ color: 'var(--bb-accent)' }} /> : <Phone size={32} style={{ color: '#39ff14' }} />}
                     </div>
-                    <h3 className="fw-black text-theme-title mb-2">Verify <span className="gradient-text">Email</span></h3>
+                    
+                    <h3 className="fw-black text-theme-title mb-2">Verify <span className="gradient-text">{otpStep === 'email' ? 'Email' : 'Phone'}</span></h3>
                     <p className="text-theme-muted mb-0" style={{ fontSize: '0.9rem' }}>
                       We sent a 6-digit code to<br />
-                      <strong style={{ color: 'var(--bb-accent)' }}>{pendingEmail || formData.email}</strong>
+                      <strong style={{ color: otpStep === 'email' ? 'var(--bb-accent)' : '#39ff14' }}>
+                        {otpStep === 'email' ? pendingEmail : pendingPhone}
+                      </strong>
                     </p>
                     <p className="text-theme-muted mt-1" style={{ fontSize: '0.75rem' }}>
                       💡 Check the backend console if DevMode is on
@@ -340,56 +389,14 @@ export default function Register() {
                   </div>
 
                   {otpLoading
-                    ? <div className="text-center py-3"><span className="spinner-border" style={{ color: 'var(--bb-accent)' }} /></div>
-                    : <OtpInput onComplete={handleEmailOtp} key={`email-otp-${step}`} />
+                    ? <div className="text-center py-3"><span className="spinner-border" style={{ color: otpStep === 'email' ? 'var(--bb-accent)' : '#39ff14' }} /></div>
+                    : <OtpInput onComplete={handleOtp} key={`otp-${step}`} />
                   }
 
                   <div className="text-center mt-3">
                     <button onClick={handleResend} disabled={resendTimer > 0}
                       className="btn border-0 p-0 d-flex align-items-center gap-1 mx-auto"
-                      style={{ color: resendTimer > 0 ? 'var(--bb-muted)' : 'var(--bb-accent)', fontSize: '0.85rem', background: 'transparent' }}>
-                      <RefreshCw size={14} />
-                      {resendTimer > 0 ? `Resend in ${resendTimer}s` : 'Resend Code'}
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* ── STEP 3: Phone OTP ─────────────────────────────────────────── */}
-              {step === 3 && (
-                <motion.div key="step3" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }}>
-                  <div className="text-center mb-4">
-                    <div className="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3"
-                      style={{ width: 72, height: 72, background: 'linear-gradient(135deg,rgba(57,255,20,0.12),rgba(0,243,255,0.08))', border: '2px solid rgba(57,255,20,0.3)' }}>
-                      <Phone size={32} style={{ color: '#39ff14' }} />
-                    </div>
-                    <h3 className="fw-black text-theme-title mb-2">Verify <span className="gradient-text">Phone</span></h3>
-                    <p className="text-theme-muted mb-0" style={{ fontSize: '0.9rem' }}>
-                      We sent a 6-digit code to<br />
-                      <strong style={{ color: '#39ff14' }}>{formData.phoneNumber}</strong>
-                    </p>
-                    <p className="text-theme-muted mt-1" style={{ fontSize: '0.75rem' }}>
-                      💡 Check the backend console (phone OTP is in DevMode)
-                    </p>
-                  </div>
-
-                  <div className="p-3 rounded-3 mb-3 d-flex align-items-center gap-2"
-                    style={{ background: 'rgba(57,255,20,0.06)', border: '1px solid rgba(57,255,20,0.2)' }}>
-                    <ShieldCheck size={18} style={{ color: '#39ff14', flexShrink: 0 }} />
-                    <p className="mb-0 text-theme-muted" style={{ fontSize: '0.78rem' }}>
-                      Email verified ✓ &nbsp;— One more step to secure your account!
-                    </p>
-                  </div>
-
-                  {otpLoading
-                    ? <div className="text-center py-3"><span className="spinner-border" style={{ color: '#39ff14' }} /></div>
-                    : <OtpInput onComplete={handlePhoneOtp} key={`phone-otp-${step}`} />
-                  }
-
-                  <div className="text-center mt-3">
-                    <button onClick={handleResend} disabled={resendTimer > 0}
-                      className="btn border-0 p-0 d-flex align-items-center gap-1 mx-auto"
-                      style={{ color: resendTimer > 0 ? 'var(--bb-muted)' : '#39ff14', fontSize: '0.85rem', background: 'transparent' }}>
+                      style={{ color: resendTimer > 0 ? 'var(--bb-muted)' : (otpStep === 'email' ? 'var(--bb-accent)' : '#39ff14'), fontSize: '0.85rem', background: 'transparent' }}>
                       <RefreshCw size={14} />
                       {resendTimer > 0 ? `Resend in ${resendTimer}s` : 'Resend Code'}
                     </button>

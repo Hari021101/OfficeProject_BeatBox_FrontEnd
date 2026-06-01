@@ -13,18 +13,28 @@ import OrderDetail from '../pages/OrderDetail'
 import Layout from '../components/layout/Layout'
 import Settings from '../pages/Settings'
 import Wishlist from '../pages/Wishlist'
-import AdminOrders from '../pages/admin/AdminOrders'
 
-import { useDispatch } from 'react-redux'
+// Admin Pages
+import AdminLayout from '../components/layout/AdminLayout'
+import AdminDashboard from '../pages/admin/Dashboard'
+import AdminProducts from '../pages/admin/Products'
+import AdminOrders from '../pages/admin/Orders'
+import AdminInventory from '../pages/admin/Inventory'
+import AdminUsers from '../pages/admin/Users'
+
+import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { fetchCart } from '../redux/cartSlice'
 
 export default function AppRouter() {
   const dispatch = useDispatch()
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
 
   useEffect(() => {
-    dispatch(fetchCart())
-  }, [dispatch])
+    if (isAuthenticated) {
+      dispatch(fetchCart())
+    }
+  }, [dispatch, isAuthenticated])
 
   return (
     <HashRouter>
@@ -56,7 +66,16 @@ export default function AppRouter() {
         <Route path="/orders/:id" element={<Layout><OrderDetail /></Layout>} />
         <Route path="/settings" element={<Layout><Settings /></Layout>} />
         <Route path="/wishlist" element={<Layout><Wishlist /></Layout>} />
-        <Route path="/admin/orders" element={<Layout><AdminOrders /></Layout>} />
+        
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="inventory" element={<AdminInventory />} />
+          <Route path="users" element={<AdminUsers />} />
+        </Route>
       </Routes>
     </HashRouter>
   )

@@ -27,6 +27,8 @@ import heroSpeaker from '../assets/hero_speaker.png'
 import gamingHeadset from '../assets/gaming_headset.png'
 import wirelessNeckband from '../assets/wireless_neckband.png'
 import smartEarbuds from '../assets/smart_earbuds.png'
+import heroSmartwatch from '../assets/hero_smartwatch.png'
+import heroWired from '../assets/hero_wired.png'
 import logo from '../assets/beatbox_logo.png'
 
 export default function Home() {
@@ -36,6 +38,7 @@ export default function Home() {
     {
       id: 1,
       title: "BEATBOX ROCKERZ 550",
+      searchKeyword: "rockerz",
       subtitle: "SILENCE THE NOISE, UNLEASH THE BASS",
       description: "Experience true audio purity with high-fidelity 40mm dynamic drivers, hybrid Active Noise Cancellation (ANC), and up to 60 hours of massive playback.",
       price: "₹1,999",
@@ -48,6 +51,7 @@ export default function Home() {
     {
       id: 2,
       title: "AIRDOPES CYBER 141",
+      searchKeyword: "airdopes",
       subtitle: "NEXT-GEN TWS FOR CYBER GAMERS",
       description: "Equipped with 13mm immersive drivers, BEAST™ mode for 40ms low latency gaming, quad mics with ENx™ technology for clear calls, and a glowing neon charging case.",
       price: "₹1,299",
@@ -60,6 +64,7 @@ export default function Home() {
     {
       id: 3,
       title: "STONE BEAT BEAST 1200",
+      searchKeyword: "stone beat",
       subtitle: "RUGGED OUTDOOR PARTY SOUND",
       description: "IPX7 waterproof portable bluetooth speaker. Features dual passive radiators, 14W signature high-bass sound, custom RGB light ring, and active water splash resistance.",
       price: "₹2,499",
@@ -72,6 +77,7 @@ export default function Home() {
     {
       id: 4,
       title: "IMMORTAL CYBER PRO",
+      searchKeyword: "immortal",
       subtitle: "PRO GAMING VIRTUAL 7.1 SURROUND",
       description: "Level up your gaming with dedicated RGB lights, 50mm dynamic drivers, a professional boom mic, and low-latency cybernetic soundscapes built for esports pros.",
       price: "₹1,599",
@@ -84,6 +90,7 @@ export default function Home() {
     {
       id: 5,
       title: "TRIP ATHLETIC NEON",
+      searchKeyword: "trip",
       subtitle: "PREMIUM SPORTY COLLAR EARPHONES",
       description: "Featherlight flexible silicon collar neckband. Features magnetic metal earbud tips, dual EQ modes for heavy bass, and up to 30 hours of continuous athletic playback.",
       price: "₹999",
@@ -95,12 +102,13 @@ export default function Home() {
     },
     {
       id: 6,
-      title: "BEATBOX SMART CAPSULE",
-      subtitle: "ANC TWS WITH OLED TOUCHSCREEN",
-      description: "Take control of your audio experience with a glowing smart touchscreen built directly into the charging case. Adjust equalizers, monitor battery levels, and toggle hybrid ANC with a simple swipe.",
-      price: "₹2,999",
-      oldPrice: "₹9,990",
-      discount: "70% OFF",
+      title: "CYBERWATCH X1",
+      searchKeyword: "cyberwatch",
+      subtitle: "FUTURISTIC FITNESS TRACKING",
+      description: "Premium futuristic smartwatch with a glowing neon interface, health tracking, and 7-day battery life.",
+      price: "₹3,499",
+      oldPrice: "₹8,990",
+      discount: "61% OFF",
       image: smartEarbuds,
       color: "rgba(255, 0, 243, 0.35)",
       badge: "Limited Edition"
@@ -145,7 +153,7 @@ export default function Home() {
   }, [productStatus, dispatch])
 
   const topProducts = allProducts.length > 0 ? allProducts.slice(0, 4) : []
-  const displayProducts = allProducts.length > 0 ? allProducts.filter(prod => activeFilter === 'all' || (prod.category && prod.category.includes(activeFilter))).slice(0, 4) : []
+  const displayProducts = allProducts.length > 0 ? allProducts.filter(prod => activeFilter === 'all' || (prod.category && prod.category.toLowerCase().includes(activeFilter.toLowerCase()))).slice(0, 4) : []
 
 
 
@@ -314,7 +322,7 @@ export default function Home() {
         <div className="d-flex gap-3">
           <button 
             onClick={() => {
-              const realProduct = allProducts.find(p => p.name === slides[currentSlide].title) || allProducts[0];
+              const realProduct = allProducts.find(p => p.name.toLowerCase().includes(slides[currentSlide].searchKeyword)) || allProducts[0];
               if (realProduct) {
                 navigate(`/products/${realProduct.id}`);
               } else {
@@ -332,7 +340,7 @@ export default function Home() {
   )
 
   const renderHeroImage = () => {
-    const realProduct = allProducts.find(p => p.name === slides[currentSlide].title) || allProducts[0];
+    const realProduct = allProducts.find(p => p.name.toLowerCase().includes(slides[currentSlide].searchKeyword)) || allProducts[0];
     
     return (
       <div 
@@ -358,7 +366,7 @@ export default function Home() {
         style={{ 
           top: '10px', 
           right: '20px', 
-          background: 'rgba(6, 11, 25, 0.65)', 
+          background: 'var(--bb-surface)', 
           backdropFilter: 'blur(8px)',
           border: '1px solid var(--bb-accent)',
           boxShadow: '0 8px 25px var(--bb-accent-glow)',
@@ -378,7 +386,9 @@ export default function Home() {
         { id: 'headphones', name: 'Over-Ear Headphones', shortName: 'Headphones', image: heroHeadphones, badge: 'PRO' },
         { id: 'speakers', name: 'Bluetooth Speakers', shortName: 'Speakers', image: heroSpeaker, badge: 'LOUD' },
         { id: 'neckbands', name: 'Neckbands', shortName: 'Neckbands', image: wirelessNeckband, badge: 'DAILY' },
-        { id: 'gaming', name: 'Gaming Headsets', shortName: 'Gaming', image: gamingHeadset, badge: 'CYBER' }
+        { id: 'gaming', name: 'Gaming Headsets', shortName: 'Gaming', image: gamingHeadset, badge: 'CYBER' },
+        { id: 'smartwatches', name: 'Smart Watches', shortName: 'Watches', image: heroSmartwatch, badge: 'NEW' },
+        { id: 'wired', name: 'Wired Headphones', shortName: 'Wired', image: heroWired, badge: 'PURE' }
       ].map((cat, idx) => (
         <div key={idx} className="col">
           <button 
@@ -439,7 +449,7 @@ export default function Home() {
           <div 
             className="position-absolute top-0 end-0 m-3 z-3 d-flex align-items-center gap-1.5 px-2 py-1 rounded-pill"
             style={{ 
-              background: 'rgba(6, 11, 25, 0.65)', 
+              background: 'var(--bb-surface)', 
               backdropFilter: 'blur(8px)',
               border: '1px solid rgba(0, 243, 255, 0.25)',
               boxShadow: '0 4px 12px rgba(0, 243, 255, 0.1)'
@@ -555,8 +565,8 @@ export default function Home() {
         style={{ 
           top: '0px', 
           right: '15px', 
-          background: 'rgba(6, 11, 25, 0.75)', 
-          backdropFilter: 'blur(8px)',
+          background: 'var(--bb-surface)', 
+          backdropFilter: 'blur(10px)',
           border: '1px solid var(--bb-primary)',
           boxShadow: '0 6px 20px var(--bb-primary-glow)',
           zIndex: 10
@@ -781,7 +791,9 @@ export default function Home() {
                 { id: 'earbuds', label: '🎵 Wireless Earbuds' },
                 { id: 'headphones', label: '🎧 Headphones' },
                 { id: 'speakers', label: '🔊 Speakers' },
-                { id: 'gaming', label: '🎮 Gaming Gear' }
+                { id: 'gaming', label: '🎮 Gaming Gear' },
+                { id: 'watches', label: '⌚ Smart Watches' },
+                { id: 'wired', label: '🎧 Wired' }
               ].map((pill) => {
                 const isActive = activeFilter === pill.id;
                 return (

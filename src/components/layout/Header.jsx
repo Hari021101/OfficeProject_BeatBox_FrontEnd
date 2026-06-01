@@ -16,7 +16,9 @@ import {
   Speaker,
   Gamepad2,
   Clock,
-  Package
+  Package,
+  Watch,
+  Link2
 } from 'lucide-react'
 import logo from '../../assets/beatbox_logo.png'
 import { logout } from '../../redux/authSlice'
@@ -100,11 +102,13 @@ export default function Header() {
   }
 
   const categories = [
-    { name: 'Wireless Earbuds', icon: <Sparkles size={16} className="text-info me-2" />, href: '#earbuds' },
-    { name: 'Over-Ear Headphones', icon: <Headphones size={16} className="text-primary me-2" />, href: '#headphones' },
-    { name: 'Wireless Neckbands', icon: <Clock size={16} className="text-warning me-2" />, href: '#neckbands' },
-    { name: 'Bluetooth Speakers', icon: <Speaker size={16} className="text-success me-2" />, href: '#speakers' },
-    { name: 'Gaming Headsets', icon: <Gamepad2 size={16} className="text-danger me-2" />, href: '#gaming' },
+    { name: 'Wireless Earbuds', icon: <Sparkles size={16} className="text-info me-2" />, href: '/products?q=earbuds' },
+    { name: 'Over-Ear Headphones', icon: <Headphones size={16} className="text-primary me-2" />, href: '/products?q=headphones' },
+    { name: 'Wireless Neckbands', icon: <Clock size={16} className="text-warning me-2" />, href: '/products?q=neckbands' },
+    { name: 'Bluetooth Speakers', icon: <Speaker size={16} className="text-success me-2" />, href: '/products?q=speakers' },
+    { name: 'Gaming Headsets', icon: <Gamepad2 size={16} className="text-danger me-2" />, href: '/products?q=gaming' },
+    { name: 'Smart Watches', icon: <Watch size={16} className="text-secondary me-2" />, href: '/products?q=watch' },
+    { name: 'Wired Headphones', icon: <Link2 size={16} className="text-muted me-2" />, href: '/products?q=wired' },
   ]
 
   return (
@@ -367,14 +371,14 @@ export default function Header() {
                     >
                       {categories.map((cat, idx) => (
                         <li key={idx} className="mb-1">
-                          <a
-                            href={cat.href}
+                          <Link
+                            to={cat.href}
                             className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3"
                             onClick={() => setShowCategories(false)}
                           >
                             {cat.icon}
                             {cat.name}
-                          </a>
+                          </Link>
                         </li>
                       ))}
                     </motion.ul>
@@ -535,7 +539,7 @@ export default function Header() {
                               lineHeight: '1'
                             }}
                           >
-                            {user.fullName.split(' ')[0]}
+                            {user.fullName?.split(' ')[0] || 'User'}
                           </span>
 
                           <span

@@ -242,7 +242,7 @@ export default function ProductDetail() {
       <div className="bg-glow-orb" style={{ width: 400, height: 400, background: 'var(--bb-primary-glow)', top: '0%', left: '-5%', filter: 'blur(130px)' }} />
       <div className="bg-glow-orb" style={{ width: 350, height: 350, background: 'var(--bb-accent-glow)', top: '10%', right: '-5%', filter: 'blur(130px)', animationDelay: '2s' }} />
 
-      <div className="container-fluid px-3 px-lg-5 py-4">
+      <div className="container px-3 px-lg-5 py-4">
         {/* Breadcrumb */}
         <nav className="mb-4">
           <ol className="breadcrumb mb-0" style={{ fontSize: '0.85rem' }}>
@@ -284,7 +284,7 @@ export default function ProductDetail() {
               </div>
 
               {/* Brand seal */}
-              <div className="position-absolute bottom-0 start-0 m-3 d-flex align-items-center gap-2 px-3 py-1 rounded-pill z-10" style={{ background: 'rgba(6,11,25,0.8)', backdropFilter: 'blur(8px)', border: '1px solid rgba(0,243,255,0.25)' }}>
+              <div className="position-absolute bottom-0 start-0 m-3 d-flex align-items-center gap-2 px-3 py-1 rounded-pill z-10" style={{ background: 'var(--bb-surface)', backdropFilter: 'blur(8px)', border: '1px solid rgba(0,243,255,0.25)' }}>
                 <img src={logo} alt="BeatBox" style={{ width: 14, height: 14 }} />
                 <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#fff', letterSpacing: '0.8px' }}>BEATBOX ORIGINAL</span>
               </div>
@@ -427,9 +427,9 @@ export default function ProductDetail() {
             <div className="d-flex align-items-center gap-4 mb-4">
               <span className="text-theme-muted small fw-semibold">QUANTITY</span>
               <div className="d-flex align-items-center rounded-3" style={{ border: '1px solid var(--bb-border)', background: 'var(--bb-surface)' }}>
-                <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="btn border-0 px-3 py-2" style={{ color: 'var(--bb-muted)', background: 'transparent' }}><Minus size={16} /></button>
+                <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))} className="btn border-0 px-3 py-2" style={{ color: 'var(--bb-muted)', background: 'transparent' }}><Minus size={16} /></button>
                 <span className="fw-black text-theme-title px-4" style={{ fontSize: '1.1rem', minWidth: 50, textAlign: 'center' }}>{quantity}</span>
-                <button onClick={() => setQuantity(q => q + 1)} className="btn border-0 px-3 py-2" style={{ color: 'var(--bb-accent)', background: 'transparent' }}><Plus size={16} /></button>
+                <button type="button" onClick={() => setQuantity(q => q + 1)} className="btn border-0 px-3 py-2" style={{ color: 'var(--bb-accent)', background: 'transparent' }}><Plus size={16} /></button>
               </div>
             </div>
 
@@ -794,41 +794,6 @@ export default function ProductDetail() {
         )}
       </div>
 
-      {/* ── STICKY ADD TO CART BAR ─── */}
-      <AnimatePresence>
-        {showStickyCart && (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            className="position-fixed bottom-0 start-0 w-100 py-3 px-3 px-md-5 d-flex align-items-center justify-content-between"
-            style={{ background: 'rgba(6, 11, 25, 0.95)', backdropFilter: 'blur(10px)', borderTop: '1px solid var(--bb-border)', boxShadow: '0 -10px 40px rgba(0,0,0,0.6)', zIndex: 1050 }}
-          >
-            <div className="d-flex align-items-center gap-3">
-              <img src={img} alt={product.name} style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 8, background: 'var(--bb-surface)' }} />
-              <div className="d-none d-sm-block">
-                <p className="text-theme-title fw-bold mb-0 text-truncate" style={{ maxWidth: 250 }}>{product.name}</p>
-                <p className="text-theme-muted small mb-0 fw-semibold">₹{product.price.toLocaleString('en-IN')}</p>
-              </div>
-            </div>
-            <div className="d-flex align-items-center gap-3">
-              <div className="d-none d-md-flex align-items-center rounded-3 px-2 py-1" style={{ border: '1px solid var(--bb-border)', background: 'var(--bb-surface)' }}>
-                <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="btn border-0 p-1 d-flex align-items-center" style={{ color: 'var(--bb-muted)' }}><Minus size={14} /></button>
-                <span className="fw-black text-theme-title px-3" style={{ fontSize: '0.9rem' }}>{quantity}</span>
-                <button onClick={() => setQuantity(q => q + 1)} className="btn border-0 p-1 d-flex align-items-center" style={{ color: 'var(--bb-accent)' }}><Plus size={14} /></button>
-              </div>
-              <button
-                onClick={handleAddToCart}
-                disabled={product.stockQuantity <= 0 || adding}
-                className="btn btn-glow fw-bold px-4 py-2"
-                style={{ borderRadius: 8 }}
-              >
-                {adding ? 'Adding...' : `Add to Cart - ₹${(salePrice * quantity).toLocaleString('en-IN')}`}
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   )
 }

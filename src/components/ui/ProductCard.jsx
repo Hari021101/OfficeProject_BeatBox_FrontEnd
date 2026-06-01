@@ -91,7 +91,7 @@ export default function ProductCard({ product, index = 0 }) {
             <button
               onClick={handleWishlist}
               className="btn p-0 border-0 d-flex align-items-center justify-content-center rounded-circle"
-              style={{ width: 32, height: 32, background: 'rgba(6,11,25,0.7)', backdropFilter: 'blur(8px)', border: '1px solid var(--bb-border)', color: isWishlisted ? '#ff4d7d' : 'var(--bb-muted)', transition: 'all 0.25s' }}
+              style={{ width: 32, height: 32, background: 'var(--bb-surface)', backdropFilter: 'blur(8px)', border: '1px solid var(--bb-border)', color: isWishlisted ? '#ff4d7d' : 'var(--bb-muted)', transition: 'all 0.25s' }}
               aria-label="Toggle wishlist"
             >
               <Heart size={14} fill={isWishlisted ? '#ff4d7d' : 'none'} stroke={isWishlisted ? '#ff4d7d' : 'currentColor'} />
@@ -111,7 +111,7 @@ export default function ProductCard({ product, index = 0 }) {
             {/* Brand seal */}
             <div
               className="position-absolute bottom-0 start-0 m-2 d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
-              style={{ background: 'rgba(6,11,25,0.75)', backdropFilter: 'blur(8px)', border: '1px solid rgba(0,243,255,0.2)', zIndex: 5 }}
+              style={{ background: 'var(--bb-surface)', backdropFilter: 'blur(8px)', border: '1px solid var(--bb-border)', zIndex: 5 }}
             >
               <img src={logo} alt="BeatBox" style={{ width: 10, height: 10, objectFit: 'contain' }} />
               <span style={{ fontSize: '0.55rem', fontWeight: 800, color: '#fff', letterSpacing: '0.5px' }}>BEATBOX</span>
