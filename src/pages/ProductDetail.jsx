@@ -22,32 +22,32 @@ export default function ProductDetail() {
   //const productStatus = useSelector(selectProductStatus)
   //const product = allProducts.find(p => p.id.toString() === id)
   const [product, setProduct] = useState(null)
-const [loading, setLoading] = useState(true)
-const [selectedVariant, setSelectedVariant] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [selectedVariant, setSelectedVariant] = useState(null)
 
   // Use a fallback to local getRelatedProducts for now until we have related product logic in backend
   const related = product ? getRelatedProducts(product, 4) : []
-  
-//   useEffect(() => {
-//   if (productStatus === 'idle') {
-//     dispatch(fetchProducts())
-//   }
-// }, [productStatus, dispatch])
+
+  //   useEffect(() => {
+  //   if (productStatus === 'idle') {
+  //     dispatch(fetchProducts())
+  //   }
+  // }, [productStatus, dispatch])
 
   useEffect(() => {
-  const loadProduct = async () => {
-    try {
-      const data = await productService.getProductById(id)
-      setProduct(data)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
+    const loadProduct = async () => {
+      try {
+        const data = await productService.getProductById(id)
+        setProduct(data)
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setLoading(false)
+      }
     }
-  }
 
-  loadProduct()
-}, [id])
+    loadProduct()
+  }, [id])
 
   // useEffect(() => {
   //   if (productStatus === 'idle') {
@@ -55,10 +55,10 @@ const [selectedVariant, setSelectedVariant] = useState(null)
   //   }
   // }, [productStatus, dispatch])
   useEffect(() => {
-  if (product?.variants?.length > 0) {
-    setSelectedVariant(product.variants[0])
-  }
-}, [product])
+    if (product?.variants?.length > 0) {
+      setSelectedVariant(product.variants[0])
+    }
+  }, [product])
 
   // Scroll to top when product page loads or id changes
   useEffect(() => {
@@ -71,7 +71,7 @@ const [selectedVariant, setSelectedVariant] = useState(null)
   const [adding, setAdding] = useState(false)
   const [openFaq, setOpenFaq] = useState(null)
   const [activeTab, setActiveTab] = useState('specs')
-  
+
   // New feature states
   const [pincode, setPincode] = useState('')
   const [deliveryStatus, setDeliveryStatus] = useState(null)
@@ -97,14 +97,14 @@ const [selectedVariant, setSelectedVariant] = useState(null)
   }
 
   // Initialize selectedColor once product is loaded
-useEffect(() => {
-  if (product && !selectedColor) {
-    setSelectedColor({
-      name: product.color || 'Black',
-      code: '#000000'
-    })
-  }
-}, [product])
+  useEffect(() => {
+    if (product && !selectedColor) {
+      setSelectedColor({
+        name: product.color || 'Black',
+        code: '#000000'
+      })
+    }
+  }, [product])
 
   if (loading) {
     return (
@@ -129,36 +129,43 @@ useEffect(() => {
   }
 
   const submitReview = async () => {
-  try {
-    await productService.addReview(product.id, {
-      rating: Number(reviewRating),
-      comment: reviewText
-    })
+    try {
+      await productService.addReview(product.id, {
+        rating: Number(reviewRating),
+        comment: reviewText
+      })
 
-    toast.success('Review Added Successfully')
+      toast.success('Review Added Successfully')
 
-    const updated = await productService.getProductById(id)
-    setProduct(updated)
+      const updated = await productService.getProductById(id)
+      setProduct(updated)
 
-    setReviewText('')
-    setReviewRating(5)
-  } catch (error) {
-    toast.error('Failed to add review')
+      setReviewText('')
+      setReviewRating(5)
+    } catch (error) {
+      toast.error('Failed to add review')
+    }
   }
-}
 
- const img =
-  selectedVariant?.imageUrl ||
-  product.imageUrl
+  const img =
+    selectedVariant?.imageUrl ||
+    product.imageUrl
+  const originalPrice =
+    Math.max(product.price || 0,
+      product.discountPrice || 0)
+
+  const salePrice =
+    Math.min(product.price || 0,
+      product.discountPrice || 0)
+
   const savings =
-  (product.price || 0) -
-  (product.discountPrice || 0)
+    originalPrice - salePrice
 
   const handleAddToCart = () => {
     if (product.stockQuantity <= 0) return
     setAdding(true)
     dispatch(addToCart({
-      id: product.id, name: product.name, price: product.price,
+      id: product.id, name: product.name, price: salePrice,
       imageKey: product.imageKey, quantity: quantity,
       selectedColor: selectedColor?.name, selectedColorCode: selectedColor?.code,
       category: product.category,
@@ -172,7 +179,7 @@ useEffect(() => {
   const handleBuyNow = () => {
     if (product.stockQuantity <= 0) return
     dispatch(addToCart({
-      id: product.id, name: product.name, price: product.price,
+      id: product.id, name: product.name, price: salePrice,
       imageKey: product.imageKey, quantity: quantity,
       selectedColor: selectedColor?.name, selectedColorCode: selectedColor?.code,
       category: product.category,
@@ -181,9 +188,13 @@ useEffect(() => {
   }
 
   const discount =
-  Math.round(
-    ((product.price - product.discountPrice) / product.price) * 100
-  )
+    originalPrice > 0
+      ? Math.round(
+        ((originalPrice - salePrice) /
+          originalPrice) *
+        100
+      )
+      : 0
 
   const handleShare = async () => {
     try {
@@ -317,7 +328,7 @@ useEffect(() => {
             {/* Rating row */}
             <div className="d-flex align-items-center gap-3 mb-3">
               <div className="d-flex align-items-center gap-1">
-                {[1,2,3,4,5].map(s => (
+                {[1, 2, 3, 4, 5].map(s => (
                   <Star key={s} size={16} fill={s <= Math.round(product.averageRating) ? '#ffc700' : 'none'} stroke={s <= Math.round(product.averageRating) ? '#ffc700' : 'var(--bb-border)'} />
                 ))}
                 <span className="fw-bold ms-1" style={{ color: '#ffc700' }}>{Number(product.averageRating).toFixed(1)}</span>
@@ -335,47 +346,75 @@ useEffect(() => {
             </div>
 
             {/* Price block */}
-            <div className="p-4 rounded-3 mb-4" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', position: 'relative', overflow: 'hidden' }}>
-              <div className="position-absolute top-0 end-0 py-1 px-3" style={{ background: 'rgba(255,199,0,0.1)', borderBottomLeftRadius: 10 }}>
-                <span className="text-warning fw-bold small flex-shrink-0" style={{ fontSize: '0.7rem' }}>⚡ LIMITED TIME OFFER</span>
+            <div
+              className="p-4 rounded-3 mb-4"
+              style={{
+                background: 'var(--bb-surface)',
+                border: '1px solid var(--bb-border)'
+              }}
+            >
+              <div className="d-flex align-items-baseline gap-3 mb-1">
+
+                <span
+                  className="display-5 fw-black text-theme-title"
+                  style={{ letterSpacing: '-2px' }}
+                >
+                  ₹{salePrice.toLocaleString('en-IN')}
+                </span>
+
+                <span
+                  className="fs-4 text-decoration-line-through text-theme-muted"
+                >
+                  ₹{originalPrice.toLocaleString('en-IN')}
+                </span>
+
+                <span
+                  className="badge text-success fw-bold"
+                  style={{
+                    background: 'rgba(39,255,20,0.1)',
+                    border: '1px solid rgba(39,255,20,0.2)',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  {discount}% OFF
+                </span>
+
               </div>
-              <div className="d-flex align-items-baseline gap-3 mb-1 mt-2">
-                <span className="display-5 fw-black text-theme-title" style={{ letterSpacing: '-2px' }}>₹{product.price.toLocaleString('en-IN')}</span>
-                <span className="fs-4 text-decoration-line-through text-theme-muted">₹{product.oldPrice.toLocaleString('en-IN')}</span>
-                <span className="badge text-success fw-bold" style={{ background: 'rgba(39,255,20,0.1)', border: '1px solid rgba(39,255,20,0.2)', fontSize: '0.9rem' }}>{product.discount}% OFF</span>
-              </div>
-              <p className="text-success small fw-semibold mb-0">You save ₹{savings.toLocaleString('en-IN')} 🎉</p>
+
+              <p className="text-success small fw-semibold mb-0">
+                You save ₹{savings.toLocaleString('en-IN')} 🎉
+              </p>
             </div>
 
             {/* Color selection */}
-              <div className="mb-4">
-  <p className="text-theme-muted small fw-semibold mb-3">
-    COLOR —
-    <span className="text-theme-title ms-2">
-      {selectedVariant?.colorName}
-    </span>
-  </p>
+            <div className="mb-4">
+              <p className="text-theme-muted small fw-semibold mb-3">
+                COLOR —
+                <span className="text-theme-title ms-2">
+                  {selectedVariant?.colorName}
+                </span>
+              </p>
 
-  <div className="d-flex gap-3">
-    {product.variants?.map((variant, index) => (
-      <button
-        key={index}
-        onClick={() => setSelectedVariant(variant)}
-        style={{
-          width: 40,
-          height: 40,
-          borderRadius: '50%',
-          background: variant.colorCode,
-          border:
-            selectedVariant?.colorName === variant.colorName
-              ? '3px solid white'
-              : '1px solid gray',
-          cursor: 'pointer'
-        }}
-      />
-    ))}
-  </div>
-</div>
+              <div className="d-flex gap-3">
+                {product.variants?.map((variant, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedVariant(variant)}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: '50%',
+                      background: variant.colorCode,
+                      border:
+                        selectedVariant?.colorName === variant.colorName
+                          ? '3px solid white'
+                          : '1px solid gray',
+                      cursor: 'pointer'
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
 
             {/* Quantity */}
             <div className="d-flex align-items-center gap-4 mb-4">
@@ -440,13 +479,13 @@ useEffect(() => {
 
             {/* Delivery Check */}
             <div className="mt-4 p-4 rounded-3" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
-              <p className="text-theme-title fw-bold mb-3 small d-flex align-items-center gap-2"><Truck size={16} className="text-theme-muted"/> Check Delivery Estimate</p>
+              <p className="text-theme-title fw-bold mb-3 small d-flex align-items-center gap-2"><Truck size={16} className="text-theme-muted" /> Check Delivery Estimate</p>
               <div className="d-flex gap-2">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={pincode}
                   onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  placeholder="Enter 6-digit Pincode" 
+                  placeholder="Enter 6-digit Pincode"
                   className="form-control flex-grow-1"
                   style={{ background: 'var(--bb-bg-navy)', border: '1px solid var(--bb-border)', color: '#fff', borderRadius: 8, padding: '10px 16px' }}
                 />
@@ -470,19 +509,19 @@ useEffect(() => {
               <span className="badge px-3 py-1 fw-bold mb-2 text-white" style={{ background: 'linear-gradient(135deg,var(--bb-primary),var(--bb-accent))', borderRadius: 50 }}>EXPERIENCE TRUE AUDIO</span>
               <h2 className="display-5 fw-black text-theme-title">Designed for <span className="gradient-text">Perfection</span></h2>
             </div>
-            
+
             <div className="row g-4">
               {product.features.map((feature, idx) => {
                 const FeatureIcon = IconMap[feature.iconName] || Zap
                 return (
                   <div key={feature.id} className="col-12 col-md-6">
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: idx * 0.1 }}
                       className="p-5 rounded-4 h-100 d-flex flex-column justify-content-end position-relative overflow-hidden"
-                      style={{ 
+                      style={{
                         background: feature.gradient,
                         minHeight: '300px',
                         border: '1px solid rgba(255,255,255,0.1)',
@@ -491,10 +530,10 @@ useEffect(() => {
                     >
                       {/* Large decorative icon in background */}
                       <FeatureIcon size={180} className="position-absolute" style={{ top: '-20px', right: '-20px', opacity: 0.1, color: '#fff' }} />
-                      
+
                       <div className="position-relative z-10 text-white">
                         <div className="mb-3 d-inline-flex align-items-center justify-content-center bg-white rounded-circle" style={{ width: 48, height: 48, color: '#000' }}>
-                           <FeatureIcon size={24} />
+                          <FeatureIcon size={24} />
                         </div>
                         <h3 className="fw-black mb-2" style={{ fontSize: '1.5rem', textShadow: '0 2px 10px rgba(0,0,0,0.2)' }}>{feature.title}</h3>
                         <p className="mb-0 fw-medium" style={{ opacity: 0.9, fontSize: '0.95rem', lineHeight: 1.6, textShadow: '0 2px 10px rgba(0,0,0,0.2)' }}>{feature.description}</p>
@@ -513,7 +552,7 @@ useEffect(() => {
           <div className="d-flex gap-1 mb-4 overflow-x-auto no-scrollbar py-1" style={{ borderBottom: '1px solid var(--bb-border)' }}>
             {[
               { id: 'specs', label: '⚙️ Specifications' },
-              { id: 'reviews', label: `⭐ Reviews (${product.reviews.length})` },
+              { id: 'reviews', label: `⭐ Reviews (${product.reviews.length || 0})` },
               { id: 'faqs', label: '❓ FAQs' }
             ].map(tab => (
               <button
@@ -547,17 +586,17 @@ useEffect(() => {
                 <div className="row g-4">
                   {/* Detailed Description */}
                   <div className="col-12 mb-2">
-                     <p className="text-theme-muted fw-medium" style={{ lineHeight: 1.8, fontSize: '0.95rem' }}>{product.description}</p>
+                    <p className="text-theme-muted fw-medium" style={{ lineHeight: 1.8, fontSize: '0.95rem' }}>{product.description}</p>
                   </div>
-                  
+
                   {/* Two-Column Specification Grid */}
                   <div className="col-12">
                     <div className="rounded-4 overflow-hidden" style={{ border: '1px solid var(--bb-border)' }}>
-                      {Object.entries(product.specs).map(([key, val], i) => (
+                      {Object.entries(product.specs || {}).map(([key, val], i) => (
                         <div
                           key={i}
                           className="d-flex flex-column flex-sm-row"
-                          style={{ borderBottom: i < Object.entries(product.specs).length - 1 ? '1px solid var(--bb-border)' : 'none', background: i % 2 === 0 ? 'var(--bb-surface)' : 'var(--bb-surface-2)' }}
+                          style={{ borderBottom: i < Object.entries(product.specs || {}).length - 1 ? '1px solid var(--bb-border)' : 'none', background: i % 2 === 0 ? 'var(--bb-surface)' : 'var(--bb-surface-2)' }}
                         >
                           <div className="px-4 py-3 fw-bold text-theme-muted" style={{ minWidth: 200, fontSize: '0.88rem' }}>{key}</div>
                           <div className="px-4 py-3 text-theme-title fw-semibold flex-grow-1" style={{ fontSize: '0.88rem', borderLeft: '1px solid var(--bb-border)' }}>{val}</div>
@@ -568,36 +607,13 @@ useEffect(() => {
                 </div>
               )}
 
-              {activeTab === 'faq' && (
-  <div className="d-flex flex-column gap-3">
-    {product.faqs?.map((faq, index) => (
-      <div
-        key={index}
-        className="p-4 rounded-3"
-        style={{
-          background: 'var(--bb-surface)',
-          border: '1px solid var(--bb-border)'
-        }}
-      >
-        <h6 className="fw-bold text-theme-title mb-2">
-          Q: {faq.question}
-        </h6>
-
-        <p className="text-theme-muted mb-0">
-          A: {faq.answer}
-        </p>
-      </div>
-    ))}
-  </div>
-)}
-
               {activeTab === 'reviews' && (
                 <div className="d-flex flex-column gap-3">
                   <div className="d-flex justify-content-between align-items-center mb-2">
-                     <h4 className="text-theme-title fw-bold m-0">Customer Reviews</h4>
-                     {!showReviewForm && (
-                        <button onClick={() => setShowReviewForm(true)} className="btn btn-sm btn-glow fw-bold px-4" style={{ borderRadius: 8 }}>Write a Review</button>
-                     )}
+                    <h4 className="text-theme-title fw-bold m-0">Customer Reviews</h4>
+                    {!showReviewForm && (
+                      <button onClick={() => setShowReviewForm(true)} className="btn btn-sm btn-glow fw-bold px-4" style={{ borderRadius: 8 }}>Write a Review</button>
+                    )}
                   </div>
 
                   <AnimatePresence>
@@ -606,15 +622,15 @@ useEffect(() => {
                         <form onSubmit={handleSubmitReview} className="p-4 rounded-4" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
                           <h5 className="text-theme-title fw-bold mb-3">Rate this product</h5>
                           <div className="d-flex gap-2 mb-3">
-                            {[1,2,3,4,5].map(s => (
+                            {[1, 2, 3, 4, 5].map(s => (
                               <Star key={s} size={24} onClick={() => setReviewRating(s)} fill={s <= reviewRating ? '#ffc700' : 'none'} stroke={s <= reviewRating ? '#ffc700' : 'var(--bb-muted)'} style={{ cursor: 'pointer', transition: 'all 0.2s' }} />
                             ))}
                           </div>
-                          <textarea 
+                          <textarea
                             value={reviewText}
                             onChange={(e) => setReviewText(e.target.value)}
-                            className="form-control mb-3" 
-                            rows="3" 
+                            className="form-control mb-3"
+                            rows="3"
                             placeholder="What did you like or dislike?"
                             style={{ background: 'var(--bb-bg-navy)', border: '1px solid var(--bb-border)', color: '#fff', borderRadius: 8 }}
                             required
@@ -633,60 +649,60 @@ useEffect(() => {
                     <div className="text-center">
                       <div className="display-4 fw-black text-theme-title" style={{ color: '#ffc700' }}>{Number(product.averageRating).toFixed(1)}</div>
                       <div className="d-flex justify-content-center gap-1 my-1">
-                        {[1,2,3,4,5].map(s => <Star key={s} size={14} fill={s <= Math.round(product.averageRating) ? '#ffc700' : 'none'} stroke='#ffc700' />)}
+                        {[1, 2, 3, 4, 5].map(s => <Star key={s} size={14} fill={s <= Math.round(product.averageRating) ? '#ffc700' : 'none'} stroke='#ffc700' />)}
                       </div>
                       <span className="text-theme-muted small">{product.reviewCount.toLocaleString('en-IN')} reviews</span>
                     </div>
                   </div>
 
                   <div
-  className="p-4 rounded-3 mb-3"
-  style={{
-    background: 'var(--bb-surface)',
-    border: '1px solid var(--bb-border)'
-  }}
->
-  <h5 className="text-theme-title fw-bold mb-3">
-    Write a Review
-  </h5>
+                    className="p-4 rounded-3 mb-3"
+                    style={{
+                      background: 'var(--bb-surface)',
+                      border: '1px solid var(--bb-border)'
+                    }}
+                  >
+                    <h5 className="text-theme-title fw-bold mb-3">
+                      Write a Review
+                    </h5>
 
-  <textarea
-  value={reviewText}
-  onChange={(e) => setReviewText(e.target.value)}
-    className="form-control mb-3"
-    rows="4"
-    placeholder="Write your review..."
-    style={{
-      background: 'var(--bb-surface-2)',
-      border: '1px solid var(--bb-border)',
-      color: 'white'
-    }}
-  />
+                    <textarea
+                      value={reviewText}
+                      onChange={(e) => setReviewText(e.target.value)}
+                      className="form-control mb-3"
+                      rows="4"
+                      placeholder="Write your review..."
+                      style={{
+                        background: 'var(--bb-surface-2)',
+                        border: '1px solid var(--bb-border)',
+                        color: 'white'
+                      }}
+                    />
 
-  <select
-  value={reviewRating}
-  onChange={(e) => setReviewRating(e.target.value)}
-    className="form-select mb-3"
-    style={{
-      background: 'var(--bb-surface-2)',
-      border: '1px solid var(--bb-border)',
-      color: 'white'
-    }}
-  >
-    <option>5</option>
-    <option>4</option>
-    <option>3</option>
-    <option>2</option>
-    <option>1</option>
-  </select>
+                    <select
+                      value={reviewRating}
+                      onChange={(e) => setReviewRating(e.target.value)}
+                      className="form-select mb-3"
+                      style={{
+                        background: 'var(--bb-surface-2)',
+                        border: '1px solid var(--bb-border)',
+                        color: 'white'
+                      }}
+                    >
+                      <option>5</option>
+                      <option>4</option>
+                      <option>3</option>
+                      <option>2</option>
+                      <option>1</option>
+                    </select>
 
-  <button
-  className="btn btn-glow"
-  onClick={submitReview}
->
-  Submit Review
-</button>
-</div>
+                    <button
+                      className="btn btn-glow"
+                      onClick={submitReview}
+                    >
+                      Submit Review
+                    </button>
+                  </div>
 
                   {product.reviews?.map((review, i) => (
                     <div key={i} className="p-4 rounded-3" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
@@ -698,7 +714,7 @@ useEffect(() => {
                           <div>
                             <p className="fw-bold text-theme-title mb-0" style={{ fontSize: '0.9rem' }}>{review.userName}</p>
                             <div className="d-flex gap-1">
-                              {[1,2,3,4,5].map(s => <Star key={s} size={11} fill={s <= review.rating ? '#ffc700' : 'none'} stroke='#ffc700' />)}
+                              {[1, 2, 3, 4, 5].map(s => <Star key={s} size={11} fill={s <= review.rating ? '#ffc700' : 'none'} stroke='#ffc700' />)}
                             </div>
                           </div>
                         </div>
@@ -715,7 +731,7 @@ useEffect(() => {
                   {product.faqs && product.faqs.length > 0 ? (
                     product.faqs.map((faq, i) => (
                       <div key={i} className="rounded-3 overflow-hidden" style={{ border: '1px solid var(--bb-border)', background: 'var(--bb-surface)' }}>
-                        <button 
+                        <button
                           onClick={() => setOpenFaq(openFaq === i ? null : i)}
                           className="w-100 d-flex align-items-center justify-content-between p-4 border-0 text-start"
                           style={{ background: 'transparent' }}
@@ -774,7 +790,7 @@ useEffect(() => {
       {/* ── STICKY ADD TO CART BAR ─── */}
       <AnimatePresence>
         {showStickyCart && (
-          <motion.div 
+          <motion.div
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
