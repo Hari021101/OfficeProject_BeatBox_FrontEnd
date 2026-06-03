@@ -29,6 +29,13 @@ import wirelessNeckband from '../assets/wireless_neckband.png'
 import smartEarbuds from '../assets/smart_earbuds.png'
 import heroSmartwatch from '../assets/hero_smartwatch.png'
 import heroWired from '../assets/hero_wired.png'
+import powerBank from '../assets/power_bank.png'
+import trimmer from '../assets/trimmer.png'
+import soundbar from '../assets/soundbar.png'
+import dashCam from '../assets/dash_cam.png'
+import projector from '../assets/projector.png'
+import actionCam from '../assets/action_cam.png'
+import gamingMouse from '../assets/gaming_mouse.png'
 import logo from '../assets/beatbox_logo.png'
 
 export default function Home() {
@@ -360,35 +367,28 @@ export default function Home() {
           filter: 'drop-shadow(0 25px 50px rgba(0,0,0,0.5)) drop-shadow(0 0 30px rgba(0, 243, 255, 0.15))' 
         }} 
       />
-      {/* Flagship Product Brand Seal */}
-      <div 
-        className="position-absolute d-flex align-items-center gap-2 px-3 py-1.5 rounded-pill"
-        style={{ 
-          top: '10px', 
-          right: '20px', 
-          background: 'var(--bb-surface)', 
-          backdropFilter: 'blur(8px)',
-          border: '1px solid var(--bb-accent)',
-          boxShadow: '0 8px 25px var(--bb-accent-glow)',
-          zIndex: 10
-        }}
-      >
-        <img src={logo} alt="BeatBox Official" style={{ width: '18px', height: '18px', objectFit: 'contain' }} />
-        <span className="fw-black text-white" style={{ fontSize: '0.75rem', letterSpacing: '0.8px' }}>BEATBOX ORIGINAL</span>
-      </div>
+
     </div>
     )
   }
   const renderCategories = () => (
     <div className="row g-4 row-cols-2 row-cols-sm-3 row-cols-md-5 justify-content-center w-100 m-0">
       {[
-        { id: 'earbuds', name: 'Wireless Earbuds', shortName: 'TWS', image: heroEarbuds, badge: 'HOT' },
-        { id: 'headphones', name: 'Over-Ear Headphones', shortName: 'Headphones', image: heroHeadphones, badge: 'PRO' },
-        { id: 'speakers', name: 'Bluetooth Speakers', shortName: 'Speakers', image: heroSpeaker, badge: 'LOUD' },
+        { id: 'earbuds', name: 'AirPods & Earbuds', shortName: 'AirPods', image: heroEarbuds, badge: 'HOT' },
+        { id: 'tws', name: 'TWS Earbuds', shortName: 'TWS', image: heroEarbuds, badge: 'PRO' },
         { id: 'neckbands', name: 'Neckbands', shortName: 'Neckbands', image: wirelessNeckband, badge: 'DAILY' },
         { id: 'gaming', name: 'Gaming Headsets', shortName: 'Gaming', image: gamingHeadset, badge: 'CYBER' },
+        { id: 'wired', name: 'Wired Headphones', shortName: 'Wired', image: heroWired, badge: 'PURE' },
         { id: 'smartwatches', name: 'Smart Watches', shortName: 'Watches', image: heroSmartwatch, badge: 'NEW' },
-        { id: 'wired', name: 'Wired Headphones', shortName: 'Wired', image: heroWired, badge: 'PURE' }
+        { id: 'speakers', name: 'Speakers', shortName: 'Speakers', image: heroSpeaker, badge: 'LOUD' },
+        { id: 'powerbank', name: 'Power Banks', shortName: 'Power', image: powerBank, badge: 'CHARGE' },
+        { id: 'soundbars', name: 'Soundbars', shortName: 'Soundbars', image: soundbar, badge: 'CINEMA' },
+        { id: 'gaming_accessories', name: 'Gaming Accessories', shortName: 'Accessories', image: gamingMouse, badge: 'PRO' },
+        { id: 'dashcams', name: 'Dash Cameras', shortName: 'DashCams', image: dashCam, badge: 'SAFE' },
+        { id: 'projectors', name: 'Projectors', shortName: 'Projectors', image: projector, badge: 'HOME' },
+        { id: 'actioncams', name: 'Action Cameras', shortName: 'Action', image: actionCam, badge: 'SPORT' },
+        { id: 'personalcare', name: 'Personal Care', shortName: 'Care', image: trimmer, badge: 'MENS' },
+        { id: 'mobile_accessories', name: 'Mobile Accessories', shortName: 'Mobile', image: powerBank, badge: 'TECH' }
       ].map((cat, idx) => (
         <div key={idx} className="col">
           <button 
@@ -436,32 +436,15 @@ export default function Home() {
           </span>
         </div>
 
-        {/* Product Visual Frame with Brand Hologram Seal */}
+        {/* Product Visual Frame */}
         <div className="product-frame w-100 position-relative">
-          <Link to={`/products/${prod.id}`} className="d-block w-100 h-100">
+          <Link to={`/products/${prod.id}`} className="d-flex align-items-center justify-content-center w-100 h-100 text-decoration-none">
             <img 
               src={displayImage} 
               alt={prod.name} 
               className="product-img"
             />
           </Link>
-          {/* Subtle BeatBox Hologram Brand Seal */}
-          <div 
-            className="position-absolute top-0 end-0 m-3 z-3 d-flex align-items-center gap-1.5 px-2 py-1 rounded-pill"
-            style={{ 
-              background: 'var(--bb-surface)', 
-              backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(0, 243, 255, 0.25)',
-              boxShadow: '0 4px 12px rgba(0, 243, 255, 0.1)'
-            }}
-          >
-            <img 
-              src={logo} 
-              alt="BeatBox Seal" 
-              style={{ width: '12px', height: '12px', objectFit: 'contain' }} 
-            />
-            <span className="fw-extrabold text-white" style={{ fontSize: '0.6rem', fontWeight: '800', letterSpacing: '0.5px' }}>BEATBOX</span>
-          </div>
         </div>
 
         {/* Signature boAt Gold Feature Ribbon */}
@@ -559,22 +542,7 @@ export default function Home() {
           filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.6)) drop-shadow(0 0 25px var(--bb-accent-glow))'
         }} 
       />
-      {/* Daily Deal Brand Seal */}
-      <div 
-        className="position-absolute d-flex align-items-center gap-1.5 px-2.5 py-1 rounded-pill"
-        style={{ 
-          top: '0px', 
-          right: '15px', 
-          background: 'var(--bb-surface)', 
-          backdropFilter: 'blur(10px)',
-          border: '1px solid var(--bb-primary)',
-          boxShadow: '0 6px 20px var(--bb-primary-glow)',
-          zIndex: 10
-        }}
-      >
-        <img src={logo} alt="BeatBox Seal" style={{ width: '14px', height: '14px', objectFit: 'contain' }} />
-        <span className="fw-extrabold text-white" style={{ fontSize: '0.65rem', letterSpacing: '0.6px' }}>BEATBOX GENUINE</span>
-      </div>
+
     </div>
   )
 

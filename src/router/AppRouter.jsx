@@ -13,6 +13,11 @@ import OrderDetail from '../pages/OrderDetail'
 import Layout from '../components/layout/Layout'
 import Settings from '../pages/Settings'
 import Wishlist from '../pages/Wishlist'
+import Personalisation from '../pages/Personalisation'
+import CorporateOrders from '../pages/CorporateOrders'
+import ReferAndEarn from '../pages/ReferAndEarn'
+import Gifting from '../pages/Gifting'
+import Support from '../pages/Support'
 
 // Admin Pages
 import AdminLayout from '../components/layout/AdminLayout'
@@ -66,6 +71,11 @@ export default function AppRouter() {
         <Route path="/orders/:id" element={<Layout><OrderDetail /></Layout>} />
         <Route path="/settings" element={<Layout><Settings /></Layout>} />
         <Route path="/wishlist" element={<Layout><Wishlist /></Layout>} />
+        <Route path="/personalisation" element={<Layout><Personalisation /></Layout>} />
+        <Route path="/corporate" element={<Layout><CorporateOrders /></Layout>} />
+        <Route path="/refer" element={<Layout><ReferAndEarn /></Layout>} />
+        <Route path="/gifting" element={<Layout><Gifting /></Layout>} />
+        <Route path="/support" element={<Layout><Support /></Layout>} />
         
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>

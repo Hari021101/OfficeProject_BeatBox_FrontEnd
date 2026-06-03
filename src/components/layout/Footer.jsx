@@ -105,22 +105,45 @@ export default function Footer() {
               </div>
 
               {/* Newsletter subscription form */}
-              <form onSubmit={handleSubscribe} className="input-group-custom position-relative w-100 mb-4">
+              <form 
+                onSubmit={handleSubscribe} 
+                className="position-relative w-100 mb-4 d-flex align-items-center"
+                style={{ 
+                  background: 'var(--bb-surface-2)',
+                  border: '1px solid var(--bb-border)',
+                  borderRadius: '50px',
+                  padding: '5px',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 15px rgba(0,0,0,0.05)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--bb-accent)';
+                  e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 243, 255, 0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--bb-border)';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.05)';
+                }}
+              >
+                <div className="ps-3 pe-2 text-theme-muted d-flex align-items-center">
+                  <Mail size={18} />
+                </div>
                 <input 
                   type="email" 
-                  className="form-control bb-input w-100" 
-                  placeholder="Enter your email"
+                  className="form-control bg-transparent border-0 text-theme-title shadow-none px-2" 
+                  placeholder="Enter your email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  style={{ paddingLeft: '20px', paddingRight: '60px' }}
+                  style={{ textOverflow: 'ellipsis', fontSize: '0.9rem' }}
                 />
                 <button 
                   type="submit" 
-                  className="btn btn-glow position-absolute end-0 top-0 h-100 px-3 d-flex align-items-center justify-content-center"
-                  style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0, borderRadius: '0 12px 12px 0' }}
+                  className="btn btn-glow rounded-pill px-4 d-flex align-items-center justify-content-center gap-2"
+                  style={{ height: '40px' }}
                 >
-                  <Send size={18} />
+                  <span className="d-none d-sm-inline fw-bold small">Subscribe</span>
+                  <Send size={16} />
                 </button>
               </form>
 
@@ -150,6 +173,8 @@ export default function Footer() {
                 <li><a href="#neckbands" className="text-theme-muted text-decoration-none transition-all">Wireless Neckbands</a></li>
                 <li><a href="#speakers" className="text-theme-muted text-decoration-none transition-all">Bluetooth Speakers</a></li>
                 <li><a href="#gaming" className="text-theme-muted text-decoration-none transition-all">Wired & Gaming Gear</a></li>
+                <li><a href="#powerbanks" className="text-theme-muted text-decoration-none transition-all">Power Banks</a></li>
+                <li><a href="#trimmers" className="text-theme-muted text-decoration-none transition-all">Trimmers</a></li>
               </ul>
             </div>
 
@@ -157,6 +182,7 @@ export default function Footer() {
             <div className="col-6 col-md-3 col-lg-2">
               <h6 className="fw-bold mb-4 text-theme-title uppercase" style={{ letterSpacing: '1px' }}>Support</h6>
               <ul className="list-unstyled d-flex flex-column gap-3 small">
+                <li><a href="mailto:beatbox80555@gmail.com" className="text-theme-muted text-decoration-none transition-all d-flex align-items-center gap-2"><Mail size={14} /> Email Support</a></li>
                 <li><a href="#track" className="text-theme-muted text-decoration-none transition-all">Track Your Order</a></li>
                 <li><a href="#warranty" className="text-theme-muted text-decoration-none transition-all">Warranty Claim</a></li>
                 <li><a href="#service" className="text-theme-muted text-decoration-none transition-all">Service Centers</a></li>
@@ -170,10 +196,11 @@ export default function Footer() {
               <h6 className="fw-bold mb-4 text-theme-title uppercase" style={{ letterSpacing: '1px' }}>Company</h6>
               <ul className="list-unstyled d-flex flex-column gap-3 small">
                 <li><a href="#about" className="text-theme-muted text-decoration-none transition-all">About BeatBox</a></li>
+                <li><Link to="/corporate" className="text-theme-muted text-decoration-none transition-all fw-bold text-info">Corporate Orders</Link></li>
+                <li><Link to="/personalisation" className="text-theme-muted text-decoration-none transition-all fw-bold text-warning">Personalisation</Link></li>
+                <li><Link to="/refer" className="text-theme-muted text-decoration-none transition-all fw-bold text-success">Refer & Earn</Link></li>
                 <li><a href="#careers" className="text-theme-muted text-decoration-none transition-all">Careers</a></li>
                 <li><a href="#press" className="text-theme-muted text-decoration-none transition-all">Press & News</a></li>
-                <li><a href="#affiliate" className="text-theme-muted text-decoration-none transition-all">Affiliate Program</a></li>
-                <li><a href="#sustainability" className="text-theme-muted text-decoration-none transition-all">Sustainability</a></li>
               </ul>
             </div>
 

@@ -212,12 +212,21 @@ export default function Cart() {
                             >
                               {/* Soft backdrop glow based on item color or default */}
                               <div className="position-absolute w-100 h-100" style={{ background: item.selectedColorCode || 'var(--bb-accent)', opacity: 0.1, filter: 'blur(20px)' }} />
-                              <img 
-                                src={IMAGE_MAP[item.imageKey]} 
-                                alt={item.name} 
-                                className="img-fluid position-relative z-1" 
-                                style={{ objectFit: 'contain', filter: 'drop-shadow(0 10px 10px rgba(0,0,0,0.4))' }} 
-                              />
+                              {item.imageUrl && item.imageUrl.includes('video') ? (
+                                <video 
+                                  src={item.imageUrl} 
+                                  autoPlay loop muted 
+                                  className="img-fluid position-relative z-1" 
+                                  style={{ objectFit: 'contain', filter: 'drop-shadow(0 10px 10px rgba(0,0,0,0.4))' }} 
+                                />
+                              ) : (
+                                <img 
+                                  src={item.imageUrl || IMAGE_MAP[item.imageKey]} 
+                                  alt={item.name} 
+                                  className="img-fluid position-relative z-1" 
+                                  style={{ objectFit: 'contain', filter: 'drop-shadow(0 10px 10px rgba(0,0,0,0.4))' }} 
+                                />
+                              )}
                             </div>
                           </Link>
                         </div>

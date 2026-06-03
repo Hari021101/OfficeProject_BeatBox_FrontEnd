@@ -13,6 +13,7 @@ import ProductCard from '../components/ui/ProductCard'
 import { toast } from 'react-hot-toast'
 import logo from '../assets/beatbox_logo.png'
 import { productService } from '../services/productService'
+import { fetchMyOrders, selectAllOrders } from '../redux/orderSlice'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -24,6 +25,9 @@ export default function ProductDetail() {
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [selectedVariant, setSelectedVariant] = useState(null)
+
+  const myOrders = useSelector(selectAllOrders)
+  const { user } = useSelector(state => state.auth)
 
   // Use a fallback to local getRelatedProducts for now until we have related product logic in backend
   const related = product ? getRelatedProducts(product, 4) : []
@@ -47,7 +51,10 @@ export default function ProductDetail() {
     }
 
     loadProduct()
-  }, [id])
+    if (user) {
+      dispatch(fetchMyOrders())
+    }
+  }, [id, dispatch, user])
 
   // useEffect(() => {
   //   if (productStatus === 'idle') {
@@ -176,6 +183,7 @@ export default function ProductDetail() {
       imageKey: product.imageKey, quantity: quantity,
       selectedColor: selectedColor?.name, selectedColorCode: selectedColor?.code,
       category: product.category,
+      imageUrl: product.imageUrl,
     }))
     toast.success(`🎸 ${product.name} added to cart!`, {
       style: { background: '#060b19', color: '#fff', border: '1px solid rgba(0,243,255,0.3)', borderRadius: '10px' }
@@ -190,6 +198,7 @@ export default function ProductDetail() {
       imageKey: product.imageKey, quantity: quantity,
       selectedColor: selectedColor?.name, selectedColorCode: selectedColor?.code,
       category: product.category,
+      imageUrl: product.imageUrl,
     }))
     navigate('/checkout')
   }
@@ -283,26 +292,34 @@ export default function ProductDetail() {
                 </span>
               </div>
 
-              {/* Brand seal */}
-              <div className="position-absolute bottom-0 start-0 m-3 d-flex align-items-center gap-2 px-3 py-1 rounded-pill z-10" style={{ background: 'var(--bb-surface)', backdropFilter: 'blur(8px)', border: '1px solid rgba(0,243,255,0.25)' }}>
-                <img src={logo} alt="BeatBox" style={{ width: 14, height: 14 }} />
-                <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#fff', letterSpacing: '0.8px' }}>BEATBOX ORIGINAL</span>
-              </div>
+
 
               {/* Ambient glow behind product */}
               <div style={{ position: 'absolute', width: 250, height: 250, background: selectedColor ? selectedColor.code : 'var(--bb-accent)', borderRadius: '50%', filter: 'blur(80px)', opacity: 0.12, zIndex: 0 }} />
 
-              <motion.img
-                key={`${product.imageKey}-${activeImageIndex}`}
-                src={img}
-                alt={product.name}
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.4 }}
-                className="img-fluid hero-float"
-                style={{ maxHeight: 340, objectFit: 'contain', zIndex: 1, filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))', transform: `rotate(${activeImageIndex * -5}deg)` }}
-              />
+              {img && img.includes('video') ? (
+                <video
+                  key={`${product.imageKey}-${activeImageIndex}`}
+                  src={img}
+                  autoPlay
+                  loop
+                  muted
+                  className="img-fluid hero-float"
+                  style={{ maxHeight: 340, objectFit: 'contain', zIndex: 1, filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))', transform: `rotate(${activeImageIndex * -5}deg)` }}
+                />
+              ) : (
+                <motion.img
+                  key={`${product.imageKey}-${activeImageIndex}`}
+                  src={img}
+                  alt={product.name}
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.4 }}
+                  className="img-fluid hero-float"
+                  style={{ maxHeight: 340, objectFit: 'contain', zIndex: 1, filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))', transform: `rotate(${activeImageIndex * -5}deg)` }}
+                />
+              )}
             </div>
 
             {/* Thumbnail row (same image for mock) */}
@@ -314,7 +331,11 @@ export default function ProductDetail() {
                   className="rounded-3 d-flex align-items-center justify-content-center"
                   style={{ width: 70, height: 70, background: 'var(--bb-surface)', border: `1px solid ${i === activeImageIndex ? 'var(--bb-accent)' : 'var(--bb-border)'}`, cursor: 'pointer', overflow: 'hidden', transition: 'border-color 0.2s' }}
                 >
-                  <img src={img} alt="" style={{ width: 50, height: 50, objectFit: 'contain', opacity: i === activeImageIndex ? 1 : 0.5, transform: `rotate(${i * -5}deg)` }} />
+                  {img && img.includes('video') ? (
+                    <video src={img} muted style={{ width: 50, height: 50, objectFit: 'contain', opacity: i === activeImageIndex ? 1 : 0.5, transform: `rotate(${i * -5}deg)` }} />
+                  ) : (
+                    <img src={img} alt="" style={{ width: 50, height: 50, objectFit: 'contain', opacity: i === activeImageIndex ? 1 : 0.5, transform: `rotate(${i * -5}deg)` }} />
+                  )}
                 </div>
               ))}
             </div>
@@ -618,9 +639,16 @@ export default function ProductDetail() {
                 <div className="d-flex flex-column gap-3">
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <h4 className="text-theme-title fw-bold m-0">Customer Reviews</h4>
-                    {!showReviewForm && (
-                      <button onClick={() => setShowReviewForm(true)} className="btn btn-sm btn-glow fw-bold px-4" style={{ borderRadius: 8 }}>Write a Review</button>
-                    )}
+                    {(() => {
+                      const hasOrdered = myOrders?.some(order => order.items?.some(item => item.productId === product.id))
+                      if (!hasOrdered) {
+                        return <span className="badge bg-secondary opacity-75">Verified Buyers Only</span>
+                      }
+                      if (!showReviewForm) {
+                        return <button onClick={() => setShowReviewForm(true)} className="btn btn-sm btn-glow fw-bold px-4" style={{ borderRadius: 8 }}>Write a Review</button>
+                      }
+                      return null
+                    })()}
                   </div>
 
                   <AnimatePresence>
@@ -652,64 +680,35 @@ export default function ProductDetail() {
                   </AnimatePresence>
 
                   {/* Rating summary */}
-                  <div className="p-4 rounded-3 mb-2 d-flex align-items-center gap-4" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
+                  <div className="p-4 rounded-3 mb-4 d-flex flex-column flex-md-row align-items-center gap-5" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
                     <div className="text-center">
                       <div className="display-4 fw-black text-theme-title" style={{ color: '#ffc700' }}>{Number(product.averageRating).toFixed(1)}</div>
-                      <div className="d-flex justify-content-center gap-1 my-1">
-                        {[1, 2, 3, 4, 5].map(s => <Star key={s} size={14} fill={s <= Math.round(product.averageRating) ? '#ffc700' : 'none'} stroke='#ffc700' />)}
+                      <div className="d-flex justify-content-center gap-1 my-2">
+                        {[1, 2, 3, 4, 5].map(s => <Star key={s} size={16} fill={s <= Math.round(product.averageRating) ? '#ffc700' : 'none'} stroke='#ffc700' />)}
                       </div>
-                      <span className="text-theme-muted small">{product.reviewCount.toLocaleString('en-IN')} reviews</span>
+                      <span className="text-theme-muted small fw-semibold">{product.reviewCount.toLocaleString('en-IN')} global ratings</span>
+                    </div>
+
+                    <div className="flex-grow-1 w-100">
+                      {[5, 4, 3, 2, 1].map(star => {
+                        const count = product.reviews?.filter(r => r.rating === star).length || 0;
+                        const total = product.reviews?.length || 1;
+                        const percent = Math.round((count / total) * 100) || (star === 5 ? 75 : star === 4 ? 15 : 0); // fallback mock data
+                        
+                        return (
+                          <div key={star} className="d-flex align-items-center gap-3 mb-2">
+                            <span className="text-theme-muted small fw-bold" style={{ width: '45px' }}>{star} star</span>
+                            <div className="progress flex-grow-1" style={{ height: '8px', background: 'var(--bb-surface-2)', borderRadius: '10px' }}>
+                              <div className="progress-bar" role="progressbar" style={{ width: `${percent}%`, background: '#ffc700', borderRadius: '10px' }} aria-valuenow={percent} aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <span className="text-theme-muted small" style={{ width: '35px', textAlign: 'right' }}>{percent}%</span>
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
 
-                  <div
-                    className="p-4 rounded-3 mb-3"
-                    style={{
-                      background: 'var(--bb-surface)',
-                      border: '1px solid var(--bb-border)'
-                    }}
-                  >
-                    <h5 className="text-theme-title fw-bold mb-3">
-                      Write a Review
-                    </h5>
 
-                    <textarea
-                      value={reviewText}
-                      onChange={(e) => setReviewText(e.target.value)}
-                      className="form-control mb-3"
-                      rows="4"
-                      placeholder="Write your review..."
-                      style={{
-                        background: 'var(--bb-surface-2)',
-                        border: '1px solid var(--bb-border)',
-                        color: 'white'
-                      }}
-                    />
-
-                    <select
-                      value={reviewRating}
-                      onChange={(e) => setReviewRating(e.target.value)}
-                      className="form-select mb-3"
-                      style={{
-                        background: 'var(--bb-surface-2)',
-                        border: '1px solid var(--bb-border)',
-                        color: 'white'
-                      }}
-                    >
-                      <option>5</option>
-                      <option>4</option>
-                      <option>3</option>
-                      <option>2</option>
-                      <option>1</option>
-                    </select>
-
-                    <button
-                      className="btn btn-glow"
-                      onClick={submitReview}
-                    >
-                      Submit Review
-                    </button>
-                  </div>
 
                   {product.reviews?.map((review, i) => (
                     <div key={i} className="p-4 rounded-3" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>

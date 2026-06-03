@@ -28,6 +28,7 @@ export default function ProductCard({ product, index = 0 }) {
       selectedColor: selectedColor.name,
       selectedColorCode: selectedColor.code,
       category: product.category,
+      imageUrl: product.imageUrl,
     }))
     toast.success(`🎸 ${product.name} added to cart!`, {
       style: { background: '#060b19', color: '#fff', border: '1px solid rgba(0,243,255,0.3)', borderRadius: '10px' }
@@ -54,7 +55,7 @@ export default function ProductCard({ product, index = 0 }) {
     }
   }
 
-  const img = IMAGE_MAP[product.imageKey]
+  const img = product.imageUrl || IMAGE_MAP[product.imageKey] || IMAGE_MAP['heroHeadphones']
   const discountedSavings = product.oldPrice - product.price
 
   return (
@@ -100,7 +101,11 @@ export default function ProductCard({ product, index = 0 }) {
 
           {/* Product image frame */}
           <div className="product-card-frame">
-            <img src={img} alt={product.name} className="product-card-img" />
+            {img && img.includes('video') ? (
+              <video src={img} autoPlay loop muted className="product-card-img" style={{ objectFit: 'contain' }} />
+            ) : (
+              <img src={img} alt={product.name} className="product-card-img" />
+            )}
             {/* Hover overlay: quick view hint */}
             <div className="product-card-hover-overlay">
               <div className="d-flex align-items-center gap-1" style={{ color: 'var(--bb-accent)' }}>

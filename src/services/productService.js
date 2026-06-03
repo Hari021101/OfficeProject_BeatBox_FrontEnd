@@ -1,5 +1,5 @@
 import api from './authService';
-import { IMAGE_MAP } from '../data/products';
+import { IMAGE_MAP, PRODUCTS as MOCK_PRODUCTS } from '../data/products';
 
 // ─── Derive a local image-key from the backend imageUrl string + product name ─
 const mapImageKey = (url = '', name = '') => {
@@ -14,7 +14,7 @@ const mapImageKey = (url = '', name = '') => {
 
 // ─── Resolve the actual image src: prefer backend URL, fall back to local asset ─
 const resolveImage = (imageUrl, imageKey) => {
-  if (imageUrl && imageUrl !== 'string' && imageUrl.startsWith('http')) return imageUrl;
+  if (imageUrl && imageUrl !== 'string' && (imageUrl.startsWith('http') || imageUrl.startsWith('data:'))) return imageUrl;
   return IMAGE_MAP[imageKey] || IMAGE_MAP['heroHeadphones'];
 };
 
@@ -149,13 +149,55 @@ const mapProduct = (bp) => {
 // ─── Service ──────────────────────────────────────────────────────────────────
 export const productService = {
   getAllProducts: async () => {
-    const response = await api.get('/product');
-    return response.data.map(mapProduct);
+    try {
+      const response = await api.get('/product');
+      const apiProducts = response.data.map(mapProduct);
+      const mockExtras = MOCK_PRODUCTS.filter(p => p.category === 'powerbank' || p.category === 'trimmer');
+      return [...apiProducts, ...mockExtras];
+    } catch (err) {
+      console.warn("Failed to fetch products from API, falling back to mock data", err);
+      return MOCK_PRODUCTS;
+    }
   },
 
   getProductById: async (id) => {
-    const response = await api.get(`/product/${id}`);
+    const mockProd = MOCK_PRODUCTS.find(p => p.id === Number(id));
+    if (mockProd && (mockProd.category === 'powerbank' || mockProd.category === 'trimmer')) {
+      return mockProd;
+    }
+    try {
+      const response = await api.get(`/product/${id}`);
+      return mapProduct(response.data);
+    } catch (err) {
+      if (mockProd) return mockProd;
+      throw err;
+    }
+  },
+
+  // Admin Methods
+  createProduct: async (productData) => {
+    const response = await api.post('/product', productData);
     return mapProduct(response.data);
+  },
+
+  updateProduct: async (id, productData) => {
+    await api.put(`/product/${id}`, productData);
+    return mapProduct({ ...productData, id });
+  },
+
+  fetchCategories: async () => {
+    const response = await api.get('/category');
+    return response.data;
+  },
+
+  deleteProduct: async (id) => {
+    try {
+      await api.delete(`/Product/${id}`);
+      return true;
+    } catch (error) {
+      console.error(`Error deleting product ${id}:`, error);
+      throw error;
+    }
   },
 
   addReview: async (productId, reviewData) => {

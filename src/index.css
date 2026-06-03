@@ -1213,3 +1213,37 @@ body {
     box-shadow: 20px 0 50px rgba(0,0,0,0.1) !important;
   }
 }
+
+/* ==========================================================================
+   Megamenu Visual Hover Effects
+   ========================================================================== */
+.category-visual-item {
+  padding: 8px 12px;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  margin-left: -12px;
+}
+
+.category-visual-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="light"] .category-visual-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.category-visual-item:hover .category-img-container {
+  transform: scale(1.15) rotate(-5deg);
+  border-color: var(--bb-accent) !important;
+  box-shadow: 0 0 20px var(--bb-accent-glow);
+  background: rgba(0, 243, 255, 0.05) !important;
+}
+
+[data-theme="light"] .category-visual-item:hover .category-img-container {
+  background: #ffffff !important;
+}
+
+.category-visual-item:hover span {
+  color: var(--bb-accent) !important;
+  transform: translateX(4px);
+}

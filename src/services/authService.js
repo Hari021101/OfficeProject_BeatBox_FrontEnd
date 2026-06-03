@@ -57,6 +57,7 @@ export const authService = {
       localStorage.setItem('bb_user', JSON.stringify({
         fullName: response.data.fullName,
         email: response.data.email,
+        roles: response.data.roles || []
       }));
     }
     return response.data; // Returns AuthResponseDto

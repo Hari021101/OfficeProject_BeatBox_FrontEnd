@@ -140,6 +140,7 @@ const authSlice = createSlice({
         state.user = {
           fullName: action.payload.fullName,
           email: action.payload.email,
+          roles: action.payload.roles || []
         };
         state.token = action.payload.token;
       })

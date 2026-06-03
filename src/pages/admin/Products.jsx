@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Plus, Search, Edit2, Trash2, MoreVertical, Image as ImageIcon } from 'lucide-react'
+import { Edit2, Trash2, MoreVertical } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { toast } from 'react-hot-toast'
 import { IMAGE_MAP } from '../../data/products'
+import DataTable from '../../components/admin/DataTable'
+import StockBadge from '../../components/admin/StockBadge'
+import AddProductModal from '../../components/admin/AddProductModal'
 
 export default function Products() {
   const [products, setProducts] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [editingProduct, setEditingProduct] = useState(null)
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -25,11 +28,6 @@ export default function Products() {
     }
     fetchProducts()
   }, [])
-
-  const filteredProducts = products.filter(p => 
-    p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.categoryName?.toLowerCase().includes(searchQuery.toLowerCase())
-  )
 
   const mapImageKey = (url = '', name = '') => {
     const text = `${url} ${name}`.toLowerCase();
@@ -49,157 +47,121 @@ export default function Products() {
     return IMAGE_MAP[key] || IMAGE_MAP.heroHeadphones;
   }
 
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      try {
+        await productService.deleteProduct(id)
+        setProducts(products.filter(p => p.id !== id))
+        toast.success('Product deleted successfully')
+      } catch (error) {
+        toast.error('Failed to delete product')
+      }
+    }
+  }
+
+  const handleEdit = (id) => {
+    const product = products.find(p => p.id === id);
+    if (product) {
+      setEditingProduct(product);
+      setIsAddModalOpen(true);
+    }
+  }
+
+  const columns = [
+    { 
+      key: 'name', 
+      label: 'Product', 
+      sortable: true,
+      render: (row) => (
+        <div className="d-flex align-items-center gap-3">
+          <div 
+            className="rounded-3 d-flex align-items-center justify-content-center overflow-hidden" 
+            style={{ width: '48px', height: '48px', background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}
+          >
+            <img src={getProductImage(row)} alt={row.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+          <div>
+            <p className="mb-0 fw-bold text-theme-title">{row.name}</p>
+            <p className="mb-0 text-theme-muted" style={{ fontSize: '0.75rem' }}>ID: {row.id.toString().substring(0, 8)}...</p>
+          </div>
+        </div>
+      )
+    },
+    { 
+      key: 'categoryName', 
+      label: 'Category', 
+      sortable: true,
+      render: (row) => <span className="text-theme-muted fw-medium" style={{ fontSize: '0.9rem' }}>{row.categoryName || 'Uncategorized'}</span>
+    },
+    { 
+      key: 'price', 
+      label: 'Price', 
+      sortable: true,
+      render: (row) => <span className="fw-black text-theme-title">₹{Number(row.discountPrice || row.price || 0).toLocaleString('en-IN')}</span>
+    },
+    { 
+      key: 'stockQuantity', 
+      label: 'Status', 
+      sortable: true,
+      render: (row) => <StockBadge stock={row.stockQuantity || 0} />
+    },
+    { 
+      key: 'actions', 
+      label: 'Actions', 
+      render: (row) => (
+        <div className="d-flex align-items-center justify-content-end">
+          <button className="btn border-0 p-2 text-theme-muted hover-scale me-1" title="Edit" onClick={() => handleEdit(row.id)}>
+            <Edit2 size={16} />
+          </button>
+          <button className="btn border-0 p-2 text-danger hover-scale me-1" title="Delete" onClick={() => handleDelete(row.id)}>
+            <Trash2 size={16} />
+          </button>
+          <button className="btn border-0 p-2 text-theme-muted hover-scale" title="More">
+            <MoreVertical size={16} />
+          </button>
+        </div>
+      )
+    }
+  ]
+
   return (
     <div className="py-2">
-      {/* Header */}
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
         <div>
           <h2 className="fw-black text-theme-title mb-1">Products Catalog</h2>
           <p className="text-theme-muted mb-0">Manage your store's inventory and product details</p>
         </div>
-        <button 
-          className="btn btn-glow d-flex align-items-center gap-2 px-4 py-2 fw-bold" 
-          style={{ borderRadius: '10px' }}
-          onClick={() => toast("Add Product modal would open here!")}
-        >
-          <Plus size={18} /> Add New Product
-        </button>
       </div>
 
-      {/* Toolbar */}
-      <div className="card border-0 mb-4 p-3" style={{ background: 'var(--bb-surface)', borderRadius: '12px' }}>
-        <div className="d-flex flex-column flex-md-row gap-3">
-          <div className="position-relative flex-grow-1" style={{ maxWidth: '400px' }}>
-            <Search size={18} className="position-absolute top-50 translate-middle-y ms-3 text-theme-muted" />
-            <input 
-              type="text" 
-              className="form-control premium-search-input ps-5"
-              placeholder="Search products by name or category..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+      {isLoading ? (
+        <div className="text-center py-5">
+          <div className="spinner-border text-info" role="status">
+            <span className="visually-hidden">Loading...</span>
           </div>
-          
-          <select className="form-select premium-search-input" style={{ width: 'auto', minWidth: '150px' }}>
-            <option value="all">All Categories</option>
-            <option value="earbuds">Wireless Earbuds</option>
-            <option value="headphones">Headphones</option>
-            <option value="speakers">Speakers</option>
-          </select>
-          
-          <select className="form-select premium-search-input" style={{ width: 'auto', minWidth: '150px' }}>
-            <option value="all">All Status</option>
-            <option value="active">Active</option>
-            <option value="draft">Draft</option>
-            <option value="out_of_stock">Out of Stock</option>
-          </select>
         </div>
-      </div>
+      ) : (
+        <DataTable 
+          columns={columns}
+          data={products}
+          searchPlaceholder="Search products by name or category..."
+          searchableFields={['name', 'categoryName']}
+          onAdd={() => { setEditingProduct(null); setIsAddModalOpen(true); }}
+          addLabel="Add New Product"
+        />
+      )}
 
-      {/* Products Table */}
-      <div className="card border-0 p-0 overflow-hidden" style={{ background: 'var(--bb-surface)', borderRadius: '16px', boxShadow: '0 8px 30px rgba(0,0,0,0.1)' }}>
-        <div className="table-responsive">
-          <table className="table table-borderless align-middle mb-0 text-theme-text">
-            <thead style={{ borderBottom: '1px solid var(--bb-border)', background: 'rgba(0,0,0,0.2)' }}>
-              <tr>
-                <th className="py-3 px-4 text-theme-muted fw-bold" style={{ fontSize: '0.8rem', textTransform: 'uppercase' }}>Product</th>
-                <th className="py-3 px-4 text-theme-muted fw-bold" style={{ fontSize: '0.8rem', textTransform: 'uppercase' }}>Category</th>
-                <th className="py-3 px-4 text-theme-muted fw-bold" style={{ fontSize: '0.8rem', textTransform: 'uppercase' }}>Price</th>
-                <th className="py-3 px-4 text-theme-muted fw-bold" style={{ fontSize: '0.8rem', textTransform: 'uppercase' }}>Stock</th>
-                <th className="py-3 px-4 text-theme-muted fw-bold" style={{ fontSize: '0.8rem', textTransform: 'uppercase' }}>Status</th>
-                <th className="py-3 px-4 text-theme-muted fw-bold text-end" style={{ fontSize: '0.8rem', textTransform: 'uppercase' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                <tr>
-                  <td colSpan="6" className="text-center py-5">
-                    <div className="spinner-border text-info" role="status">
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
-                  </td>
-                </tr>
-              ) : filteredProducts.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="text-center py-5 text-theme-muted">No products found matching your search.</td>
-                </tr>
-              ) : (
-                filteredProducts.map((product, idx) => (
-                  <motion.tr 
-                    key={product.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
-                  >
-                    <td className="py-3 px-4">
-                      <div className="d-flex align-items-center gap-3">
-                        <div 
-                          className="rounded-3 d-flex align-items-center justify-content-center overflow-hidden" 
-                          style={{ width: '48px', height: '48px', background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}
-                        >
-                          <img src={getProductImage(product)} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        </div>
-                        <div>
-                          <p className="mb-0 fw-bold text-theme-title">{product.name}</p>
-                          <p className="mb-0 text-theme-muted" style={{ fontSize: '0.75rem' }}>ID: {product.id}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className="text-theme-muted fw-medium" style={{ fontSize: '0.9rem' }}>{product.categoryName || 'Uncategorized'}</span>
-                    </td>
-                    <td className="py-3 px-4 fw-black text-theme-title">
-                      ₹{Number(product.discountPrice || product.price || 0).toLocaleString('en-IN')}
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className="fw-bold" style={{ color: (product.stockQuantity || 0) < 10 ? '#ef4444' : 'var(--bb-text)', fontSize: '0.9rem' }}>
-                        {product.stockQuantity || 0}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      <span 
-                        className="badge rounded-pill px-3 py-1"
-                        style={{ 
-                          background: (product.stockQuantity || 0) > 0 ? 'rgba(57,255,20,0.1)' : 'rgba(239,68,68,0.1)',
-                          color: (product.stockQuantity || 0) > 0 ? '#39ff14' : '#ef4444',
-                          border: `1px solid currentColor`,
-                          fontWeight: 'bold',
-                          fontSize: '0.75rem'
-                        }}
-                      >
-                        {(product.stockQuantity || 0) > 0 ? 'Active' : 'Out of Stock'}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-end">
-                      <button className="btn border-0 p-2 text-theme-muted hover-scale me-1" title="Edit">
-                        <Edit2 size={16} />
-                      </button>
-                      <button className="btn border-0 p-2 text-danger hover-scale me-1" title="Delete">
-                        <Trash2 size={16} />
-                      </button>
-                      <button className="btn border-0 p-2 text-theme-muted hover-scale" title="More">
-                        <MoreVertical size={16} />
-                      </button>
-                    </td>
-                  </motion.tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-        
-        {/* Pagination mock */}
-        <div className="d-flex align-items-center justify-content-between p-3" style={{ borderTop: '1px solid var(--bb-border)' }}>
-          <span className="text-theme-muted small">Showing {filteredProducts.length} entries</span>
-          <div className="d-flex gap-2">
-            <button className="btn btn-sm text-theme-muted border-secondary border-opacity-25" disabled>Previous</button>
-            <button className="btn btn-sm btn-glow">1</button>
-            <button className="btn btn-sm text-theme-muted border-secondary border-opacity-25">2</button>
-            <button className="btn btn-sm text-theme-muted border-secondary border-opacity-25">Next</button>
-          </div>
-        </div>
-      </div>
+      <AddProductModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => { setIsAddModalOpen(false); setEditingProduct(null); }} 
+        editingProduct={editingProduct}
+        onProductAdded={(newProd, isEdit) => {
+          if (isEdit) {
+            setProducts(prev => prev.map(p => p.id === newProd.id ? newProd : p));
+          } else {
+            setProducts(prev => [newProd, ...prev]);
+          }
+        }} 
+      />
     </div>
   )
 }

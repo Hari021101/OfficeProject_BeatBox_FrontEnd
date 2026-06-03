@@ -5,6 +5,8 @@ import heroSpeaker from '../assets/hero_speaker.png'
 import gamingHeadset from '../assets/gaming_headset.png'
 import wirelessNeckband from '../assets/wireless_neckband.png'
 import smartEarbuds from '../assets/smart_earbuds.png'
+import powerBank from '../assets/power_bank.png'
+import trimmer from '../assets/trimmer.png'
 
 export const IMAGE_MAP = {
   heroHeadphones,
@@ -13,17 +15,22 @@ export const IMAGE_MAP = {
   gamingHeadset,
   wirelessNeckband,
   smartEarbuds,
+  powerBank,
+  trimmer,
 }
 
 export const CATEGORIES = [
   { id: 'all', label: 'All Products', emoji: '🔥' },
-  { id: 'earbuds', label: 'Wireless Earbuds', emoji: '🎵' },
-  { id: 'headphones', label: 'Headphones', emoji: '🎧' },
-  { id: 'speakers', label: 'Speakers', emoji: '🔊' },
-  { id: 'neckbands', label: 'Neckbands', emoji: '🎶' },
-  { id: 'gaming', label: 'Gaming Gear', emoji: '🎮' },
-  { id: 'smart watches', label: 'Smart Watches', emoji: '⌚' },
-  { id: 'wired headphones', label: 'Wired Headphones', emoji: '🔌' },
+  { id: 'airpods', label: 'AirPods', emoji: '🎵' },
+  { id: 'tws', label: 'TWS Earbuds', emoji: '🎧' },
+  { id: 'gaming_headsets', label: 'Gaming Headsets', emoji: '🎮' },
+  { id: 'bluetooth_speakers', label: 'Bluetooth Speakers', emoji: '🔊' },
+  { id: 'soundbars', label: 'Sound Bars', emoji: '📺' },
+  { id: 'smartwatches', label: 'Smart Watches', emoji: '⌚' },
+  { id: 'powerbank', label: 'Power Banks', emoji: '🔋' },
+  { id: 'gaming_accessories', label: 'Gaming Accessories', emoji: '🕹️' },
+  { id: 'dashcams', label: 'Dash Cameras', emoji: '🚗' },
+  { id: 'projectors', label: 'Projectors', emoji: '🎥' }
 ]
 
 export const PRODUCTS = [
@@ -193,6 +200,34 @@ export const PRODUCTS = [
     reviews: [
       { user: 'Kavya N.', rating: 5, comment: 'Compact and great ANC. Perfect for office and commutes.' },
       { user: 'Siddharth R.', rating: 4, comment: 'Solid TWS with ANC at this budget. Very impressed!' },
+    ],
+  },
+  {
+    id: 13, slug: 'energy-core-10000', name: 'Energy Core 10k',
+    brand: 'BeatBox', category: 'powerbank', price: 999, oldPrice: 2499, discount: 60,
+    rating: 4.8, reviewCount: 520, tag: 'New', usp: '22.5W Fast Charge',
+    imageKey: 'powerBank', badge: 'Power Up', inStock: true,
+    colors: [{ name: 'Black', code: '#1a1a1a' }, { name: 'White', code: '#f9fafb' }],
+    specs: { 'Capacity': '10000mAh', 'Output': '22.5W Max', 'Ports': '2 USB-A, 1 Type-C', 'Material': 'Aluminum', 'Charging': 'Two-way Fast Charge', 'Weight': '210g' },
+    description: 'Ultra-slim 10000mAh power bank with 22.5W fast charging, LED display, and premium aluminum casing. Never run out of juice.',
+    highlights: ['22.5W fast charging', 'Charge 3 devices at once', 'Smart IC protection', 'Digital LED display'],
+    reviews: [
+      { user: 'Vikram S.', rating: 5, comment: 'Charges my phone super fast. Highly recommend!' },
+      { user: 'Neha P.', rating: 4, comment: 'Very sleek and portable. A bit heavy but worth it.' },
+    ],
+  },
+  {
+    id: 14, slug: 'blade-pro-trimmer', name: 'Blade Pro Trimmer',
+    brand: 'BeatBox', category: 'trimmer', price: 1499, oldPrice: 3499, discount: 57,
+    rating: 4.7, reviewCount: 315, tag: 'Grooming', usp: 'Titanium Blades',
+    imageKey: 'trimmer', badge: 'Pro Series', inStock: true,
+    colors: [{ name: 'Silver', code: '#c0c0c0' }, { name: 'Black', code: '#000000' }],
+    specs: { 'Blade': 'Titanium Coated', 'Battery': '90 Mins', 'Lengths': '20 Settings', 'Charging': 'Type-C', 'Water': 'IPX7 Washable', 'Motor': '7000 RPM' },
+    description: 'Precision beard trimmer with self-sharpening titanium blades, 90 mins runtime, and 20 length settings. Elevate your grooming.',
+    highlights: ['Titanium coated blades', '90 mins cordless use', '20 precision length settings', 'IPX7 fully washable body'],
+    reviews: [
+      { user: 'Rahul D.', rating: 5, comment: 'Very smooth trim, no pulling at all.' },
+      { user: 'Karan V.', rating: 4, comment: 'Battery life is excellent. Good quality.' },
     ],
   },
 ]

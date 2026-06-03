@@ -18,9 +18,25 @@ import {
   Clock,
   Package,
   Watch,
-  Link2
+  Link2,
+  BatteryCharging,
+  Scissors
 } from 'lucide-react'
 import logo from '../../assets/beatbox_logo.png'
+import heroEarbuds from '../../assets/hero_earbuds.png'
+import heroHeadphones from '../../assets/hero_headphones.png'
+import wirelessNeckband from '../../assets/wireless_neckband.png'
+import gamingHeadset from '../../assets/gaming_headset.png'
+import heroWired from '../../assets/hero_wired.png'
+import heroSmartwatch from '../../assets/hero_smartwatch.png'
+import heroSpeaker from '../../assets/hero_speaker.png'
+import powerBank from '../../assets/power_bank.png'
+import soundbar from '../../assets/soundbar.png'
+import dashCam from '../../assets/dash_cam.png'
+import projector from '../../assets/projector.png'
+import actionCam from '../../assets/action_cam.png'
+import gamingMouse from '../../assets/gaming_mouse.png'
+import trimmer from '../../assets/trimmer.png'
 import { logout } from '../../redux/authSlice'
 import { selectCartCount } from '../../redux/cartSlice'
 import { selectWishlistCount } from '../../redux/wishlistSlice'
@@ -35,6 +51,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [searchFocused, setSearchFocused] = useState(false)
   const [showCategories, setShowCategories] = useState(false)
+  const [showMore, setShowMore] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [showCart, setShowCart] = useState(false)
   const { user } = useSelector((state) => state.auth)
@@ -101,14 +118,17 @@ export default function Header() {
     }
   }
 
-  const categories = [
-    { name: 'Wireless Earbuds', icon: <Sparkles size={16} className="text-info me-2" />, href: '/products?q=earbuds' },
-    { name: 'Over-Ear Headphones', icon: <Headphones size={16} className="text-primary me-2" />, href: '/products?q=headphones' },
-    { name: 'Wireless Neckbands', icon: <Clock size={16} className="text-warning me-2" />, href: '/products?q=neckbands' },
-    { name: 'Bluetooth Speakers', icon: <Speaker size={16} className="text-success me-2" />, href: '/products?q=speakers' },
-    { name: 'Gaming Headsets', icon: <Gamepad2 size={16} className="text-danger me-2" />, href: '/products?q=gaming' },
-    { name: 'Smart Watches', icon: <Watch size={16} className="text-secondary me-2" />, href: '/products?q=watch' },
-    { name: 'Wired Headphones', icon: <Link2 size={16} className="text-muted me-2" />, href: '/products?q=wired' },
+  const visualCategories = [
+    { name: 'AirPods', image: heroEarbuds, href: '/products?q=airpods' },
+    { name: 'TWS Earbuds', image: heroEarbuds, href: '/products?q=tws' },
+    { name: 'Gaming Headsets', image: gamingHeadset, href: '/products?q=gaming_headsets' },
+    { name: 'Bluetooth Speakers', image: heroSpeaker, href: '/products?q=bluetooth_speakers' },
+    { name: 'Sound Bars', image: soundbar, href: '/products?q=soundbars' },
+    { name: 'Smart Watches', image: heroSmartwatch, href: '/products?q=smartwatches' },
+    { name: 'Power Banks', image: powerBank, href: '/products?q=powerbank' },
+    { name: 'Gaming Accessories', image: gamingMouse, href: '/products?q=gaming_accessories' },
+    { name: 'Dash Cameras', image: dashCam, href: '/products?q=dashcams' },
+    { name: 'Projectors', image: projector, href: '/products?q=projectors' },
   ]
 
   return (
@@ -192,6 +212,13 @@ export default function Header() {
                     <h6 className="mb-0 text-theme-title fw-bold">{user.fullName}</h6>
                     <small className="text-theme-muted">{user.email}</small>
                   </li>
+                  {user.roles && user.roles.includes('Admin') && (
+                    <li>
+                      <Link to="/admin" className="dropdown-item premium-dropdown-item rounded-3 py-2 d-flex align-items-center gap-2 fw-bold text-primary">
+                        🛡️ Admin Dashboard
+                      </Link>
+                    </li>
+                  )}
                   <li>
                     <Link to="/orders" className="dropdown-item premium-dropdown-item rounded-3 py-2 d-flex align-items-center gap-2"><Package size={15} style={{ color: 'var(--bb-accent)' }} /> My Orders</Link>
                   </li>
@@ -346,7 +373,7 @@ export default function Header() {
 
               {/* Categories Hover Dropdown */}
               <li
-                className="nav-item position-relative dropdown"
+                className="nav-item position-static dropdown"
                 onMouseEnter={() => setShowCategories(true)}
                 onMouseLeave={() => setShowCategories(false)}
               >
@@ -359,50 +386,141 @@ export default function Header() {
 
                 <AnimatePresence>
                   {showCategories && (
-                    <motion.ul
+                    <motion.div
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 15 }}
                       transition={{ duration: 0.2 }}
-                      className="dropdown-menu show premium-dropdown p-lg-3 mt-2 dropdown-mobile-static"
+                      className="dropdown-menu show premium-dropdown p-4 mt-0 dropdown-mobile-static mega-menu-visual"
                       style={{
-                        width: '260px'
+                        width: '100%',
+                        left: '0',
+                        right: '0',
+                        borderLeft: 'none',
+                        borderRight: 'none',
+                        borderRadius: '0',
+                        boxShadow: '0 15px 40px rgba(0,0,0,0.2)',
+                        borderTop: '1px solid var(--bb-border)',
+                        paddingLeft: '5%',
+                        paddingRight: '5%',
                       }}
                     >
-                      {categories.map((cat, idx) => (
-                        <li key={idx} className="mb-1">
+                      <div 
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: window.innerWidth > 992 ? 'repeat(5, 1fr)' : 'repeat(2, 1fr)',
+                          gap: '30px 20px',
+                          maxWidth: '1400px',
+                          margin: '0 auto'
+                        }}
+                      >
+                        {visualCategories.map((item, idx) => (
                           <Link
-                            to={cat.href}
-                            className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3"
-                            onClick={() => setShowCategories(false)}
+                            key={idx}
+                            to={item.href}
+                            className="text-decoration-none d-flex align-items-center gap-3 category-visual-item"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => { setShowCategories(false); setIsOpen(false); }}
                           >
-                            {cat.icon}
-                            {cat.name}
+                            <div 
+                              className="category-img-container rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                              style={{ 
+                                width: '56px', 
+                                height: '56px', 
+                                backgroundColor: 'var(--bb-surface-2)',
+                                border: '1px solid var(--bb-border)',
+                                transition: 'transform 0.3s ease'
+                              }}
+                            >
+                              <img src={item.image} alt={item.name} style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
+                            </div>
+                            <span className="text-theme-title fw-semibold hover-text-accent transition-all text-start" style={{ fontSize: '0.9rem', lineHeight: '1.2' }}>{item.name}</span>
                           </Link>
-                        </li>
-                      ))}
-                    </motion.ul>
+                        ))}
+                      </div>
+                    </motion.div>
                   )}
                 </AnimatePresence>
               </li>
 
               <li className="nav-item">
-                <Link to="/products" className="nav-link premium-nav-link py-2">
+                <Link to="/products?sale=true" className="nav-link premium-nav-link py-2 text-danger fw-bold d-flex align-items-center gap-1" onClick={() => setIsOpen(false)}>
+                  <Sparkles size={14} /> Daily Deals
+                </Link>
+              </li>
+
+              <li className="nav-item">
+                <Link to="/products?category=bestsellers" className="nav-link premium-nav-link py-2 text-warning" onClick={() => setIsOpen(false)}>
                   Best Sellers
                 </Link>
               </li>
 
               <li className="nav-item">
-                <Link to="/products" className="nav-link premium-nav-link py-2">
-                  New Launches
+                <Link to="/gifting" className="nav-link premium-nav-link py-2" onClick={() => setIsOpen(false)}>
+                  Gifting Store
                 </Link>
               </li>
 
-              <li className="nav-item">
-                <a href="#support" className="nav-link premium-nav-link py-2">
-                  Support
-                </a>
+              {/* More Dropdown */}
+              <li
+                className="nav-item position-relative dropdown"
+                onMouseEnter={() => setShowMore(true)}
+                onMouseLeave={() => setShowMore(false)}
+              >
+                <button
+                  className="nav-link text-theme-title d-flex align-items-center gap-1 border-0 bg-transparent py-2 premium-nav-link"
+                  onClick={() => setShowMore(!showMore)}
+                >
+                  More <ChevronDown size={14} className={`transition-all duration-300 ${showMore ? 'rotate-180' : ''}`} />
+                </button>
+                <AnimatePresence>
+                  {showMore && (
+                    <motion.ul
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 15 }}
+                      transition={{ duration: 0.2 }}
+                      className="dropdown-menu show premium-dropdown p-2 mt-2 dropdown-mobile-static"
+                      style={{
+                        width: '240px',
+                        left: '0'
+                      }}
+                    >
+                      <li className="mb-1">
+                        <Link to="/products?category=bestsellers" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3 text-warning" onClick={() => { setShowMore(false); setIsOpen(false); }}>
+                          <Sparkles size={14} className="me-3" /> Best Sellers
+                        </Link>
+                      </li>
+                      <li className="mb-1">
+                        <Link to="/corporate" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3" onClick={() => { setShowMore(false); setIsOpen(false); }}>
+                          <Package size={14} className="me-3 text-primary" /> Corporate Orders
+                        </Link>
+                      </li>
+                      <li className="mb-1">
+                        <Link to="/personalisation" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3" onClick={() => { setShowMore(false); setIsOpen(false); }}>
+                          <User size={14} className="me-3 text-info" /> Personalisation
+                        </Link>
+                      </li>
+                      <li className="mb-1">
+                        <Link to="/refer" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3 text-success" onClick={() => { setShowMore(false); setIsOpen(false); }}>
+                          <Heart size={14} className="me-3" /> Refer & Earn
+                        </Link>
+                      </li>
+                      <li className="mb-1">
+                        <Link to="/orders" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3" onClick={() => { setShowMore(false); setIsOpen(false); }}>
+                          <Package size={14} className="me-3 text-warning" /> Track Order
+                        </Link>
+                      </li>
+                      <li className="mb-1">
+                        <Link to="/support" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3" onClick={() => { setShowMore(false); setIsOpen(false); }}>
+                          <Link2 size={14} className="me-3 text-secondary" /> Support
+                        </Link>
+                      </li>
+                    </motion.ul>
+                  )}
+                </AnimatePresence>
               </li>
+              
               {/* Mobile Only Wishlist Link */}
               <li className="nav-item d-lg-none mt-2 pt-2 border-top border-secondary border-opacity-25">
                 <button 
@@ -606,6 +724,17 @@ export default function Header() {
                         </li>
 
                         {/* Menu Links */}
+
+                        {user.roles && user.roles.includes('Admin') && (
+                          <li>
+                            <Link
+                              to="/admin"
+                              className="dropdown-item premium-dropdown-item rounded-3 py-3 d-flex align-items-center gap-2 fw-bold text-primary"
+                            >
+                              🛡️ Admin Dashboard
+                            </Link>
+                          </li>
+                        )}
 
                         <li>
                           <Link

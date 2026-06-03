@@ -31,28 +31,36 @@ const productSlice = createSlice({
         };
 
         // Map backend DTO to match the UI's expected structure
-        state.items = action.payload.map(bp => ({
-          id: bp.id,
-          slug: bp.name?.toLowerCase().replace(/ /g, '-') || 'product',
-          name: bp.name,
-          brand: bp.brand || 'BeatBox',
-          category: bp.categoryName?.toLowerCase() || 'headphones',
-          // bp.price = original/MRP; bp.discountPrice = sale price
-          price: bp.discountPrice ?? bp.price,          // sale price shown on card
-          oldPrice: bp.price,                            // strikethrough price
-          discount: bp.discountPrice
-            ? Math.round(((bp.price - bp.discountPrice) / bp.price) * 100)
-            : 0,
-          rating: bp.averageRating ?? bp.rating ?? 4.5,
-          reviewCount: bp.reviewCount ?? 0,
-          tag: bp.isFeatured ? 'Featured' : 'Popular',
-          usp: bp.batteryLife ? `${bp.batteryLife} Battery` : 'Signature Sound',
-          imageKey: mapImageKey(bp.imageUrl, bp.name),
-          badge: 'Original',
-          inStock: (bp.stockQuantity || 0) > 0,
-          stockQuantity: bp.stockQuantity || 0,
-          colors: [{ name: bp.color || 'Black', code: '#0a0a0a' }],
-          specs: {
+        state.items = action.payload.map(bp => {
+          // Bypass mapping if it's already a fully-formed mock product
+          if (bp.colors && Array.isArray(bp.colors)) {
+            return bp;
+          }
+
+          return {
+            id: bp.id,
+            slug: bp.name?.toLowerCase().replace(/ /g, '-') || 'product',
+            name: bp.name,
+            brand: bp.brand || 'BeatBox',
+            category: bp.categoryName?.toLowerCase() || bp.category || 'headphones',
+            // bp.price = original/MRP; bp.discountPrice = sale price
+            price: bp.discountPrice ?? bp.price,          // sale price shown on card
+            oldPrice: bp.price ?? bp.oldPrice,                            // strikethrough price
+            discount: bp.discountPrice
+              ? Math.round(((bp.price - bp.discountPrice) / bp.price) * 100)
+              : 0,
+            rating: bp.averageRating ?? bp.rating ?? 4.5,
+            reviewCount: bp.reviewCount ?? 0,
+            tag: bp.isFeatured ? 'Featured' : 'Popular',
+            usp: bp.batteryLife ? `${bp.batteryLife} Battery` : 'Signature Sound',
+            imageKey: bp.imageKey || mapImageKey(bp.imageUrl, bp.name),
+            imageUrl: bp.imageUrl,
+            badge: bp.badge || 'Original',
+            inStock: bp.inStock !== undefined ? bp.inStock : ((bp.stockQuantity || 0) > 0),
+            stockQuantity: bp.stockQuantity || 0,
+            colors: bp.colors || [{ name: bp.color || 'Black', code: '#0a0a0a' }],
+            specs: {
+
             'Battery Life': bp.batteryLife || '40 Hours Playback',
             'Connectivity': bp.connectivity || 'Bluetooth v5.3',
             'Charging Tech': 'ASAP™ Fast Charge (10 mins = 10 Hours)',
@@ -103,7 +111,8 @@ const productSlice = createSlice({
             { question: 'What is the warranty period?', answer: 'It comes with a 1-year standard warranty against manufacturing defects.' }
           ],
           reviews: [],
-        }));
+        };
+        });
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.status = 'failed';
