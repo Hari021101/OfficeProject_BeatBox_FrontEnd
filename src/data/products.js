@@ -7,6 +7,43 @@ import wirelessNeckband from '../assets/wireless_neckband.png'
 import smartEarbuds from '../assets/smart_earbuds.png'
 import powerBank from '../assets/power_bank.png'
 import trimmer from '../assets/trimmer.png'
+import soundbar from '../assets/soundbar.png'
+
+import portableFan from '../assets/portable_fan.png'
+import cables from '../assets/cables.png'
+import carCharger from '../assets/car_charger.png'
+import electricKettle from '../assets/electric_kettle.png'
+import hairDryer from '../assets/hair_dryer.png'
+import keyboardMouse from '../assets/keyboard_mouse.png'
+import laptopBag from '../assets/laptop_bag.png'
+import laptopStand from '../assets/laptop_stand.png'
+import mobileHolder from '../assets/mobile_holder.png'
+import smartTracker from '../assets/smart_tracker.png'
+import tyreInflator from '../assets/tyre_inflator.png'
+import usbHub from '../assets/usb_hub.png'
+import vacuumCleaner from '../assets/vacuum_cleaner.png'
+import wirelessCharger from '../assets/wireless_charger.png'
+
+import partySpeaker from '../assets/party_speaker.png'
+import wiredEarphones from '../assets/wired_earphones.png'
+import usbSpeakers from '../assets/usb_speakers.png'
+import conferenceSpeakers from '../assets/conference_speakers.png'
+import wirelessMicrophones from '../assets/wireless_microphones.png'
+
+import phoneWallet from '../assets/phone_wallet.png'
+import cableOrganiser from '../assets/cable_organiser.png'
+
+import wirelessKeyboard from '../assets/wireless_keyboard.png'
+import wiredKeyboard from '../assets/wired_keyboard.png'
+import gamingKeyboard from '../assets/gaming_keyboard.png'
+import wirelessMouse from '../assets/wireless_mouse.png'
+import wiredMouse from '../assets/wired_mouse.png'
+import laptopTable from '../assets/laptop_table.png'
+import extensionBoard from '../assets/extension_board.png'
+import projector from '../assets/projector.png'
+import lcdWritingPad from '../assets/lcd_writing_pad.png'
+import computerCables from '../assets/computer_cables.png'
+import wirelessPresenter from '../assets/wireless_presenter.png'
 
 export const IMAGE_MAP = {
   heroHeadphones,
@@ -17,20 +54,92 @@ export const IMAGE_MAP = {
   smartEarbuds,
   powerBank,
   trimmer,
+  soundbar,
+  premiumCables: cables,
+  carCharger,
+  portableFan,
+  electricKettle,
+  hairDryer,
+  keyboardMouse,
+  laptopBag,
+  laptopStand,
+  mobileHolder,
+  smartTracker,
+  tyreInflator,
+  usbHub,
+  vacuumCleaner,
+  wirelessCharger,
+  partySpeaker,
+  wiredEarphones,
+  usbSpeakers,
+  conferenceSpeakers,
+  wirelessMicrophones,
+  phoneWallet,
+  cableOrganiser,
+  wirelessKeyboard,
+  wiredKeyboard,
+  gamingKeyboard,
+  wirelessMouse,
+  wiredMouse,
+  laptopTable,
+  extensionBoard,
+  projector,
+  lcdWritingPad,
+  computerCables,
+  wirelessPresenter
 }
 
 export const CATEGORIES = [
   { id: 'all', label: 'All Products', emoji: '🔥' },
-  { id: 'airpods', label: 'AirPods', emoji: '🎵' },
-  { id: 'tws', label: 'TWS Earbuds', emoji: '🎧' },
-  { id: 'gaming_headsets', label: 'Gaming Headsets', emoji: '🎮' },
-  { id: 'bluetooth_speakers', label: 'Bluetooth Speakers', emoji: '🔊' },
+  { id: 'headphones', label: 'Headphones', emoji: '🎧' },
+  { id: 'earbuds', label: 'Earbuds', emoji: '🎵' },
+  { id: 'tws', label: 'TWS Earbuds', emoji: '🎼' },
+  { id: 'neckbands', label: 'Neckbands', emoji: '🏃' },
+  { id: 'gaming', label: 'Gaming Headsets', emoji: '🎮' },
+  { id: 'speakers', label: 'Speakers', emoji: '🔊' },
   { id: 'soundbars', label: 'Sound Bars', emoji: '📺' },
+  { id: 'party speakers', label: 'Party Speakers', emoji: '🪩' },
+  { id: 'portable speakers', label: 'Portable Speakers', emoji: '📻' },
+  { id: 'usb speakers', label: 'USB Speakers', emoji: '🖥️' },
+  { id: 'conference speakers', label: 'Conference Speakers', emoji: '🗣️' },
+  { id: 'wired earphones', label: 'Wired Earphones', emoji: '🔌' },
+  { id: 'wireless microphones', label: 'Microphones', emoji: '🎙️' },
   { id: 'smartwatches', label: 'Smart Watches', emoji: '⌚' },
-  { id: 'powerbank', label: 'Power Banks', emoji: '🔋' },
-  { id: 'gaming_accessories', label: 'Gaming Accessories', emoji: '🕹️' },
-  { id: 'dashcams', label: 'Dash Cameras', emoji: '🚗' },
-  { id: 'projectors', label: 'Projectors', emoji: '🎥' }
+  { id: 'power bank', label: 'Power Banks', emoji: '🔋' },
+  { id: 'chargers', label: 'Chargers', emoji: '⚡' },
+  { id: 'cables', label: 'Cables', emoji: '🪢' },
+  { id: 'trimmer', label: 'Trimmers', emoji: '✂️' },
+  { id: 'computer accessories', label: 'Computer Accs', emoji: '💻' },
+  { id: 'mobile accessories', label: 'Mobile Accs', emoji: '📱' },
+  { id: 'car accessories', label: 'Car Accessories', emoji: '🚗' },
+  { id: 'smart gadgets', label: 'Smart Gadgets', emoji: '💡' },
+  { id: 'projectors', label: 'Projectors', emoji: '🎥' },
+  { id: 'wireless keyboard', label: 'Wireless Keyboards', emoji: '⌨️' },
+  { id: 'wired keyboard', label: 'Wired Keyboards', emoji: '⌨️' },
+  { id: 'gaming keyboard', label: 'Gaming Keyboards', emoji: '🕹️' },
+  { id: 'wireless mouse', label: 'Wireless Mice', emoji: '🖱️' },
+  { id: 'wired mouse', label: 'Wired Mice', emoji: '🖱️' },
+  { id: 'laptop table', label: 'Laptop Tables', emoji: '🪑' },
+  { id: 'extension board', label: 'Extension Boards', emoji: '🔌' },
+  { id: 'lcd writing pads', label: 'Writing Pads', emoji: '📝' },
+  { id: 'computer cables', label: 'Computer Cables', emoji: '🔗' },
+  { id: 'wireless presenter', label: 'Presenters', emoji: '🪄' },
+  { id: 'gadget cleaners', label: 'Gadget Cleaners', emoji: '🧹' },
+  { id: 'phone wallet', label: 'Phone Wallets', emoji: '💳' },
+  { id: 'cable organiser', label: 'Cable Organisers', emoji: '🖇️' },
+  { id: 'car bluetooth', label: 'Car Bluetooth', emoji: '📻' },
+  { id: 'car mobile holder', label: 'Car Mounts', emoji: '📱' },
+  { id: 'bike mobile holder', label: 'Bike Mounts', emoji: '🚲' },
+  { id: 'car wireless charger', label: 'Car Chargers', emoji: '⚡' },
+  { id: 'pressure washer', label: 'Pressure Washers', emoji: '💦' },
+  { id: 'ear cleaners', label: 'Ear Cleaners', emoji: '👂' },
+  { id: 'tool kit', label: 'Tool Kits', emoji: '🛠️' },
+  { id: 'humidifiers', label: 'Humidifiers', emoji: '🌫️' },
+  { id: 'air blower', label: 'Air Blowers', emoji: '💨' },
+  { id: 'timers', label: 'Timers', emoji: '⏱️' },
+  { id: 'massagers', label: 'Massagers', emoji: '💆' },
+  { id: 'smart sealers', label: 'Smart Sealers', emoji: '🥡' },
+  { id: 'rechargeable battery', label: 'Batteries', emoji: '🔋' }
 ]
 
 export const PRODUCTS = [
@@ -204,7 +313,7 @@ export const PRODUCTS = [
   },
   {
     id: 13, slug: 'energy-core-10000', name: 'Energy Core 10k',
-    brand: 'BeatBox', category: 'powerbank', price: 999, oldPrice: 2499, discount: 60,
+    brand: 'BeatBox', category: 'power bank', price: 999, oldPrice: 2499, discount: 60,
     rating: 4.8, reviewCount: 520, tag: 'New', usp: '22.5W Fast Charge',
     imageKey: 'powerBank', badge: 'Power Up', inStock: true,
     colors: [{ name: 'Black', code: '#1a1a1a' }, { name: 'White', code: '#f9fafb' }],
@@ -230,6 +339,421 @@ export const PRODUCTS = [
       { user: 'Karan V.', rating: 4, comment: 'Battery life is excellent. Good quality.' },
     ],
   },
+  {
+    id: 15, slug: 'cinema-pro-soundbar', name: 'Cinema Pro Soundbars',
+    brand: 'BeatBox', category: 'soundbars', price: 4999, oldPrice: 12999, discount: 61,
+    rating: 4.8, reviewCount: 150, tag: 'Bestseller', usp: '120W Dolby Audio',
+    imageKey: 'soundbar', badge: 'Home Theatre', inStock: true,
+    colors: [{ name: 'Black', code: '#000000' }],
+    specs: { 'Output': '120W RMS', 'Channels': '2.1', 'Subwoofer': 'Wireless', 'Bluetooth': '5.3', 'Ports': 'HDMI ARC, Optical' },
+    description: 'Transform your living room into a cinema with 120W of pure Dolby audio and a wireless subwoofer.',
+    highlights: ['Dolby Audio', 'Wireless Subwoofer', 'HDMI ARC', 'Wall Mountable'],
+    reviews: [],
+  },
+  {
+    id: 16, slug: 'premium-cables-typec', name: 'Premium Braided Cables',
+    brand: 'BeatBox', category: 'cables', price: 299, oldPrice: 999, discount: 70,
+    rating: 4.6, reviewCount: 890, tag: 'Essential', usp: 'Tough Braided',
+    imageKey: 'premiumCables', badge: 'Durable', inStock: true,
+    colors: [{ name: 'Black', code: '#000000' }, { name: 'Red', code: '#ff0000' }],
+    specs: { 'Type': 'Type-C to Type-C', 'Length': '1.5m', 'Speed': '60W PD Fast Charging', 'Material': 'Nylon Braided' },
+    description: 'Ultra-durable nylon braided cables supporting 60W Power Delivery fast charging.',
+    highlights: ['10,000+ Bend Lifespan', '60W PD', 'Tangle-free'],
+    reviews: [],
+  },
+  {
+    id: 17, slug: 'magnetic-wireless-charger', name: 'Magnetic Wireless Charger',
+    brand: 'BeatBox', category: 'chargers', price: 1299, oldPrice: 3499, discount: 62,
+    rating: 4.7, reviewCount: 420, tag: 'New', usp: '15W MagSafe Compatible',
+    imageKey: 'wirelessCharger', badge: 'Fast Charge', inStock: true,
+    colors: [{ name: 'Silver', code: '#c0c0c0' }],
+    specs: { 'Output': '15W Max', 'Input': 'Type-C', 'Compatibility': 'Qi-Enabled Devices', 'Material': 'Aluminum Alloy' },
+    description: 'Sleek metallic wireless charging pad with strong magnetic alignment for instantaneous 15W charging.',
+    highlights: ['15W Fast Charge', 'Magnetic Alignment', 'Aluminum Build'],
+    reviews: [],
+  },
+  {
+    id: 18, slug: 'auto-grip-car-charger', name: 'Auto Grip Car Charger',
+    brand: 'BeatBox', category: 'car accessories', price: 899, oldPrice: 2499, discount: 64,
+    rating: 4.5, reviewCount: 310, tag: 'Trending', usp: 'Dual Port 36W',
+    imageKey: 'carCharger', badge: 'On-the-go', inStock: true,
+    colors: [{ name: 'Black', code: '#000000' }],
+    specs: { 'Output': '36W Max', 'Ports': 'USB-A + Type-C', 'Material': 'Metal Body' },
+    description: 'Premium dual-port car charger to fast-charge two devices simultaneously while on the move.',
+    highlights: ['36W Fast Charge', 'Dual Ports', 'LED Indicator'],
+    reviews: [],
+  },
+  {
+    id: 19, slug: 'flexi-mobile-holder', name: 'Flexi Mobile Holder',
+    brand: 'BeatBox', category: 'mobile accessories', price: 399, oldPrice: 999, discount: 60,
+    rating: 4.4, reviewCount: 500, tag: 'Useful', usp: '360° Rotation',
+    imageKey: 'mobileHolder', badge: 'Desk Essential', inStock: true,
+    colors: [{ name: 'Silver', code: '#c0c0c0' }],
+    specs: { 'Material': 'Aluminum', 'Compatibility': '4" to 7" devices', 'Rotation': '360 Degrees' },
+    description: 'Ergonomic aluminum mobile holder for your desk. Perfect for video calls and content consumption.',
+    highlights: ['360° Adjustable', 'Anti-slip pads', 'Foldable'],
+    reviews: [],
+  },
+  {
+    id: 20, slug: 'ergo-laptop-stand', name: 'Ergo Laptop Stand',
+    brand: 'BeatBox', category: 'computer accessories', price: 1499, oldPrice: 3999, discount: 62,
+    rating: 4.8, reviewCount: 220, tag: 'Premium', usp: 'Adjustable Angles',
+    imageKey: 'laptopStand', badge: 'Ergonomic', inStock: true,
+    colors: [{ name: 'Silver', code: '#c0c0c0' }],
+    specs: { 'Material': 'Aviation Aluminum', 'Support': 'Up to 15.6" Laptops', 'Levels': '6 Height Settings' },
+    description: 'Premium adjustable aluminum laptop stand to improve your posture and device cooling.',
+    highlights: ['Aviation Aluminum', '6 Height Levels', 'Improves Cooling'],
+    reviews: [],
+  },
+  {
+    id: 21, slug: 'multi-usb-hub', name: 'Multi-Port USB Hub',
+    brand: 'BeatBox', category: 'computer accessories', price: 1899, oldPrice: 4999, discount: 62,
+    rating: 4.6, reviewCount: 180, tag: 'Must Have', usp: '7-in-1 Expansion',
+    imageKey: 'usbHub', badge: 'Connectivity', inStock: true,
+    colors: [{ name: 'Grey', code: '#808080' }],
+    specs: { 'Ports': 'HDMI, 2x USB 3.0, SD/TF, Type-C PD', 'Material': 'Aluminum', 'Speed': '5Gbps' },
+    description: 'Expand your laptop connectivity with this sleek 7-in-1 Type-C hub adapter.',
+    highlights: ['4K HDMI', '100W PD Pass-through', 'SD/TF Card Reader'],
+    reviews: [],
+  },
+  {
+    id: 22, slug: 'pro-laptop-bags', name: 'Pro Laptop Bags',
+    brand: 'BeatBox', category: 'computer accessories', price: 1999, oldPrice: 5999, discount: 66,
+    rating: 4.9, reviewCount: 145, tag: 'Bestseller', usp: 'Water Resistant',
+    imageKey: 'laptopBag', badge: 'Travel', inStock: true,
+    colors: [{ name: 'Black', code: '#000000' }],
+    specs: { 'Capacity': '25L', 'Material': 'Water-resistant Oxford', 'Fit': 'Up to 16" Laptops' },
+    description: 'Professional water-resistant laptop backpack with anti-theft compartments and ergonomic padding.',
+    highlights: ['Water Resistant', 'Anti-theft Zippers', 'USB Charging Port'],
+    reviews: [],
+  },
+  {
+    id: 23, slug: 'smart-tyre-inflator', name: 'Smart Tyre Inflator',
+    brand: 'BeatBox', category: 'car accessories', price: 2499, oldPrice: 6999, discount: 64,
+    rating: 4.7, reviewCount: 88, tag: 'Safety', usp: 'Auto Shut-off',
+    imageKey: 'tyreInflator', badge: 'Must Have', inStock: true,
+    colors: [{ name: 'Dark Grey', code: '#404040' }],
+    specs: { 'Max Pressure': '150 PSI', 'Battery': '4000mAh', 'Display': 'Digital LED', 'Charging': 'Type-C' },
+    description: 'Portable digital tyre inflator with auto shut-off and built-in LED flashlight.',
+    highlights: ['150 PSI Max', 'Digital Display', 'Emergency Flashlight'],
+    reviews: [],
+  },
+  {
+    id: 24, slug: 'cordless-vacuum-cleaner', name: 'Cordless Vacuum Cleaner',
+    brand: 'BeatBox', category: 'car accessories', price: 2199, oldPrice: 5999, discount: 63,
+    rating: 4.5, reviewCount: 112, tag: 'Cleaning', usp: 'High Suction',
+    imageKey: 'vacuumCleaner', badge: 'Powerful', inStock: true,
+    colors: [{ name: 'Black', code: '#000000' }],
+    specs: { 'Suction': '8000Pa', 'Battery': '30 Mins Runtime', 'Filter': 'Washable HEPA' },
+    description: 'Sleek cordless handheld vacuum cleaner perfect for keeping your car and desk spotless.',
+    highlights: ['8000Pa Suction', 'Washable HEPA filter', 'Lightweight'],
+    reviews: [],
+  },
+  {
+    id: 25, slug: 'ionic-hair-dryer', name: 'Ionic Hair Dryer',
+    brand: 'BeatBox', category: 'smart gadgets', price: 1799, oldPrice: 4999, discount: 64,
+    rating: 4.8, reviewCount: 300, tag: 'Beauty', usp: 'Damage Protection',
+    imageKey: 'hairDryer', badge: 'Salon Tech', inStock: true,
+    colors: [{ name: 'Magenta', code: '#ff00ff' }, { name: 'Dark Grey', code: '#404040' }],
+    specs: { 'Power': '1800W', 'Tech': 'Negative Ion', 'Settings': '3 Heat, 2 Speed' },
+    description: 'Premium ionic hair dryer that reduces frizz and dries hair quickly without heat damage.',
+    highlights: ['1800W Powerful Motor', 'Ionic Technology', 'Cool Shot Button'],
+    reviews: [],
+  },
+  {
+    id: 26, slug: 'smart-electric-kettle', name: 'Smart Electric Kettle',
+    brand: 'BeatBox', category: 'smart gadgets', price: 1499, oldPrice: 3999, discount: 62,
+    rating: 4.6, reviewCount: 156, tag: 'Kitchen', usp: 'Temperature Control',
+    imageKey: 'electricKettle', badge: 'Smart Home', inStock: true,
+    colors: [{ name: 'Matte Black', code: '#202020' }],
+    specs: { 'Capacity': '1.5L', 'Material': '304 Stainless Steel', 'Power': '1500W', 'Features': 'Keep Warm' },
+    description: 'Sleek matte black electric kettle with real-time temperature display and keep-warm functionality.',
+    highlights: ['Real-time Temp Display', '1.5L Capacity', 'Boil-dry Protection'],
+    reviews: [],
+  },
+  {
+    id: 27, slug: 'smart-location-tracker', name: 'Smart Location tracker',
+    brand: 'BeatBox', category: 'smart gadgets', price: 799, oldPrice: 2499, discount: 68,
+    rating: 4.7, reviewCount: 450, tag: 'Security', usp: 'Global Tracking',
+    imageKey: 'smartTracker', badge: 'Never Lose', inStock: true,
+    colors: [{ name: 'White', code: '#ffffff' }],
+    specs: { 'Battery': '1 Year Replaceable', 'Range': 'Global (Crowdsourced)', 'Water': 'IP67' },
+    description: 'Small premium smart tracker tag to keep tabs on your keys, wallet, or luggage.',
+    highlights: ['Global Tracking', 'Loud Ring', 'Water Resistant'],
+    reviews: [],
+  },
+  {
+    id: 28, slug: 'breeze-portable-fans', name: 'Breeze Portable Fans',
+    brand: 'BeatBox', category: 'smart gadgets', price: 599, oldPrice: 1499, discount: 60,
+    rating: 4.5, reviewCount: 610, tag: 'Summer', usp: '3 Speed Settings',
+    imageKey: 'portableFan', badge: 'Cooling', inStock: true,
+    colors: [{ name: 'White', code: '#ffffff' }, { name: 'Pink', code: '#ffc0cb' }],
+    specs: { 'Battery': '2000mAh', 'Runtime': '8 Hours', 'Charging': 'Type-C' },
+    description: 'Compact and powerful portable fan to keep you cool on the go.',
+    highlights: ['3 Speed Modes', '8 Hours Battery', 'Ultra-quiet'],
+    reviews: [],
+  },
+  {
+    id: 29, slug: 'wireless-keyboard-mouse', name: 'Keyboard And Mouse Set',
+    brand: 'BeatBox', category: 'computer accessories', price: 1299, oldPrice: 3499, discount: 62,
+    rating: 4.6, reviewCount: 380, tag: 'Workstation', usp: 'Silent Clicks',
+    imageKey: 'keyboardMouse', badge: 'Combo', inStock: true,
+    colors: [{ name: 'Black', code: '#000000' }],
+    specs: { 'Type': 'Wireless 2.4GHz', 'Range': '10m', 'Battery': '12 Months' },
+    description: 'Sleek wireless keyboard and mouse combo with silent keys and ergonomic design.',
+    highlights: ['Silent Clicks', 'Spill Resistant', 'Long Battery Life'],
+    reviews: [],
+  },
+  {
+    id: 30, slug: 'pro-selfie-stick', name: 'Pro Selfie Stick',
+    brand: 'BeatBox', category: 'smart gadgets', price: 499, oldPrice: 1299, discount: 61,
+    rating: 4.4, reviewCount: 230, tag: 'Photography', usp: 'Bluetooth Remote',
+    imageKey: 'mobileHolder', badge: 'Creator Pick', inStock: true,
+    colors: [{ name: 'Black', code: '#000000' }],
+    specs: { 'Material': 'Aluminum Alloy', 'Length': '100cm', 'Connectivity': 'Bluetooth 5.0' },
+    description: 'Extendable aluminum selfie stick with a detachable Bluetooth remote for perfect group shots.',
+    highlights: ['Bluetooth Remote', 'Aluminum Build', 'Tripod Mode'],
+    reviews: [],
+  },
+  {
+    id: 31, slug: 'tactical-flashlight', name: 'Tactical Flashlight',
+    brand: 'BeatBox', category: 'smart gadgets', price: 699, oldPrice: 1999, discount: 65,
+    rating: 4.7, reviewCount: 150, tag: 'Outdoor', usp: '1000 Lumens',
+    imageKey: 'portableFan', badge: 'Bright', inStock: true,
+    colors: [{ name: 'Military Black', code: '#1a1a1a' }],
+    specs: { 'Brightness': '1000 Lumens', 'Battery': 'Rechargeable', 'Water': 'IPX6' },
+    description: 'Ultra-bright tactical flashlight with adjustable focus and SOS mode for emergencies.',
+    highlights: ['1000 Lumens', 'Adjustable Focus', 'SOS Mode'],
+    reviews: [],
+  },
+  {
+    id: 32, slug: 'precision-stylus', name: 'Precision Stylus',
+    brand: 'BeatBox', category: 'smart gadgets', price: 899, oldPrice: 2499, discount: 64,
+    rating: 4.6, reviewCount: 110, tag: 'Productivity', usp: 'Palm Rejection',
+    imageKey: 'smartTracker', badge: 'Digital Art', inStock: true,
+    colors: [{ name: 'White', code: '#ffffff' }],
+    specs: { 'Compatibility': 'Universal', 'Battery': '12 Hours', 'Feature': 'Palm Rejection' },
+    description: 'High-precision active stylus pen with palm rejection for smooth drawing and note-taking.',
+    highlights: ['Palm Rejection', 'Zero Lag', '12 Hours Battery'],
+    reviews: [],
+  },
+  {
+    id: 33, slug: 'mega-party-speaker', name: 'Mega Party Speaker',
+    brand: 'BeatBox', category: 'party speakers', price: 9999, oldPrice: 19999, discount: 50,
+    rating: 4.9, reviewCount: 840, tag: 'Party Gear', usp: '250W Thunder Bass',
+    imageKey: 'partySpeaker', badge: 'Loudest', inStock: true,
+    colors: [{ name: 'Black', code: '#000000' }],
+    specs: { 'Output': '250W', 'Battery': '10 Hours', 'Lighting': 'RGB Ring Light' },
+    description: 'Turn any space into a club with 250W thunder bass and dynamic RGB party lights.',
+    highlights: ['250W Output', 'Karaoke Mic Included', 'RGB Sync to Music'],
+    reviews: [],
+  },
+  {
+    id: 34, slug: 'mini-portable-speaker', name: 'Mini Portable Speaker',
+    brand: 'BeatBox', category: 'portable speakers', price: 1299, oldPrice: 2999, discount: 56,
+    rating: 4.6, reviewCount: 410, tag: 'On the Go', usp: 'IPX7 Waterproof',
+    imageKey: 'heroSpeaker', badge: 'Travel', inStock: true,
+    colors: [{ name: 'Blue', code: '#0000ff' }],
+    specs: { 'Output': '10W', 'Battery': '12 Hours', 'Water': 'IPX7' },
+    description: 'Compact 10W portable speaker with rich bass and full IPX7 waterproofing.',
+    highlights: ['IPX7 Waterproof', '12 Hours Playtime', 'Rugged Design'],
+    reviews: [],
+  },
+  {
+    id: 35, slug: 'true-wireless-tws', name: 'True Wireless TWS',
+    brand: 'BeatBox', category: 'tws', price: 1499, oldPrice: 3999, discount: 62,
+    rating: 4.7, reviewCount: 520, tag: 'Essential', usp: '50H Playback',
+    imageKey: 'heroEarbuds', badge: 'Best Seller', inStock: true,
+    colors: [{ name: 'White', code: '#ffffff' }],
+    specs: { 'Driver': '10mm', 'Battery': '50 Hours Total', 'Latency': '50ms' },
+    description: 'Reliable true wireless earbuds with 50 hours of total playback and low latency gaming mode.',
+    highlights: ['50H Total Playback', 'Quad Mic ENC', 'Fast Charge'],
+    reviews: [],
+  },
+  {
+    id: 36, slug: 'elite-wireless-headphones', name: 'Elite Wireless Headphones',
+    brand: 'BeatBox', category: 'wireless headphones', price: 2499, oldPrice: 5999, discount: 58,
+    rating: 4.8, reviewCount: 315, tag: 'Studio', usp: 'Active Noise Cancellation',
+    imageKey: 'heroHeadphones', badge: 'Premium', inStock: true,
+    colors: [{ name: 'Black', code: '#000000' }],
+    specs: { 'Driver': '40mm', 'Battery': '40 Hours', 'ANC': 'Hybrid 30dB' },
+    description: 'Studio-grade wireless headphones with hybrid active noise cancellation.',
+    highlights: ['Hybrid ANC', 'Hi-Res Audio', 'Memory Foam Pads'],
+    reviews: [],
+  },
+  {
+    id: 37, slug: 'bass-wired-earphones', name: 'Bass Wired Earphones',
+    brand: 'BeatBox', category: 'wired earphones', price: 399, oldPrice: 999, discount: 60,
+    rating: 4.5, reviewCount: 1200, tag: 'Classic', usp: 'Tangle-Free Cable',
+    imageKey: 'wiredEarphones', badge: 'Value', inStock: true,
+    colors: [{ name: 'Red', code: '#ff0000' }],
+    specs: { 'Driver': '10mm', 'Connector': '3.5mm Jack', 'Cable': 'Braided' },
+    description: 'Classic wired earphones with deep bass, an in-line mic, and tangle-free braided cables.',
+    highlights: ['Deep Bass', 'In-line HD Mic', 'Tangle-free Braided Cable'],
+    reviews: [],
+  },
+  {
+    id: 38, slug: 'desk-usb-speakers', name: 'Desk USB Speakers',
+    brand: 'BeatBox', category: 'usb speakers', price: 799, oldPrice: 1999, discount: 60,
+    rating: 4.3, reviewCount: 150, tag: 'Desktop', usp: 'Plug and Play',
+    imageKey: 'usbSpeakers', badge: 'PC Setup', inStock: true,
+    colors: [{ name: 'Black', code: '#000000' }],
+    specs: { 'Output': '6W RMS', 'Power': 'USB Powered', 'Lighting': 'Subtle RGB' },
+    description: 'Compact plug-and-play USB speakers with modern angles and subtle RGB underglow for your desk.',
+    highlights: ['USB Powered', 'Crisp Audio', 'Subtle RGB'],
+    reviews: [],
+  },
+  {
+    id: 39, slug: 'pro-conference-speakers', name: 'Pro Conference Speakers',
+    brand: 'BeatBox', category: 'conference speakers', price: 3499, oldPrice: 8999, discount: 61,
+    rating: 4.7, reviewCount: 85, tag: 'Business', usp: '360° Voice Pickup',
+    imageKey: 'conferenceSpeakers', badge: 'Office', inStock: true,
+    colors: [{ name: 'Silver', code: '#c0c0c0' }],
+    specs: { 'Microphones': '6-Mic Array', 'Connectivity': 'Bluetooth/USB', 'Battery': '15 Hours' },
+    description: 'Premium conference room speakerphone puck with 360-degree voice pickup and touch controls.',
+    highlights: ['6-Mic Array', '360° Pickup', 'Echo Cancellation'],
+    reviews: [],
+  },
+  {
+    id: 40, slug: 'dual-wireless-microphones', name: 'Dual Wireless Microphones',
+    brand: 'BeatBox', category: 'wireless microphones', price: 4999, oldPrice: 11999, discount: 58,
+    rating: 4.8, reviewCount: 65, tag: 'Creator', usp: '100m Range',
+    imageKey: 'wirelessMicrophones', badge: 'Pro Audio', inStock: true,
+    colors: [{ name: 'Black', code: '#000000' }],
+    specs: { 'Range': '100m', 'Latency': '5ms', 'Battery': '8 Hours/Mic' },
+    description: 'Professional dual wireless microphone set with digital receiver for broadcasting and vlogging.',
+    highlights: ['Dual Mics', '100m Wireless Range', 'Digital Receiver included'],
+    reviews: [],
+  },
+  {
+    id: 41, slug: 'gadget-cleaners', name: 'Gadget Cleaners Kit', brand: 'BeatBox', category: 'gadget cleaners', price: 299, oldPrice: 599, discount: 50, rating: 4.5, reviewCount: 150, tag: 'Care', usp: '7-in-1', imageKey: 'vacuumCleaner', badge: 'Essential', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'Type': 'Cleaning Kit'}, description: '7-in-1 gadget cleaning kit for keyboards, earbuds, and screens.', highlights: ['Compact', 'Soft Brush'], reviews: []
+  },
+  {
+    id: 42, slug: 'phone-wallet', name: 'Magnetic Phone Wallet', brand: 'BeatBox', category: 'phone wallet', price: 499, oldPrice: 999, discount: 50, rating: 4.6, reviewCount: 120, tag: 'Accessory', usp: 'MagSafe', imageKey: 'phoneWallet', badge: 'Premium', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Material': 'Vegan Leather'}, description: 'Premium vegan leather magnetic phone wallet that securely holds up to 3 cards.', highlights: ['MagSafe Compatible', 'Slim Design'], reviews: []
+  },
+  {
+    id: 43, slug: 'cable-organiser', name: 'Magnetic Cable Organiser', brand: 'BeatBox', category: 'cable organiser', price: 199, oldPrice: 499, discount: 60, rating: 4.7, reviewCount: 300, tag: 'Desk', usp: 'Clutter Free', imageKey: 'cableOrganiser', badge: 'Neat', inStock: true, colors: [{name: 'Grey', code: '#888'}], specs: {'Material': 'Silicone'}, description: 'Keep your workspace tidy with these magnetic silicone cable organizers.', highlights: ['Strong Magnets', 'Reusable'], reviews: []
+  },
+  {
+    id: 44, slug: 'wireless-keyboard', name: 'Pro Wireless Keyboard', brand: 'BeatBox', category: 'wireless keyboard', price: 1499, oldPrice: 3999, discount: 62, rating: 4.8, reviewCount: 410, tag: 'Work', usp: 'Multi-Device', imageKey: 'wirelessKeyboard', badge: 'Top Pick', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Type': 'Membrane'}, description: 'Slim multi-device wireless keyboard for seamless switching between PC and tablet.', highlights: ['Multi-Device', 'Quiet Keys'], reviews: []
+  },
+  {
+    id: 45, slug: 'wired-keyboard', name: 'Classic Wired Keyboard', brand: 'BeatBox', category: 'wired keyboard', price: 499, oldPrice: 999, discount: 50, rating: 4.4, reviewCount: 200, tag: 'Office', usp: 'Durable', imageKey: 'wiredKeyboard', badge: 'Value', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Interface': 'USB'}, description: 'Durable and spill-resistant wired keyboard for everyday office use.', highlights: ['Spill Resistant', 'Plug & Play'], reviews: []
+  },
+  {
+    id: 46, slug: 'gaming-keyboard', name: 'RGB Gaming Keyboard', brand: 'BeatBox', category: 'gaming keyboard', price: 2499, oldPrice: 5999, discount: 58, rating: 4.9, reviewCount: 850, tag: 'Esports', usp: 'Mechanical', imageKey: 'gamingKeyboard', badge: 'Gamer', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Switches': 'Blue Mechanical'}, description: 'Tactile mechanical gaming keyboard with per-key RGB lighting.', highlights: ['Blue Switches', 'Anti-Ghosting'], reviews: []
+  },
+  {
+    id: 47, slug: 'wireless-mouse', name: 'Ergo Wireless Mouse', brand: 'BeatBox', category: 'wireless mouse', price: 799, oldPrice: 1999, discount: 60, rating: 4.7, reviewCount: 620, tag: 'Comfort', usp: 'Silent', imageKey: 'wirelessMouse', badge: 'Popular', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'DPI': '1600'}, description: 'Ergonomic wireless mouse with silent clicks and 12-month battery life.', highlights: ['Silent Clicks', 'Ergonomic'], reviews: []
+  },
+  {
+    id: 48, slug: 'wired-mouse', name: 'Precision Wired Mouse', brand: 'BeatBox', category: 'wired mouse', price: 299, oldPrice: 699, discount: 57, rating: 4.5, reviewCount: 340, tag: 'Basic', usp: 'Optical', imageKey: 'wiredMouse', badge: 'Budget', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'DPI': '1000'}, description: 'Reliable optical wired mouse for smooth and precise tracking.', highlights: ['Optical Sensor', 'Ambidextrous'], reviews: []
+  },
+  {
+    id: 49, slug: 'laptop-table', name: 'Foldable Laptop Table', brand: 'BeatBox', category: 'laptop table', price: 899, oldPrice: 1999, discount: 55, rating: 4.6, reviewCount: 500, tag: 'Home', usp: 'Portable', imageKey: 'laptopTable', badge: 'WFH', inStock: true, colors: [{name: 'Wood', code: '#deb887'}], specs: {'Material': 'MDF & Steel'}, description: 'Sturdy foldable laptop table perfect for working from bed or the couch.', highlights: ['Cup Holder', 'Tablet Slot'], reviews: []
+  },
+  {
+    id: 50, slug: 'extension-board', name: 'Smart Extension Board', brand: 'BeatBox', category: 'extension board', price: 699, oldPrice: 1499, discount: 53, rating: 4.5, reviewCount: 210, tag: 'Power', usp: 'Surge Protection', imageKey: 'extensionBoard', badge: 'Safe', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'Sockets': '4 AC, 2 USB'}, description: 'Surge-protected extension board with 4 AC sockets and 2 fast-charging USB ports.', highlights: ['Surge Protection', 'Fire Retardant'], reviews: []
+  },
+  {
+    id: 51, slug: 'projectors', name: 'Mini HD Projectors', brand: 'BeatBox', category: 'projectors', price: 4999, oldPrice: 12999, discount: 61, rating: 4.6, reviewCount: 180, tag: 'Cinema', usp: '1080p Support', imageKey: 'projector', badge: 'Movie Night', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'Resolution': '1080p Supported'}, description: 'Compact mini projector to bring the cinema experience to your bedroom.', highlights: ['120" Screen Size', 'Built-in Speaker'], reviews: []
+  },
+  {
+    id: 52, slug: 'lcd-writing-pads', name: 'Digital LCD Writing Pads', brand: 'BeatBox', category: 'lcd writing pads', price: 399, oldPrice: 999, discount: 60, rating: 4.4, reviewCount: 420, tag: 'Kids', usp: 'Paperless', imageKey: 'lcdWritingPad', badge: 'Eco', inStock: true, colors: [{name: 'Blue', code: '#00f'}], specs: {'Screen': '8.5 Inch'}, description: 'Eco-friendly LCD writing pad for notes, doodles, and lists without wasting paper.', highlights: ['One-touch Erase', 'Eye Protection'], reviews: []
+  },
+  {
+    id: 53, slug: 'computer-cables', name: 'High-Speed Computer Cables', brand: 'BeatBox', category: 'computer cables', price: 499, oldPrice: 1299, discount: 61, rating: 4.8, reviewCount: 310, tag: 'Network', usp: 'CAT8 LAN', imageKey: 'computerCables', badge: 'Fast', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Type': 'Ethernet CAT8'}, description: 'Ultra-fast CAT8 ethernet computer cables for zero-lag gaming and streaming.', highlights: ['40Gbps Speed', 'Gold Plated'], reviews: []
+  },
+  {
+    id: 54, slug: 'wireless-presenter', name: 'Laser Wireless Presenter', brand: 'BeatBox', category: 'wireless presenter', price: 599, oldPrice: 1499, discount: 60, rating: 4.7, reviewCount: 190, tag: 'Office', usp: 'Red Laser', imageKey: 'wirelessPresenter', badge: 'Pro', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Range': '15m'}, description: 'Sleek wireless presenter remote with a bright red laser pointer for impactful meetings.', highlights: ['Plug & Play', '15m Range'], reviews: []
+  },
+  {
+    id: 55, slug: 'car-bluetooth', name: 'Car Bluetooth Receiver', brand: 'BeatBox', category: 'car bluetooth', price: 399, oldPrice: 999, discount: 60, rating: 4.5, reviewCount: 330, tag: 'Audio', usp: 'AUX to Bluetooth', imageKey: 'smartTracker', badge: 'Upgrade', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Bluetooth': '5.0'}, description: 'Upgrade your old car stereo to wireless with this compact Bluetooth AUX receiver.', highlights: ['Hands-free Calling', '10hr Battery'], reviews: []
+  },
+  {
+    id: 56, slug: 'car-mobile-holder', name: 'Dash Car Mobile Holder', brand: 'BeatBox', category: 'car mobile holder', price: 499, oldPrice: 1299, discount: 61, rating: 4.6, reviewCount: 450, tag: 'Nav', usp: 'Suction Cup', imageKey: 'mobileHolder', badge: 'Secure', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Mount': 'Dashboard/Windshield'}, description: 'Secure suction cup car mobile holder with a telescopic arm for optimal navigation viewing.', highlights: ['Strong Suction', 'Telescopic Arm'], reviews: []
+  },
+  {
+    id: 57, slug: 'bike-mobile-holder', name: 'Alloy Bike Mobile Holder', brand: 'BeatBox', category: 'bike mobile holder', price: 599, oldPrice: 1499, discount: 60, rating: 4.8, reviewCount: 280, tag: 'Ride', usp: 'Anti-Shake', imageKey: 'mobileHolder', badge: 'Rugged', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], specs: {'Material': 'Aluminum Alloy'}, description: 'Rugged aluminum bike mobile holder that keeps your phone secure on the bumpiest trails.', highlights: ['Aluminum Build', '360° Rotation'], reviews: []
+  },
+  {
+    id: 58, slug: 'car-wireless-charger', name: 'MagGrip Car Wireless Charger', brand: 'BeatBox', category: 'car wireless charger', price: 1499, oldPrice: 3999, discount: 62, rating: 4.7, reviewCount: 150, tag: 'Tech', usp: '15W Auto-Clamping', imageKey: 'wirelessCharger', badge: 'Futuristic', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Output': '15W Max'}, description: 'Futuristic auto-clamping car wireless charger that detects your phone and securely grips it.', highlights: ['Auto-Clamping', '15W Fast Charge'], reviews: []
+  },
+  {
+    id: 59, slug: 'pressure-washer', name: 'High Pressure Washer', brand: 'BeatBox', category: 'pressure washer', price: 4999, oldPrice: 12999, discount: 61, rating: 4.8, reviewCount: 90, tag: 'Cleaning', usp: '1500W Motor', imageKey: 'vacuumCleaner', badge: 'Power', inStock: true, colors: [{name: 'Yellow', code: '#ff0'}], specs: {'Pressure': '120 Bar'}, description: 'Heavy-duty high pressure washer perfect for cleaning cars, bikes, and driveways effortlessly.', highlights: ['120 Bar Pressure', 'Foam Cannon Included'], reviews: []
+  },
+  {
+    id: 60, slug: 'ear-cleaners', name: 'Smart Visual Ear Cleaners', brand: 'BeatBox', category: 'ear cleaners', price: 999, oldPrice: 2499, discount: 60, rating: 4.5, reviewCount: 220, tag: 'Hygiene', usp: '1080p Camera', imageKey: 'trimmer', badge: 'Tech', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'Camera': '1080p HD'}, description: 'High-tech visual ear cleaner with an integrated 1080p camera that syncs directly to your phone.', highlights: ['1080p Camera', 'Soft Silicone Tips'], reviews: []
+  },
+  {
+    id: 61, slug: 'tool-kit', name: '46-Piece Tool Kit', brand: 'BeatBox', category: 'tool kit', price: 899, oldPrice: 2499, discount: 64, rating: 4.7, reviewCount: 310, tag: 'DIY', usp: 'Chrome Vanadium', imageKey: 'laptopBag', badge: 'Handy', inStock: true, colors: [{name: 'Red', code: '#f00'}], specs: {'Pieces': '46'}, description: 'Comprehensive 46-piece socket and wrench tool kit forged from premium chrome vanadium steel.', highlights: ['Rust Resistant', 'Compact Case'], reviews: []
+  },
+  {
+    id: 62, slug: 'humidifiers', name: 'Aroma Diffuser Humidifiers', brand: 'BeatBox', category: 'humidifiers', price: 799, oldPrice: 1999, discount: 60, rating: 4.8, reviewCount: 420, tag: 'Home', usp: 'RGB Lights', imageKey: 'electricKettle', badge: 'Relax', inStock: true, colors: [{name: 'Wood', code: '#deb887'}], specs: {'Capacity': '300ml'}, description: 'Ultrasonic aroma diffuser humidifier with soothing RGB lighting for a relaxing room ambiance.', highlights: ['Auto Shut-off', 'Ultra Quiet'], reviews: []
+  },
+  {
+    id: 63, slug: 'air-blower', name: 'Heavy Duty Air Blower', brand: 'BeatBox', category: 'air blower', price: 999, oldPrice: 2499, discount: 60, rating: 4.6, reviewCount: 150, tag: 'Tools', usp: '500W Power', imageKey: 'portableFan', badge: 'Strong', inStock: true, colors: [{name: 'Blue', code: '#00f'}], specs: {'Power': '500W'}, description: 'High-velocity 500W air blower for cleaning PC internals and clearing dust from tight spaces.', highlights: ['Unbreakable Body', 'Dust Bag Included'], reviews: []
+  },
+  {
+    id: 64, slug: 'timers', name: 'Digital Pomodoro Timers', brand: 'BeatBox', category: 'timers', price: 399, oldPrice: 999, discount: 60, rating: 4.7, reviewCount: 290, tag: 'Focus', usp: 'Magnetic Back', imageKey: 'smartTracker', badge: 'Study', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Display': 'LED'}, description: 'Sleek digital rotating timer with a magnetic back, perfect for the Pomodoro technique and cooking.', highlights: ['Twist to Set', 'Loud Alarm'], reviews: []
+  },
+  {
+    id: 65, slug: 'massagers', name: 'Deep Tissue Massagers', brand: 'BeatBox', category: 'massagers', price: 1999, oldPrice: 4999, discount: 60, rating: 4.9, reviewCount: 880, tag: 'Health', usp: 'Fascia Gun', imageKey: 'trimmer', badge: 'Recovery', inStock: true, colors: [{name: 'Grey', code: '#888'}], specs: {'Speeds': '6 Levels'}, description: 'Professional grade percussion massage gun to relieve muscle tension and accelerate recovery.', highlights: ['4 Massage Heads', 'Quiet Motor'], reviews: []
+  },
+  {
+    id: 66, slug: 'smart-sealers', name: 'Mini smart Sealers', brand: 'BeatBox', category: 'smart sealers', price: 299, oldPrice: 799, discount: 62, rating: 4.4, reviewCount: 120, tag: 'Kitchen', usp: 'Heat Sealing', imageKey: 'smartTracker', badge: 'Fresh', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'Battery': 'AA Operated'}, description: 'Compact mini heat sealer to easily reseal snack bags and keep food fresh for longer.', highlights: ['Instant Heat', 'Magnetic Base'], reviews: []
+  },
+  {
+    id: 67, slug: 'rechargeable-battery', name: 'AA Rechargeable Battery Set', brand: 'BeatBox', category: 'rechargeable battery', price: 699, oldPrice: 1499, discount: 53, rating: 4.8, reviewCount: 500, tag: 'Power', usp: '2800mAh', imageKey: 'powerBank', badge: 'Eco', inStock: true, colors: [{name: 'Green', code: '#0f0'}], specs: {'Capacity': '2800mAh'}, description: 'Pack of 4 high-capacity Ni-MH rechargeable batteries. Stop buying disposable batteries!', highlights: ['Pre-charged', '1000+ Cycles'], reviews: []
+  },
+  // Soundbars (4 more)
+  { id: 68, slug: 'soundbar-pro', name: 'BeatBox Soundbar Pro 5.1', brand: 'BeatBox', category: 'soundbars', price: 6999, oldPrice: 14999, discount: 53, rating: 4.8, reviewCount: 320, tag: 'Premium', usp: '5.1 Surround', imageKey: 'soundbar', badge: 'Hot', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Channels': '5.1', 'Power': '200W'}, description: 'Immersive 5.1 surround soundbar for the ultimate home cinema experience.', highlights: ['5.1 Surround', 'Bluetooth 5.0'], reviews: [] },
+  { id: 69, slug: 'soundbar-elite', name: 'BeatBox Soundbar Elite S9', brand: 'BeatBox', category: 'soundbars', price: 8999, oldPrice: 19999, discount: 55, rating: 4.9, reviewCount: 210, tag: 'Flagship', usp: 'Dolby Atmos', imageKey: 'soundbar', badge: 'Top', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Audio': 'Dolby Atmos', 'Power': '320W'}, description: 'Flagship soundbar with Dolby Atmos and wireless subwoofer for audiophiles.', highlights: ['Dolby Atmos', 'Wireless Sub'], reviews: [] },
+  { id: 70, slug: 'soundbar-mini', name: 'BeatBox Soundbar Mini 2.1', brand: 'BeatBox', category: 'soundbars', price: 3499, oldPrice: 7999, discount: 56, rating: 4.6, reviewCount: 450, tag: 'Compact', usp: '2.1 Channel', imageKey: 'soundbar', badge: 'Value', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Channels': '2.1', 'Power': '80W'}, description: 'Compact 2.1 soundbar perfect for small rooms and gaming setups.', highlights: ['Compact Design', 'Deep Bass'], reviews: [] },
+  { id: 71, slug: 'soundbar-gaming', name: 'BeatBox Gaming Soundbar X', brand: 'BeatBox', category: 'soundbars', price: 4999, oldPrice: 10999, discount: 54, rating: 4.7, reviewCount: 380, tag: 'Gaming', usp: 'Virtual 7.1', imageKey: 'soundbar', badge: 'Gamer', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Audio': 'Virtual 7.1', 'Power': '120W'}, description: 'Gaming-optimized soundbar with virtual 7.1 surround and RGB accents.', highlights: ['Virtual 7.1', 'Low Latency'], reviews: [] },
+  // Party Speakers (4 more)
+  { id: 72, slug: 'party-boom', name: 'Party Boom 1500', brand: 'BeatBox', category: 'party speakers', price: 12999, oldPrice: 24999, discount: 48, rating: 4.8, reviewCount: 290, tag: 'Loud', usp: '1500W Peak', imageKey: 'partySpeaker', badge: 'Beast', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Power': '1500W Peak', 'Battery': '8 Hours'}, description: 'Massive party speaker with 1500W peak power and built-in disco lights.', highlights: ['Disco Lights', 'Mic Input'], reviews: [] },
+  { id: 73, slug: 'party-blast', name: 'Party Blast Tower', brand: 'BeatBox', category: 'party speakers', price: 14999, oldPrice: 29999, discount: 50, rating: 4.9, reviewCount: 180, tag: 'Tower', usp: 'Tower Speaker', imageKey: 'partySpeaker', badge: 'Epic', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Height': '1.2m', 'Power': '800W'}, description: 'Tall tower party speaker with a karaoke mic and FM radio.', highlights: ['Karaoke Ready', 'FM Radio'], reviews: [] },
+  { id: 74, slug: 'party-max', name: 'Party Max 2000', brand: 'BeatBox', category: 'party speakers', price: 18999, oldPrice: 39999, discount: 52, rating: 4.9, reviewCount: 120, tag: 'Pro', usp: '2000W RMS', imageKey: 'partySpeaker', badge: 'King', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Power': '2000W RMS'}, description: 'Professional-grade party speaker for outdoor events and large gatherings.', highlights: ['Outdoor Ready', 'Dual Woofer'], reviews: [] },
+  { id: 75, slug: 'party-lite', name: 'Party Lite Wireless', brand: 'BeatBox', category: 'party speakers', price: 7999, oldPrice: 16999, discount: 52, rating: 4.6, reviewCount: 410, tag: 'Portable', usp: 'Wireless', imageKey: 'partySpeaker', badge: 'Portable', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Battery': '12 Hours', 'Power': '60W'}, description: 'Portable party speaker with 12-hour battery and splash resistance.', highlights: ['IPX5 Splash Proof', 'Carry Handle'], reviews: [] },
+  // Portable Speakers (4 more)
+  { id: 76, slug: 'portable-rugged', name: 'Portable Rugged X3', brand: 'BeatBox', category: 'portable speakers', price: 2499, oldPrice: 5999, discount: 58, rating: 4.8, reviewCount: 520, tag: 'Rugged', usp: 'IP67 Waterproof', imageKey: 'heroSpeaker', badge: 'Adventure', inStock: true, colors: [{name: 'Green', code: '#228b22'}], specs: {'Rating': 'IP67', 'Battery': '24 Hours'}, description: 'Fully waterproof rugged bluetooth speaker for outdoor adventures.', highlights: ['IP67 Waterproof', '24Hr Battery'], reviews: [] },
+  { id: 77, slug: 'portable-bass', name: 'Portable Bass Booster', brand: 'BeatBox', category: 'portable speakers', price: 1999, oldPrice: 4499, discount: 55, rating: 4.7, reviewCount: 640, tag: 'Bass', usp: '360° Bass', imageKey: 'heroSpeaker', badge: 'Boom', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Bass': '360° Radiator', 'Battery': '16 Hours'}, description: 'Portable speaker with a 360° passive bass radiator for room-filling sound.', highlights: ['360° Sound', 'TWS Pairable'], reviews: [] },
+  { id: 78, slug: 'portable-mini', name: 'Pocket Mini Speaker', brand: 'BeatBox', category: 'portable speakers', price: 999, oldPrice: 2499, discount: 60, rating: 4.5, reviewCount: 880, tag: 'Mini', usp: 'Pocket Size', imageKey: 'heroSpeaker', badge: 'Tiny', inStock: true, colors: [{name: 'Blue', code: '#00f'}], specs: {'Size': 'Pocket', 'Battery': '8 Hours'}, description: 'Ultra-compact pocket speaker that punches well above its size.', highlights: ['Clip & Go', 'USB-C Charging'], reviews: [] },
+  { id: 79, slug: 'portable-fabric', name: 'Fabric Portable Speaker', brand: 'BeatBox', category: 'portable speakers', price: 1499, oldPrice: 3499, discount: 57, rating: 4.6, reviewCount: 390, tag: 'Style', usp: 'Premium Fabric', imageKey: 'heroSpeaker', badge: 'Chic', inStock: true, colors: [{name: 'Grey', code: '#888'}], specs: {'Cover': 'Premium Fabric', 'Battery': '20 Hours'}, description: 'Stylish fabric-wrapped portable speaker with rich, warm audio.', highlights: ['Premium Fabric', 'Multi-Color'], reviews: [] },
+  // TWS (4 more)
+  { id: 80, slug: 'tws-sport', name: 'TWS Sport Pro', brand: 'BeatBox', category: 'tws', price: 1999, oldPrice: 4999, discount: 60, rating: 4.7, reviewCount: 720, tag: 'Sport', usp: 'IPX5 Sweat Proof', imageKey: 'smartEarbuds', badge: 'Active', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Rating': 'IPX5', 'Playback': '36 Hours'}, description: 'Sport-tuned TWS earbuds with secure ear hooks and sweat resistance.', highlights: ['IPX5 Rated', 'Ear Hook Design'], reviews: [] },
+  { id: 81, slug: 'tws-anc', name: 'TWS ANC Elite', brand: 'BeatBox', category: 'tws', price: 3499, oldPrice: 7999, discount: 56, rating: 4.9, reviewCount: 480, tag: 'ANC', usp: 'Hybrid ANC', imageKey: 'smartEarbuds', badge: 'Quiet', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'ANC': 'Hybrid', 'Playback': '40 Hours'}, description: 'Premium hybrid ANC TWS earbuds for crystal-clear calls and music.', highlights: ['Hybrid ANC', '40Hr Total'], reviews: [] },
+  { id: 82, slug: 'tws-lite', name: 'TWS Lite Everyday', brand: 'BeatBox', category: 'tws', price: 799, oldPrice: 1999, discount: 60, rating: 4.5, reviewCount: 1100, tag: 'Budget', usp: 'Best Value', imageKey: 'smartEarbuds', badge: 'Value', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Playback': '24 Hours', 'Connect': 'BT 5.0'}, description: 'Everyday TWS earbuds offering great sound at an unbeatable price.', highlights: ['24Hr Battery', 'Touch Controls'], reviews: [] },
+  { id: 83, slug: 'tws-gaming', name: 'TWS Gaming Buds', brand: 'BeatBox', category: 'tws', price: 2499, oldPrice: 5999, discount: 58, rating: 4.8, reviewCount: 350, tag: 'Gaming', usp: '50ms Low Latency', imageKey: 'smartEarbuds', badge: 'Pro', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Latency': '50ms', 'Playback': '30 Hours'}, description: 'Low latency gaming TWS earbuds with a dedicated gaming mode.', highlights: ['50ms Latency', 'RGB Case'], reviews: [] },
+  // Neckbands (2 more)
+  { id: 84, slug: 'neckband-pro', name: 'Neckband Pro ANC', brand: 'BeatBox', category: 'neckbands', price: 1499, oldPrice: 3499, discount: 57, rating: 4.8, reviewCount: 560, tag: 'ANC', usp: 'Active Noise Cancel', imageKey: 'wirelessNeckband', badge: 'Smart', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'ANC': 'Active', 'Playback': '30 Hours'}, description: 'Neckband with active noise cancellation for undisturbed listening.', highlights: ['ANC Mode', 'Fast Charge'], reviews: [] },
+  { id: 85, slug: 'neckband-sport', name: 'Neckband Sport Flex', brand: 'BeatBox', category: 'neckbands', price: 1299, oldPrice: 2999, discount: 56, rating: 4.7, reviewCount: 430, tag: 'Sport', usp: 'Flexible Band', imageKey: 'wirelessNeckband', badge: 'Flex', inStock: true, colors: [{name: 'Blue', code: '#00f'}], specs: {'Band': 'Memory Flex', 'Playback': '28 Hours'}, description: 'Flexible memory-band neckband that fits every neck comfortably.', highlights: ['Memory Flex Band', 'IPX4 Rated'], reviews: [] },
+  // Wireless Headphones (4 more)
+  { id: 86, slug: 'wireless-headphones-anc', name: 'ANC Headphones Pro', brand: 'BeatBox', category: 'wireless headphones', price: 4999, oldPrice: 10999, discount: 54, rating: 4.9, reviewCount: 290, tag: 'ANC', usp: '45dB Noise Cancel', imageKey: 'heroHeadphones', badge: 'Silent', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'ANC': '45dB', 'Playback': '50 Hours'}, description: 'Industry-leading 45dB ANC headphones with premium leather cushions.', highlights: ['45dB ANC', '50Hr Playback'], reviews: [] },
+  { id: 87, slug: 'wireless-headphones-lite', name: 'Wireless Headphones Lite', brand: 'BeatBox', category: 'wireless headphones', price: 1999, oldPrice: 4999, discount: 60, rating: 4.6, reviewCount: 780, tag: 'Value', usp: 'Best Value', imageKey: 'heroHeadphones', badge: 'Popular', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'Playback': '40 Hours', 'Driver': '40mm'}, description: 'Lightweight wireless headphones with great sound for everyday use.', highlights: ['Foldable Design', '40Hr Playback'], reviews: [] },
+  { id: 88, slug: 'wireless-headphones-studio', name: 'Studio Headphones X', brand: 'BeatBox', category: 'wireless headphones', price: 6999, oldPrice: 14999, discount: 53, rating: 4.9, reviewCount: 150, tag: 'Studio', usp: 'Studio Grade', imageKey: 'heroHeadphones', badge: 'Creator', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], specs: {'Driver': '50mm', 'Freq': '5Hz-40kHz'}, description: 'Studio-grade wireless headphones for professional music production.', highlights: ['Studio Grade', 'Flat EQ'], reviews: [] },
+  { id: 89, slug: 'wireless-headphones-kids', name: 'Kids Wireless Headphones', brand: 'BeatBox', category: 'wireless headphones', price: 999, oldPrice: 2499, discount: 60, rating: 4.7, reviewCount: 920, tag: 'Kids', usp: '85dB Safe Volume', imageKey: 'heroHeadphones', badge: 'Safe', inStock: true, colors: [{name: 'Pink', code: '#ffc0cb'}], specs: {'Volume Limit': '85dB', 'Playback': '25 Hours'}, description: 'Safe volume-limited wireless headphones designed for children.', highlights: ['85dB Limit', 'Flexible Headband'], reviews: [] },
+  // Wired Earphones (4 more)
+  { id: 90, slug: 'wired-bass', name: 'Wired Bass Boost', brand: 'BeatBox', category: 'wired earphones', price: 499, oldPrice: 1199, discount: 58, rating: 4.6, reviewCount: 1200, tag: 'Bass', usp: 'Deep Bass', imageKey: 'wiredEarphones', badge: 'Boom', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Driver': '12mm Bass', 'Jack': '3.5mm'}, description: 'Bass-boosted wired earphones with a powerful 12mm driver.', highlights: ['Deep Bass', 'In-line Mic'], reviews: [] },
+  { id: 91, slug: 'wired-pro', name: 'Wired Pro IEM', brand: 'BeatBox', category: 'wired earphones', price: 799, oldPrice: 1999, discount: 60, rating: 4.8, reviewCount: 480, tag: 'IEM', usp: 'Audiophile Grade', imageKey: 'wiredEarphones', badge: 'HiFi', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], specs: {'Driver': 'Balanced Armature', 'Impedance': '32 Ohm'}, description: 'Audiophile-grade IEM earphones for detailed, accurate sound reproduction.', highlights: ['Balanced Armature', 'Braided Cable'], reviews: [] },
+  { id: 92, slug: 'wired-sport', name: 'Wired Sport Earphones', brand: 'BeatBox', category: 'wired earphones', price: 599, oldPrice: 1499, discount: 60, rating: 4.5, reviewCount: 670, tag: 'Sport', usp: 'Ear Hook Design', imageKey: 'wiredEarphones', badge: 'Active', inStock: true, colors: [{name: 'Red', code: '#f00'}], specs: {'Rating': 'IPX4', 'Jack': '3.5mm'}, description: 'Sport wired earphones with secure ear hooks and sweat resistance.', highlights: ['IPX4 Rated', 'Tangle-Free Cable'], reviews: [] },
+  { id: 93, slug: 'wired-typec', name: 'Type-C Wired Earphones', brand: 'BeatBox', category: 'wired earphones', price: 899, oldPrice: 1999, discount: 55, rating: 4.7, reviewCount: 390, tag: 'Type-C', usp: 'USB-C + DAC', imageKey: 'wiredEarphones', badge: 'Modern', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Connector': 'USB-C', 'DAC': 'Built-in'}, description: 'Modern USB-C earphones with a built-in DAC for improved audio quality.', highlights: ['Built-in DAC', 'Hi-Res Audio'], reviews: [] },
+  // USB Speakers (4 more)
+  { id: 94, slug: 'usb-speakers-rgb', name: 'USB RGB Gaming Speakers', brand: 'BeatBox', category: 'usb speakers', price: 1299, oldPrice: 2999, discount: 56, rating: 4.7, reviewCount: 430, tag: 'RGB', usp: 'RGB Lighting', imageKey: 'usbSpeakers', badge: 'Gamer', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Power': '10W RMS', 'Lighting': 'RGB'}, description: 'USB gaming speakers with vibrant RGB lighting and punchy bass.', highlights: ['RGB Lighting', 'Headphone Jack'], reviews: [] },
+  { id: 95, slug: 'usb-speakers-pro', name: 'USB Studio Monitors', brand: 'BeatBox', category: 'usb speakers', price: 1999, oldPrice: 4499, discount: 55, rating: 4.8, reviewCount: 220, tag: 'Studio', usp: 'Flat Response', imageKey: 'usbSpeakers', badge: 'Creator', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'Power': '20W RMS', 'Response': 'Flat'}, description: 'USB studio monitor speakers for accurate audio mixing and content creation.', highlights: ['Flat Frequency', 'XLR Input'], reviews: [] },
+  { id: 96, slug: 'usb-speakers-mini', name: 'USB Mini Desktop Speakers', brand: 'BeatBox', category: 'usb speakers', price: 699, oldPrice: 1699, discount: 58, rating: 4.5, reviewCount: 760, tag: 'Mini', usp: 'Bus Powered', imageKey: 'usbSpeakers', badge: 'Compact', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Power': '5W RMS', 'Powered': 'USB Bus'}, description: 'No power adapter needed. Just plug into your PC and enjoy clear desktop audio.', highlights: ['Bus Powered', 'Volume Knob'], reviews: [] },
+  { id: 97, slug: 'usb-speakers-soundbar', name: 'USB Desktop Soundbar', brand: 'BeatBox', category: 'usb speakers', price: 1499, oldPrice: 3499, discount: 57, rating: 4.6, reviewCount: 310, tag: 'Soundbar', usp: 'Under Monitor', imageKey: 'usbSpeakers', badge: 'Space Saver', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Power': '15W RMS', 'Form': 'Under-Monitor'}, description: 'Slim USB soundbar designed to sit neatly under your monitor.', highlights: ['Space-Saving Design', 'Optical Input'], reviews: [] },
+  // Conference Speakers (4 more)
+  { id: 98, slug: 'conf-360', name: 'Conference Speaker 360', brand: 'BeatBox', category: 'conference speakers', price: 4999, oldPrice: 11999, discount: 58, rating: 4.8, reviewCount: 140, tag: '360°', usp: '360° Pickup', imageKey: 'conferenceSpeakers', badge: 'Pro', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Mics': '6 Array', 'Range': '5m'}, description: 'Omnidirectional conference speaker with 6-mic array for crystal-clear meetings.', highlights: ['360° Pickup', 'Echo Cancel'], reviews: [] },
+  { id: 99, slug: 'conf-mini', name: 'Portable Conference Speaker', brand: 'BeatBox', category: 'conference speakers', price: 2999, oldPrice: 6999, discount: 57, rating: 4.6, reviewCount: 230, tag: 'Portable', usp: 'Travel Ready', imageKey: 'conferenceSpeakers', badge: 'Compact', inStock: true, colors: [{name: 'Grey', code: '#888'}], specs: {'Battery': '10 Hours', 'Weight': '300g'}, description: 'Portable conference speakerphone for remote workers and business travelers.', highlights: ['10Hr Battery', 'USB-C & BT'], reviews: [] },
+  { id: 100, slug: 'conf-elite', name: 'Conference Elite Hub', brand: 'BeatBox', category: 'conference speakers', price: 7999, oldPrice: 17999, discount: 55, rating: 4.9, reviewCount: 80, tag: 'Elite', usp: 'AI Noise Cancel', imageKey: 'conferenceSpeakers', badge: 'AI', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'AI': 'Noise Cancel', 'Mics': '8 Array'}, description: 'AI-powered conference speaker that removes background noise automatically.', highlights: ['AI Noise Cancel', '8-Mic Array'], reviews: [] },
+  { id: 101, slug: 'conf-duo', name: 'Dual Conference Speakerphone', brand: 'BeatBox', category: 'conference speakers', price: 5999, oldPrice: 13999, discount: 57, rating: 4.7, reviewCount: 110, tag: 'Dual', usp: 'Dual Unit Link', imageKey: 'conferenceSpeakers', badge: 'Large Room', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Units': '2 Daisy-chainable', 'Range': '10m'}, description: 'Two daisy-chainable conference speakers for large boardrooms.', highlights: ['Daisy-Chain', '10m Coverage'], reviews: [] },
+  // Wireless Microphones (4 more)
+  { id: 102, slug: 'mic-handheld', name: 'Wireless Handheld Mic', brand: 'BeatBox', category: 'wireless microphones', price: 5999, oldPrice: 12999, discount: 53, rating: 4.8, reviewCount: 180, tag: 'Stage', usp: 'Stage Ready', imageKey: 'wirelessMicrophones', badge: 'Live', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Range': '80m', 'Battery': '10 Hours'}, description: 'Professional wireless handheld mic for live performances and events.', highlights: ['80m Range', 'Anti-Drop Design'], reviews: [] },
+  { id: 103, slug: 'mic-lavalier', name: 'Wireless Lavalier Clip Mic', brand: 'BeatBox', category: 'wireless microphones', price: 3499, oldPrice: 7999, discount: 56, rating: 4.7, reviewCount: 390, tag: 'Vlog', usp: 'Clip-On Design', imageKey: 'wirelessMicrophones', badge: 'Creator', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Latency': '20ms', 'Battery': '8 Hours'}, description: 'Wireless clip-on lavalier mic for vloggers and content creators.', highlights: ['Clip-On Design', 'Noise Shield'], reviews: [] },
+  { id: 104, slug: 'mic-duo', name: 'Wireless Dual Mic System', brand: 'BeatBox', category: 'wireless microphones', price: 8999, oldPrice: 19999, discount: 55, rating: 4.9, reviewCount: 95, tag: 'Dual', usp: '2-Person Recording', imageKey: 'wirelessMicrophones', badge: 'Interview', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Channels': 'Dual', 'Range': '100m'}, description: 'Dual wireless mic system ideal for interviews and two-person podcasts.', highlights: ['Dual Channel', 'Mixer Output'], reviews: [] },
+  { id: 105, slug: 'mic-studio', name: 'Studio Wireless Condenser', brand: 'BeatBox', category: 'wireless microphones', price: 12999, oldPrice: 27999, discount: 53, rating: 4.9, reviewCount: 60, tag: 'Studio', usp: 'Condenser Grade', imageKey: 'wirelessMicrophones', badge: 'Pro Audio', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], specs: {'Type': 'Condenser', 'Freq': '20Hz-20kHz'}, description: 'Premium wireless condenser microphone for studio-quality recordings.', highlights: ['Condenser Capsule', 'Low Self-Noise'], reviews: [] }
 ]
 
 export const getProductById = (id) => PRODUCTS.find((p) => p.id === Number(id))

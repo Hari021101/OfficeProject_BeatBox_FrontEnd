@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import logo from '../../assets/beatbox_logo.png'
 import heroEarbuds from '../../assets/hero_earbuds.png'
+import smartEarbuds from '../../assets/smart_earbuds.png'
 import heroHeadphones from '../../assets/hero_headphones.png'
 import wirelessNeckband from '../../assets/wireless_neckband.png'
 import gamingHeadset from '../../assets/gaming_headset.png'
@@ -51,6 +52,9 @@ import vacuumCleaner from '../../assets/vacuum_cleaner.png'
 import hairDryer from '../../assets/hair_dryer.png'
 import electricKettle from '../../assets/electric_kettle.png'
 import smartTracker from '../../assets/smart_tracker.png'
+import phoneWallet from '../../assets/phone_wallet.png'
+import wiredEarphones from '../../assets/wired_earphones.png'
+import gamingKeyboard from '../../assets/gaming_keyboard.png'
 import { logout } from '../../redux/authSlice'
 import { selectCartCount } from '../../redux/cartSlice'
 import { selectWishlistCount } from '../../redux/wishlistSlice'
@@ -137,7 +141,8 @@ export default function Header() {
     
     // Audio
     if (n.includes('soundbar') || n.includes('tv')) return soundbar;
-    if (n.includes('tws') || n.includes('earbud')) return heroEarbuds;
+    if (n.includes('tws') || n.includes('earbud')) return smartEarbuds;
+    if (n.includes('wired')) return wiredEarphones;
     if (n.includes('headphone') || n.includes('earphone')) return heroHeadphones;
     if (n.includes('neckband')) return wirelessNeckband;
     if (n.includes('speaker') || n.includes('mic')) return heroSpeaker;
@@ -148,10 +153,12 @@ export default function Header() {
     if (n.includes('wireless charger')) return wirelessCharger;
     if (n.includes('charger') || n.includes('adapter')) return carCharger;
     if (n.includes('holder') || n.includes('stand')) return mobileHolder;
-    if (n.includes('wallet') || n.includes('cleaner')) return trimmer;
+    if (n.includes('wallet')) return phoneWallet;
+    if (n.includes('cleaner')) return trimmer;
 
     // Computer Accessories
-    if (n.includes('mouse') || n.includes('keyboard') || n.includes('pad')) return keyboardMouse;
+    if (n.includes('keyboard')) return gamingKeyboard;
+    if (n.includes('mouse') || n.includes('pad')) return gamingMouse;
     if (n.includes('laptop bag')) return laptopBag;
     if (n.includes('laptop') || n.includes('board') || n.includes('table')) return laptopStand;
     if (n.includes('hub')) return usbHub;
@@ -176,28 +183,33 @@ export default function Header() {
     return heroEarbuds; // Ultimate fallback
   }
 
-  const megaMenuCategories = [
+  const [megaMenuCategories, setMegaMenuCategories] = useState([
     {
       title: "Audio",
+      expanded: false,
       items: ["Soundbars", "Party Speakers", "Portable Speakers", "TWS", "Neckbands", "Wireless Headphones", "Wired Earphones", "USB Speakers", "Conference Speakers", "Wireless Microphones"]
     },
     {
       title: "Mobile Accessories",
+      expanded: false,
       items: ["Power bank", "Cables", "Wireless Charger", "Chargers", "Mobile Holder", "Gadget Cleaners", "Phone Wallet", "Cable Organiser"]
     },
     {
       title: "Computer Accessories",
+      expanded: false,
       items: ["Keyboard And Mouse", "Wireless Keyboard", "Wired Keyboard", "Gaming Keyboard", "Wireless Mouse", "Wired Mouse", "Laptop Stand", "Laptop Table", "Extension Board", "Projectors", "USB Hub", "LCD Writing Pads", "Laptop Bags", "Computer Cables", "Wireless Presenter"]
     },
     {
       title: "Car Accessories",
+      expanded: false,
       items: ["Car Charger", "Car Bluetooth", "Tyre Inflator", "Car Mobile Holder", "Bike Mobile Holder", "Vacuum Cleaner", "Car Wireless Charger", "Pressure Washer"]
     },
     {
       title: "Smart Gadgets",
+      expanded: false,
       items: ["Ear Cleaners", "Portable Fans", "Selfie Stick", "Flashlight", "Stylus", "Location tracker", "Electric Kettle", "Hair Dryer", "Tool Kit", "Humidifiers", "Air Blower", "Timers", "Massagers", "smart Sealers", "Rechargeable Battery"]
     }
-  ]
+  ])
 
   return (
     <header className="fixed-top w-100" style={{ zIndex: 10000 }}>
@@ -489,7 +501,7 @@ export default function Header() {
                               {col.title}
                             </h6>
                             <ul className="list-unstyled mb-0 d-flex flex-column gap-3">
-                              {col.items.map((item, i) => (
+                              {col.items.slice(0, col.expanded ? col.items.length : 5).map((item, i) => (
                                 <li key={i}>
                                   <Link
                                     to={`/products?q=${encodeURIComponent(item.toLowerCase())}`}
@@ -504,6 +516,22 @@ export default function Header() {
                                   </Link>
                                 </li>
                               ))}
+                              {col.items.length > 5 && (
+                                <li className="mt-2 text-center">
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const newCategories = [...megaMenuCategories];
+                                      newCategories[idx].expanded = !newCategories[idx].expanded;
+                                      setMegaMenuCategories(newCategories);
+                                    }}
+                                    className="btn btn-sm w-100 fw-bold rounded-pill border-0"
+                                    style={{ fontSize: '0.8rem', background: 'var(--bb-primary-light)', color: '#fff' }}
+                                  >
+                                    {col.expanded ? 'View Less' : `View All (${col.items.length})`}
+                                  </button>
+                                </li>
+                              )}
                             </ul>
                           </div>
                         ))}
@@ -556,11 +584,6 @@ export default function Header() {
                         left: '0'
                       }}
                     >
-                      <li className="mb-1">
-                        <Link to="/products?category=bestsellers" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3 text-warning" onClick={() => { setShowMore(false); setIsOpen(false); }}>
-                          <Sparkles size={14} className="me-3" /> Best Sellers
-                        </Link>
-                      </li>
                       <li className="mb-1">
                         <Link to="/corporate" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3" onClick={() => { setShowMore(false); setIsOpen(false); }}>
                           <Package size={14} className="me-3 text-primary" /> Corporate Orders

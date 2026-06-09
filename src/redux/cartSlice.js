@@ -8,8 +8,7 @@ export const fetchCart = createAsyncThunk('cart/fetchCart', async () => {
 
 export const addToCart = createAsyncThunk('cart/addToCart', async (payload, { dispatch }) => {
   // payload: { id, quantity, name, price, imageKey, selectedColor, category }
-  // Backend only expects productId and quantity
-  await cartService.addToCart(payload.id, payload.quantity || 1);
+  await cartService.addToCart(payload.id, payload.quantity || 1, payload);
   dispatch(fetchCart());
   return payload;
 });

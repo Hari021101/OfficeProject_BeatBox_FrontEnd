@@ -187,7 +187,8 @@ export const productService = {
     try {
       const response = await api.get('/product');
       const apiProducts = response.data.map(mapProduct);
-      const mockExtras = MOCK_PRODUCTS.filter(p => p.category === 'powerbank' || p.category === 'trimmer');
+      const apiProductNames = new Set(apiProducts.map(p => p.name?.toLowerCase() || ''));
+      const mockExtras = MOCK_PRODUCTS.filter(p => !apiProductNames.has(p.name?.toLowerCase() || ''));
       return [...apiProducts, ...mockExtras];
     } catch (err) {
       console.warn("Failed to fetch products from API, falling back to mock data", err);
@@ -197,9 +198,6 @@ export const productService = {
 
   getProductById: async (id) => {
     const mockProd = MOCK_PRODUCTS.find(p => p.id === Number(id));
-    if (mockProd && (mockProd.category === 'powerbank' || mockProd.category === 'trimmer')) {
-      return mockProd;
-    }
     try {
       const response = await api.get(`/product/${id}`);
       return mapProduct(response.data);

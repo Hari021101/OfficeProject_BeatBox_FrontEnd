@@ -678,12 +678,14 @@ body {
   margin-left: -12px;
   border-radius: 12px;
   border: 1px solid transparent;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
 }
 
 .mega-menu-item:hover {
-  background: rgba(0, 153, 184, 0.05); /* subtle accent glow */
-  border-color: rgba(0, 153, 184, 0.1);
-  transform: translateX(3px);
+  background: linear-gradient(90deg, var(--bb-primary-glow), transparent) !important;
+  border-color: transparent !important;
+  transform: translateX(5px);
+  padding-left: 18px !important;
 }
 
 .mega-menu-item:hover .mega-menu-text {
@@ -691,7 +693,7 @@ body {
 }
 
 [data-theme="light"] .mega-menu-item:hover {
-  background: rgba(0, 153, 184, 0.05);
+  background: linear-gradient(90deg, rgba(168,32,255,0.1), transparent) !important;
 }
 
 /* Expanding Search Bar Wrapper */

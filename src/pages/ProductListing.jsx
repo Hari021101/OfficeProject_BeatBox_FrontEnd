@@ -51,6 +51,11 @@ export default function ProductListing() {
     if (q !== null && q !== searchQuery) {
       setSearchQuery(q)
     }
+    
+    const cat = searchParams.get('category')
+    if (cat !== null && cat !== activeCategory) {
+      setActiveCategory(cat)
+    }
   }, [searchParams])
 
   const filtered = useMemo(() => {
@@ -286,6 +291,9 @@ export default function ProductListing() {
 
 // ── Filter Panel (reused desktop + mobile) ───────────────────────────────────
 function FilterPanel({ activeCategory, setActiveCategory, activePriceRange, setActivePriceRange, minRating, setMinRating, inStockOnly, setInStockOnly, activeFilterCount, clearAll }) {
+  const [showAllCategories, setShowAllCategories] = useState(false);
+  const visibleCategories = showAllCategories ? CATEGORIES : CATEGORIES.slice(0, 8);
+
   return (
     <div className="d-flex flex-column gap-4" style={{ position: 'sticky', top: 120 }}>
       {/* Header */}
@@ -302,7 +310,7 @@ function FilterPanel({ activeCategory, setActiveCategory, activePriceRange, setA
       {/* Categories */}
       <FilterSection title="Category">
         <div className="d-flex flex-column gap-1">
-          {CATEGORIES.map(cat => (
+          {visibleCategories.map(cat => (
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
@@ -318,6 +326,15 @@ function FilterPanel({ activeCategory, setActiveCategory, activePriceRange, setA
               {activeCategory === cat.id && <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--bb-accent)' }} />}
             </button>
           ))}
+          {CATEGORIES.length > 8 && (
+            <button 
+              onClick={() => setShowAllCategories(!showAllCategories)}
+              className="btn text-start px-3 py-2 border-0 fw-bold mt-1"
+              style={{ color: 'var(--bb-primary)', fontSize: '0.85rem', background: 'rgba(0,243,255,0.05)', borderRadius: '8px' }}
+            >
+              {showAllCategories ? 'View Less' : `View All ${CATEGORIES.length} Categories`}
+            </button>
+          )}
         </div>
       </FilterSection>
 

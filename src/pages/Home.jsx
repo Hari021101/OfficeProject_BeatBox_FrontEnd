@@ -36,6 +36,10 @@ import dashCam from '../assets/dash_cam.png'
 import projector from '../assets/projector.png'
 import actionCam from '../assets/action_cam.png'
 import gamingMouse from '../assets/gaming_mouse.png'
+import smartTracker from '../assets/smart_tracker.png'
+import phoneWallet from '../assets/phone_wallet.png'
+import wiredEarphones from '../assets/wired_earphones.png'
+import gamingKeyboard from '../assets/gaming_keyboard.png'
 import logo from '../assets/beatbox_logo.png'
 
 export default function Home() {
@@ -375,24 +379,24 @@ export default function Home() {
     <div className="row g-4 row-cols-2 row-cols-sm-3 row-cols-md-5 justify-content-center w-100 m-0">
       {[
         { id: 'earbuds', name: 'AirPods & Earbuds', shortName: 'AirPods', image: heroEarbuds, badge: 'HOT' },
-        { id: 'tws', name: 'TWS Earbuds', shortName: 'TWS', image: heroEarbuds, badge: 'PRO' },
+        { id: 'tws', name: 'TWS Earbuds', shortName: 'TWS', image: smartEarbuds, badge: 'PRO' },
         { id: 'neckbands', name: 'Neckbands', shortName: 'Neckbands', image: wirelessNeckband, badge: 'DAILY' },
         { id: 'gaming', name: 'Gaming Headsets', shortName: 'Gaming', image: gamingHeadset, badge: 'CYBER' },
-        { id: 'wired', name: 'Wired Headphones', shortName: 'Wired', image: heroWired, badge: 'PURE' },
+        { id: 'wired earphones', name: 'Wired Headphones', shortName: 'Wired', image: wiredEarphones, badge: 'PURE' },
         { id: 'smartwatches', name: 'Smart Watches', shortName: 'Watches', image: heroSmartwatch, badge: 'NEW' },
         { id: 'speakers', name: 'Speakers', shortName: 'Speakers', image: heroSpeaker, badge: 'LOUD' },
-        { id: 'powerbank', name: 'Power Banks', shortName: 'Power', image: powerBank, badge: 'CHARGE' },
+        { id: 'power bank', name: 'Power Banks', shortName: 'Power', image: powerBank, badge: 'CHARGE' },
         { id: 'soundbars', name: 'Soundbars', shortName: 'Soundbars', image: soundbar, badge: 'CINEMA' },
-        { id: 'gaming_accessories', name: 'Gaming Accessories', shortName: 'Accessories', image: gamingMouse, badge: 'PRO' },
-        { id: 'dashcams', name: 'Dash Cameras', shortName: 'DashCams', image: dashCam, badge: 'SAFE' },
+        { id: 'gaming keyboard', name: 'Gaming Accessories', shortName: 'Accessories', image: gamingKeyboard, badge: 'PRO' },
+        { id: 'car accessories', name: 'Car Accessories', shortName: 'Car Accs', image: dashCam, badge: 'SAFE' },
         { id: 'projectors', name: 'Projectors', shortName: 'Projectors', image: projector, badge: 'HOME' },
-        { id: 'actioncams', name: 'Action Cameras', shortName: 'Action', image: actionCam, badge: 'SPORT' },
-        { id: 'personalcare', name: 'Personal Care', shortName: 'Care', image: trimmer, badge: 'MENS' },
-        { id: 'mobile_accessories', name: 'Mobile Accessories', shortName: 'Mobile', image: powerBank, badge: 'TECH' }
+        { id: 'smart gadgets', name: 'Smart Gadgets', shortName: 'Gadgets', image: smartTracker, badge: 'SPORT' },
+        { id: 'trimmer', name: 'Personal Care', shortName: 'Care', image: trimmer, badge: 'MENS' },
+        { id: 'mobile accessories', name: 'Mobile Accessories', shortName: 'Mobile', image: phoneWallet, badge: 'TECH' }
       ].map((cat, idx) => (
         <div key={idx} className="col">
           <button 
-            onClick={() => navigate('/products')}
+            onClick={() => navigate(`/products?category=${cat.id}`)}
             className="category-card btn p-0 border-0 d-flex flex-column align-items-center justify-content-center text-center text-decoration-none w-100"
           >
             {cat.badge && <span className="category-badge">{cat.badge}</span>}
