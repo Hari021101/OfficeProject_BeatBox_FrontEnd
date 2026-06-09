@@ -164,16 +164,15 @@ export default function ProductDetail() {
       : null) ||
     IMAGE_MAP[product.imageKey] ||
     IMAGE_MAP['heroHeadphones']
-  const originalPrice =
-    Math.max(product.price || 0,
-      product.discountPrice || 0)
 
-  const salePrice =
-    Math.min(product.price || 0,
-      product.discountPrice || 0)
+const salePrice =
+  product.price || 0
 
-  const savings =
-    originalPrice - salePrice
+const originalPrice =
+  product.oldPrice || product.price || 0
+
+const savings =
+  originalPrice - salePrice
 
   const handleAddToCart = () => {
     if (product.stockQuantity <= 0) return
@@ -203,14 +202,13 @@ export default function ProductDetail() {
     navigate('/checkout')
   }
 
-  const discount =
-    originalPrice > 0
-      ? Math.round(
+const discount =
+  originalPrice > salePrice
+    ? Math.round(
         ((originalPrice - salePrice) /
-          originalPrice) *
-        100
+          originalPrice) * 100
       )
-      : 0
+    : 0
 
   const handleShare = async () => {
     try {
@@ -357,11 +355,11 @@ export default function ProductDetail() {
             <div className="d-flex align-items-center gap-3 mb-3">
               <div className="d-flex align-items-center gap-1">
                 {[1, 2, 3, 4, 5].map(s => (
-                  <Star key={s} size={16} fill={s <= Math.round(product.averageRating) ? '#ffc700' : 'none'} stroke={s <= Math.round(product.averageRating) ? '#ffc700' : 'var(--bb-border)'} />
+                  <Star key={s} size={16} fill={s <= Math.round(product.averageRating || 0) ? '#ffc700' : 'none'} stroke={s <= Math.round(product.averageRating || 0) ? '#ffc700' : 'var(--bb-border)'} />
                 ))}
-                <span className="fw-bold ms-1" style={{ color: '#ffc700' }}>{Number(product.averageRating).toFixed(1)}</span>
+                <span className="fw-bold ms-1" style={{ color: '#ffc700' }}>{Number(product.averageRating || 0).toFixed(1)}</span>
               </div>
-              <span className="text-theme-muted small">({product.reviewCount.toLocaleString('en-IN')} reviews)</span>
+              <span className="text-theme-muted small">({(product.reviewCount || 0).toLocaleString('en-IN')} reviews)</span>
               <span className={`badge px-2 py-1 small fw-bold ${product.stockQuantity > 0 ? 'text-success' : 'text-danger'}`} style={{ background: product.stockQuantity > 0 ? 'rgba(39,255,20,0.08)' : 'rgba(220,53,69,0.08)', border: `1px solid ${product.stockQuantity > 0 ? 'rgba(39,255,20,0.2)' : 'rgba(220,53,69,0.2)'}` }}>
                 {product.stockQuantity > 0 ? '✓ In Stock' : '✗ Out of Stock'}
               </span>
@@ -580,7 +578,7 @@ export default function ProductDetail() {
           <div className="d-flex gap-1 mb-4 overflow-x-auto no-scrollbar py-1" style={{ borderBottom: '1px solid var(--bb-border)' }}>
             {[
               { id: 'specs', label: '⚙️ Specifications' },
-              { id: 'reviews', label: `⭐ Reviews (${product.reviews.length || 0})` },
+              { id: 'reviews', label: `⭐ Reviews (${product.reviews?.length || 0})` },
               { id: 'faqs', label: '❓ FAQs' }
             ].map(tab => (
               <button
@@ -715,10 +713,10 @@ export default function ProductDetail() {
                       <div className="d-flex align-items-center justify-content-between mb-2">
                         <div className="d-flex align-items-center gap-3">
                           <div className="d-flex align-items-center justify-content-center rounded-circle fw-black" style={{ width: 36, height: 36, background: 'linear-gradient(135deg,var(--bb-primary),var(--bb-accent))', color: '#fff', fontSize: '0.85rem' }}>
-                            {review.userName.charAt(0) || 'U'}
+                            {review.userName?.charAt(0) || 'U'}
                           </div>
                           <div>
-                            <p className="fw-bold text-theme-title mb-0" style={{ fontSize: '0.9rem' }}>{review.userName}</p>
+                            <p className="fw-bold text-theme-title mb-0" style={{ fontSize: '0.9rem' }}>{review.userName || 'Anonymous User'}</p>
                             <div className="d-flex gap-1">
                               {[1, 2, 3, 4, 5].map(s => <Star key={s} size={11} fill={s <= review.rating ? '#ffc700' : 'none'} stroke='#ffc700' />)}
                             </div>

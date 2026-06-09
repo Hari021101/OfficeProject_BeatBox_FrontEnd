@@ -465,7 +465,7 @@ export default function Home() {
             style={{ fontSize: '0.65rem', color: '#000000', fontWeight: '800', boxShadow: '0 2px 4px rgba(0,0,0,0.08)' }}
           >
             <Star size={10} className="fill-dark text-dark" style={{ fill: '#000000' }} />
-            {prod.rating}
+            {Number(prod.rating || 0).toFixed(1)}
           </span>
         </div>
 
@@ -501,8 +501,8 @@ export default function Home() {
               </h5>
             </Link>
             <span className="text-theme-muted small d-block mb-3">
-              Reviews ({prod.reviews})
-            </span>
+  Reviews ({prod.reviewCount || prod.reviews?.length || 0})
+</span>
           </div>
 
           {/* Price and Purchase CTA Row */}

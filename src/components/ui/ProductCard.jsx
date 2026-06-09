@@ -13,7 +13,8 @@ export default function ProductCard({ product, index = 0 }) {
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
   const isWishlisted = useSelector(state => selectIsInWishlist(state, product.id))
-  const [selectedColor, setSelectedColor] = useState(product.colors[0])
+const [selectedColor, setSelectedColor] =
+  useState(product.colors?.[0] || null)
   const [adding, setAdding] = useState(false)
 
   const handleAddToCart = (e) => {
@@ -25,10 +26,10 @@ export default function ProductCard({ product, index = 0 }) {
       name: product.name,
       price: product.price,
       imageKey: product.imageKey,
-      selectedColor: selectedColor.name,
-      selectedColorCode: selectedColor.code,
+      selectedColor: selectedColor?.name || product.color,
+selectedColorCode: selectedColor?.code || '#111111',
       category: product.category,
-      imageUrl: product.imageUrl,
+      imageUrl: selectedColor?.imageUrl || product.imageUrl,
     }))
     toast.success(`🎸 ${product.name} added to cart!`, {
       style: { background: '#060b19', color: '#fff', border: '1px solid rgba(0,243,255,0.3)', borderRadius: '10px' }
@@ -55,7 +56,7 @@ export default function ProductCard({ product, index = 0 }) {
     }
   }
 
-  const img = product.imageUrl || IMAGE_MAP[product.imageKey] || IMAGE_MAP['heroHeadphones']
+  const img = selectedColor?.imageUrl || product.imageUrl || IMAGE_MAP[product.imageKey] || IMAGE_MAP['heroHeadphones']
   const discountedSavings = product.oldPrice - product.price
 
   return (
@@ -104,7 +105,11 @@ export default function ProductCard({ product, index = 0 }) {
             {img && img.includes('video') ? (
               <video src={img} autoPlay loop muted className="product-card-img" style={{ objectFit: 'contain' }} />
             ) : (
-              <img src={img} alt={product.name} className="product-card-img" />
+              <img src={img} alt={product.name} className="product-card-img"  onError={(e) => {
+    e.target.src =
+      IMAGE_MAP[product.imageKey] ||
+      IMAGE_MAP.heroHeadphones;
+  }} />
             )}
             {/* Hover overlay: quick view hint */}
             <div className="product-card-hover-overlay">
@@ -130,7 +135,7 @@ export default function ProductCard({ product, index = 0 }) {
           >
             <span className="text-uppercase" style={{ letterSpacing: '0.3px' }}>{product.usp}</span>
             <span className="d-flex align-items-center gap-1 bg-white px-2 rounded-pill" style={{ fontSize: '0.65rem', color: '#000', fontWeight: 800, padding: '2px 8px' }}>
-              <Star size={9} fill="#000" /> {product.rating}
+              <Star size={9} fill="#000" /> {product.averageRating || product.rating || 0}
             </span>
           </div>
 
@@ -138,7 +143,7 @@ export default function ProductCard({ product, index = 0 }) {
           <div className="product-card-body">
             {/* Color swatches */}
             <div className="d-flex gap-2 mb-2">
-              {product.colors.map((clr, i) => (
+              {(product.colors || []).map((clr, i) => (
                 <button
                   key={i}
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedColor(clr) }}
@@ -146,9 +151,9 @@ export default function ProductCard({ product, index = 0 }) {
                   style={{
                     width: 16, height: 16,
                     background: clr.code,
-                    outline: selectedColor.name === clr.name ? `2px solid white` : 'none',
+                    outline: selectedColor?.name === clr.name ? `2px solid white` : 'none',
                     outlineOffset: 2,
-                    boxShadow: selectedColor.name === clr.name ? `0 0 6px ${clr.code}` : 'none',
+                    boxShadow: selectedColor?.name === clr.name ? `0 0 6px ${clr.code}` : 'none',
                     transition: 'all 0.2s'
                   }}
                   title={clr.name}
@@ -160,16 +165,20 @@ export default function ProductCard({ product, index = 0 }) {
             {/* Name & reviews */}
             <h5 className="product-card-name text-theme-title">{product.name}</h5>
             <span className="text-theme-muted d-block mb-2" style={{ fontSize: '0.75rem' }}>
-              ⭐ {product.rating} · {product.reviewCount.toLocaleString('en-IN')} reviews
+              ⭐ {Number(product.averageRating || product.rating || 0).toFixed(1)} · {product.reviewCount?.toLocaleString('en-IN') || 0} reviews
             </span>
 
             {/* Price row */}
             <div className="d-flex align-items-baseline justify-content-between mb-3">
               <div>
-                <span className="fw-black fs-5 text-theme-title">₹{product.price.toLocaleString('en-IN')}</span>
-                <span className="text-decoration-line-through text-theme-muted small ms-2">₹{product.oldPrice.toLocaleString('en-IN')}</span>
-              </div>
-              <span className="text-success small fw-bold">{product.discount}% off</span>
+                <span className="fw-black fs-5 text-theme-title">
+  ₹{(product.discountPrice ?? product.price).toLocaleString('en-IN')}
+</span>
+
+<span className="text-decoration-line-through text-theme-muted small ms-2">
+  ₹{(product.oldPrice ?? product.price).toLocaleString('en-IN')}
+</span>              </div>
+              <span className="text-success small fw-bold">{Math.max(product.discount, 0)}% OFF</span>
             </div>
 
             {/* Add to cart */}
