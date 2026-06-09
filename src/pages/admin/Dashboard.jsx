@@ -29,11 +29,54 @@ export default function Dashboard() {
     const loadDashboardData = async () => {
       try {
         // Load Analytics
+
         const analytics = await adminService.getDashboardAnalytics();
-        setStats(analytics.stats);
-        setRevenueData(analytics.revenueChart);
-        setSalesData(analytics.salesChart);
-        setProductData(analytics.productDistribution);
+
+setStats({
+  totalRevenue: analytics.totalRevenue || 0,
+  revenueTrend: 0,
+
+  totalOrders: analytics.totalOrders || 0,
+  ordersTrend: 0,
+
+  activeUsers: analytics.totalCustomers || 0,
+  usersTrend: 0,
+
+  conversionRate: 0,
+  conversionTrend: 0
+});
+
+const revenue = await adminService.getRevenueChart();
+
+setRevenueData(
+  revenue.map(r => ({
+    name: new Date(2026, r.month - 1)
+      .toLocaleString('default', { month: 'short' }),
+    value: r.revenue
+  }))
+);
+
+const sales = await adminService.getSalesChart();
+
+setSalesData(
+  sales.map(s => ({
+    name: new Date(s.date)
+      .toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short'
+      }),
+    value: s.revenue
+  }))
+);
+
+const products = await adminService.getProductAnalytics();
+
+setProductData(
+  products.topProducts.map(p => ({
+    name: p.productName,
+    value: p.unitsSold
+  }))
+);
 
         // Load Orders
         const orders = await orderService.getAllOrders()

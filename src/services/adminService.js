@@ -3,19 +3,35 @@ import api from './authService';
 const adminService = {
   // --- Analytics ---
   getDashboardAnalytics: async () => {
-    try {
-      const response = await api.get('/Dashboard/analytics');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching dashboard analytics:', error);
-      throw error;
-    }
+    const response = await api.get('/admin/dashboard/summary');
+    return response.data;
+  },
+
+  getRevenueChart: async () => {
+    const response = await api.get(
+      `/admin/dashboard/revenue?year=${new Date().getFullYear()}`
+    );
+    return response.data;
+  },
+
+  getSalesChart: async () => {
+    const response = await api.get(
+      '/admin/dashboard/sales'
+    );
+    return response.data;
+  },
+
+  getProductAnalytics: async () => {
+    const response = await api.get(
+      '/admin/dashboard/products'
+    );
+    return response.data;
   },
 
   // --- Users ---
   getAllUsers: async () => {
     try {
-      const response = await api.get('/Account/users');
+      const response = await api.get('/account/users');
       return response.data;
     } catch (error) {
       console.error('Error fetching all users:', error);
@@ -38,7 +54,7 @@ const adminService = {
       throw error;
     }
   },
-  
+
   getLowStock: async () => {
     try {
       const response = await api.get('/Inventory/low-stock');

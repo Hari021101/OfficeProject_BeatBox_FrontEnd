@@ -89,14 +89,14 @@ export default function CartDrawer({ isOpen, onClose }) {
                   Add <strong style={{ color: 'var(--bb-accent)' }}>₹{(999 - subtotal).toLocaleString('en-IN')}</strong> more for FREE shipping!
                 </span>
                 <div className="rounded-pill overflow-hidden mt-2 mx-auto" style={{ height: 4, width: '80%', background: 'var(--bb-surface-2)' }}>
-                  <div 
-                    style={{ 
-                      width: `${Math.min((subtotal / 999) * 100, 100)}%`, 
-                      height: '100%', 
+                  <div
+                    style={{
+                      width: `${Math.min((subtotal / 999) * 100, 100)}%`,
+                      height: '100%',
                       background: 'linear-gradient(90deg, var(--bb-primary), var(--bb-accent))',
                       boxShadow: '0 0 10px var(--bb-accent-glow)',
-                      transition: 'width 0.6s ease' 
-                    }} 
+                      transition: 'width 0.6s ease'
+                    }}
                   />
                 </div>
               </div>
@@ -150,12 +150,12 @@ export default function CartDrawer({ isOpen, onClose }) {
                         <button
                           onClick={() => dispatch(removeFromCart(item.cartKey))}
                           className="btn position-absolute border-0 d-flex align-items-center justify-content-center p-0 rounded-circle text-theme-title"
-                          style={{ 
-                            top: '-8px', 
-                            right: '-8px', 
-                            width: '24px', 
-                            height: '24px', 
-                            background: 'var(--bb-surface-2)', 
+                          style={{
+                            top: '-8px',
+                            right: '-8px',
+                            width: '24px',
+                            height: '24px',
+                            background: 'var(--bb-surface-2)',
                             border: '1px solid var(--bb-border)',
                             transition: 'all 0.2s ease',
                             zIndex: 10,
@@ -175,7 +175,10 @@ export default function CartDrawer({ isOpen, onClose }) {
                         >
                           <div className="position-absolute w-100 h-100" style={{ background: item.selectedColorCode || 'var(--bb-accent)', opacity: 0.1, filter: 'blur(10px)' }} />
                           <img
-                            src={IMAGE_MAP[item.imageKey]}
+                            src={
+                              item.imageUrl ||
+                              IMAGE_MAP[item.imageKey]
+                            }
                             alt={item.name}
                             className="position-relative z-1"
                             style={{ width: 60, height: 60, objectFit: 'contain', filter: 'drop-shadow(0 5px 5px rgba(0,0,0,0.3))' }}

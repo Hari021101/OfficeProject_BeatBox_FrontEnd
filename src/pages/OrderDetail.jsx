@@ -17,15 +17,17 @@ import {
 } from '../redux/orderSlice'
 import OrderTimeline from '../components/ui/OrderTimeline'
 import logo from '../assets/beatbox_logo.png'
+import { orderService } from '../services/orderService'
+
 
 // ─── Status config ────────────────────────────────────────────────────────────
 
 const STATUS_CONFIG = {
-  Pending:    { label: 'Pending',    color: '#f59e0b', bg: 'rgba(245,158,11,0.1)',  Icon: Clock },
+  Pending: { label: 'Pending', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', Icon: Clock },
   Processing: { label: 'Processing', color: '#a820ff', bg: 'rgba(168,32,255,0.1)', Icon: RefreshCw },
-  Shipped:    { label: 'Shipped',    color: '#00f3ff', bg: 'rgba(0,243,255,0.1)',   Icon: Truck },
-  Delivered:  { label: 'Delivered',  color: '#39ff14', bg: 'rgba(57,255,20,0.08)', Icon: CheckCircle },
-  Cancelled:  { label: 'Cancelled',  color: '#ef4444', bg: 'rgba(239,68,68,0.08)', Icon: XCircle },
+  Shipped: { label: 'Shipped', color: '#00f3ff', bg: 'rgba(0,243,255,0.1)', Icon: Truck },
+  Delivered: { label: 'Delivered', color: '#39ff14', bg: 'rgba(57,255,20,0.08)', Icon: CheckCircle },
+  Cancelled: { label: 'Cancelled', color: '#ef4444', bg: 'rgba(239,68,68,0.08)', Icon: XCircle },
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -517,7 +519,7 @@ export default function OrderDetail() {
                     </button>
                   )}
                   <button
-                    onClick={() => window.print()}
+                    onClick={() => orderService.downloadInvoice(order.orderId)}
                     className="btn fw-bold d-flex align-items-center justify-content-center gap-2 py-2"
                     style={{
                       background: 'rgba(168,32,255,0.1)',
@@ -526,9 +528,9 @@ export default function OrderDetail() {
                       borderRadius: 10,
                       fontSize: '0.85rem',
                     }}
-                    id="download-invoice-btn"
                   >
-                    <Download size={15} /> Download Invoice
+                    <Download size={15} />
+                    Download Invoice
                   </button>
                   <Link
                     to="/products"
