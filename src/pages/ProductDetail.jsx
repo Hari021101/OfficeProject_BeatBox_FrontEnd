@@ -180,7 +180,8 @@ const savings =
     dispatch(addToCart({
       id: product.id, name: product.name, price: salePrice,
       imageKey: product.imageKey, quantity: quantity,
-      selectedColor: selectedColor?.name, selectedColorCode: selectedColor?.code,
+      selectedColor: selectedColor?.name,
+      selectedColorCode: selectedColor?.code,
       category: product.category,
       imageUrl: product.imageUrl,
     }))

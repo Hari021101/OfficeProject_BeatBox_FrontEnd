@@ -105,9 +105,9 @@ const mapProduct = (bp) => {
 
     connectivity: bp.connectivity || '',
 
-    // ===================================
-    // COLOR SUPPORT
-    // ===================================
+   // ===================================
+// COLOR SUPPORT
+// ===================================
 
 colors:
   bp.images?.length > 0
@@ -138,12 +138,6 @@ variants:
           imageUrl: bp.imageUrl
         }
       ],
-
-  variants: bp.images?.map(img => ({
-  colorName: img.colorName,
-  colorCode: img.colorCode,
-  imageUrl: img.imageUrl
-})) || [],
 
     specs: {
       Brand: bp.brand || 'BeatBox',

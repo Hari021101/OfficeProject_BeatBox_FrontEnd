@@ -27,7 +27,7 @@ const [selectedColor, setSelectedColor] =
       price: product.price,
       imageKey: product.imageKey,
       selectedColor: selectedColor?.name || product.color,
-selectedColorCode: selectedColor?.code || '#111111',
+      selectedColorCode: selectedColor?.code || '#111111',
       category: product.category,
       imageUrl: selectedColor?.imageUrl || product.imageUrl,
     }))
