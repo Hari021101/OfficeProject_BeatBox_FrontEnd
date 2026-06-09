@@ -233,16 +233,33 @@ const discount =
     }, 800)
   }
 
-  const handleSubmitReview = (e) => {
-    e.preventDefault()
-    if (!reviewText.trim()) return
-    toast.success('Review submitted successfully for moderation!', {
-      style: { background: '#060b19', color: '#fff', border: '1px solid rgba(39,255,20,0.3)', borderRadius: '10px' }
+const handleSubmitReview = async (e) => {
+  e.preventDefault()
+
+  if (!reviewText.trim()) return
+
+  try {
+    await productService.addReview(product.id, {
+      rating: Number(reviewRating),
+      comment: reviewText
     })
+
+    toast.success('Review Added Successfully')
+
+    const updated =
+      await productService.getProductById(id)
+
+    setProduct(updated)
+
     setShowReviewForm(false)
     setReviewText('')
     setReviewRating(5)
+
+  } catch (error) {
+    console.error(error)
+    toast.error('Failed to add review')
   }
+}
 
   return (
     <div className="min-vh-100 pb-5" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
@@ -639,8 +656,13 @@ const discount =
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <h4 className="text-theme-title fw-bold m-0">Customer Reviews</h4>
                     {(() => {
-                      const hasOrdered = myOrders?.some(order => order.items?.some(item => item.productId === product.id))
-                      if (!hasOrdered) {
+                      const hasDeliveredOrder = myOrders?.some(order =>
+  order.status === "Delivered" &&
+  order.items?.some(item =>
+    item.productId === product.id
+  )
+)
+                      if (!hasDeliveredOrder) {
                         return <span className="badge bg-secondary opacity-75">Verified Buyers Only</span>
                       }
                       if (!showReviewForm) {
