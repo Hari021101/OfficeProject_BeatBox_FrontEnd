@@ -3,16 +3,12 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSelector, useDispatch } from 'react-redux'
 import { X, Plus, Minus, ShoppingBag, ArrowRight, Tag, Package, ChevronRight, Shield, Truck } from 'lucide-react'
-import { removeFromCart, updateQuantity, clearCart, selectCartItems, selectCartSubtotal, selectCartCount } from '../redux/cartSlice'
+import { removeFromCart, updateQuantity, clearCart, selectCartItems, selectCartSubtotal, selectCartCount, selectAppliedPromo, applyPromo, removePromo } from '../redux/cartSlice'
 import { IMAGE_MAP } from '../data/products'
 import { toast } from 'react-hot-toast'
 import logo from '../assets/beatbox_logo.png'
 
-const COUPONS = {
-  'BASS20': { discount: 0.20, label: '20% off your order' },
-  'BEATBOX10': { discount: 0.10, label: '10% off your order' },
-  'NEWBASS': { discount: 0.15, label: '15% off for new customers' },
-}
+import { validatePromoCode } from '../services/promoService'
 
 export default function Cart() {
   const dispatch = useDispatch()
@@ -20,32 +16,39 @@ export default function Cart() {
   const items = useSelector(selectCartItems)
   const subtotal = useSelector(selectCartSubtotal)
   const count = useSelector(selectCartCount)
+  const appliedPromo = useSelector(selectAppliedPromo)
 
   const [couponInput, setCouponInput] = useState('')
-  const [appliedCoupon, setAppliedCoupon] = useState(null)
   const [couponError, setCouponError] = useState('')
+  const [isValidatingPromo, setIsValidatingPromo] = useState(false)
 
-  const shipping = subtotal >= 999 ? 0 : 79
+  const shipping = appliedPromo?.isFreeShipping ? 0 : (subtotal >= 999 ? 0 : 79)
   const gst = Math.round(subtotal * 0.18)
-  const couponDiscount = appliedCoupon ? Math.round(subtotal * COUPONS[appliedCoupon].discount) : 0
+  const couponDiscount = appliedPromo?.discountPercentage ? Math.round(subtotal * (appliedPromo.discountPercentage / 100)) : 0
   const total = subtotal + shipping + gst - couponDiscount
 
-  const handleApplyCoupon = () => {
+  const handleApplyCoupon = async () => {
     const code = couponInput.toUpperCase().trim()
-    if (COUPONS[code]) {
-      setAppliedCoupon(code)
-      setCouponError('')
-      setCouponInput('')
-      toast.success(`🎉 Coupon "${code}" applied! ${COUPONS[code].label}`, {
+    if (!code) return;
+
+    setIsValidatingPromo(true);
+    setCouponError('');
+    try {
+      const result = await validatePromoCode(code);
+      dispatch(applyPromo(result));
+      setCouponInput('');
+      toast.success(`🎉 ${result.message}`, {
         style: { background: '#060b19', color: '#39ff14', border: '1px solid rgba(39,255,20,0.3)', borderRadius: '10px' }
       })
-    } else {
-      setCouponError('Invalid coupon code. Try BASS20, BEATBOX10, or NEWBASS.')
+    } catch (error) {
+      setCouponError(error.message || 'Invalid coupon code.');
+    } finally {
+      setIsValidatingPromo(false);
     }
   }
 
   const handleRemoveCoupon = () => {
-    setAppliedCoupon(null)
+    dispatch(removePromo())
     toast('Coupon removed.', { style: { background: '#060b19', color: '#fff', border: '1px solid var(--bb-border)', borderRadius: '10px' } })
   }
 
@@ -361,9 +364,9 @@ export default function Cart() {
                     </span>
                   </div>
                   
-                  {appliedCoupon && (
+                  {appliedPromo && (
                     <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="d-flex justify-content-between align-items-center text-success mt-2">
-                      <span className="fw-bold d-flex align-items-center gap-1"><Tag size={14} /> Discount ({appliedCoupon})</span>
+                      <span className="fw-bold d-flex align-items-center gap-1"><Tag size={14} /> Discount ({appliedPromo.code})</span>
                       <span className="fw-black">-₹{couponDiscount.toLocaleString('en-IN')}</span>
                     </motion.div>
                   )}
@@ -379,15 +382,15 @@ export default function Cart() {
                 {/* Coupon Code Section */}
                 <div className="mb-5 pb-4" style={{ borderBottom: '1px solid var(--bb-border)' }}>
                   <label className="text-theme-title fw-bold small mb-3 d-block text-uppercase" style={{ letterSpacing: '0.5px' }}>Promo Code</label>
-                  {appliedCoupon ? (
+                  {appliedPromo ? (
                     <div className="d-flex align-items-center justify-content-between p-3 rounded-3" style={{ background: 'rgba(39,255,20,0.08)', border: '1px dashed rgba(39,255,20,0.3)' }}>
                       <div className="d-flex align-items-center gap-3">
                         <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: 32, height: 32, background: 'rgba(39,255,20,0.2)' }}>
                           <Tag size={14} style={{ color: '#39ff14' }} />
                         </div>
                         <div>
-                          <span className="fw-black d-block" style={{ color: '#39ff14', fontSize: '0.9rem', letterSpacing: '1px' }}>{appliedCoupon}</span>
-                          <span className="text-theme-muted fw-medium" style={{ fontSize: '0.75rem' }}>{COUPONS[appliedCoupon].label}</span>
+                          <span className="fw-black d-block" style={{ color: '#39ff14', fontSize: '0.9rem', letterSpacing: '1px' }}>{appliedPromo.code}</span>
+                          <span className="text-theme-muted fw-medium" style={{ fontSize: '0.75rem' }}>{appliedPromo.message}</span>
                         </div>
                       </div>
                       <button onClick={handleRemoveCoupon} className="btn border-0 p-2 hover-scale" style={{ color: 'var(--bb-muted)' }} title="Remove Coupon">
@@ -417,8 +420,8 @@ export default function Cart() {
                         />
                         <button
                           onClick={handleApplyCoupon}
-                          disabled={!couponInput.trim()}
-                          className="btn btn-glow position-absolute fw-bold"
+                          disabled={!couponInput.trim() || isValidatingPromo}
+                          className="btn btn-glow position-absolute fw-bold d-flex align-items-center justify-content-center"
                           style={{ 
                             top: '4px', right: '4px', bottom: '4px',
                             borderRadius: '8px', 
@@ -426,7 +429,11 @@ export default function Cart() {
                             fontSize: '0.85rem' 
                           }}
                         >
-                          Apply
+                          {isValidatingPromo ? (
+                            <div className="spinner-border spinner-border-sm" role="status">
+                              <span className="visually-hidden">Loading...</span>
+                            </div>
+                          ) : 'Apply'}
                         </button>
                       </div>
                       {couponError && <p className="text-danger small mt-2 mb-0 fw-medium" style={{ fontSize: '0.8rem' }}>{couponError}</p>}

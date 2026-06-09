@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { MapPin, CreditCard, CheckCircle, ArrowRight, ArrowLeft, Lock, Truck, Package } from 'lucide-react'
-import { clearCart, selectCartItems, selectCartSubtotal, selectCartCount } from '../redux/cartSlice'
+import { clearCart, selectCartItems, selectCartSubtotal, selectCartCount, selectAppliedPromo } from '../redux/cartSlice'
 import { orderService } from '../services/orderService'
 import { toast } from 'react-hot-toast'
 import { fetchAddresses } from '../redux/profileSlice'
@@ -24,6 +24,7 @@ export default function Checkout() {
   const items = useSelector(selectCartItems)
   const subtotal = useSelector(selectCartSubtotal)
   const count = useSelector(selectCartCount)
+  const appliedPromo = useSelector(selectAppliedPromo)
 
   const { addresses } = useSelector(state => state.profile)
 
@@ -36,9 +37,10 @@ export default function Checkout() {
   const [orderId] = useState(`BB${Date.now().toString().slice(-8)}`)
   const [createdOrderId, setCreatedOrderId] = useState(null)
 
-  const shipping = subtotal >= 999 ? 0 : 79
+  const shipping = appliedPromo?.isFreeShipping ? 0 : (subtotal >= 999 ? 0 : 79)
   const gst = Math.round(subtotal * 0.18)
-  const total = subtotal + shipping + gst
+  const couponDiscount = appliedPromo?.discountPercentage ? Math.round(subtotal * (appliedPromo.discountPercentage / 100)) : 0
+  const total = subtotal + shipping + gst - couponDiscount
 
   const { register, handleSubmit, formState: { errors } } = useForm()
 
@@ -437,6 +439,18 @@ export default function Checkout() {
                     <span className="text-theme-muted">Shipping</span>
                     <span style={{ color: shipping === 0 ? '#39ff14' : 'var(--bb-muted)', fontWeight: 600 }}>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
                   </div>
+                  {appliedPromo && couponDiscount > 0 && (
+                    <div className="d-flex justify-content-between small text-success">
+                      <span className="fw-bold">Discount ({appliedPromo.code})</span>
+                      <span className="fw-bold">-₹{couponDiscount.toLocaleString('en-IN')}</span>
+                    </div>
+                  )}
+                  {appliedPromo && appliedPromo.isFreeShipping && (
+                    <div className="d-flex justify-content-between small text-success">
+                      <span className="fw-bold">Promo ({appliedPromo.code})</span>
+                      <span className="fw-bold">Free Shipping</span>
+                    </div>
+                  )}
                   <div className="d-flex justify-content-between fw-black mt-2 pt-2" style={{ borderTop: '1px solid var(--bb-border)' }}>
                     <span className="text-theme-title">Total</span>
                     <span className="text-theme-title" style={{ color: 'var(--bb-accent)' }}>₹{total.toLocaleString('en-IN')}</span>

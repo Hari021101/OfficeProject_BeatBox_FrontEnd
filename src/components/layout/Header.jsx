@@ -37,6 +37,20 @@ import projector from '../../assets/projector.png'
 import actionCam from '../../assets/action_cam.png'
 import gamingMouse from '../../assets/gaming_mouse.png'
 import trimmer from '../../assets/trimmer.png'
+import keyboardMouse from '../../assets/keyboard_mouse.png'
+import carCharger from '../../assets/car_charger.png'
+import portableFan from '../../assets/portable_fan.png'
+import premiumCables from '../../assets/cables.png'
+import wirelessCharger from '../../assets/wireless_charger.png'
+import mobileHolder from '../../assets/mobile_holder.png'
+import laptopStand from '../../assets/laptop_stand.png'
+import usbHub from '../../assets/usb_hub.png'
+import laptopBag from '../../assets/laptop_bag.png'
+import tyreInflator from '../../assets/tyre_inflator.png'
+import vacuumCleaner from '../../assets/vacuum_cleaner.png'
+import hairDryer from '../../assets/hair_dryer.png'
+import electricKettle from '../../assets/electric_kettle.png'
+import smartTracker from '../../assets/smart_tracker.png'
 import { logout } from '../../redux/authSlice'
 import { selectCartCount } from '../../redux/cartSlice'
 import { selectWishlistCount } from '../../redux/wishlistSlice'
@@ -118,17 +132,71 @@ export default function Header() {
     }
   }
 
-  const visualCategories = [
-    { name: 'AirPods', image: heroEarbuds, href: '/products?q=airpods' },
-    { name: 'TWS Earbuds', image: heroEarbuds, href: '/products?q=tws' },
-    { name: 'Gaming Headsets', image: gamingHeadset, href: '/products?q=gaming_headsets' },
-    { name: 'Bluetooth Speakers', image: heroSpeaker, href: '/products?q=bluetooth_speakers' },
-    { name: 'Sound Bars', image: soundbar, href: '/products?q=soundbars' },
-    { name: 'Smart Watches', image: heroSmartwatch, href: '/products?q=smartwatches' },
-    { name: 'Power Banks', image: powerBank, href: '/products?q=powerbank' },
-    { name: 'Gaming Accessories', image: gamingMouse, href: '/products?q=gaming_accessories' },
-    { name: 'Dash Cameras', image: dashCam, href: '/products?q=dashcams' },
-    { name: 'Projectors', image: projector, href: '/products?q=projectors' },
+  const getMegaMenuImage = (name) => {
+    const n = name.toLowerCase();
+    
+    // Audio
+    if (n.includes('soundbar') || n.includes('tv')) return soundbar;
+    if (n.includes('tws') || n.includes('earbud')) return heroEarbuds;
+    if (n.includes('headphone') || n.includes('earphone')) return heroHeadphones;
+    if (n.includes('neckband')) return wirelessNeckband;
+    if (n.includes('speaker') || n.includes('mic')) return heroSpeaker;
+    
+    // Mobile Accessories
+    if (n.includes('power bank') || n.includes('battery')) return powerBank;
+    if (n.includes('cable') || n.includes('wire') || n.includes('organiser')) return premiumCables;
+    if (n.includes('wireless charger')) return wirelessCharger;
+    if (n.includes('charger') || n.includes('adapter')) return carCharger;
+    if (n.includes('holder') || n.includes('stand')) return mobileHolder;
+    if (n.includes('wallet') || n.includes('cleaner')) return trimmer;
+
+    // Computer Accessories
+    if (n.includes('mouse') || n.includes('keyboard') || n.includes('pad')) return keyboardMouse;
+    if (n.includes('laptop bag')) return laptopBag;
+    if (n.includes('laptop') || n.includes('board') || n.includes('table')) return laptopStand;
+    if (n.includes('hub')) return usbHub;
+    if (n.includes('projector') || n.includes('presenter')) return projector;
+
+    // Car Accessories
+    if (n.includes('car charger')) return carCharger;
+    if (n.includes('inflator') || n.includes('washer')) return tyreInflator;
+    if (n.includes('vacuum') || n.includes('cleaner')) return vacuumCleaner;
+    if (n.includes('car') || n.includes('bike') || n.includes('dash')) return dashCam;
+
+    // Smart Gadgets
+    if (n.includes('watch') || n.includes('band') || n.includes('timer')) return heroSmartwatch;
+    if (n.includes('tracker')) return smartTracker;
+    if (n.includes('hair') || n.includes('dryer')) return hairDryer;
+    if (n.includes('kettle')) return electricKettle;
+    if (n.includes('trimmer') || n.includes('shaver') || n.includes('ear')) return trimmer;
+    if (n.includes('fan') || n.includes('blower') || n.includes('humidifier')) return portableFan;
+    if (n.includes('sealer') || n.includes('massager')) return powerBank;
+    if (n.includes('stick') || n.includes('flashlight') || n.includes('stylus')) return actionCam;
+    
+    return heroEarbuds; // Ultimate fallback
+  }
+
+  const megaMenuCategories = [
+    {
+      title: "Audio",
+      items: ["Soundbars", "Party Speakers", "Portable Speakers", "TWS", "Neckbands", "Wireless Headphones", "Wired Earphones", "USB Speakers", "Conference Speakers", "Wireless Microphones"]
+    },
+    {
+      title: "Mobile Accessories",
+      items: ["Power bank", "Cables", "Wireless Charger", "Chargers", "Mobile Holder", "Gadget Cleaners", "Phone Wallet", "Cable Organiser"]
+    },
+    {
+      title: "Computer Accessories",
+      items: ["Keyboard And Mouse", "Wireless Keyboard", "Wired Keyboard", "Gaming Keyboard", "Wireless Mouse", "Wired Mouse", "Laptop Stand", "Laptop Table", "Extension Board", "Projectors", "USB Hub", "LCD Writing Pads", "Laptop Bags", "Computer Cables", "Wireless Presenter"]
+    },
+    {
+      title: "Car Accessories",
+      items: ["Car Charger", "Car Bluetooth", "Tyre Inflator", "Car Mobile Holder", "Bike Mobile Holder", "Vacuum Cleaner", "Car Wireless Charger", "Pressure Washer"]
+    },
+    {
+      title: "Smart Gadgets",
+      items: ["Ear Cleaners", "Portable Fans", "Selfie Stick", "Flashlight", "Stylus", "Location tracker", "Electric Kettle", "Hair Dryer", "Tool Kit", "Humidifiers", "Air Blower", "Timers", "Massagers", "smart Sealers", "Rechargeable Battery"]
+    }
   ]
 
   return (
@@ -199,9 +267,7 @@ export default function Header() {
                   className="dropdown-menu dropdown-menu-end p-2 border-0 mt-3 premium-profile-dropdown"
                   style={{
                     width: '240px',
-                    background: 'var(--bb-surface)',
-                    backdropFilter: 'blur(20px)',
-                    WebkitBackdropFilter: 'blur(20px)',
+                    background: 'var(--bb-bg-navy)',
                     border: '1px solid var(--bb-border)',
                     borderRadius: '16px',
                     boxShadow: '0 20px 45px rgba(0,0,0,0.25)',
@@ -403,9 +469,12 @@ export default function Header() {
                         borderTop: '1px solid var(--bb-border)',
                         paddingLeft: '5%',
                         paddingRight: '5%',
+                        maxHeight: '65vh',
+                        overflowY: 'auto'
                       }}
                     >
                       <div 
+                        className="mega-menu-grid"
                         style={{
                           display: 'grid',
                           gridTemplateColumns: window.innerWidth > 992 ? 'repeat(5, 1fr)' : 'repeat(2, 1fr)',
@@ -414,28 +483,29 @@ export default function Header() {
                           margin: '0 auto'
                         }}
                       >
-                        {visualCategories.map((item, idx) => (
-                          <Link
-                            key={idx}
-                            to={item.href}
-                            className="text-decoration-none d-flex align-items-center gap-3 category-visual-item"
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => { setShowCategories(false); setIsOpen(false); }}
-                          >
-                            <div 
-                              className="category-img-container rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                              style={{ 
-                                width: '56px', 
-                                height: '56px', 
-                                backgroundColor: 'var(--bb-surface-2)',
-                                border: '1px solid var(--bb-border)',
-                                transition: 'transform 0.3s ease'
-                              }}
-                            >
-                              <img src={item.image} alt={item.name} style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
-                            </div>
-                            <span className="text-theme-title fw-semibold hover-text-accent transition-all text-start" style={{ fontSize: '0.9rem', lineHeight: '1.2' }}>{item.name}</span>
-                          </Link>
+                        {megaMenuCategories.map((col, idx) => (
+                          <div key={idx} className="mega-menu-column">
+                            <h6 className="fw-black text-theme-title mb-4 pb-2 text-center" style={{ fontSize: '1rem' }}>
+                              {col.title}
+                            </h6>
+                            <ul className="list-unstyled mb-0 d-flex flex-column gap-3">
+                              {col.items.map((item, i) => (
+                                <li key={i}>
+                                  <Link
+                                    to={`/products?q=${encodeURIComponent(item.toLowerCase())}`}
+                                    className="text-decoration-none text-theme-title transition-all d-flex align-items-center gap-3 mega-menu-item"
+                                    style={{ fontSize: '0.85rem', fontWeight: 600 }}
+                                    onClick={() => { setShowCategories(false); setIsOpen(false); }}
+                                  >
+                                    <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px', background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', flexShrink: 0 }}>
+                                      <img src={getMegaMenuImage(item)} alt="" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                                    </div>
+                                    <span className="text-theme-muted transition-all text-start mega-menu-text" style={{ lineHeight: '1.2' }}>{item}</span>
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
                         ))}
                       </div>
                     </motion.div>
@@ -678,9 +748,7 @@ export default function Header() {
                         aria-labelledby="userMenuButton"
                         style={{
                           width: '280px',
-                          background: 'var(--bb-surface)',
-                          backdropFilter: 'blur(20px)',
-                          WebkitBackdropFilter: 'blur(20px)',
+                          background: 'var(--bb-bg-navy)',
                           border: '1px solid var(--bb-border)',
                           borderRadius: '18px',
                           boxShadow: '0 20px 45px rgba(0,0,0,0.25)'

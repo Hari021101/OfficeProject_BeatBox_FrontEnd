@@ -38,12 +38,20 @@ const initialState = {
   cartId: null,
   totalAmount: 0,
   status: 'idle',
+  appliedPromo: null,
 };
 
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
-  reducers: {},
+  reducers: {
+    applyPromo: (state, action) => {
+      state.appliedPromo = action.payload;
+    },
+    removePromo: (state) => {
+      state.appliedPromo = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchCart.fulfilled, (state, action) => {
@@ -58,7 +66,11 @@ const cartSlice = createSlice({
   },
 });
 
+export const { applyPromo, removePromo } = cartSlice.actions;
+
 // Selectors
+export const selectAppliedPromo = (state) => state.cart.appliedPromo;
+
 export const selectCartItems = createSelector(
   [(state) => state.cart.items, (state) => state.products.items],
   (cartItems, productsItems) => {

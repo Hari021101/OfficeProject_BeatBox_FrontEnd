@@ -18,6 +18,7 @@ import CorporateOrders from '../pages/CorporateOrders'
 import ReferAndEarn from '../pages/ReferAndEarn'
 import Gifting from '../pages/Gifting'
 import Support from '../pages/Support'
+import SoundMatch from '../pages/SoundMatch'
 
 // Admin Pages
 import AdminLayout from '../components/layout/AdminLayout'
@@ -76,6 +77,7 @@ export default function AppRouter() {
         <Route path="/refer" element={<Layout><ReferAndEarn /></Layout>} />
         <Route path="/gifting" element={<Layout><Gifting /></Layout>} />
         <Route path="/support" element={<Layout><Support /></Layout>} />
+        <Route path="/soundmatch" element={<Layout><SoundMatch /></Layout>} />
         
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>

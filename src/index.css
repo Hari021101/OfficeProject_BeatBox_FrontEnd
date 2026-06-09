@@ -642,8 +642,7 @@ body {
 
 /* Megamenu Category Dropdown */
 .premium-dropdown {
-  background: var(--bb-surface) !important;
-  backdrop-filter: blur(20px) !important;
+  background: var(--bb-bg-navy) !important;
   border: 1px solid var(--bb-border) !important;
   border-radius: 20px !important;
   box-shadow: 0 20px 50px rgba(0,0,0,0.45) !important;
@@ -671,6 +670,28 @@ body {
   color: var(--bb-accent) !important;
   transform: translateX(5px);
   padding-left: 20px !important;
+}
+
+/* Megamenu Item Hover Effect */
+.mega-menu-item {
+  padding: 6px 12px;
+  margin-left: -12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+}
+
+.mega-menu-item:hover {
+  background: rgba(0, 153, 184, 0.05); /* subtle accent glow */
+  border-color: rgba(0, 153, 184, 0.1);
+  transform: translateX(3px);
+}
+
+.mega-menu-item:hover .mega-menu-text {
+  color: var(--bb-accent) !important;
+}
+
+[data-theme="light"] .mega-menu-item:hover {
+  background: rgba(0, 153, 184, 0.05);
 }
 
 /* Expanding Search Bar Wrapper */
@@ -722,14 +743,12 @@ body {
 
 /* Premium Uniform Glassmorphism Navbar */
 .premium-navbar {
-  background: rgba(6, 11, 25, 0.85) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
+  background: var(--bb-bg-navy) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
 [data-theme="light"] .premium-navbar {
-  background: rgba(245, 247, 251, 0.85) !important;
+  background: #ffffff !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
 }
 
@@ -749,12 +768,10 @@ body {
     width: 100vw;
     height: 100vh;
     height: 100dvh;
-    background: var(--bb-surface) !important;
+    background: var(--bb-bg-navy) !important;
     z-index: 10500;
     padding: 24px;
     overflow-y: auto;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
   }
   .mobile-dropdown-drawer:not(.show) {
@@ -766,7 +783,7 @@ body {
   }
   
   [data-theme="light"] .mobile-dropdown-drawer {
-    background: rgba(245, 247, 251, 0.98) !important;
+    background: #ffffff !important;
   }
 
   .dropdown-mobile-static {
