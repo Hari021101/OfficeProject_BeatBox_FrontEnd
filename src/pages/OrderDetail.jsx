@@ -473,33 +473,56 @@ export default function OrderDetail() {
                 </SectionCard>
 
                 {/* Payment Info */}
-                <SectionCard title="Payment" icon={CreditCard} id="order-payment-section">
-                  <div
-                    className="d-flex align-items-center gap-3 p-3 rounded-3"
-                    style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}
-                  >
-                    <div
-                      className="d-flex align-items-center justify-content-center rounded-2"
-                      style={{
-                        width: 40, height: 40,
-                        background: 'rgba(0,243,255,0.1)',
-                        border: '1px solid rgba(0,243,255,0.2)',
-                      }}
-                    >
-                      <CreditCard size={18} style={{ color: 'var(--bb-accent)' }} />
-                    </div>
-                    <div>
-                      <p className="fw-bold text-theme-title mb-0" style={{ fontSize: '0.88rem' }}>Online Payment</p>
-                      <p className="text-theme-muted mb-0" style={{ fontSize: '0.75rem' }}>Paid · ₹{fmt(total)}</p>
-                    </div>
-                    <span
-                      className="ms-auto rounded-pill px-2 py-1 fw-bold"
-                      style={{ background: 'rgba(57,255,20,0.1)', color: '#39ff14', fontSize: '0.65rem', border: '1px solid rgba(57,255,20,0.2)' }}
-                    >
-                      PAID
-                    </span>
-                  </div>
-                </SectionCard>
+               <SectionCard title="Payment" icon={CreditCard}>
+  <div
+    className="d-flex align-items-center gap-3 p-3 rounded-3"
+    style={{
+      background: 'var(--bb-surface-2)',
+      border: '1px solid var(--bb-border)'
+    }}
+  >
+    <div
+      className="d-flex align-items-center justify-content-center rounded-2"
+      style={{
+        width: 40,
+        height: 40,
+        background: 'rgba(0,243,255,0.1)',
+        border: '1px solid rgba(0,243,255,0.2)'
+      }}
+    >
+      <CreditCard size={18} style={{ color: 'var(--bb-accent)' }} />
+    </div>
+
+    <div>
+      <p className="fw-bold text-theme-title mb-0">
+        {order.paymentMethod}
+      </p>
+
+      <p className="text-theme-muted mb-0">
+        {order.paymentStatus === "Success"
+          ? `Paid · ₹${fmt(total)}`
+          : `Pending · ₹${fmt(total)}`}
+      </p>
+    </div>
+
+    <span
+      className="ms-auto rounded-pill px-2 py-1 fw-bold"
+      style={{
+        background:
+          order.paymentStatus === "Success"
+            ? "rgba(57,255,20,0.1)"
+            : "rgba(245,158,11,0.1)",
+        color:
+          order.paymentStatus === "Success"
+            ? "#39ff14"
+            : "#f59e0b",
+        fontSize: '0.65rem'
+      }}
+    >
+      {order.paymentStatus}
+    </span>
+  </div>
+</SectionCard>
 
                 {/* Actions */}
                 <div className="d-flex flex-column gap-2">

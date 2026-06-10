@@ -11,6 +11,7 @@ import { fetchAddresses } from '../redux/profileSlice'
 import { useEffect } from 'react'
 import { IMAGE_MAP } from '../data/products'
 import logo from '../assets/beatbox_logo.png'
+import { paymentService } from '../services/paymentService'
 
 const STEPS = [
   { id: 1, label: 'Delivery', icon: <MapPin size={16} /> },
@@ -99,9 +100,14 @@ export default function Checkout() {
       setStep(2);
     }
   }
+const onPlaceOrder = async () => {
+  try {
 
-  const onPlaceOrder = async () => {
-    try {
+    // ==========================
+    // CASH ON DELIVERY
+    // ==========================
+    if (paymentMethod === "cod") {
+
       const orderData = {
         shippingAddress: {
           fullName: addressData.fullName,
@@ -113,29 +119,117 @@ export default function Checkout() {
           country: "India",
           phone: addressData.phone
         },
-        paymentMethod: paymentMethod,
+
+        paymentMethod: "COD",
+
         paymentDetails: {
-          cardNumber: paymentMethod === "card" ? "4111111111111111" : "",
-          expiry: paymentMethod === "card" ? "12/30" : "",
-          cvv: paymentMethod === "card" ? "123" : "",
-          transactionReference: `TXN-${Date.now()}`
+          transactionReference: `COD-${Date.now()}`
         }
-      };
+      }
 
-      const result = await orderService.checkout(orderData);
-      
-      // Use orderId from backend response if available, else keep the local one
-      if (result?.orderId) setCreatedOrderId(result.orderId);
+      const result = await orderService.checkout(orderData)
 
-      setStep(3);
-      setOrdered(true);
-      dispatch(clearCart());
-      toast.success("Order placed successfully!");
-    } catch (err) {
-      console.log(err.response?.data);
-      toast.error('Failed to place order. Please try again.');
+      setCreatedOrderId(result.orderId)
+
+      setOrdered(true)
+      setStep(3)
+
+      dispatch(clearCart())
+
+      toast.success("Order placed successfully!")
+
+      return
     }
+
+    // ==========================
+    // RAZORPAY METHODS
+    // UPI / CARD / NETBANKING
+    // ==========================
+
+    const razorpayOrder =
+      await paymentService.createRazorpayOrder(
+        Date.now(),
+        total
+      )
+
+    const options = {
+      key: "rzp_test_SzoeIy8fRZ4hB9",
+
+      amount: razorpayOrder.data.amount,
+
+      currency: "INR",
+
+      order_id: razorpayOrder.data.razorpayOrderId,
+
+      name: "BeatBox",
+
+      description: "Premium Audio Store",
+
+      handler: async function (response) {
+
+        const orderData = {
+          shippingAddress: {
+            fullName: addressData.fullName,
+            addressLine1: addressData.address1,
+            addressLine2: addressData.address2 || "",
+            city: addressData.city,
+            state: addressData.state,
+            postalCode: addressData.pincode,
+            country: "India",
+            phone: addressData.phone
+          },
+
+          paymentMethod: paymentMethod,
+
+        paymentDetails: {
+  razorpayOrderId: response.razorpay_order_id,
+  razorpayPaymentId: response.razorpay_payment_id,
+  razorpaySignature: response.razorpay_signature
+}
+        }
+
+        const result =
+          await orderService.checkout(orderData)
+
+        const backendOrderId = result.orderId
+
+        setCreatedOrderId(backendOrderId)
+
+        await paymentService.processPayment({
+          orderId: backendOrderId,
+          amount: total,
+          method: paymentMethod.toUpperCase(),
+          transactionId:
+            response.razorpay_payment_id
+        })
+
+        setStep(3)
+        setOrdered(true)
+
+        dispatch(clearCart())
+
+        toast.success("Payment Successful!")
+      },
+
+      prefill: {
+        name: addressData.fullName,
+        contact: addressData.phone
+      },
+
+      theme: {
+        color: "#00f3ff"
+      }
+    }
+
+    const razorpay = new window.Razorpay(options)
+
+    razorpay.open()
+
+  } catch (err) {
+    console.log(err)
+    toast.error("Payment failed")
   }
+}
   return (
     <div className="min-vh-100 pb-5" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
       <div className="bg-glow-orb" style={{ width: 400, height: 400, background: 'var(--bb-primary-glow)', top: '5%', left: '-5%', filter: 'blur(130px)' }} />
@@ -317,7 +411,6 @@ export default function Checkout() {
                     {/* Payment options */}
                     <div className="d-flex flex-column gap-3">
                       {[
-                        { id: 'upi', label: 'UPI / GPay / PhonePe', emoji: '📱', desc: 'Pay instantly via any UPI app' },
                         { id: 'card', label: 'Credit / Debit Card', emoji: '💳', desc: 'Visa, Mastercard, RuPay' },
                         { id: 'netbanking', label: 'Net Banking', emoji: '🏦', desc: 'All major Indian banks' },
                         { id: 'cod', label: 'Cash on Delivery', emoji: '💵', desc: 'Pay when you receive' },
@@ -337,31 +430,6 @@ export default function Checkout() {
                       ))}
                     </div>
 
-                    {/* Card fields */}
-                    {paymentMethod === 'card' && (
-                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-3 p-3 rounded-3" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
-                        <div className="row g-2">
-                          <div className="col-12">
-                            <input className="form-control checkout-input" placeholder="Card Number" maxLength={19} />
-                          </div>
-                          <div className="col-6">
-                            <input className="form-control checkout-input" placeholder="MM/YY" maxLength={5} />
-                          </div>
-                          <div className="col-6">
-                            <input className="form-control checkout-input" placeholder="CVV" maxLength={3} type="password" />
-                          </div>
-                          <div className="col-12">
-                            <input className="form-control checkout-input" placeholder="Cardholder Name" />
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {paymentMethod === 'upi' && (
-                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-3 p-3 rounded-3" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
-                        <input className="form-control checkout-input" placeholder="Enter UPI ID (e.g. name@upi)" />
-                      </motion.div>
-                    )}
 
                     <div className="d-flex gap-3 mt-4">
                       <button onClick={() => setStep(1)} className="btn fw-bold d-flex align-items-center gap-2 px-4" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-muted)', borderRadius: 12 }}>
