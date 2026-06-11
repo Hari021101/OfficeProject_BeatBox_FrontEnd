@@ -252,7 +252,19 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
 
               <div className="col-md-4">
                 <label className="form-label text-theme-muted small fw-bold">Color</label>
-                <input type="text" className="form-control" name="color" value={formData.color} onChange={handleChange} placeholder="e.g. Phantom Black" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
+               <select
+  className="form-select"
+  name="color"
+  value={formData.color}
+  onChange={handleChange}
+>
+  <option value="">Select Color</option>
+  <option value="Black">Black</option>
+  <option value="White">White</option>
+  <option value="Blue">Blue</option>
+  <option value="Red">Red</option>
+  <option value="Green">Green</option>
+</select>
               </div>
               <div className="col-md-4">
                 <label className="form-label text-theme-muted small fw-bold">Battery Life</label>

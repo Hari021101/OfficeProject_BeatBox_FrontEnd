@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import { 
-  IndianRupee, 
-  ShoppingCart, 
-  Users, 
-  TrendingUp, 
-  Package, 
+import {
+  IndianRupee,
+  ShoppingCart,
+  Users,
+  TrendingUp,
+  Package,
   Activity
 } from 'lucide-react'
 import { orderService } from '../../services/orderService'
@@ -32,51 +32,54 @@ export default function Dashboard() {
 
         const analytics = await adminService.getDashboardAnalytics();
 
-setStats({
-  totalRevenue: analytics.totalRevenue || 0,
-  revenueTrend: 0,
+        setStats({
+          totalRevenue: analytics.totalRevenue || 0,
+          revenueTrend: null,
 
-  totalOrders: analytics.totalOrders || 0,
-  ordersTrend: 0,
+          totalOrders: analytics.totalOrders || 0,
+          ordersTrend: null,
 
-  activeUsers: analytics.totalCustomers || 0,
-  usersTrend: 0,
+          activeUsers: analytics.totalCustomers || 0,
+          usersTrend: null,
 
-  conversionRate: 0,
-  conversionTrend: 0
-});
+          conversionRate: 0,
+          conversionTrend: null
+        });
 
-const revenue = await adminService.getRevenueChart();
+        const revenue = await adminService.getRevenueChart();
 
-setRevenueData(
-  revenue.map(r => ({
-    name: new Date(2026, r.month - 1)
-      .toLocaleString('default', { month: 'short' }),
-    value: r.revenue
-  }))
-);
+        setRevenueData(
+          revenue.map(r => ({
+            name: new Date(2026, r.month - 1)
+              .toLocaleString('default', { month: 'short' }),
+            value: r.revenue
+          }))
+        );
 
-const sales = await adminService.getSalesChart();
+        const sales = await adminService.getSalesChart();
 
-setSalesData(
-  sales.map(s => ({
-    name: new Date(s.date)
-      .toLocaleDateString('en-IN', {
-        day: 'numeric',
-        month: 'short'
-      }),
-    value: s.revenue
-  }))
-);
+        setSalesData(
+          sales.map(s => ({
+            name: new Date(s.date)
+              .toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'short'
+              }),
+            value: s.revenue
+          }))
+        );
 
-const products = await adminService.getProductAnalytics();
+        const products = await adminService.getProductAnalytics();
 
-setProductData(
-  products.topProducts.map(p => ({
-    name: p.productName,
-    value: p.unitsSold
-  }))
-);
+        setProductData(
+          products.topProducts.map(p => ({
+            name:
+              p.productName.length > 15
+                ? p.productName.substring(0, 15) + "..."
+                : p.productName,
+            value: p.unitsSold
+          }))
+        );
 
         // Load Orders
         const orders = await orderService.getAllOrders()
@@ -96,20 +99,22 @@ setProductData(
     { key: 'userId', label: 'Customer', render: (row) => <span className="d-inline-block text-truncate text-theme-muted" style={{ maxWidth: '120px', fontSize: '0.9rem' }}>{row.userId}</span> },
     { key: 'createdDate', label: 'Date', render: (row) => <span className="text-theme-muted" style={{ fontSize: '0.9rem' }}>{new Date(row.createdDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span> },
     { key: 'totalAmount', label: 'Amount', render: (row) => <span className="fw-black text-theme-title">₹{Number(row.totalAmount).toLocaleString('en-IN')}</span> },
-    { key: 'status', label: 'Status', render: (row) => (
-      <span className="badge rounded-pill px-3 py-2" style={{ 
-        background: row.status === 'Pending' ? 'rgba(245,158,11,0.1)' : 
-                    row.status === 'Processing' ? 'rgba(168,32,255,0.1)' :
-                    row.status === 'Shipped' ? 'rgba(0,243,255,0.1)' :
-                    row.status === 'Delivered' ? 'rgba(57,255,20,0.1)' : 'rgba(239,68,68,0.1)',
-        color: row.status === 'Pending' ? '#f59e0b' : 
-               row.status === 'Processing' ? '#a820ff' :
-               row.status === 'Shipped' ? '#00f3ff' :
-               row.status === 'Delivered' ? '#39ff14' : '#ef4444',
-        border: `1px solid currentColor`,
-        fontWeight: 'bold'
-      }}>{row.status}</span>
-    )}
+    {
+      key: 'status', label: 'Status', render: (row) => (
+        <span className="badge rounded-pill px-3 py-2" style={{
+          background: row.status === 'Pending' ? 'rgba(245,158,11,0.1)' :
+            row.status === 'Processing' ? 'rgba(168,32,255,0.1)' :
+              row.status === 'Shipped' ? 'rgba(0,243,255,0.1)' :
+                row.status === 'Delivered' ? 'rgba(57,255,20,0.1)' : 'rgba(239,68,68,0.1)',
+          color: row.status === 'Pending' ? '#f59e0b' :
+            row.status === 'Processing' ? '#a820ff' :
+              row.status === 'Shipped' ? '#00f3ff' :
+                row.status === 'Delivered' ? '#39ff14' : '#ef4444',
+          border: `1px solid currentColor`,
+          fontWeight: 'bold'
+        }}>{row.status}</span>
+      )
+    }
   ]
 
   return (
@@ -143,13 +148,22 @@ setProductData(
       {/* Charts Row */}
       <div className="row g-4 mb-4">
         <div className="col-12 col-xl-8">
-          <ChartCard title="Revenue Overview (Last 7 Days)" data={revenueData} type="line" dataKey="value" colors={['#00f3ff']} />
+          <ChartCard title="Revenue Overview (This Year)" data={revenueData} type="line" dataKey="value" colors={['#00f3ff']} />
         </div>
         <div className="col-12 col-xl-4">
-          <ChartCard title="Product Distribution" data={productData} type="pie" dataKey="value" colors={['#00f3ff', '#a820ff', '#39ff14', '#f59e0b']} />
+          <ChartCard title="Product Distribution" data={productData} type="pie" dataKey="value" colors={[
+            '#00f3ff',
+            '#a820ff',
+            '#0025fa',
+            '#f59e0b',
+            '#0dd406',
+            '#ac90ec4f',
+            '#ec4899',
+            '#b8142a'
+          ]} />
         </div>
       </div>
-      
+
       <div className="row g-4 mb-4">
         <div className="col-12 col-xl-4">
           <ChartCard title="Weekly Sales" data={salesData} type="bar" dataKey="value" colors={['#a820ff']} />
@@ -158,15 +172,15 @@ setProductData(
           <div className="mb-3 d-flex align-items-center justify-content-between px-2">
             <h5 className="fw-bold text-theme-title mb-0">Recent Orders</h5>
           </div>
-          <DataTable 
-            columns={orderColumns} 
-            data={recentOrders} 
+          <DataTable
+            columns={orderColumns}
+            data={recentOrders}
             searchPlaceholder="Search order ID or customer..."
             searchableFields={['orderId', 'userId', 'status']}
           />
         </div>
       </div>
-      
+
     </div>
   )
 }

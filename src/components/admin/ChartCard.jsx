@@ -1,10 +1,10 @@
 import {
-  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, 
+  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
 
 export default function ChartCard({ title, data, type = 'line', dataKey = 'value', height = 300, colors = ['#00f3ff'] }) {
-  
+
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
@@ -22,7 +22,7 @@ export default function ChartCard({ title, data, type = 'line', dataKey = 'value
   };
 
   const renderChart = () => {
-    switch(type) {
+    switch (type) {
       case 'line':
         return (
           <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -47,7 +47,18 @@ export default function ChartCard({ title, data, type = 'line', dataKey = 'value
         return (
           <PieChart>
             <Tooltip content={<CustomTooltip />} />
-            <Legend verticalAlign="bottom" height={72} iconType="circle" wrapperStyle={{ fontSize: '12px', color: 'var(--bb-muted)' }}/>
+            <Legend
+              layout="horizontal"
+              verticalAlign="bottom"
+              align="center"
+              iconType="circle"
+              wrapperStyle={{
+                fontSize: '10px',
+                color: 'var(--bb-muted)',
+                paddingTop: '12px',
+                lineHeight: '18px'
+              }}
+            />
             <Pie
               data={data}
               cx="50%"
@@ -69,7 +80,7 @@ export default function ChartCard({ title, data, type = 'line', dataKey = 'value
   }
 
   return (
-    <div 
+    <div
       className="card border-0 h-100 p-4"
       style={{ background: 'var(--bb-surface)', borderRadius: '16px', boxShadow: '0 8px 30px rgba(0,0,0,0.1)' }}
     >
