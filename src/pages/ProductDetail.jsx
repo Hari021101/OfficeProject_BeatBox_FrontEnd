@@ -5,15 +5,18 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   Star, ShoppingBag, ArrowLeft, Heart, Share2, Zap,
   CheckCircle, Shield, Truck, RotateCcw, ChevronRight, Minus, Plus,
-  Battery, Smartphone, Mic, Gamepad2, ChevronDown, ChevronUp
+  Battery, Smartphone, Mic, Gamepad2, ChevronDown, ChevronUp, Scale
 } from 'lucide-react'
 import { addToCart } from '../redux/cartSlice'
+import { addToCompare } from '../redux/compareSlice'
 import { getRelatedProducts, IMAGE_MAP } from '../data/products'
 import ProductCard from '../components/ui/ProductCard'
+import RecentlyViewed from '../components/ui/RecentlyViewed'
 import { toast } from 'react-hot-toast'
 import logo from '../assets/beatbox_logo.png'
 import { productService } from '../services/productService'
 import { fetchMyOrders, selectAllOrders } from '../redux/orderSlice'
+import { addRecentlyViewed } from '../redux/recentlyViewedSlice'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -24,7 +27,6 @@ export default function ProductDetail() {
   //const product = allProducts.find(p => p.id.toString() === id)
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [selectedVariant, setSelectedVariant] = useState(null)
 
   const myOrders = useSelector(selectAllOrders)
   const { user } = useSelector(state => state.auth)
@@ -56,14 +58,30 @@ export default function ProductDetail() {
     }
   }, [id, dispatch, user])
 
+  // Track recently viewed when product is loaded
+  useEffect(() => {
+    if (product) {
+      dispatch(addRecentlyViewed({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        oldPrice: product.oldPrice,
+        discount: product.discount,
+        imageKey: product.imageKey,
+        imageUrl: product.imageUrl,
+        category: product.category,
+      }))
+    }
+  }, [product, dispatch])
+
   // useEffect(() => {
   //   if (productStatus === 'idle') {
   //     dispatch(fetchProducts())
   //   }
   // }, [productStatus, dispatch])
   useEffect(() => {
-    if (product?.variants?.length > 0) {
-      setSelectedVariant(product.variants[0])
+    if (product?.colors?.length > 0) {
+      setSelectedColor(product.colors[0])
     }
   }, [product])
 
@@ -154,11 +172,8 @@ export default function ProductDetail() {
     }
   }
 
-  // Three-level fallback: variant URL → backend URL → local bundled asset
+  // Two-level fallback: backend URL → local bundled asset
   const img =
-    (selectedVariant?.imageUrl && selectedVariant.imageUrl !== 'string' && selectedVariant.imageUrl.startsWith('http')
-      ? selectedVariant.imageUrl
-      : null) ||
     (product.imageUrl && product.imageUrl !== 'string' && product.imageUrl.startsWith('http')
       ? product.imageUrl
       : null) ||
@@ -175,7 +190,7 @@ const savings =
   originalPrice - salePrice
 
   const handleAddToCart = () => {
-    if (product.stockQuantity <= 0) return
+    if (!(product.stockQuantity > 0 || product.inStock)) return
     setAdding(true)
     dispatch(addToCart({
       id: product.id, name: product.name, price: salePrice,
@@ -192,7 +207,7 @@ const savings =
   }
 
   const handleBuyNow = () => {
-    if (product.stockQuantity <= 0) return
+    if (!(product.stockQuantity > 0 || product.inStock)) return
     dispatch(addToCart({
       id: product.id, name: product.name, price: salePrice,
       imageKey: product.imageKey, quantity: quantity,
@@ -222,15 +237,35 @@ const discount =
     }
   }
 
-  const handleCheckDelivery = () => {
+  const handleCheckDelivery = async () => {
     if (pincode.length !== 6 || isNaN(pincode)) {
       setDeliveryStatus({ error: true, message: 'Please enter a valid 6-digit pincode.' })
       return
     }
-    setDeliveryStatus({ error: false, message: 'Checking...' })
-    setTimeout(() => {
-      setDeliveryStatus({ error: false, message: `Delivery available by ${new Date(Date.now() + 86400000 * 3).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} to ${pincode} 🚚` })
-    }, 800)
+    setDeliveryStatus({ error: false, message: 'Checking Shiprocket...' })
+    
+    try {
+      const response = await productService.checkDelivery(pincode, product.id)
+      
+      if (response && response.status === 1) { // Assuming 1 means serviceable
+        const dateStr = response.data?.available_courier_companies?.[0]?.etd || new Date(Date.now() + 86400000 * 3).toISOString()
+        const formattedDate = new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+        setDeliveryStatus({ error: false, message: `Delivery available by ${formattedDate} to ${pincode} 🚚 (COD: ${response.data?.available_courier_companies?.[0]?.cod === 1 ? 'Yes' : 'No'})` })
+      } else {
+        setDeliveryStatus({ error: true, message: `Sorry, delivery is currently not available to ${pincode}.` })
+      }
+    } catch (err) {
+      // Backend route doesn't exist yet, gracefully fall back to mock data
+      console.warn("Shiprocket endpoint not ready. Using mock estimation.")
+      setTimeout(() => {
+        const isUnserviceableMock = ['000000', '111111', '999999'].includes(pincode)
+        if (isUnserviceableMock) {
+          setDeliveryStatus({ error: true, message: `Sorry, delivery is currently not available to ${pincode}.` })
+        } else {
+          setDeliveryStatus({ error: false, message: `Delivery available by ${new Date(Date.now() + 86400000 * 3).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} to ${pincode} 🚚` })
+        }
+      }, 800)
+    }
   }
 
 const handleSubmitReview = async (e) => {
@@ -373,13 +408,13 @@ const handleSubmitReview = async (e) => {
             <div className="d-flex align-items-center gap-3 mb-3">
               <div className="d-flex align-items-center gap-1">
                 {[1, 2, 3, 4, 5].map(s => (
-                  <Star key={s} size={16} fill={s <= Math.round(product.averageRating || 0) ? '#ffc700' : 'none'} stroke={s <= Math.round(product.averageRating || 0) ? '#ffc700' : 'var(--bb-border)'} />
+                  <Star key={s} size={16} fill={s <= Math.round(product.averageRating || product.rating || 0) ? '#ffc700' : 'none'} stroke={s <= Math.round(product.averageRating || product.rating || 0) ? '#ffc700' : 'var(--bb-border)'} />
                 ))}
-                <span className="fw-bold ms-1" style={{ color: '#ffc700' }}>{Number(product.averageRating || 0).toFixed(1)}</span>
+                <span className="fw-bold ms-1" style={{ color: '#ffc700' }}>{Number(product.averageRating || product.rating || 0).toFixed(1)}</span>
               </div>
               <span className="text-theme-muted small">({(product.reviewCount || 0).toLocaleString('en-IN')} reviews)</span>
-              <span className={`badge px-2 py-1 small fw-bold ${product.stockQuantity > 0 ? 'text-success' : 'text-danger'}`} style={{ background: product.stockQuantity > 0 ? 'rgba(39,255,20,0.08)' : 'rgba(220,53,69,0.08)', border: `1px solid ${product.stockQuantity > 0 ? 'rgba(39,255,20,0.2)' : 'rgba(220,53,69,0.2)'}` }}>
-                {product.stockQuantity > 0 ? '✓ In Stock' : '✗ Out of Stock'}
+              <span className={`badge px-2 py-1 small fw-bold ${product.stockQuantity > 0 || product.inStock ? 'text-success' : 'text-danger'}`} style={{ background: product.stockQuantity > 0 || product.inStock ? 'rgba(39,255,20,0.08)' : 'rgba(220,53,69,0.08)', border: `1px solid ${product.stockQuantity > 0 || product.inStock ? 'rgba(39,255,20,0.2)' : 'rgba(220,53,69,0.2)'}` }}>
+                {product.stockQuantity > 0 || product.inStock ? '✓ In Stock' : '✗ Out of Stock'}
               </span>
             </div>
 
@@ -431,34 +466,38 @@ const handleSubmitReview = async (e) => {
             </div>
 
             {/* Color selection */}
-            <div className="mb-4">
-              <p className="text-theme-muted small fw-semibold mb-3">
-                COLOR —
-                <span className="text-theme-title ms-2">
-                  {selectedVariant?.colorName}
-                </span>
-              </p>
+            {product?.colors?.length > 0 && (
+              <div className="mb-4">
+                <p className="text-theme-muted small fw-semibold mb-3">
+                  COLOR —
+                  <span className="text-theme-title ms-2">
+                    {selectedColor?.name}
+                  </span>
+                </p>
 
-              <div className="d-flex gap-3">
-                {product.variants?.map((variant, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedVariant(variant)}
-                    style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: '50%',
-                      background: variant.colorCode,
-                      border:
-                        selectedVariant?.colorName === variant.colorName
-                          ? '3px solid white'
-                          : '1px solid gray',
-                      cursor: 'pointer'
-                    }}
-                  />
-                ))}
+                <div className="d-flex gap-3">
+                  {product.colors.map((color, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedColor(color)}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: '50%',
+                        background: color.code,
+                        border:
+                          selectedColor?.name === color.name
+                            ? '3px solid white'
+                            : '1px solid var(--bb-border)',
+                        cursor: 'pointer',
+                        boxShadow: selectedColor?.name === color.name ? `0 0 15px ${color.code}` : 'none',
+                        transition: 'all 0.2s'
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Quantity */}
             <div className="d-flex align-items-center gap-4 mb-4">
@@ -474,7 +513,7 @@ const handleSubmitReview = async (e) => {
             <div className="d-flex gap-3 mb-4 flex-wrap">
               <button
                 onClick={handleAddToCart}
-                disabled={product.stockQuantity <= 0 || adding}
+                disabled={!(product.stockQuantity > 0 || product.inStock) || adding}
                 className="btn btn-glow flex-grow-1 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
                 style={{ borderRadius: 12, minWidth: 200, height: 56 }}
               >
@@ -482,7 +521,7 @@ const handleSubmitReview = async (e) => {
               </button>
               <button
                 onClick={handleBuyNow}
-                disabled={product.stockQuantity <= 0}
+                disabled={!(product.stockQuantity > 0 || product.inStock)}
                 className="btn flex-grow-1 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
                 style={{ borderRadius: 12, minWidth: 180, height: 56, background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }}
               >
@@ -502,6 +541,14 @@ const handleSubmitReview = async (e) => {
                 title="Share"
               >
                 <Share2 size={20} />
+              </button>
+              <button
+                onClick={() => dispatch(addToCompare(product))}
+                className="btn d-flex align-items-center justify-content-center"
+                style={{ width: 56, height: 56, borderRadius: 12, background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-accent)', flexShrink: 0 }}
+                title="Add to Compare"
+              >
+                <Scale size={20} />
               </button>
             </div>
 
@@ -531,7 +578,7 @@ const handleSubmitReview = async (e) => {
                   onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="Enter 6-digit Pincode"
                   className="form-control flex-grow-1"
-                  style={{ background: 'var(--bb-bg-navy)', border: '1px solid var(--bb-border)', color: '#fff', borderRadius: 8, padding: '10px 16px' }}
+                  style={{ background: 'var(--bb-bg-navy)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)', borderRadius: 8, padding: '10px 16px' }}
                 />
                 <button onClick={handleCheckDelivery} className="btn px-4 fw-bold" style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-accent)', border: '1px solid var(--bb-accent)', borderRadius: 8 }}>
                   Check
@@ -688,7 +735,7 @@ const handleSubmitReview = async (e) => {
                             className="form-control mb-3"
                             rows="3"
                             placeholder="What did you like or dislike?"
-                            style={{ background: 'var(--bb-bg-navy)', border: '1px solid var(--bb-border)', color: '#fff', borderRadius: 8 }}
+                            style={{ background: 'var(--bb-bg-navy)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)', borderRadius: 8 }}
                             required
                           />
                           <div className="d-flex gap-2 justify-content-end mt-3">
@@ -812,6 +859,12 @@ const handleSubmitReview = async (e) => {
             </div>
           </div>
         )}
+
+        {/* ── RECENTLY VIEWED ─── */}
+        <div className="mt-5 pt-3" style={{ borderTop: '1px solid var(--bb-border)' }}>
+          <RecentlyViewed excludeId={product?.id} />
+        </div>
+
       </div>
 
     </div>

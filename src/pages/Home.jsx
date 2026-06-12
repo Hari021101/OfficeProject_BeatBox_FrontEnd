@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import AntiGravityPlayground from '../components/ui/AntiGravityPlayground'
+import RecentlyViewed from '../components/ui/RecentlyViewed'
 
 // Asset imports
 import heroHeadphones from '../assets/hero_headphones.png'
@@ -213,6 +214,55 @@ export default function Home() {
     })
   }
 
+  // 5. LIVE ACTIVITY TOAST ALERTS (CONVERSION TRIGGERS)
+  useEffect(() => {
+    const locations = ['California', 'New York', 'London', 'Texas', 'Sydney', 'Mumbai', 'Berlin'];
+    const productsList = ['BeatBox Pro 5.1', 'Airdopes Cyber 141', 'Gaming Headset X', 'Stone Beat 1200', 'Neon Neckband'];
+    
+    // Fire the first toast after 4 seconds
+    const initialTimeout = setTimeout(() => {
+      const loc = locations[Math.floor(Math.random() * locations.length)];
+      const prod = productsList[Math.floor(Math.random() * productsList.length)];
+      
+      toast(`Someone in ${loc} just purchased a ${prod}!`, {
+        icon: '🔥',
+        position: 'bottom-left',
+        duration: 4000,
+        style: {
+          borderRadius: '10px',
+          background: 'var(--bb-surface-2)',
+          color: 'var(--bb-title-color)',
+          border: '1px solid var(--bb-accent)',
+          fontSize: '0.85rem'
+        }
+      });
+    }, 4000);
+
+    // Then set an interval to fire periodically (every 15-25 seconds)
+    const interval = setInterval(() => {
+      const loc = locations[Math.floor(Math.random() * locations.length)];
+      const prod = productsList[Math.floor(Math.random() * productsList.length)];
+      
+      toast(`Someone in ${loc} just purchased a ${prod}!`, {
+        icon: '🚀',
+        position: 'bottom-left',
+        duration: 4000,
+        style: {
+          borderRadius: '10px',
+          background: 'var(--bb-surface-2)',
+          color: 'var(--bb-title-color)',
+          border: '1px solid var(--bb-primary)',
+          fontSize: '0.85rem'
+        }
+      });
+    }, 22000);
+
+    return () => {
+      clearTimeout(initialTimeout);
+      clearInterval(interval);
+    };
+  }, []);
+
   // 4. ZERO-GRAVITY (ANTI-GRAVITY) PHYSICS PLAYGROUND STATE
   const [isZeroGravity, setIsZeroGravity] = useState(false)
   const [zeroGravityElements, setZeroGravityElements] = useState([])
@@ -379,7 +429,7 @@ export default function Home() {
     <div className="row g-4 row-cols-2 row-cols-sm-3 row-cols-md-5 justify-content-center w-100 m-0">
       {[
         { id: 'earbuds', name: 'AirPods & Earbuds', shortName: 'AirPods', image: heroEarbuds, badge: 'HOT' },
-        { id: 'tws', name: 'TWS Earbuds', shortName: 'TWS', image: smartEarbuds, badge: 'PRO' },
+        { id: 'earbuds', name: 'TWS Earbuds', shortName: 'TWS', image: smartEarbuds, badge: 'PRO' },
         { id: 'neckbands', name: 'Neckbands', shortName: 'Neckbands', image: wirelessNeckband, badge: 'DAILY' },
         { id: 'gaming', name: 'Gaming Headsets', shortName: 'Gaming', image: gamingHeadset, badge: 'CYBER' },
         { id: 'wired earphones', name: 'Wired Headphones', shortName: 'Wired', image: wiredEarphones, badge: 'PURE' },
@@ -863,6 +913,44 @@ export default function Home() {
               </div>
 
             </div>
+          </div>
+        </section>
+
+        {/* ==================== SOCIAL PROOF & UGC ==================== */}
+        <section className="py-5" id="social-proof">
+          <div className="container px-lg-5">
+            <div className="text-center mb-5">
+              <h3 className="fw-black text-theme-title mb-2">#BeatBox<span className="gradient-text">Vibes</span></h3>
+              <p className="text-theme-muted small">Real people, true sound. See how our community is leveling up their audio game.</p>
+            </div>
+
+            <div className="row g-4 row-cols-1 row-cols-md-3">
+              {[
+                { name: "@alex_beats", text: "The ANC on the Rockerz 550 is literally insane. I can't hear anything on the subway anymore! 🔥", img: "https://i.pravatar.cc/150?u=a" },
+                { name: "@sarah.gamer", text: "Immortal Cyber Pro headset completely changed my streaming setup. The 7.1 surround is perfectly tuned for tactical games.", img: "https://i.pravatar.cc/150?u=b" },
+                { name: "@dj_mike", text: "Took the Stone Beat to a pool party yesterday. Splashed it twice, still bumps the bass like crazy. 10/10.", img: "https://i.pravatar.cc/150?u=c" }
+              ].map((review, idx) => (
+                <div key={idx} className="col">
+                  <div className="card border-0 p-4 h-100 hover-scale" style={{ background: 'var(--bb-surface)', borderRadius: '16px', borderTop: '2px solid var(--bb-accent)' }}>
+                    <div className="d-flex gap-1 text-warning mb-3">
+                      {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}
+                    </div>
+                    <p className="text-theme-title fw-semibold mb-4" style={{ fontStyle: 'italic', lineHeight: '1.6' }}>"{review.text}"</p>
+                    <div className="d-flex align-items-center gap-3 mt-auto">
+                      <img src={review.img} alt={review.name} className="rounded-circle" style={{ width: '40px', height: '40px' }} />
+                      <span className="text-theme-muted fw-bold" style={{ fontSize: '0.85rem' }}>{review.name}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ==================== RECENTLY VIEWED ==================== */}
+        <section className="py-4 px-3 px-lg-5">
+          <div className="container-fluid px-0">
+            <RecentlyViewed />
           </div>
         </section>
 

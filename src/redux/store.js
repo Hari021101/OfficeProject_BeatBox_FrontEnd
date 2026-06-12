@@ -5,6 +5,8 @@ import productReducer from './productSlice';
 import orderReducer from './orderSlice';
 import profileReducer from './profileSlice';
 import wishlistReducer from './wishlistSlice';
+import recentlyViewedReducer from './recentlyViewedSlice';
+import compareReducer from './compareSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,5 +16,7 @@ export const store = configureStore({
     orders: orderReducer,
     profile: profileReducer,
     wishlist: wishlistReducer,
+    recentlyViewed: recentlyViewedReducer,
+    compare: compareReducer,
   },
 });

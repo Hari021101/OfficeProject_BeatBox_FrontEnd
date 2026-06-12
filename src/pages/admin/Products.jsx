@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Edit2, Trash2, MoreVertical } from 'lucide-react'
+import { Edit2, Trash2, MoreVertical, Star } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { toast } from 'react-hot-toast'
 import { IMAGE_MAP } from '../../data/products'
@@ -12,6 +12,7 @@ export default function Products() {
   const [isLoading, setIsLoading] = useState(true)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState(null)
+  const [selectedCategory, setSelectedCategory] = useState('All')
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -116,13 +117,39 @@ export default function Products() {
           <button className="btn border-0 p-2 text-danger hover-scale me-1" title="Delete" onClick={() => handleDelete(row.id)}>
             <Trash2 size={16} />
           </button>
-          <button className="btn border-0 p-2 text-theme-muted hover-scale" title="More">
-            <MoreVertical size={16} />
-          </button>
+          <div className="dropdown d-inline-block">
+            <button className="btn border-0 p-2 text-theme-muted hover-scale" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="More Options">
+              <MoreVertical size={16} />
+            </button>
+            <ul className="dropdown-menu dropdown-menu-end shadow-sm" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
+              <li>
+                <a className="dropdown-item text-theme-title d-flex align-items-center gap-2" href={`/product/${row.slug}`} target="_blank" rel="noreferrer">
+                  View in Store
+                </a>
+              </li>
+              <li>
+                <button className="dropdown-item text-theme-title d-flex align-items-center gap-2" onClick={() => toast.success('Duplicate feature coming soon!')}>
+                  Duplicate Product
+                </button>
+              </li>
+              <li><hr className="dropdown-divider" style={{ borderColor: 'var(--bb-border)' }} /></li>
+              <li>
+                <button className="dropdown-item text-danger d-flex align-items-center gap-2" onClick={() => handleDelete(row.id)}>
+                  Delete
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       )
     }
   ]
+
+  const categories = ['All', ...new Set(products.map(p => p.categoryName || 'Uncategorized').filter(Boolean))].sort()
+
+  const filteredProducts = selectedCategory === 'All' 
+    ? products 
+    : products.filter(p => (p.categoryName || 'Uncategorized') === selectedCategory)
 
   return (
     <div className="py-2">
@@ -141,12 +168,69 @@ export default function Products() {
         </div>
       ) : (
         <DataTable 
-          columns={columns}
-          data={products}
+          columns={columns} 
+          data={filteredProducts} 
           searchPlaceholder="Search products by name or category..."
-          searchableFields={['name', 'categoryName']}
+          searchableFields={['name', 'categoryName', 'brand']}
           onAdd={() => { setEditingProduct(null); setIsAddModalOpen(true); }}
           addLabel="Add New Product"
+          selectable={true}
+          onSelectionChange={(selectedIds) => {
+            console.log("Selected Product IDs:", selectedIds);
+          }}
+          bulkActions={[
+            {
+              label: 'Delete Selected',
+              icon: Trash2,
+              danger: true,
+              onClick: async (selectedIds) => {
+                if (window.confirm(`Are you sure you want to delete ${selectedIds.length} products?`)) {
+                  try {
+                    await productService.bulkDeleteProducts(selectedIds);
+                    toast.success(`Deleted ${selectedIds.length} products!`);
+                    fetchProducts();
+                  } catch (err) {
+                    toast.error('Failed to delete products.');
+                  }
+                }
+              }
+            },
+            {
+              label: 'Mark as Featured',
+              icon: Star,
+              danger: false,
+              onClick: async (selectedIds) => {
+                try {
+                  await productService.bulkUpdateFeatured(selectedIds, true);
+                  toast.success(`Marked ${selectedIds.length} products as Featured!`);
+                  fetchProducts();
+                } catch (err) {
+                  toast.error('Failed to update products.');
+                }
+              }
+            }
+          ]}
+          filterSlot={
+            <div className="d-flex align-items-center gap-2">
+              <span className="text-theme-muted fw-bold d-none d-sm-inline" style={{ fontSize: '0.85rem' }}>Category:</span>
+              <select 
+                className="form-select fw-bold text-theme-title" 
+                style={{ 
+                  background: 'var(--bb-surface-2)', 
+                  border: '1px solid var(--bb-border)', 
+                  borderRadius: '10px',
+                  minWidth: '150px',
+                  cursor: 'pointer'
+                }}
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+          }
         />
       )}
 

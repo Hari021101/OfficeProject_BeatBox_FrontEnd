@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Star, ShoppingBag, Heart, Zap, Eye } from 'lucide-react'
+import { Star, ShoppingBag, Heart, Zap, Eye, Scale } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addToCart } from '../../redux/cartSlice'
 import { toggleWishlistItem, selectIsInWishlist } from '../../redux/wishlistSlice'
+import { addToCompare } from '../../redux/compareSlice'
 import { IMAGE_MAP } from '../../data/products'
 import { toast } from 'react-hot-toast'
 import logo from '../../assets/beatbox_logo.png'
@@ -56,6 +57,12 @@ const [selectedColor, setSelectedColor] =
     }
   }
 
+  const handleCompare = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    dispatch(addToCompare(product))
+  }
+
   const img = selectedColor?.imageUrl || product.imageUrl || IMAGE_MAP[product.imageKey] || IMAGE_MAP['heroHeadphones']
   const discountedSavings = product.oldPrice - product.price
 
@@ -87,17 +94,27 @@ const [selectedColor, setSelectedColor] =
             </div>
           )}
 
-          {/* Top row: badge + wishlist */}
+          {/* Top row: badge + wishlist & compare */}
           <div className="position-absolute top-0 start-0 end-0 d-flex justify-content-between p-3" style={{ zIndex: 10 }}>
             <span className="product-card-badge">{product.tag}</span>
-            <button
-              onClick={handleWishlist}
-              className="btn p-0 border-0 d-flex align-items-center justify-content-center rounded-circle"
-              style={{ width: 32, height: 32, background: 'var(--bb-surface)', backdropFilter: 'blur(8px)', border: '1px solid var(--bb-border)', color: isWishlisted ? '#ff4d7d' : 'var(--bb-muted)', transition: 'all 0.25s' }}
-              aria-label="Toggle wishlist"
-            >
-              <Heart size={14} fill={isWishlisted ? '#ff4d7d' : 'none'} stroke={isWishlisted ? '#ff4d7d' : 'currentColor'} />
-            </button>
+            <div className="d-flex gap-2">
+              <button
+                onClick={handleCompare}
+                className="btn p-0 border-0 d-flex align-items-center justify-content-center rounded-circle"
+                style={{ width: 32, height: 32, background: 'var(--bb-surface)', backdropFilter: 'blur(8px)', border: '1px solid var(--bb-border)', color: 'var(--bb-accent)', transition: 'all 0.25s' }}
+                aria-label="Add to compare"
+              >
+                <Scale size={14} />
+              </button>
+              <button
+                onClick={handleWishlist}
+                className="btn p-0 border-0 d-flex align-items-center justify-content-center rounded-circle"
+                style={{ width: 32, height: 32, background: 'var(--bb-surface)', backdropFilter: 'blur(8px)', border: '1px solid var(--bb-border)', color: isWishlisted ? '#ff4d7d' : 'var(--bb-muted)', transition: 'all 0.25s' }}
+                aria-label="Toggle wishlist"
+              >
+                <Heart size={14} fill={isWishlisted ? '#ff4d7d' : 'none'} stroke={isWishlisted ? '#ff4d7d' : 'currentColor'} />
+              </button>
+            </div>
           </div>
 
           {/* Product image frame */}

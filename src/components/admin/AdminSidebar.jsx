@@ -5,15 +5,21 @@ import {
   Package, 
   ShoppingCart, 
   Users, 
-  Archive 
+  Archive,
+  RefreshCcw,
+  Tag,
+  ShieldAlert
 } from 'lucide-react'
 
 export const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
   { id: 'products', label: 'Products', icon: Package, path: '/admin/products' },
   { id: 'orders', label: 'Orders', icon: ShoppingCart, path: '/admin/orders' },
+  { id: 'returns', label: 'Returns', icon: RefreshCcw, path: '/admin/returns' },
   { id: 'inventory', label: 'Inventory', icon: Archive, path: '/admin/inventory' },
+  { id: 'promotions', label: 'Promotions', icon: Tag, path: '/admin/promotions' },
   { id: 'users', label: 'Users', icon: Users, path: '/admin/users' },
+  { id: 'audit-logs', label: 'Audit Logs', icon: ShieldAlert, path: '/admin/audit-logs' },
 ]
 
 export default function AdminSidebar({ isSidebarOpen, isMobile, activeNavItem, setIsSidebarOpen }) {

@@ -47,17 +47,6 @@ import stoneGrenadeProImage from '../assets/stone_grenade_pro.png'
 import beatboxSmartCapsuleImage from '../assets/beatbox_smart_capsule.png'
 import auralPrecisionV3Image from '../assets/aural_precision_v3.png'
 
-import partyBoom1500Image from '../assets/party_boom_1500.png'
-import partyLiteWirelessImage from '../assets/party_lite_wireless.png'
-import partyBlastTowerImage from '../assets/party_blast_tower.png'
-
-import soundbarMini21Image from '../assets/soundbar_mini_21.png'
-import soundbarEliteS9Image from '../assets/soundbar_elite_s9.png'
-import cinemaProSoundbarImage from '../assets/cinema_pro_soundbar.png'
-import soundbar21Image from '../assets/soundbar_21.png'
-import gamingSoundbarXImage from '../assets/gaming_soundbar_x.png'
-import soundbarPro51Image from '../assets/soundbar_pro_51.png'
-
 import phoneWallet from '../assets/phone_wallet.png'
 import cableOrganiser from '../assets/cable_organiser.png'
 
@@ -73,78 +62,9 @@ import lcdWritingPad from '../assets/lcd_writing_pad.png'
 import computerCables from '../assets/computer_cables.png'
 import wirelessPresenter from '../assets/wireless_presenter.png'
 
-export const IMAGE_MAP = {
-  heroHeadphones,
-  heroEarbuds,
-  heroSpeaker,
-  gamingHeadset,
-  wirelessNeckband,
-  smartEarbuds,
-  powerBank,
-  trimmer,
-  soundbar,
-  premiumCables: cables,
-  carCharger,
-  portableFan,
-  electricKettle,
-  hairDryer,
-  keyboardMouse,
-  laptopBag,
-  laptopStand,
-  mobileHolder,
-  smartTracker,
-  tyreInflator,
-  usbHub,
-  vacuumCleaner,
-  wirelessCharger,
-  partySpeaker,
-  wiredEarphones,
-  usbSpeakers,
-  conferenceSpeakers,
-  wirelessMicrophones,
-  phoneWallet,
-  cableOrganiser,
-  wirelessKeyboard,
-  wiredKeyboard,
-  gamingKeyboard,
-  wirelessMouse,
-  wiredMouse,
-  laptopTable,
-  extensionBoard,
-  projector,
-  lcdWritingPad,
-  computerCables,
-  wirelessPresenter,
-  // New unique audio hero images
-  soundbarHero,
-  partySpeakerHero,
-  portableSpeakerHero,
-  twsHero,
-  neckbandHero,
-  wirelessHeadphonesHero,
-  wiredEarphonesHero,
-  usbSpeakersHero,
-  conferenceSpeakerHero,
-  wirelessMicHero,
-  
-  // Newly Generated Unique Product Images
-  stoneGrenadePro: stoneGrenadeProImage,
-  beatboxSmartCapsule: beatboxSmartCapsuleImage,
-  auralPrecisionV3: auralPrecisionV3Image,
-  
-  partyBoom1500: partyBoom1500Image,
-  partyLiteWireless: partyLiteWirelessImage,
-  partyBlastTower: partyBlastTowerImage,
+const IMAGE_MAP = {}
 
-  soundbarMini21: soundbarMini21Image,
-  soundbarEliteS9: soundbarEliteS9Image,
-  cinemaProSoundbar: cinemaProSoundbarImage,
-  soundbar21: soundbar21Image,
-  gamingSoundbarX: gamingSoundbarXImage,
-  soundbarPro51: soundbarPro51Image
-}
-
-export const CATEGORIES = [
+const CATEGORIES = [
   { id: 'all', label: 'All Products', emoji: '🔥' },
   { id: 'headphones', label: 'Headphones', emoji: '🎧' },
   { id: 'earbuds', label: 'Earbuds', emoji: '🎵' },
@@ -197,7 +117,7 @@ export const CATEGORIES = [
   { id: 'rechargeable battery', label: 'Batteries', emoji: '🔋' }
 ]
 
-export const PRODUCTS = [
+const PRODUCTS = [
   {
     id: 1, slug: 'rockerz-pro-anc-550', name: 'Rockerz Pro ANC 550',
     brand: 'BeatBox', category: 'headphones', price: 1999, oldPrice: 7990, discount: 75,
@@ -762,10 +682,10 @@ export const PRODUCTS = [
     id: 67, slug: 'rechargeable-battery', name: 'AA Rechargeable Battery Set', brand: 'BeatBox', category: 'rechargeable battery', price: 699, oldPrice: 1499, discount: 53, rating: 4.8, reviewCount: 500, tag: 'Power', usp: '2800mAh', imageKey: 'powerBank', badge: 'Eco', inStock: true, colors: [{name: 'Green', code: '#0f0'}], specs: {'Capacity': '2800mAh'}, description: 'Pack of 4 high-capacity Ni-MH rechargeable batteries. Stop buying disposable batteries!', highlights: ['Pre-charged', '1000+ Cycles'], reviews: []
   },
   // Soundbars (4 more)
-  { id: 68, slug: 'soundbar-pro', name: 'BeatBox Soundbar Pro 5.1', brand: 'BeatBox', category: 'soundbars', price: 6999, oldPrice: 14999, discount: 53, rating: 4.8, reviewCount: 320, tag: 'Premium', usp: '5.1 Surround', imageKey: 'soundbarPro51', badge: 'Hot', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Channels': '5.1', 'Power': '200W'}, description: 'Immersive 5.1 surround soundbar for the ultimate home cinema experience.', highlights: ['5.1 Surround', 'Bluetooth 5.0'], reviews: [] },
-  { id: 69, slug: 'soundbar-elite', name: 'BeatBox Soundbar Elite S9', brand: 'BeatBox', category: 'soundbars', price: 8999, oldPrice: 19999, discount: 55, rating: 4.9, reviewCount: 210, tag: 'Flagship', usp: 'Dolby Atmos', imageKey: 'soundbarEliteS9', badge: 'Top', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Audio': 'Dolby Atmos', 'Power': '320W'}, description: 'Flagship soundbar with Dolby Atmos and wireless subwoofer for audiophiles.', highlights: ['Dolby Atmos', 'Wireless Sub'], reviews: [] },
-  { id: 70, slug: 'soundbar-mini', name: 'BeatBox Soundbar Mini 2.1', brand: 'BeatBox', category: 'soundbars', price: 3499, oldPrice: 7999, discount: 56, rating: 4.6, reviewCount: 450, tag: 'Compact', usp: '2.1 Channel', imageKey: 'soundbarMini21', badge: 'Value', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Channels': '2.1', 'Power': '80W'}, description: 'Compact 2.1 soundbar perfect for small rooms and gaming setups.', highlights: ['Compact Design', 'Deep Bass'], reviews: [] },
-  { id: 71, slug: 'soundbar-gaming', name: 'BeatBox Gaming Soundbar X', brand: 'BeatBox', category: 'soundbars', price: 4999, oldPrice: 10999, discount: 54, rating: 4.7, reviewCount: 380, tag: 'Gaming', usp: 'Virtual 7.1', imageKey: 'gamingSoundbarX', badge: 'Gamer', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Audio': 'Virtual 7.1', 'Power': '120W'}, description: 'Gaming-optimized soundbar with virtual 7.1 surround and RGB accents.', highlights: ['Virtual 7.1', 'Low Latency'], reviews: [] },
+  { id: 68, slug: 'soundbar-pro', name: 'BeatBox Soundbar Pro 5.1', brand: 'BeatBox', category: 'soundbars', price: 6999, oldPrice: 14999, discount: 53, rating: 4.8, reviewCount: 320, tag: 'Premium', usp: '5.1 Surround', imageKey: 'soundbarHero', badge: 'Hot', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Channels': '5.1', 'Power': '200W'}, description: 'Immersive 5.1 surround soundbar for the ultimate home cinema experience.', highlights: ['5.1 Surround', 'Bluetooth 5.0'], reviews: [] },
+  { id: 69, slug: 'soundbar-elite', name: 'BeatBox Soundbar Elite S9', brand: 'BeatBox', category: 'soundbars', price: 8999, oldPrice: 19999, discount: 55, rating: 4.9, reviewCount: 210, tag: 'Flagship', usp: 'Dolby Atmos', imageKey: 'soundbarHero', badge: 'Top', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Audio': 'Dolby Atmos', 'Power': '320W'}, description: 'Flagship soundbar with Dolby Atmos and wireless subwoofer for audiophiles.', highlights: ['Dolby Atmos', 'Wireless Sub'], reviews: [] },
+  { id: 70, slug: 'soundbar-mini', name: 'BeatBox Soundbar Mini 2.1', brand: 'BeatBox', category: 'soundbars', price: 3499, oldPrice: 7999, discount: 56, rating: 4.6, reviewCount: 450, tag: 'Compact', usp: '2.1 Channel', imageKey: 'soundbarHero', badge: 'Value', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Channels': '2.1', 'Power': '80W'}, description: 'Compact 2.1 soundbar perfect for small rooms and gaming setups.', highlights: ['Compact Design', 'Deep Bass'], reviews: [] },
+  { id: 71, slug: 'soundbar-gaming', name: 'BeatBox Gaming Soundbar X', brand: 'BeatBox', category: 'soundbars', price: 4999, oldPrice: 10999, discount: 54, rating: 4.7, reviewCount: 380, tag: 'Gaming', usp: 'Virtual 7.1', imageKey: 'soundbarHero', badge: 'Gamer', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Audio': 'Virtual 7.1', 'Power': '120W'}, description: 'Gaming-optimized soundbar with virtual 7.1 surround and RGB accents.', highlights: ['Virtual 7.1', 'Low Latency'], reviews: [] },
   // Party Speakers (4 more)
   { id: 72, slug: 'party-boom', name: 'Party Boom 1500', brand: 'BeatBox', category: 'party speakers', price: 12999, oldPrice: 24999, discount: 48, rating: 4.8, reviewCount: 290, tag: 'Loud', usp: '1500W Peak', imageKey: 'partySpeakerHero', badge: 'Beast', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Power': '1500W Peak', 'Battery': '8 Hours'}, description: 'Massive party speaker with 1500W peak power and built-in disco lights.', highlights: ['Disco Lights', 'Mic Input'], reviews: [] },
   { id: 73, slug: 'party-blast', name: 'Party Blast Tower', brand: 'BeatBox', category: 'party speakers', price: 14999, oldPrice: 29999, discount: 50, rating: 4.9, reviewCount: 180, tag: 'Tower', usp: 'Tower Speaker', imageKey: 'partySpeakerHero', badge: 'Epic', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Height': '1.2m', 'Power': '800W'}, description: 'Tall tower party speaker with a karaoke mic and FM radio.', highlights: ['Karaoke Ready', 'FM Radio'], reviews: [] },
@@ -818,3 +738,89 @@ export const getRelatedProducts = (product, count = 4) =>
 
 
 
+
+const fs = require('fs');
+let csCode = `using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Infrastructure.Data
+{
+    public static class MockProductsSeeder
+    {
+        public static async Task SeedAsync(AppDbContext context)
+        {
+            var categoriesList = new List<Category>();
+`;
+
+const categoriesSet = new Set(PRODUCTS.map(p => p.category));
+
+csCode += `            var existingCategories = await context.Categories.ToDictionaryAsync(c => c.Name.ToLower(), c => c);\n`;
+
+for(const catName of categoriesSet) {
+    const titleCase = catName.charAt(0).toUpperCase() + catName.slice(1);
+    csCode += `
+            if (!existingCategories.ContainsKey("${catName.toLowerCase()}"))
+            {
+                var newCat = new Category { Id = Guid.NewGuid(), Name = "${titleCase}", Description = "${titleCase} category" };
+                context.Categories.Add(newCat);
+                existingCategories["${catName.toLowerCase()}"] = newCat;
+            }
+`;
+}
+
+csCode += `            await context.SaveChangesAsync();\n\n`;
+
+csCode += `            var existingProducts = await context.Products.Select(p => p.Name).ToListAsync();\n`;
+csCode += `            var productsToAdd = new List<Product>();\n`;
+
+for(const p of PRODUCTS) {
+    csCode += `
+            if (!existingProducts.Contains("${p.name}"))
+            {
+                productsToAdd.Add(new Product
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "${p.name}",
+                    Description = "${(p.description || '').replace(/"/g, '\"')}",
+                    Price = ${p.oldPrice || p.price + 1000}m,
+                    DiscountPrice = ${p.price}m,
+                    StockQuantity = 100,
+                    ImageUrl = "${p.imageKey}.png",
+                    CategoryId = existingCategories["${p.category.toLowerCase()}"].Id,
+                    Brand = "${p.brand || 'BeatBox'}",
+                    Rating = ${p.rating || 4.5},
+                    BatteryLife = "${p.specs && p.specs.Battery ? p.specs.Battery : 'N/A'}",
+                    Color = "${p.colors && p.colors[0] ? p.colors[0].name : 'Black'}",
+                    Connectivity = "${p.specs && p.specs.Bluetooth ? p.specs.Bluetooth : 'N/A'}",
+                    IsFeatured = true,
+                    SoldCount = ${Math.floor(Math.random() * 500)},
+                    DeliveryDays = 3
+                });
+            }
+`;
+}
+
+csCode += `
+            if (productsToAdd.Any())
+            {
+                await context.Products.AddRangeAsync(productsToAdd);
+                await context.SaveChangesAsync();
+                
+                // Add Inventory for them
+                foreach(var p in productsToAdd) {
+                    var inv = new Inventory { Id = Guid.NewGuid(), ProductId = p.Id, AvailableStock = 100, ReservedStock = 0, WarehouseLocation = "Main", LastUpdated = DateTime.UtcNow };
+                    context.Inventories.Add(inv);
+                }
+                await context.SaveChangesAsync();
+            }
+        }
+    }
+}
+`;
+
+fs.writeFileSync('C:\\Users\\Mhari\\source\\repos\\OfficeProject_BeatBox_BackEnd\\Infrastructure\\Data\\MockProductsSeeder.cs', csCode);
+console.log('Seeder generated!');

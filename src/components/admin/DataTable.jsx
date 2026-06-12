@@ -7,11 +7,16 @@ export default function DataTable({
   searchPlaceholder = "Search...", 
   searchableFields = ['name'],
   onAdd,
-  addLabel = "Add New"
+  addLabel = "Add New",
+  filterSlot,
+  selectable = false,
+  onSelectionChange,
+  bulkActions = []
 }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' })
   const [currentPage, setCurrentPage] = useState(1)
+  const [selectedRows, setSelectedRows] = useState(new Set())
   const itemsPerPage = 8
 
   // Filtering
@@ -46,39 +51,90 @@ export default function DataTable({
     setSortConfig({ key, direction });
   };
 
+  const handleToggleRow = (id) => {
+    const newSelection = new Set(selectedRows);
+    if (newSelection.has(id)) {
+      newSelection.delete(id);
+    } else {
+      newSelection.add(id);
+    }
+    setSelectedRows(newSelection);
+    if (onSelectionChange) onSelectionChange(Array.from(newSelection));
+  };
+
+  const handleToggleAll = () => {
+    if (selectedRows.size === paginatedData.length && paginatedData.length > 0) {
+      setSelectedRows(new Set());
+      if (onSelectionChange) onSelectionChange([]);
+    } else {
+      const allIds = new Set(paginatedData.map(r => r.id));
+      setSelectedRows(allIds);
+      if (onSelectionChange) onSelectionChange(Array.from(allIds));
+    }
+  };
+
   return (
     <div className="card border-0 p-4" style={{ background: 'var(--bb-surface)', borderRadius: '16px', boxShadow: '0 8px 30px rgba(0,0,0,0.1)' }}>
       {/* Toolbar */}
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-4">
-        <div className="position-relative w-100" style={{ maxWidth: '400px' }}>
-          <Search className="position-absolute top-50 translate-middle-y text-theme-muted" style={{ left: '15px' }} size={18} />
-          <input
-            type="text"
-            className="form-control text-theme-title fw-bold pe-4"
-            placeholder={searchPlaceholder}
-            value={searchTerm}
-            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-            style={{ 
-              paddingLeft: '45px', 
-              background: 'var(--bb-surface-2)',
-              border: '1px solid var(--bb-border)',
-              borderRadius: '12px'
-            }}
-          />
+      <div className="row g-3 mb-4 align-items-center">
+        <div className="col-12 col-xl-auto flex-grow-1 d-flex flex-column flex-md-row align-items-md-center gap-3">
+          <div className="position-relative w-100" style={{ maxWidth: '400px' }}>
+            <Search className="position-absolute top-50 translate-middle-y text-theme-muted" style={{ left: '15px' }} size={18} />
+            <input
+              type="text"
+              className="form-control text-theme-title fw-bold pe-4"
+              placeholder={searchPlaceholder}
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              style={{ 
+                paddingLeft: '45px', 
+                background: 'var(--bb-surface-2)',
+                border: '1px solid var(--bb-border)',
+                borderRadius: '12px'
+              }}
+            />
+          </div>
+          {filterSlot && (
+            <div className="w-100 w-md-auto" style={{ overflowX: 'auto' }}>
+              {filterSlot}
+            </div>
+          )}
         </div>
         
         {onAdd && (
-          <button className="btn btn-glow fw-bold w-100 w-md-auto" onClick={onAdd} style={{ borderRadius: '12px' }}>
-            + {addLabel}
-          </button>
+          <div className="col-12 col-xl-auto text-xl-end mt-3 mt-xl-0">
+            <button className="btn btn-glow fw-bold w-100 w-xl-auto" onClick={onAdd} style={{ borderRadius: '12px' }}>
+              + {addLabel}
+            </button>
+          </div>
         )}
       </div>
+
+      {/* Bulk Action Toolbar */}
+      {selectable && selectedRows.size > 0 && bulkActions.length > 0 && (
+        <div className="d-flex align-items-center gap-3 p-3 mb-4 rounded-3 animate__animated animate__fadeIn" style={{ background: 'rgba(0, 243, 255, 0.1)', border: '1px solid rgba(0, 243, 255, 0.2)' }}>
+          <span className="text-theme-title fw-bold">{selectedRows.size} Selected</span>
+          <div className="d-flex gap-2 ms-auto">
+            {bulkActions.map((action, idx) => (
+              <button key={idx} className={`btn btn-sm fw-bold d-flex align-items-center gap-1 ${action.danger ? 'btn-outline-danger' : 'btn-outline-info'}`} onClick={() => action.onClick(Array.from(selectedRows))}>
+                {action.icon && <action.icon size={14} />}
+                {action.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Table */}
       <div className="table-responsive">
         <table className="table table-borderless align-middle mb-0 text-theme-text">
           <thead style={{ borderBottom: '1px solid var(--bb-border)' }}>
             <tr>
+              {selectable && (
+                <th style={{ width: '40px' }} className="py-3">
+                  <input type="checkbox" className="form-check-input" checked={paginatedData.length > 0 && selectedRows.size === paginatedData.length} onChange={handleToggleAll} style={{ cursor: 'pointer', background: 'var(--bb-surface-2)', borderColor: 'var(--bb-border)' }} />
+                </th>
+              )}
               {columns.map((col, idx) => (
                 <th 
                   key={idx} 
@@ -96,10 +152,15 @@ export default function DataTable({
           </thead>
           <tbody>
             {paginatedData.length === 0 ? (
-              <tr><td colSpan={columns.length} className="text-center py-5 text-theme-muted">No data found.</td></tr>
+              <tr><td colSpan={selectable ? columns.length + 1 : columns.length} className="text-center py-5 text-theme-muted">No data found.</td></tr>
             ) : (
               paginatedData.map((row, rowIdx) => (
-                <tr key={row.id || rowIdx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <tr key={row.id || rowIdx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', background: selectedRows.has(row.id) ? 'rgba(0, 243, 255, 0.03)' : 'transparent' }}>
+                  {selectable && (
+                    <td className="py-3">
+                      <input type="checkbox" className="form-check-input" checked={selectedRows.has(row.id)} onChange={() => handleToggleRow(row.id)} style={{ cursor: 'pointer', background: 'var(--bb-surface-2)', borderColor: 'var(--bb-border)' }} />
+                    </td>
+                  )}
                   {columns.map((col, colIdx) => (
                     <td key={colIdx} className="py-3">
                       {col.render ? col.render(row) : row[col.key]}

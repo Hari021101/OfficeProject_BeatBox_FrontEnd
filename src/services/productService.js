@@ -4,6 +4,20 @@ import { IMAGE_MAP, PRODUCTS as MOCK_PRODUCTS } from '../data/products';
 // ─── Derive a local image-key from the backend imageUrl string + product name ─
 const mapImageKey = (url = '', name = '') => {
   const text = `${url} ${name}`.toLowerCase();
+  
+  // Specific overrides for unique generated images
+  if (text.includes('party boom 1500')) return 'partyBoom1500';
+  if (text.includes('party lite wireless')) return 'partyLiteWireless';
+  if (text.includes('party blast tower')) return 'partyBlastTower';
+  
+  if (text.includes('soundbar mini 2.1')) return 'soundbarMini21';
+  if (text.includes('soundbar elite s9')) return 'soundbarEliteS9';
+  if (text.includes('cinema pro')) return 'cinemaProSoundbar';
+  if (text.includes('gaming soundbar x')) return 'gamingSoundbarX';
+  if (text.includes('soundbar pro 5.1')) return 'soundbarPro51';
+  if (text.includes('soundbar 2.1')) return 'soundbar21';
+
+  // General fallbacks
   if (text.includes('earbud') || text.includes('airdopes') || text.includes('tws') || text.includes('earphone')) return 'heroEarbuds';
   if (text.includes('speaker') || text.includes('stone') || text.includes('grenade') || text.includes('capsule sound')) return 'heroSpeaker';
   if (text.includes('gaming') || text.includes('immortal') || text.includes('headset')) return 'gamingHeadset';
@@ -103,7 +117,17 @@ const mapProduct = (bp) => {
 
     batteryLife: bp.batteryLife || '',
 
-    connectivity: bp.connectivity || '',
+    connectivity: (() => {
+      let conn = bp.connectivity;
+      if (!conn || conn === 'N/A') {
+        const text = `${bp.name} ${bp.categoryName}`.toLowerCase();
+        if (text.includes('wired') || text.includes('cable') || text.includes('usb')) {
+          return 'Wired';
+        }
+        return 'Wireless / Bluetooth';
+      }
+      return conn;
+    })(),
 
    // ===================================
 // COLOR SUPPORT
@@ -214,7 +238,11 @@ export const productService = {
   },
 
   updateProduct: async (id, productData) => {
-    await api.put(`/product/${id}`, productData);
+    const response = await api.put(`/product/${id}`, productData);
+    if (response.data && Object.keys(response.data).length > 0) {
+      return mapProduct(response.data);
+    }
+    // Fallback just in case
     return mapProduct({ ...productData, id });
   },
 
@@ -233,8 +261,40 @@ export const productService = {
     }
   },
 
+  bulkDeleteProducts: async (ids) => {
+    try {
+      await api.post('/Product/bulk-delete', ids);
+      return true;
+    } catch (error) {
+      console.error('Error bulk deleting products:', error);
+      throw error;
+    }
+  },
+
+  bulkUpdateFeatured: async (ids, isFeatured) => {
+    try {
+      await api.post('/Product/bulk-feature', { productIds: ids, isFeatured });
+      return true;
+    } catch (error) {
+      console.error('Error bulk updating featured status:', error);
+      throw error;
+    }
+  },
+
   addReview: async (productId, reviewData) => {
     const response = await api.post(`/product/${productId}/reviews`, reviewData);
+    return response.data;
+  },
+
+  checkDelivery: async (pincode, productId) => {
+    // This is the expected backend endpoint for Shiprocket integration
+    // Example: GET /api/shipping/serviceability?delivery_postcode=614901&product_id=37
+    const response = await api.get(`/shipping/serviceability`, {
+      params: {
+        delivery_postcode: pincode,
+        product_id: productId
+      }
+    });
     return response.data;
   },
 };

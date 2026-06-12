@@ -12,6 +12,8 @@ import adminService from '../../services/adminService'
 import StatWidget from '../../components/admin/StatWidget'
 import ChartCard from '../../components/admin/ChartCard'
 import DataTable from '../../components/admin/DataTable'
+import { useSignalR } from '../../hooks/useSignalR'
+import { toast } from 'react-hot-toast'
 
 export default function Dashboard() {
   const [recentOrders, setRecentOrders] = useState([])
@@ -93,6 +95,20 @@ export default function Dashboard() {
     }
     loadDashboardData()
   }, [])
+
+  // Listen for real-time backend updates when orders are placed or cancelled
+  useSignalR('DashboardUpdated', (analytics) => {
+    setStats(prev => ({
+      ...prev,
+      totalRevenue: analytics.totalRevenue || prev.totalRevenue,
+      totalOrders: analytics.totalOrders || prev.totalOrders,
+      activeUsers: analytics.totalCustomers || prev.activeUsers
+    }));
+    toast.success('Dashboard metrics updated in real-time! 🚀', {
+      id: 'dashboard-live-update', // prevent spam
+      style: { background: 'rgba(0, 243, 255, 0.1)', border: '1px solid #00f3ff' }
+    });
+  });
 
   const orderColumns = [
     { key: 'orderId', label: 'Order ID', render: (row) => <span className="fw-bold text-theme-title">#{row.orderId.toString().slice(-6)}</span> },

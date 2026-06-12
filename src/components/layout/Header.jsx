@@ -20,7 +20,8 @@ import {
   Watch,
   Link2,
   BatteryCharging,
-  Scissors
+  Scissors,
+  Scale
 } from 'lucide-react'
 import logo from '../../assets/beatbox_logo.png'
 import heroEarbuds from '../../assets/hero_earbuds.png'
@@ -62,6 +63,7 @@ import { selectAllProducts, selectProductStatus, fetchProducts } from '../../red
 import { toast } from 'react-hot-toast'
 import ThemeToggle from '../ui/ThemeToggle'
 import CartDrawer from '../ui/CartDrawer'
+import NotificationsPanel from '../ui/NotificationsPanel'
 
 
 export default function Header() {
@@ -71,9 +73,11 @@ export default function Header() {
   const [showCategories, setShowCategories] = useState(false)
   const [showMore, setShowMore] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
   const [showCart, setShowCart] = useState(false)
   const { user } = useSelector((state) => state.auth)
   const cartCount = useSelector(selectCartCount)
+  const compareCount = useSelector((state) => state.compare?.items?.length || 0)
   const wishlistCount = useSelector(selectWishlistCount)
   const allProducts = useSelector(selectAllProducts)
   const productStatus = useSelector(selectProductStatus)
@@ -82,6 +86,14 @@ export default function Header() {
   const location = useLocation()
   const isHome = location.pathname === '/'
   const [showMobileSearch, setShowMobileSearch] = useState(false)
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -101,13 +113,14 @@ export default function Header() {
     }
   }, [productStatus, dispatch])
 
+  // Use the debounced query for calculating suggestions
   const searchSuggestions = useMemo(() => {
-    if (!searchQuery.trim()) return [];
-    const q = searchQuery.toLowerCase();
+    if (!debouncedSearchQuery.trim()) return [];
+    const q = debouncedSearchQuery.toLowerCase();
     return allProducts
       .filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || p.usp?.toLowerCase().includes(q))
       .slice(0, 5); // top 5
-  }, [searchQuery, allProducts]);
+  }, [debouncedSearchQuery, allProducts]);
 
   // Prevent background scrolling when mobile menu is open
   useEffect(() => {
@@ -276,7 +289,7 @@ export default function Header() {
                   </div>
                 </button>
                 <ul
-                  className="dropdown-menu dropdown-menu-end p-2 border-0 mt-3 premium-profile-dropdown"
+                  className="dropdown-menu dropdown-menu-end p-2 border-0 mt-3 premium-profile-dropdown mobile-profile-dropdown-panel"
                   style={{
                     width: '240px',
                     background: 'var(--bb-bg-navy)',
@@ -332,6 +345,8 @@ export default function Header() {
                 <Search size={22} />
               </button>
             )}
+
+            <NotificationsPanel />
 
             <button
               className="btn border-0 p-1 position-relative text-theme-muted"
@@ -600,6 +615,11 @@ export default function Header() {
                         </Link>
                       </li>
                       <li className="mb-1">
+                        <Link to="/studio" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3 text-accent" onClick={() => { setShowMore(false); setIsOpen(false); }}>
+                          <Headphones size={14} className="me-3" /> BeatBox Studio
+                        </Link>
+                      </li>
+                      <li className="mb-1">
                         <Link to="/orders" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3" onClick={() => { setShowMore(false); setIsOpen(false); }}>
                           <Package size={14} className="me-3 text-warning" /> Track Order
                         </Link>
@@ -709,6 +729,35 @@ export default function Header() {
                     </span>
                   )}
                 </button>
+
+                {/* Compare Trigger */}
+                <Link
+                  to="/compare"
+                  className="btn border-0 p-2 position-relative text-theme-muted hover-scale d-none d-lg-block"
+                  style={{ background: 'transparent', transition: 'all 0.2s' }}
+                  title="Compare Products"
+                >
+                  <Scale size={20} />
+                  {compareCount > 0 && (
+                    <span
+                      className="position-absolute translate-middle badge rounded-pill cart-pulse-badge"
+                      style={{
+                        top: '4px',
+                        right: '-2px',
+                        fontSize: '0.65rem',
+                        padding: '3px 6px',
+                        background: 'var(--bb-accent)'
+                      }}
+                    >
+                      {compareCount}
+                    </span>
+                  )}
+                </Link>
+
+                {/* Notifications Bell */}
+                <div className="d-none d-lg-block">
+                  <NotificationsPanel />
+                </div>
 
                 {/* Profile / Account Dropdown */}
                 <div className="d-none d-lg-block">

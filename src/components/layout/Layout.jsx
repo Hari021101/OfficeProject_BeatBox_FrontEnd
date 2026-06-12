@@ -1,5 +1,6 @@
 import Header from './Header'
 import Footer from './Footer'
+import CompareDock from '../ui/CompareDock'
 
 export default function Layout({ children }) {
   return (
@@ -21,6 +22,9 @@ export default function Layout({ children }) {
 
       {/* Premium Footer */}
       <Footer />
+
+      {/* Global Compare Dock */}
+      <CompareDock />
     </div>
   )
 }

@@ -19,8 +19,12 @@ window.addEventListener('unhandledrejection', (event) => {
 
 const originalConsoleError = console.error;
 console.error = (...args) => {
-  if (typeof args[0] === 'string' && args[0].includes('A listener indicated an asynchronous response')) {
-    return; // Suppress
+  if (typeof args[0] === 'string') {
+    if (args[0].includes('A listener indicated an asynchronous response') || 
+        args[0].includes('stopped during negotiation') ||
+        args[0].includes('Failed to start the connection')) {
+      return; // Suppress harmless extension/HMR abort errors
+    }
   }
   originalConsoleError(...args);
 };

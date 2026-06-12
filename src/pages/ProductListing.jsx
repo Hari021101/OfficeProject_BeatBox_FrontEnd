@@ -64,11 +64,18 @@ export default function ProductListing() {
     // Search
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
-      list = list.filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || p.usp.toLowerCase().includes(q))
+      list = list.filter(p => 
+        (p.name?.toLowerCase() || '').includes(q) || 
+        (p.category?.toLowerCase() || '').includes(q) || 
+        (p.usp?.toLowerCase() || '').includes(q)
+      )
     }
 
     // Category
-    if (activeCategory !== 'all') list = list.filter(p => p.category === activeCategory)
+    if (activeCategory !== 'all') {
+      const targetCat = activeCategory.toLowerCase();
+      list = list.filter(p => p.category && p.category.toLowerCase().includes(targetCat))
+    }
 
     // Price
     const range = PRICE_RANGES.find(r => r.id === activePriceRange)
@@ -91,7 +98,7 @@ export default function ProductListing() {
     }
 
     return list
-  }, [activeCategory, activeSort, activePriceRange, minRating, searchQuery, inStockOnly])
+  }, [allProducts, activeCategory, activeSort, activePriceRange, minRating, searchQuery, inStockOnly])
 
   const activeFilterCount = [
     activeCategory !== 'all',
@@ -237,7 +244,7 @@ export default function ProductListing() {
               <div className="d-flex flex-wrap gap-2 mb-4 align-items-center">
                 <span className="text-theme-muted small d-flex align-items-center gap-1"><Tag size={12} /> Active:</span>
                 {activeCategory !== 'all' && (
-                  <FilterPill label={CATEGORIES.find(c => c.id === activeCategory)?.label} onRemove={() => setActiveCategory('all')} />
+                  <FilterPill label={CATEGORIES.find(c => c.id === activeCategory)?.label || (activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1))} onRemove={() => setActiveCategory('all')} />
                 )}
                 {activePriceRange !== 'all' && (
                   <FilterPill label={PRICE_RANGES.find(r => r.id === activePriceRange)?.label} onRemove={() => setActivePriceRange('all')} />
@@ -257,7 +264,17 @@ export default function ProductListing() {
               Showing <span className="text-theme-title fw-bold">{filtered.length}</span> product{filtered.length !== 1 && 's'}
             </p>
 
-            {filtered.length === 0 ? (
+            {productStatus === 'loading' ? (
+              <div className="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4">
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                  <div key={i} className="col">
+                    <div className="rounded-4 overflow-hidden" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', height: 400 }}>
+                      <div className="skeleton-pulse w-100 h-100" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="text-center py-5">
                 <div className="mb-3" style={{ fontSize: '3rem' }}>🎵</div>
                 <h4 className="text-theme-title fw-bold">No products found</h4>

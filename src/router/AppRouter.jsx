@@ -1,32 +1,40 @@
+import React, { Suspense } from 'react'
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
-import App from '../App'
-import Login from '../pages/Login'
-import Register from '../pages/Register'
-import Home from '../pages/Home'
-import ProductListing from '../pages/ProductListing'
-import ProductDetail from '../pages/ProductDetail'
-import Cart from '../pages/Cart'
-import Checkout from '../pages/Checkout'
-import Orders from '../pages/Orders'
-import OrderDetail from '../pages/OrderDetail'
 import Layout from '../components/layout/Layout'
-import Settings from '../pages/Settings'
-import Wishlist from '../pages/Wishlist'
-import Personalisation from '../pages/Personalisation'
-import CorporateOrders from '../pages/CorporateOrders'
-import ReferAndEarn from '../pages/ReferAndEarn'
-import Gifting from '../pages/Gifting'
-import Support from '../pages/Support'
-import SoundMatch from '../pages/SoundMatch'
-
-// Admin Pages
 import AdminLayout from '../components/layout/AdminLayout'
-import AdminDashboard from '../pages/admin/Dashboard'
-import AdminProducts from '../pages/admin/Products'
-import AdminOrders from '../pages/admin/Orders'
-import AdminInventory from '../pages/admin/Inventory'
-import AdminUsers from '../pages/admin/Users'
+
+// Lazy Load Pages
+const App = React.lazy(() => import('../App'))
+const Login = React.lazy(() => import('../pages/Login'))
+const Register = React.lazy(() => import('../pages/Register'))
+const Home = React.lazy(() => import('../pages/Home'))
+const ProductListing = React.lazy(() => import('../pages/ProductListing'))
+const ProductDetail = React.lazy(() => import('../pages/ProductDetail'))
+const Cart = React.lazy(() => import('../pages/Cart'))
+const Checkout = React.lazy(() => import('../pages/Checkout'))
+const Orders = React.lazy(() => import('../pages/Orders'))
+const OrderDetail = React.lazy(() => import('../pages/OrderDetail'))
+const Settings = React.lazy(() => import('../pages/Settings'))
+const Wishlist = React.lazy(() => import('../pages/Wishlist'))
+const Personalisation = React.lazy(() => import('../pages/Personalisation'))
+const CorporateOrders = React.lazy(() => import('../pages/CorporateOrders'))
+const ReferAndEarn = React.lazy(() => import('../pages/ReferAndEarn'))
+const Gifting = React.lazy(() => import('../pages/Gifting'))
+const Support = React.lazy(() => import('../pages/Support'))
+const SoundMatch = React.lazy(() => import('../pages/SoundMatch'))
+const BeatBoxStudio = React.lazy(() => import('../pages/BeatBoxStudio'))
+const Compare = React.lazy(() => import('../pages/Compare'))
+
+// Lazy Load Admin Pages
+const AdminDashboard = React.lazy(() => import('../pages/admin/Dashboard'))
+const AdminProducts = React.lazy(() => import('../pages/admin/Products'))
+const AdminOrders = React.lazy(() => import('../pages/admin/Orders'))
+const AdminInventory = React.lazy(() => import('../pages/admin/Inventory'))
+const AdminUsers = React.lazy(() => import('../pages/admin/Users'))
+const AdminReturns = React.lazy(() => import('../pages/admin/Returns'))
+const AdminPromotions = React.lazy(() => import('../pages/admin/Promotions'))
+const AdminAuditLogs = React.lazy(() => import('../pages/admin/AuditLogs'))
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
@@ -59,36 +67,43 @@ export default function AppRouter() {
           }
         }}
       />
-      <Routes>
-        <Route path="/" element={<Layout><Home /></Layout>} />
-        <Route path="/welcome" element={<App />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/products" element={<Layout><ProductListing /></Layout>} />
-        <Route path="/products/:id" element={<Layout><ProductDetail /></Layout>} />
-        <Route path="/cart" element={<Layout><Cart /></Layout>} />
-        <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
-        <Route path="/orders" element={<Layout><Orders /></Layout>} />
-        <Route path="/orders/:id" element={<Layout><OrderDetail /></Layout>} />
-        <Route path="/settings" element={<Layout><Settings /></Layout>} />
-        <Route path="/wishlist" element={<Layout><Wishlist /></Layout>} />
-        <Route path="/personalisation" element={<Layout><Personalisation /></Layout>} />
-        <Route path="/corporate" element={<Layout><CorporateOrders /></Layout>} />
-        <Route path="/refer" element={<Layout><ReferAndEarn /></Layout>} />
-        <Route path="/gifting" element={<Layout><Gifting /></Layout>} />
-        <Route path="/support" element={<Layout><Support /></Layout>} />
-        <Route path="/soundmatch" element={<Layout><SoundMatch /></Layout>} />
-        
-        {/* Admin Routes */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="products" element={<AdminProducts />} />
-          <Route path="orders" element={<AdminOrders />} />
-          <Route path="inventory" element={<AdminInventory />} />
-          <Route path="users" element={<AdminUsers />} />
-        </Route>
-      </Routes>
+      <Suspense fallback={<div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', color: '#00f3ff' }}>Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<Layout><Home /></Layout>} />
+          <Route path="/welcome" element={<App />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/products" element={<Layout><ProductListing /></Layout>} />
+          <Route path="/products/:id" element={<Layout><ProductDetail /></Layout>} />
+          <Route path="/cart" element={<Layout><Cart /></Layout>} />
+          <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
+          <Route path="/orders" element={<Layout><Orders /></Layout>} />
+          <Route path="/orders/:id" element={<Layout><OrderDetail /></Layout>} />
+          <Route path="/settings" element={<Layout><Settings /></Layout>} />
+          <Route path="/wishlist" element={<Layout><Wishlist /></Layout>} />
+          <Route path="/personalisation" element={<Layout><Personalisation /></Layout>} />
+          <Route path="/corporate" element={<Layout><CorporateOrders /></Layout>} />
+          <Route path="/refer" element={<Layout><ReferAndEarn /></Layout>} />
+          <Route path="/gifting" element={<Layout><Gifting /></Layout>} />
+          <Route path="/support" element={<Layout><Support /></Layout>} />
+          <Route path="/soundmatch" element={<Layout><SoundMatch /></Layout>} />
+          <Route path="/studio" element={<Layout><BeatBoxStudio /></Layout>} />
+          <Route path="/compare" element={<Layout><Compare /></Layout>} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="inventory" element={<AdminInventory />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="returns" element={<AdminReturns />} />
+            <Route path="promotions" element={<AdminPromotions />} />
+            <Route path="audit-logs" element={<AdminAuditLogs />} />
+          </Route>
+        </Routes>
+      </Suspense>
     </HashRouter>
   )
 }

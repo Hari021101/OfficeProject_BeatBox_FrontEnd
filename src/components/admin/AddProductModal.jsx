@@ -30,7 +30,7 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
         setFormData({
           name: editingProduct.name || '',
           description: editingProduct.description || '',
-          price: editingProduct.price || '',
+          price: editingProduct.oldPrice || editingProduct.price || '',
           discountPrice: editingProduct.discountPrice || '',
           stockQuantity: editingProduct.stockQuantity || '',
           imageUrl: editingProduct.imageUrl || '',

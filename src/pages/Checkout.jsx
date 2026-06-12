@@ -124,7 +124,13 @@ const onPlaceOrder = async () => {
 
         paymentDetails: {
           transactionReference: `COD-${Date.now()}`
-        }
+        },
+        
+        items: items.map(item => ({
+          productId: item.id.toString(),
+          quantity: item.quantity,
+          unitPrice: item.price
+        }))
       }
 
       const result = await orderService.checkout(orderData)
@@ -181,11 +187,17 @@ const onPlaceOrder = async () => {
 
           paymentMethod: paymentMethod,
 
-        paymentDetails: {
-  razorpayOrderId: response.razorpay_order_id,
-  razorpayPaymentId: response.razorpay_payment_id,
-  razorpaySignature: response.razorpay_signature
-}
+          paymentDetails: {
+            razorpayOrderId: response.razorpay_order_id,
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpaySignature: response.razorpay_signature
+          },
+          
+          items: items.map(item => ({
+            productId: item.id.toString(),
+            quantity: item.quantity,
+            unitPrice: item.price
+          }))
         }
 
         const result =
