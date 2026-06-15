@@ -3,46 +3,25 @@ const fs = require('fs');
 const content = fs.readFileSync('./src/data/products.js', 'utf8');
 
 // Extract the PRODUCTS array using a simple regex since we know the structure
-const match = content.match(/export const PRODUCTS = (\[[\s\S]*?\n\])\n/);
+const match = content.match(/export const PRODUCTS = (\[[\s\S]*?^\])/m);
 if (!match) {
     console.error("Could not find PRODUCTS array");
     process.exit(1);
 }
 
-// We can just execute the JS array by using eval since we sanitized the imports
 let productsText = match[1];
-// We need to remove the imageKey references since they point to imported variables, 
-// wait, in products.js, imageKey is a string like 'heroHeadphones' for mock products!
-// Let's check products.js again.
-// Actually, I can just use a simple string manipulation instead of executing it.
 
-const lines = productsText.split('\n');
+// Use a regex to find all { ... } blocks
 let products = [];
-let currentProduct = null;
-
-for (let line of lines) {
-    if (line.includes('{')) currentProduct = {};
-    if (line.includes('name:')) {
-        let nMatch = line.match(/name:\s*'([^']+)'/);
-        if (nMatch) currentProduct.name = nMatch[1];
-    }
-    if (line.includes('description:')) {
-        let dMatch = line.match(/description:\s*'([^']+)'/);
-        if (dMatch) currentProduct.description = dMatch[1];
-    }
-    if (line.includes('price:')) {
-        let pMatch = line.match(/price:\s*(\d+)/);
-        if (pMatch) currentProduct.price = pMatch[1];
-    }
-    if (line.includes('category:')) {
-        let cMatch = line.match(/category:\s*'([^']+)'/);
-        if (cMatch) currentProduct.category = cMatch[1];
-    }
-    if (line.includes('}')) {
-        if (currentProduct && currentProduct.name) {
-            products.push(currentProduct);
-        }
-    }
+const productRegex = /\{[^{}]*name:\s*'([^']+)'[^{}]*category:\s*'([^']+)'[^{}]*price:\s*(\d+)[^{}]*\}/g;
+let m;
+while ((m = productRegex.exec(productsText)) !== null) {
+    products.push({
+        name: m[1],
+        category: m[2],
+        price: m[3],
+        description: "Mock description"
+    });
 }
 
 let csCode = `using Domain.Entities;
@@ -83,7 +62,7 @@ csCode += `            var existingProducts = await context.Products.Select(p =>
 csCode += `            var productsToAdd = new List<Product>();\n`;
 
 for (const p of products) {
-    if(!p.name) continue;
+    if(!p.name || !p.category) continue;
     csCode += `
             if (!existingProducts.Contains("${p.name}"))
             {

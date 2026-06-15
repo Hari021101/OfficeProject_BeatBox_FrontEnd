@@ -40,6 +40,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { fetchCart } from '../redux/cartSlice'
 
+import AdminRoute from './AdminRoute'
+
 export default function AppRouter() {
   const dispatch = useDispatch()
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
@@ -91,7 +93,7 @@ export default function AppRouter() {
           <Route path="/compare" element={<Layout><Compare /></Layout>} />
           
           {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
             <Route index element={<AdminDashboard />} />
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="products" element={<AdminProducts />} />

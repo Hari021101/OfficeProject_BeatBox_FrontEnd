@@ -34,7 +34,7 @@ export default function Orders() {
     try {
       setIsLoading(true)
       const data = await orderService.getAllOrders()
-      setOrders(data || [])
+      setOrders(data?.map(o => ({...o, id: o.orderId})) || [])
     } catch (err) {
       toast.error('Failed to load orders. Are you an admin?')
       console.error(err)
@@ -58,6 +58,37 @@ export default function Orders() {
       setUpdatingId(null)
     }
   }
+
+  const handleBulkStatusUpdate = async (selectedIds, status) => {
+    try {
+      setIsLoading(true)
+      await orderService.bulkUpdateOrderStatus(selectedIds, status)
+      toast.success(`${selectedIds.length} orders updated to ${status}`)
+      fetchOrders()
+    } catch (err) {
+      toast.error('Failed to update bulk status')
+      setIsLoading(false)
+    }
+  }
+
+  const handleBulkDelete = async (selectedIds) => {
+    if (!window.confirm(`Are you sure you want to cancel/delete ${selectedIds.length} orders?`)) return;
+    try {
+      setIsLoading(true)
+      await orderService.bulkDeleteOrders(selectedIds)
+      toast.success(`${selectedIds.length} orders cancelled`)
+      fetchOrders()
+    } catch (err) {
+      toast.error('Failed to delete bulk orders')
+      setIsLoading(false)
+    }
+  }
+
+  const bulkActions = [
+    { label: 'Mark Shipped', icon: Truck, onClick: (ids) => handleBulkStatusUpdate(ids, 'Shipped') },
+    { label: 'Mark Delivered', icon: CheckCircle, onClick: (ids) => handleBulkStatusUpdate(ids, 'Delivered') },
+    { label: 'Cancel Orders', icon: XCircle, danger: true, onClick: (ids) => handleBulkDelete(ids) }
+  ]
 
   const columns = [
     { key: 'orderId', label: 'Order ID', sortable: true, render: (row) => <span className="fw-bold text-theme-title">#{row.orderId.toString().substring(0, 8)}...</span> },
@@ -118,6 +149,8 @@ export default function Orders() {
           data={orders}
           searchPlaceholder="Search by Order ID, Customer, or Status..."
           searchableFields={['orderId', 'userId', 'status']}
+          selectable={true}
+          bulkActions={bulkActions}
         />
       )}
     </div>

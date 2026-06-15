@@ -83,6 +83,9 @@ export default function ProductDetail() {
     if (product?.colors?.length > 0) {
       setSelectedColor(product.colors[0])
     }
+    if (product?.capacities?.length > 0) {
+      setSelectedCapacity(product.capacities[0])
+    }
   }, [product])
 
   // Scroll to top when product page loads or id changes
@@ -91,6 +94,7 @@ export default function ProductDetail() {
   }, [id])
 
   const [selectedColor, setSelectedColor] = useState(null)
+  const [selectedCapacity, setSelectedCapacity] = useState(null)
   const [quantity, setQuantity] = useState(1)
   const [wishlisted, setWishlisted] = useState(false)
   const [adding, setAdding] = useState(false)
@@ -180,14 +184,26 @@ export default function ProductDetail() {
     IMAGE_MAP[product.imageKey] ||
     IMAGE_MAP['heroHeadphones']
 
-const salePrice =
-  product.price || 0
+  const getCapacityMultiplier = (cap) => {
+    if (!cap) return 1;
+    if (cap.includes('16GB')) return 0.5;
+    if (cap.includes('32GB')) return 0.7;
+    if (cap.includes('64GB')) return 0.85;
+    if (cap.includes('128GB')) return 1;
+    if (cap.includes('256GB')) return 1.5;
+    if (cap.includes('500GB') || cap.includes('512GB')) return 2;
+    if (cap.includes('1TB')) return 3.5;
+    if (cap.includes('2TB')) return 6;
+    return 1;
+  }
 
-const originalPrice =
-  product.oldPrice || product.price || 0
+  const multiplier = getCapacityMultiplier(selectedCapacity);
 
-const savings =
-  originalPrice - salePrice
+  const salePrice = Math.round((product?.price || 0) * multiplier);
+
+  const originalPrice = Math.round((product?.oldPrice || product?.price || 0) * multiplier);
+
+  const savings = originalPrice - salePrice;
 
   const handleAddToCart = () => {
     if (!(product.stockQuantity > 0 || product.inStock)) return
@@ -197,6 +213,7 @@ const savings =
       imageKey: product.imageKey, quantity: quantity,
       selectedColor: selectedColor?.name,
       selectedColorCode: selectedColor?.code,
+      selectedCapacity: selectedCapacity || product?.capacities?.[0],
       category: product.category,
       imageUrl: product.imageUrl,
     }))
@@ -212,6 +229,7 @@ const savings =
       id: product.id, name: product.name, price: salePrice,
       imageKey: product.imageKey, quantity: quantity,
       selectedColor: selectedColor?.name, selectedColorCode: selectedColor?.code,
+      selectedCapacity: selectedCapacity || product?.capacities?.[0],
       category: product.category,
       imageUrl: product.imageUrl,
     }))
@@ -494,6 +512,40 @@ const handleSubmitReview = async (e) => {
                         transition: 'all 0.2s'
                       }}
                     />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Capacity selection */}
+            {product?.capacities?.length > 0 && (
+              <div className="mb-4">
+                <p className="text-theme-muted small fw-semibold mb-3">
+                  CAPACITY —
+                  <span className="text-theme-title ms-2">
+                    {selectedCapacity || product.capacities[0]}
+                  </span>
+                </p>
+
+                <div className="d-flex gap-2 flex-wrap">
+                  {product.capacities.map((cap, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedCapacity(cap)}
+                      className={`btn fw-bold px-3 py-2 ${
+                        (selectedCapacity || product.capacities[0]) === cap
+                          ? 'btn-glow'
+                          : 'btn-outline-secondary'
+                      }`}
+                      style={{
+                        borderRadius: '8px',
+                        border: (selectedCapacity || product.capacities[0]) === cap ? 'none' : '1px solid var(--bb-border)',
+                        background: (selectedCapacity || product.capacities[0]) === cap ? '' : 'var(--bb-surface-2)',
+                        color: (selectedCapacity || product.capacities[0]) === cap ? '#fff' : 'var(--bb-muted)'
+                      }}
+                    >
+                      {cap}
+                    </button>
                   ))}
                 </div>
               </div>

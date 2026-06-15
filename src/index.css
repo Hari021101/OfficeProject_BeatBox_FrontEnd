@@ -762,7 +762,7 @@ body {
 /* ==========================================================================
    Mobile Dropdown Drawer
    ========================================================================== */
-@media (max-width: 991px) {
+@media (max-width: 1199px) {
   .mobile-dropdown-drawer {
     position: fixed;
     top: 0;
@@ -812,7 +812,7 @@ body {
   }
 }
 
-@media (min-width: 992px) {
+@media (min-width: 1200px) {
   .notification-dropdown-panel,
   .mobile-profile-dropdown-panel {
     right: 0 !important;

@@ -32,6 +32,16 @@ export const orderService = {
     return response.data;
   },
   
+  bulkUpdateOrderStatus: async (orderIds, status) => {
+    const response = await api.post('/order/bulk-status', { orderIds, status });
+    return response.data;
+  },
+
+  bulkDeleteOrders: async (orderIds) => {
+    const response = await api.post('/order/bulk-delete', orderIds);
+    return response.data;
+  },
+  
   downloadInvoice: async (orderId) => {
   const response = await api.get(
     `/order/${orderId}/invoice`,

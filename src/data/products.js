@@ -73,6 +73,13 @@ import lcdWritingPad from '../assets/lcd_writing_pad.png'
 import computerCables from '../assets/computer_cables.png'
 import wirelessPresenter from '../assets/wireless_presenter.png'
 
+import smartwatchProImage from '../assets/smartwatch_pro.png'
+import cctvCameraImage from '../assets/cctv_camera.png'
+import ssdDriveImage from '../assets/ssd_drive.png'
+import scientificCalculatorImage from '../assets/scientific_calculator.png'
+import pendriveFlashImage from '../assets/pendrive_flash.png'
+import microsdCardImage from '../assets/microsd_card.png'
+
 export const IMAGE_MAP = {
   heroHeadphones,
   heroEarbuds,
@@ -141,7 +148,13 @@ export const IMAGE_MAP = {
   cinemaProSoundbar: cinemaProSoundbarImage,
   soundbar21: soundbar21Image,
   gamingSoundbarX: gamingSoundbarXImage,
-  soundbarPro51: soundbarPro51Image
+  soundbarPro51: soundbarPro51Image,
+  smartwatchProImage,
+  cctvCameraImage,
+  ssdDriveImage,
+  scientificCalculatorImage,
+  pendriveFlashImage,
+  microsdCardImage
 }
 
 export const CATEGORIES = [
@@ -808,7 +821,23 @@ export const PRODUCTS = [
   { id: 102, slug: 'mic-handheld', name: 'Wireless Handheld Mic', brand: 'BeatBox', category: 'wireless microphones', price: 5999, oldPrice: 12999, discount: 53, rating: 4.8, reviewCount: 180, tag: 'Stage', usp: 'Stage Ready', imageKey: 'wirelessMicHero', badge: 'Live', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Range': '80m', 'Battery': '10 Hours'}, description: 'Professional wireless handheld mic for live performances and events.', highlights: ['80m Range', 'Anti-Drop Design'], reviews: [] },
   { id: 103, slug: 'mic-lavalier', name: 'Wireless Lavalier Clip Mic', brand: 'BeatBox', category: 'wireless microphones', price: 3499, oldPrice: 7999, discount: 56, rating: 4.7, reviewCount: 390, tag: 'Vlog', usp: 'Clip-On Design', imageKey: 'wirelessMicHero', badge: 'Creator', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Latency': '20ms', 'Battery': '8 Hours'}, description: 'Wireless clip-on lavalier mic for vloggers and content creators.', highlights: ['Clip-On Design', 'Noise Shield'], reviews: [] },
   { id: 104, slug: 'mic-duo', name: 'Wireless Dual Mic System', brand: 'BeatBox', category: 'wireless microphones', price: 8999, oldPrice: 19999, discount: 55, rating: 4.9, reviewCount: 95, tag: 'Dual', usp: '2-Person Recording', imageKey: 'wirelessMicHero', badge: 'Interview', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Channels': 'Dual', 'Range': '100m'}, description: 'Dual wireless mic system ideal for interviews and two-person podcasts.', highlights: ['Dual Channel', 'Mixer Output'], reviews: [] },
-  { id: 105, slug: 'mic-studio', name: 'Studio Wireless Condenser', brand: 'BeatBox', category: 'wireless microphones', price: 12999, oldPrice: 27999, discount: 53, rating: 4.9, reviewCount: 60, tag: 'Studio', usp: 'Condenser Grade', imageKey: 'wirelessMicHero', badge: 'Pro Audio', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], specs: {'Type': 'Condenser', 'Freq': '20Hz-20kHz'}, description: 'Premium wireless condenser microphone for studio-quality recordings.', highlights: ['Condenser Capsule', 'Low Self-Noise'], reviews: [] }
+  { id: 105, slug: 'mic-studio', name: 'Studio Wireless Condenser', brand: 'BeatBox', category: 'wireless microphones', price: 12999, oldPrice: 27999, discount: 53, rating: 4.9, reviewCount: 60, tag: 'Studio', usp: 'Condenser Grade', imageKey: 'wirelessMicHero', badge: 'Pro Audio', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], specs: {'Type': 'Condenser', 'Freq': '20Hz-20kHz'}, description: 'Premium wireless condenser microphone for studio-quality recordings.', highlights: ['Condenser Capsule', 'Low Self-Noise'], reviews: [] },
+  // Storage & Calculators
+  { id: 106, slug: 'ssd-pro-1tb', name: 'BeatBox SSD Pro 1TB', brand: 'BeatBox', category: 'ssd cards', price: 5999, oldPrice: 10999, discount: 45, rating: 4.8, reviewCount: 310, tag: 'Storage', usp: 'NVMe Gen4', imageKey: 'ssdDriveImage', badge: 'Fast', inStock: true, colors: [{name: 'Black', code: '#000'}], capacities: ['500GB', '1TB', '2TB'], specs: {'Capacity': '1TB', 'Type': 'NVMe'}, description: 'Lightning fast 1TB NVMe Gen4 SSD for ultimate gaming and productivity.', highlights: ['7000MB/s Read', 'Heatsink Included'], reviews: [] },
+  { id: 107, slug: 'pendrive-128gb', name: 'BeatBox Flash Pendrive', brand: 'BeatBox', category: 'pendrives', price: 999, oldPrice: 1999, discount: 50, rating: 4.6, reviewCount: 520, tag: 'Storage', usp: 'USB 3.2', imageKey: 'pendriveFlashImage', badge: 'Compact', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], capacities: ['16GB', '32GB', '64GB', '128GB', '256GB', '512GB', '1TB'], specs: {'Interface': 'USB 3.2'}, description: 'Compact and durable metal body pendrive.', highlights: ['Metal Body', 'Waterproof'], reviews: [] },
+  { id: 117, slug: 'memory-card-256gb', name: 'BeatBox Ultra MicroSD', brand: 'BeatBox', category: 'memory cards', price: 1499, oldPrice: 2999, discount: 50, rating: 4.8, reviewCount: 410, tag: 'Storage', usp: 'Class 10 U3', imageKey: 'microsdCardImage', badge: 'Fast', inStock: true, colors: [{name: 'Black', code: '#000'}], capacities: ['16GB', '32GB', '64GB', '128GB', '256GB', '512GB', '1TB'], specs: {'Type': 'MicroSDXC'}, description: 'High-speed MicroSD card perfect for 4K video recording and smartphones.', highlights: ['130MB/s Read', 'Adapter Included'], reviews: [] },
+  { id: 108, slug: 'calc-scientific', name: 'Scientific Calculator X1', brand: 'BeatBox', category: 'calculators', price: 799, oldPrice: 1499, discount: 46, rating: 4.7, reviewCount: 140, tag: 'Office', usp: '417 Functions', imageKey: 'scientificCalculatorImage', badge: 'Student', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Functions': '417', 'Display': '2-Line'}, description: 'Advanced scientific calculator perfect for engineering and science students.', highlights: ['Solar Powered', 'Matrix Calculations'], reviews: [] },
+  // Smart Watches
+  { id: 109, slug: 'smartwatch-active', name: 'BeatBox Watch Active', brand: 'BeatBox', category: 'smart watches', price: 2999, oldPrice: 6999, discount: 57, rating: 4.8, reviewCount: 890, tag: 'Wearable', usp: 'Amoled Display', imageKey: 'smartwatchProImage', badge: 'Hot', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Display': '1.4" Amoled', 'Battery': '7 Days'}, description: 'Feature-packed smartwatch with heart rate monitoring and fitness tracking.', highlights: ['SpO2 Monitor', 'IP68 Waterproof'], reviews: [] },
+  { id: 110, slug: 'smartwatch-pro', name: 'BeatBox Watch Pro', brand: 'BeatBox', category: 'smart watches', price: 4999, oldPrice: 9999, discount: 50, rating: 4.9, reviewCount: 450, tag: 'Wearable', usp: 'Bluetooth Calling', imageKey: 'smartwatchProImage', badge: 'Premium', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], specs: {'Display': '1.78" Amoled', 'Battery': '10 Days'}, description: 'Premium smartwatch with built-in speaker for Bluetooth calling.', highlights: ['Bluetooth Calling', 'Metal Body'], reviews: [] },
+  // CCTV
+  { id: 111, slug: 'cctv-outdoor', name: 'Smart Outdoor Camera', brand: 'BeatBox', category: 'camera', price: 3499, oldPrice: 7999, discount: 56, rating: 4.7, reviewCount: 320, tag: 'Security', usp: '1080p PTZ', imageKey: 'cctvCameraImage', badge: 'Secure', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'Resolution': '1080p', 'Night Vision': 'Color'}, description: 'Outdoor PTZ camera with color night vision and motion tracking.', highlights: ['360° Pan', '2-Way Audio'], reviews: [] },
+  { id: 112, slug: 'cctv-indoor', name: 'Mini Indoor WiFi Cam', brand: 'BeatBox', category: 'camera', price: 1999, oldPrice: 3999, discount: 50, rating: 4.6, reviewCount: 280, tag: 'Security', usp: 'Compact Size', imageKey: 'cctvCameraImage', badge: 'Baby Monitor', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'Resolution': '1080p', 'Storage': 'MicroSD'}, description: 'Discreet indoor WiFi camera perfect for baby monitoring or pet watching.', highlights: ['Motion Alerts', 'Cloud Storage'], reviews: [] },
+  // New Products Menu Items
+  { id: 113, slug: 'latest-drops-audio', name: 'BeatBox Latest Drops Edition', brand: 'BeatBox', category: 'latest drops', price: 12999, oldPrice: 24999, discount: 48, rating: 5.0, reviewCount: 15, tag: 'Exclusive', usp: 'Limited Run', imageKey: 'beatboxSmartCapsuleImage', badge: 'New', inStock: true, colors: [{name: 'Neon', code: '#00f3ff'}], specs: {'Type': 'Exclusive', 'Status': 'Just Dropped'}, description: 'Be the first to experience our latest drops. This exclusive edition is strictly limited in quantity.', highlights: ['Latest Drops', 'Collector Edition'], reviews: [] },
+  { id: 114, slug: 'trending-gear-speaker', name: 'Trending Gear Pro Speaker', brand: 'BeatBox', category: 'trending gear', price: 8999, oldPrice: 15999, discount: 43, rating: 4.9, reviewCount: 450, tag: 'Trending', usp: 'Viral Hit', imageKey: 'partyBoom1500Image', badge: 'Trending', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Type': 'Speaker', 'Popularity': 'Viral'}, description: 'The trending gear everyone is talking about on social media. Grab yours before it sells out.', highlights: ['Trending Gear', 'High Demand'], reviews: [] },
+  { id: 115, slug: 'upcoming-releases-preview', name: 'BeatBox Upcoming Releases VIP', brand: 'BeatBox', category: 'upcoming releases', price: 499, oldPrice: 999, discount: 50, rating: 4.8, reviewCount: 20, tag: 'Pre-Order', usp: 'Early Access', imageKey: 'stoneGrenadeProImage', badge: 'Upcoming', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], specs: {'Type': 'Preview Pass', 'Release': 'Next Month'}, description: 'A VIP pass giving you early access to upcoming releases and exclusive discounts.', highlights: ['Upcoming Releases', 'VIP Access'], reviews: [] },
+  { id: 116, slug: 'limited-editions-gold', name: 'BeatBox Limited Editions Gold', brand: 'BeatBox', category: 'limited editions', price: 29999, oldPrice: 49999, discount: 40, rating: 5.0, reviewCount: 5, tag: 'Luxury', usp: '24K Gold Plated', imageKey: 'soundbarEliteS9Image', badge: 'Limited', inStock: true, colors: [{name: 'Gold', code: '#ffd700'}], specs: {'Finish': '24K Gold', 'Units': '100 Worldwide'}, description: 'Part of our exclusive limited editions line. Only 100 units made globally.', highlights: ['Limited Editions', 'Certificate Included'], reviews: [] }
 ]
 
 export const getProductById = (id) => PRODUCTS.find((p) => p.id === Number(id))

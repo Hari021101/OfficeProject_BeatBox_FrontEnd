@@ -56,6 +56,7 @@ import smartTracker from '../../assets/smart_tracker.png'
 import phoneWallet from '../../assets/phone_wallet.png'
 import wiredEarphones from '../../assets/wired_earphones.png'
 import gamingKeyboard from '../../assets/gaming_keyboard.png'
+import newProductsIcon from '../../assets/new_products_icon.png'
 import { logout } from '../../redux/authSlice'
 import { selectCartCount } from '../../redux/cartSlice'
 import { selectWishlistCount } from '../../redux/wishlistSlice'
@@ -75,6 +76,7 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
   const [showCart, setShowCart] = useState(false)
+  const [megaMenuExpanded, setMegaMenuExpanded] = useState(false)
   const { user } = useSelector((state) => state.auth)
   const cartCount = useSelector(selectCartCount)
   const compareCount = useSelector((state) => state.compare?.items?.length || 0)
@@ -160,6 +162,13 @@ export default function Header() {
     if (n.includes('neckband')) return wirelessNeckband;
     if (n.includes('speaker') || n.includes('mic')) return heroSpeaker;
     
+    // CCTV Surveillance
+    if (n.includes('camera') || n.includes('cctv') || n.includes('video') || n.includes('poe') || n.includes('surveillance')) return dashCam;
+
+    // Mobile & Storage
+    if (n.includes('ssd') || n.includes('pendrive') || n.includes('hard disk') || n.includes('memory') || n.includes('storage')) return usbHub;
+    if (n.includes('calculator')) return phoneWallet;
+
     // Mobile Accessories
     if (n.includes('power bank') || n.includes('battery')) return powerBank;
     if (n.includes('cable') || n.includes('wire') || n.includes('organiser')) return premiumCables;
@@ -177,21 +186,19 @@ export default function Header() {
     if (n.includes('hub')) return usbHub;
     if (n.includes('projector') || n.includes('presenter')) return projector;
 
-    // Car Accessories
-    if (n.includes('car charger')) return carCharger;
-    if (n.includes('inflator') || n.includes('washer')) return tyreInflator;
-    if (n.includes('vacuum') || n.includes('cleaner')) return vacuumCleaner;
-    if (n.includes('car') || n.includes('bike') || n.includes('dash')) return dashCam;
-
     // Smart Gadgets
     if (n.includes('watch') || n.includes('band') || n.includes('timer')) return heroSmartwatch;
-    if (n.includes('tracker')) return smartTracker;
+    if (n.includes('tracker') || n.includes('tag')) return smartTracker;
+    if (n.includes('plug') || n.includes('remote')) return wirelessCharger;
     if (n.includes('hair') || n.includes('dryer')) return hairDryer;
     if (n.includes('kettle')) return electricKettle;
     if (n.includes('trimmer') || n.includes('shaver') || n.includes('ear')) return trimmer;
     if (n.includes('fan') || n.includes('blower') || n.includes('humidifier')) return portableFan;
     if (n.includes('sealer') || n.includes('massager')) return powerBank;
     if (n.includes('stick') || n.includes('flashlight') || n.includes('stylus')) return actionCam;
+    
+    // New Products
+    if (n.includes('drop') || n.includes('trend') || n.includes('upcoming') || n.includes('edition') || n.includes('latest')) return newProductsIcon;
     
     return heroEarbuds; // Ultimate fallback
   }
@@ -200,27 +207,32 @@ export default function Header() {
     {
       title: "Audio",
       expanded: false,
-      items: ["Soundbars", "Party Speakers", "Portable Speakers", "TWS", "Neckbands", "Wireless Headphones", "Wired Earphones", "USB Speakers", "Conference Speakers", "Wireless Microphones"]
+      items: ["Soundbars", "Party Speakers", "Portable Speakers", "TWS", "Neckbands", "Wireless Headphones", "Wired Earphones", "Wifi Speakers"]
     },
     {
-      title: "Mobile Accessories",
+      title: "CCTV Surveillance",
       expanded: false,
-      items: ["Power bank", "Cables", "Wireless Charger", "Chargers", "Mobile Holder", "Gadget Cleaners", "Phone Wallet", "Cable Organiser"]
+      items: ["Camera", "Video Door Phone", "Video Recorder", "PoE Devices", "Vehicle Surveillance", "Accessories"]
     },
     {
-      title: "Computer Accessories",
+      title: "Smart Home & Gadgets",
       expanded: false,
-      items: ["Keyboard And Mouse", "Wireless Keyboard", "Wired Keyboard", "Gaming Keyboard", "Wireless Mouse", "Wired Mouse", "Laptop Stand", "Laptop Table", "Extension Board", "Projectors", "USB Hub", "LCD Writing Pads", "Laptop Bags", "Computer Cables", "Wireless Presenter"]
+      items: ["Smart Watches", "Smart Wifi Plug", "Smart WiFi Cameras", "Smart WiFi Universal Remote", "Smart Tag", "Location tracker", "Selfie Stick", "Flashlight"]
     },
     {
-      title: "Car Accessories",
+      title: "Appliances",
       expanded: false,
-      items: ["Car Charger", "Car Bluetooth", "Tyre Inflator", "Car Mobile Holder", "Bike Mobile Holder", "Vacuum Cleaner", "Car Wireless Charger", "Pressure Washer"]
+      items: ["Electric Kettle", "Hair Dryer", "Vacuum Cleaner", "Portable Fans", "Humidifiers", "Air Blower", "Massagers"]
     },
     {
-      title: "Smart Gadgets",
+      title: "Mobile & Computer",
       expanded: false,
-      items: ["Ear Cleaners", "Portable Fans", "Selfie Stick", "Flashlight", "Stylus", "Location tracker", "Electric Kettle", "Hair Dryer", "Tool Kit", "Humidifiers", "Air Blower", "Timers", "Massagers", "smart Sealers", "Rechargeable Battery"]
+      items: ["SSD Cards", "Pendrives", "Hard Disks", "Memory Cards", "Calculators", "Power bank", "Cables", "Wireless Charger", "Keyboard And Mouse", "Laptop Stand", "USB Hub", "Projectors"]
+    },
+    {
+      title: "New Products",
+      expanded: false,
+      items: ["Latest Drops", "Trending Gear", "Upcoming Releases", "Limited Editions"]
     }
   ])
 
@@ -247,14 +259,14 @@ export default function Header() {
 
       {/* 2. MAIN NAVBAR */}
       <nav
-        className="navbar navbar-expand-lg py-3 border-0 border-bottom w-100 premium-navbar"
+        className="navbar navbar-expand-xl py-3 border-0 border-bottom w-100 premium-navbar"
         style={{
           transition: 'all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1)'
         }}
       >
-        <div className="container-fluid px-lg-5">
+        <div className="container-fluid px-2 px-xl-5 flex-nowrap">
           {/* Logo & Brand */}
-          <Link to="/" className="navbar-brand d-flex align-items-center gap-2 me-4 premium-brand">
+          <Link to="/" className="navbar-brand d-flex align-items-center gap-1 gap-sm-2 me-2 premium-brand text-truncate" style={{ flexShrink: 1, minWidth: 0 }}>
             <img
               src={logo}
               alt="BeatBox Logo"
@@ -266,8 +278,10 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Mobile Widgets */}
-          <div className="d-flex align-items-center gap-2 d-lg-none ms-auto me-1">
+          {/* Mobile Right Side (Widgets + Toggler) */}
+          <div className="d-flex align-items-center gap-1 gap-sm-2 ms-auto d-xl-none">
+            {/* Mobile Widgets */}
+            <div className="d-flex align-items-center gap-1 gap-sm-2 me-1">
             {/* Mobile Profile Dropdown */}
             {user ? (
               <div className="dropdown">
@@ -367,24 +381,25 @@ export default function Header() {
             <div className="scale-90 origin-right">
               <ThemeToggle isFloating={false} />
             </div>
-          </div>
+            </div>
 
-          {/* Mobile Toggle Button */}
-          <button
-            className="navbar-toggler border-0 text-theme-title p-2"
-            type="button"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-controls="navbarNav"
-            aria-expanded={isOpen}
-            aria-label="Toggle navigation"
-            style={{ outline: 'none', boxShadow: 'none' }}
-          >
-            {isOpen ? <X size={26} /> : <Menu size={26} />}
-          </button>
+            {/* Mobile Toggle Button */}
+            <button
+              className="navbar-toggler border-0 text-theme-title p-1 p-sm-2 ms-1"
+              type="button"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-controls="navbarNav"
+              aria-expanded={isOpen}
+              aria-label="Toggle navigation"
+              style={{ outline: 'none', boxShadow: 'none' }}
+            >
+              {isOpen ? <X size={26} /> : <Menu size={26} />}
+            </button>
+          </div>
 
           {/* Mobile Full Search Bar */}
           {(isHome || showMobileSearch) && (
-            <div className="w-100 d-lg-none mt-3 mb-1 position-relative">
+            <div className="w-100 d-xl-none mt-3 mb-1 position-relative">
               <form onSubmit={handleSearchSubmit} className="position-relative">
                 <input
                   type="text"
@@ -504,7 +519,7 @@ export default function Header() {
                         className="mega-menu-grid"
                         style={{
                           display: 'grid',
-                          gridTemplateColumns: window.innerWidth > 992 ? 'repeat(5, 1fr)' : 'repeat(2, 1fr)',
+                          gridTemplateColumns: window.innerWidth > 992 ? `repeat(${megaMenuCategories.length}, 1fr)` : 'repeat(2, 1fr)',
                           gap: '30px 20px',
                           maxWidth: '1400px',
                           margin: '0 auto'
@@ -516,13 +531,13 @@ export default function Header() {
                               {col.title}
                             </h6>
                             <ul className="list-unstyled mb-0 d-flex flex-column gap-3">
-                              {col.items.slice(0, col.expanded ? col.items.length : 5).map((item, i) => (
+                              {col.items.slice(0, megaMenuExpanded ? col.items.length : 5).map((item, i) => (
                                 <li key={i}>
                                   <Link
                                     to={`/products?q=${encodeURIComponent(item.toLowerCase())}`}
                                     className="text-decoration-none text-theme-title transition-all d-flex align-items-center gap-3 mega-menu-item"
                                     style={{ fontSize: '0.85rem', fontWeight: 600 }}
-                                    onClick={() => { setShowCategories(false); setIsOpen(false); }}
+                                    onClick={() => { setShowCategories(false); setIsOpen(false); setMegaMenuExpanded(false); }}
                                   >
                                     <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px', background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', flexShrink: 0 }}>
                                       <img src={getMegaMenuImage(item)} alt="" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
@@ -531,25 +546,37 @@ export default function Header() {
                                   </Link>
                                 </li>
                               ))}
-                              {col.items.length > 5 && (
-                                <li className="mt-2 text-center">
-                                  <button
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      const newCategories = [...megaMenuCategories];
-                                      newCategories[idx].expanded = !newCategories[idx].expanded;
-                                      setMegaMenuCategories(newCategories);
-                                    }}
-                                    className="btn btn-sm w-100 fw-bold rounded-pill border-0"
-                                    style={{ fontSize: '0.8rem', background: 'var(--bb-primary-light)', color: '#fff' }}
-                                  >
-                                    {col.expanded ? 'View Less' : `View All (${col.items.length})`}
-                                  </button>
-                                </li>
-                              )}
                             </ul>
                           </div>
                         ))}
+                      </div>
+                      
+                      <div className="d-flex justify-content-center mt-5 mb-2">
+                        <button
+                          className="btn d-flex align-items-center justify-content-center gap-2 rounded-pill border-0 hover-scale"
+                          style={{ 
+                            fontSize: '0.9rem', 
+                            fontWeight: 'bold',
+                            background: 'linear-gradient(135deg, var(--bb-primary), var(--bb-accent))',
+                            color: '#fff',
+                            padding: '12px 36px',
+                            boxShadow: '0 8px 25px rgba(0, 243, 255, 0.3)',
+                            transition: 'all 0.3s ease'
+                          }}
+                          onClick={(e) => { 
+                            e.preventDefault();
+                            if (!megaMenuExpanded) {
+                              setMegaMenuExpanded(true);
+                            } else {
+                              setShowCategories(false); 
+                              setIsOpen(false);
+                              setMegaMenuExpanded(false);
+                              navigate('/products');
+                            }
+                          }}
+                        >
+                          {megaMenuExpanded ? 'Go To Product Catalog' : 'Explore All Categories'} <Sparkles size={16} />
+                        </button>
                       </div>
                     </motion.div>
                   )}
@@ -635,7 +662,7 @@ export default function Header() {
               </li>
               
               {/* Mobile Only Wishlist Link */}
-              <li className="nav-item d-lg-none mt-2 pt-2 border-top border-secondary border-opacity-25">
+              <li className="nav-item d-xl-none mt-2 pt-2 border-top border-secondary border-opacity-25">
                 <button 
                   className="nav-link premium-nav-link py-2 d-flex align-items-center gap-2 border-0 bg-transparent w-100 text-start"
                   onClick={() => { navigate('/wishlist'); setIsOpen(false); }}
@@ -646,11 +673,11 @@ export default function Header() {
             </ul>
 
             {/* Right: Search bar & Utility Icons */}
-            <div className="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-3">
+            <div className="d-flex flex-column flex-xl-row align-items-stretch align-items-xl-center gap-3">
 
               {/* Search Pill */}
               {/* Search Pill */}
-              <form onSubmit={handleSearchSubmit} className="position-relative d-none d-lg-block">
+              <form onSubmit={handleSearchSubmit} className="position-relative d-none d-xl-block">
                 <input
                   type="text"
                   className="form-control premium-search-input"
@@ -705,11 +732,11 @@ export default function Header() {
               </form>
 
               {/* Icon Group */}
-              <div className="d-flex align-items-center justify-content-center gap-3 mt-2 mt-lg-0 text-theme-title">
+              <div className="d-flex align-items-center justify-content-center gap-3 mt-2 mt-xl-0 text-theme-title">
 
                 {/* Shopping Cart Trigger */}
                 <button
-                  className="btn border-0 p-2 position-relative text-theme-muted hover-scale d-none d-lg-block"
+                  className="btn border-0 p-2 position-relative text-theme-muted hover-scale d-none d-xl-block"
                   onClick={() => setShowCart(true)}
                   style={{ background: 'transparent', transition: 'all 0.2s' }}
                   aria-label="Open cart"
@@ -733,7 +760,7 @@ export default function Header() {
                 {/* Compare Trigger */}
                 <Link
                   to="/compare"
-                  className="btn border-0 p-2 position-relative text-theme-muted hover-scale d-none d-lg-block"
+                  className="btn border-0 p-2 position-relative text-theme-muted hover-scale d-none d-xl-block"
                   style={{ background: 'transparent', transition: 'all 0.2s' }}
                   title="Compare Products"
                 >
@@ -755,12 +782,12 @@ export default function Header() {
                 </Link>
 
                 {/* Notifications Bell */}
-                <div className="d-none d-lg-block">
+                <div className="d-none d-xl-block">
                   <NotificationsPanel />
                 </div>
 
                 {/* Profile / Account Dropdown */}
-                <div className="d-none d-lg-block">
+                <div className="d-none d-xl-block">
                   {user ? (
                     <div className="dropdown">
 
@@ -955,7 +982,7 @@ export default function Header() {
                 </div>
 
                 {/* Navbar Inline Theme Toggle */}
-                <div className="d-none d-lg-block">
+                <div className="d-none d-xl-block">
                   <ThemeToggle isFloating={false} />
                 </div>
 
