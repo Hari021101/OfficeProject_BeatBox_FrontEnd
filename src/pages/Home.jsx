@@ -380,7 +380,7 @@ export default function Home() {
           </span>
         </div>
         
-        <div className="d-flex gap-3">
+        <div className="d-flex gap-3 w-100 mt-2">
           <button 
             onClick={() => {
               const realProduct = allProducts.find(p => p.name.toLowerCase().includes(slides[currentSlide].searchKeyword)) || allProducts[0];
@@ -390,7 +390,7 @@ export default function Home() {
                 toast.error("Products not loaded yet");
               }
             }}
-            className="btn btn-glow d-flex align-items-center justify-content-center gap-2 py-3 px-5 fw-bold"
+            className="btn btn-glow d-flex align-items-center justify-content-center gap-2 py-3 fw-bold w-100 w-sm-auto px-sm-5"
             style={{ borderRadius: '12px', height: '55px' }}
           >
             View Product <ArrowRight size={18} />
@@ -566,7 +566,7 @@ export default function Home() {
                 <span className="fw-black fs-4 text-theme-title">₹{prod.price.toLocaleString('en-IN')}</span>
                 <span className="text-decoration-line-through text-theme-muted small ms-2">₹{prod.oldPrice.toLocaleString('en-IN')}</span>
               </div>
-              <span className="text-success small fw-bold">{prod.discount}</span>
+              <span className="text-success small fw-bold">{prod.discount}% OFF</span>
             </div>
 
             <button 

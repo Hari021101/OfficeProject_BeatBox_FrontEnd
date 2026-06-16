@@ -368,17 +368,17 @@ const handleSubmitReview = async (e) => {
 
               {img && img.includes('video') ? (
                 <video
-                  key={`${product.imageKey}-${activeImageIndex}`}
+                  key={`${product.imageKey}-${activeImageIndex}-${selectedColor?.name}`}
                   src={img}
                   autoPlay
                   loop
                   muted
                   className="img-fluid hero-float"
-                  style={{ maxHeight: 340, objectFit: 'contain', zIndex: 1, filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))', transform: `rotate(${activeImageIndex * -5}deg)` }}
+                  style={{ maxHeight: 340, objectFit: 'contain', zIndex: 1, filter: `drop-shadow(0 20px 40px rgba(0,0,0,0.5)) ${selectedColor && selectedColor.name !== 'Black' && selectedColor.name !== 'White' ? 'hue-rotate(45deg)' : ''}`, transform: `rotate(${activeImageIndex === 1 ? -25 : activeImageIndex === 2 ? 25 : 0}deg) scale(${activeImageIndex === 0 ? 1 : 1.05})` }}
                 />
               ) : (
                 <motion.img
-                  key={`${product.imageKey}-${activeImageIndex}`}
+                  key={`${product.imageKey}-${activeImageIndex}-${selectedColor?.name}`}
                   src={img}
                   alt={product.name}
                   initial={{ scale: 0.9, opacity: 0 }}
@@ -386,7 +386,7 @@ const handleSubmitReview = async (e) => {
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.4 }}
                   className="img-fluid hero-float"
-                  style={{ maxHeight: 340, objectFit: 'contain', zIndex: 1, filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))', transform: `rotate(${activeImageIndex * -5}deg)` }}
+                  style={{ maxHeight: 340, objectFit: 'contain', zIndex: 1, filter: `drop-shadow(0 20px 40px rgba(0,0,0,0.5)) ${selectedColor && selectedColor.name !== 'Black' && selectedColor.name !== 'White' ? 'hue-rotate(45deg)' : ''}`, transform: `rotate(${activeImageIndex === 1 ? -25 : activeImageIndex === 2 ? 25 : 0}deg) scale(${activeImageIndex === 0 ? 1 : 1.05})` }}
                 />
               )}
             </div>
@@ -401,9 +401,9 @@ const handleSubmitReview = async (e) => {
                   style={{ width: 70, height: 70, background: 'var(--bb-surface)', border: `1px solid ${i === activeImageIndex ? 'var(--bb-accent)' : 'var(--bb-border)'}`, cursor: 'pointer', overflow: 'hidden', transition: 'border-color 0.2s' }}
                 >
                   {img && img.includes('video') ? (
-                    <video src={img} muted style={{ width: 50, height: 50, objectFit: 'contain', opacity: i === activeImageIndex ? 1 : 0.5, transform: `rotate(${i * -5}deg)` }} />
+                    <video src={img} muted style={{ width: 50, height: 50, objectFit: 'contain', opacity: i === activeImageIndex ? 1 : 0.5, transform: `rotate(${i === 1 ? -25 : i === 2 ? 25 : 0}deg) scale(${i === 0 ? 1 : 1.05})`, filter: selectedColor && selectedColor.name !== 'Black' && selectedColor.name !== 'White' ? 'hue-rotate(45deg)' : '' }} />
                   ) : (
-                    <img src={img} alt="" style={{ width: 50, height: 50, objectFit: 'contain', opacity: i === activeImageIndex ? 1 : 0.5, transform: `rotate(${i * -5}deg)` }} />
+                    <img src={img} alt="" style={{ width: 50, height: 50, objectFit: 'contain', opacity: i === activeImageIndex ? 1 : 0.5, transform: `rotate(${i === 1 ? -25 : i === 2 ? 25 : 0}deg) scale(${i === 0 ? 1 : 1.05})`, filter: selectedColor && selectedColor.name !== 'Black' && selectedColor.name !== 'White' ? 'hue-rotate(45deg)' : '' }} />
                   )}
                 </div>
               ))}

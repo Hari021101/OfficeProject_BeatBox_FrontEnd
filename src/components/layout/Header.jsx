@@ -21,7 +21,14 @@ import {
   Link2,
   BatteryCharging,
   Scissors,
-  Scale
+  Scale,
+  Tag,
+  Zap,
+  Star,
+  CreditCard,
+  MapPin,
+  Gift,
+  Bell
 } from 'lucide-react'
 import logo from '../../assets/beatbox_logo.png'
 import heroEarbuds from '../../assets/hero_earbuds.png'
@@ -57,6 +64,9 @@ import phoneWallet from '../../assets/phone_wallet.png'
 import wiredEarphones from '../../assets/wired_earphones.png'
 import gamingKeyboard from '../../assets/gaming_keyboard.png'
 import newProductsIcon from '../../assets/new_products_icon.png'
+import usbGamingSpeakersImage from '../../assets/usb_gaming_speakers.png'
+import partySpeakerImage from '../../assets/party_speaker.png'
+import wirelessMicImage from '../../assets/wireless_mic.png'
 import { logout } from '../../redux/authSlice'
 import { selectCartCount } from '../../redux/cartSlice'
 import { selectWishlistCount } from '../../redux/wishlistSlice'
@@ -88,6 +98,7 @@ export default function Header() {
   const location = useLocation()
   const isHome = location.pathname === '/'
   const [showMobileSearch, setShowMobileSearch] = useState(false)
+  const [expandedMobileCategory, setExpandedMobileCategory] = useState(null)
 
   // Debounce search query
   useEffect(() => {
@@ -136,6 +147,76 @@ export default function Header() {
     }
   }, [isOpen])
 
+  const renderProfileMenu = () => (
+    <>
+      <li className="px-3 py-2 border-bottom border-secondary border-opacity-25 mb-1 bg-theme-surface">
+        <span className="text-theme-muted fw-bold text-uppercase" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>Your Account</span>
+      </li>
+      {user?.roles?.includes('Admin') && (
+        <li className="mb-1">
+          <Link to="/admin" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3 fw-bold text-primary">
+            <User size={16} className="me-3" /> Admin Dashboard
+          </Link>
+        </li>
+      )}
+      <li className="mb-1">
+        <Link to="/settings" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
+          <User size={16} className="me-3 text-theme-muted" /> My Profile
+        </Link>
+      </li>
+      <li className="mb-1">
+        <Link to="/orders" id="nav-my-orders" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
+          <Package size={16} className="me-3 text-theme-muted" /> Orders
+        </Link>
+      </li>
+      <li className="mb-1">
+        <Link to="/coupons" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
+          <Tag size={16} className="me-3 text-theme-muted" /> Coupons
+        </Link>
+      </li>
+      <li className="mb-1">
+        <Link to="/rewards" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
+          <Zap size={16} className="me-3 text-theme-muted" /> BeatBox Coins
+        </Link>
+      </li>
+      <li className="mb-1">
+        <Link to="/vip" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
+          <Star size={16} className="me-3 text-theme-muted" /> VIP Zone
+        </Link>
+      </li>
+      <li className="mb-1">
+        <Link to="/wallet" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
+          <CreditCard size={16} className="me-3 text-theme-muted" /> Saved Cards & Wallet
+        </Link>
+      </li>
+      <li className="mb-1">
+        <Link to="/addresses" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
+          <MapPin size={16} className="me-3 text-theme-muted" /> Saved Addresses
+        </Link>
+      </li>
+      <li className="mb-1">
+        <Link to="/wishlist" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
+          <Heart size={16} className="me-3 text-theme-muted" /> Wishlist
+        </Link>
+      </li>
+      <li className="mb-1">
+        <Link to="/giftcards" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
+          <Gift size={16} className="me-3 text-theme-muted" /> Gift Cards
+        </Link>
+      </li>
+      <li className="mb-1 border-bottom border-secondary border-opacity-25 pb-1">
+        <button className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3 w-100 bg-transparent border-0" onClick={() => {}}>
+          <Bell size={16} className="me-3 text-theme-muted" /> Notifications
+        </button>
+      </li>
+      <li className="mt-1">
+        <button className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3 text-danger fw-semibold w-100 bg-transparent border-0" onClick={handleLogout}>
+          <LogOut size={16} className="me-3" /> Logout
+        </button>
+      </li>
+    </>
+  )
+
   const handleLogout = () => {
     dispatch(logout())
     toast.success("Successfully logged out!")
@@ -156,19 +237,15 @@ export default function Header() {
     
     // Audio
     if (n.includes('soundbar') || n.includes('tv')) return soundbar;
+    if (n.includes('party')) return partySpeakerImage;
+    if (n.includes('usb speaker')) return usbGamingSpeakersImage;
     if (n.includes('tws') || n.includes('earbud')) return smartEarbuds;
     if (n.includes('wired')) return wiredEarphones;
     if (n.includes('headphone') || n.includes('earphone')) return heroHeadphones;
     if (n.includes('neckband')) return wirelessNeckband;
-    if (n.includes('speaker') || n.includes('mic')) return heroSpeaker;
+    if (n.includes('mic')) return wirelessMicImage;
+    if (n.includes('speaker')) return heroSpeaker;
     
-    // CCTV Surveillance
-    if (n.includes('camera') || n.includes('cctv') || n.includes('video') || n.includes('poe') || n.includes('surveillance')) return dashCam;
-
-    // Mobile & Storage
-    if (n.includes('ssd') || n.includes('pendrive') || n.includes('hard disk') || n.includes('memory') || n.includes('storage')) return usbHub;
-    if (n.includes('calculator')) return phoneWallet;
-
     // Mobile Accessories
     if (n.includes('power bank') || n.includes('battery')) return powerBank;
     if (n.includes('cable') || n.includes('wire') || n.includes('organiser')) return premiumCables;
@@ -176,7 +253,7 @@ export default function Header() {
     if (n.includes('charger') || n.includes('adapter')) return carCharger;
     if (n.includes('holder') || n.includes('stand')) return mobileHolder;
     if (n.includes('wallet')) return phoneWallet;
-    if (n.includes('cleaner')) return trimmer;
+    if (n.includes('cleaner')) return trimmer; // fallback for cleaner
 
     // Computer Accessories
     if (n.includes('keyboard')) return gamingKeyboard;
@@ -186,19 +263,21 @@ export default function Header() {
     if (n.includes('hub')) return usbHub;
     if (n.includes('projector') || n.includes('presenter')) return projector;
 
+    // Car Accessories
+    if (n.includes('car charger')) return carCharger;
+    if (n.includes('tyre') || n.includes('pressure')) return tyreInflator;
+    if (n.includes('vacuum')) return vacuumCleaner;
+    if (n.includes('car') || n.includes('bike')) return dashCam;
+
     // Smart Gadgets
     if (n.includes('watch') || n.includes('band') || n.includes('timer')) return heroSmartwatch;
     if (n.includes('tracker') || n.includes('tag')) return smartTracker;
-    if (n.includes('plug') || n.includes('remote')) return wirelessCharger;
     if (n.includes('hair') || n.includes('dryer')) return hairDryer;
     if (n.includes('kettle')) return electricKettle;
-    if (n.includes('trimmer') || n.includes('shaver') || n.includes('ear')) return trimmer;
+    if (n.includes('trimmer') || n.includes('shaver') || n.includes('ear') || n.includes('tool')) return trimmer;
     if (n.includes('fan') || n.includes('blower') || n.includes('humidifier')) return portableFan;
     if (n.includes('sealer') || n.includes('massager')) return powerBank;
     if (n.includes('stick') || n.includes('flashlight') || n.includes('stylus')) return actionCam;
-    
-    // New Products
-    if (n.includes('drop') || n.includes('trend') || n.includes('upcoming') || n.includes('edition') || n.includes('latest')) return newProductsIcon;
     
     return heroEarbuds; // Ultimate fallback
   }
@@ -207,32 +286,27 @@ export default function Header() {
     {
       title: "Audio",
       expanded: false,
-      items: ["Soundbars", "Party Speakers", "Portable Speakers", "TWS", "Neckbands", "Wireless Headphones", "Wired Earphones", "Wifi Speakers"]
+      items: ["Soundbars", "Party Speakers", "Portable Speakers", "TWS", "Neckbands", "Wireless Headphones", "Wired Earphones", "USB Speakers", "Conference Speakers", "Wireless Microphones"]
     },
     {
-      title: "CCTV Surveillance",
+      title: "Mobile Accessories",
       expanded: false,
-      items: ["Camera", "Video Door Phone", "Video Recorder", "PoE Devices", "Vehicle Surveillance", "Accessories"]
+      items: ["Power bank", "Cables", "Wireless Charger", "Chargers", "Mobile Holder", "Gadget Cleaners", "Phone Wallet", "Cable Organiser"]
     },
     {
-      title: "Smart Home & Gadgets",
+      title: "Computer Accessories",
       expanded: false,
-      items: ["Smart Watches", "Smart Wifi Plug", "Smart WiFi Cameras", "Smart WiFi Universal Remote", "Smart Tag", "Location tracker", "Selfie Stick", "Flashlight"]
+      items: ["Keyboard And Mouse", "Wireless Keyboard", "Wired Keyboard", "Gaming Keyboard", "Wireless Mouse", "Wired Mouse", "Laptop Stand", "Laptop Table", "Extension Board", "Projectors", "USB Hub", "LCD Writing Pads", "Laptop Bags", "Computer Cables", "Wireless Presenter"]
     },
     {
-      title: "Appliances",
+      title: "Car Accessories",
       expanded: false,
-      items: ["Electric Kettle", "Hair Dryer", "Vacuum Cleaner", "Portable Fans", "Humidifiers", "Air Blower", "Massagers"]
+      items: ["Car Charger", "Car Bluetooth", "Tyre Inflator", "Car Mobile Holder", "Bike Mobile Holder", "Vacuum Cleaner", "Car Wireless Charger", "Pressure Washer"]
     },
     {
-      title: "Mobile & Computer",
+      title: "Smart Gadgets",
       expanded: false,
-      items: ["SSD Cards", "Pendrives", "Hard Disks", "Memory Cards", "Calculators", "Power bank", "Cables", "Wireless Charger", "Keyboard And Mouse", "Laptop Stand", "USB Hub", "Projectors"]
-    },
-    {
-      title: "New Products",
-      expanded: false,
-      items: ["Latest Drops", "Trending Gear", "Upcoming Releases", "Limited Editions"]
+      items: ["Ear Cleaners", "Portable Fans", "Selfie Stick", "Flashlight", "Stylus", "Location tracker", "Electric Kettle", "Hair Dryer", "Tool Kit", "Humidifiers", "Air Blower", "Timers", "Massagers", "smart Sealers", "Rechargeable Battery"]
     }
   ])
 
@@ -264,8 +338,22 @@ export default function Header() {
           transition: 'all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1)'
         }}
       >
-        <div className="container-fluid px-2 px-xl-5 flex-nowrap">
-          {/* Logo & Brand */}
+        <div className="container-fluid px-2 px-xl-5 flex-wrap flex-xl-nowrap">
+          {/* Mobile Toggle Button & Logo (Left Side) */}
+          <div className="d-flex align-items-center">
+            <button
+              className="navbar-toggler d-xl-none border-0 text-theme-title p-1 p-sm-2 me-2"
+              type="button"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-controls="navbarNav"
+              aria-expanded={isOpen}
+              aria-label="Toggle navigation"
+              style={{ outline: 'none', boxShadow: 'none' }}
+            >
+              {isOpen ? <X size={26} /> : <Menu size={26} />}
+            </button>
+            
+            {/* Logo & Brand */}
           <Link to="/" className="navbar-brand d-flex align-items-center gap-1 gap-sm-2 me-2 premium-brand text-truncate" style={{ flexShrink: 1, minWidth: 0 }}>
             <img
               src={logo}
@@ -276,12 +364,23 @@ export default function Header() {
             <span className="fw-black fs-4 tracking-tight text-theme-title mb-0">
               BEAT<span className="gradient-text">BOX</span>
             </span>
-          </Link>
+            </Link>
+          </div>
 
-          {/* Mobile Right Side (Widgets + Toggler) */}
+          {/* Mobile Right Side (Widgets) */}
           <div className="d-flex align-items-center gap-1 gap-sm-2 ms-auto d-xl-none">
             {/* Mobile Widgets */}
             <div className="d-flex align-items-center gap-1 gap-sm-2 me-1">
+            {/* Mobile Search Toggle */}
+            <button
+              className="btn border-0 p-1 position-relative text-theme-muted hover-scale"
+              onClick={() => setShowMobileSearch(!showMobileSearch)}
+              aria-label="Toggle mobile search"
+              style={{ background: 'transparent' }}
+            >
+              <Search size={22} />
+            </button>
+            
             {/* Mobile Profile Dropdown */}
             {user ? (
               <div className="dropdown">
@@ -313,33 +412,7 @@ export default function Header() {
                     zIndex: 1060
                   }}
                 >
-                  <li className="px-3 py-2 border-bottom border-secondary border-opacity-25 mb-2">
-                    <h6 className="mb-0 text-theme-title fw-bold">{user.fullName}</h6>
-                    <small className="text-theme-muted">{user.email}</small>
-                  </li>
-                  {user.roles && user.roles.includes('Admin') && (
-                    <li>
-                      <Link to="/admin" className="dropdown-item premium-dropdown-item rounded-3 py-2 d-flex align-items-center gap-2 fw-bold text-primary">
-                        🛡️ Admin Dashboard
-                      </Link>
-                    </li>
-                  )}
-                  <li>
-                    <Link to="/orders" className="dropdown-item premium-dropdown-item rounded-3 py-2 d-flex align-items-center gap-2"><Package size={15} style={{ color: 'var(--bb-accent)' }} /> My Orders</Link>
-                  </li>
-                  <li>
-                    <Link to="/wishlist" className="dropdown-item premium-dropdown-item rounded-3 py-2 d-flex align-items-center gap-2">
-                      <Heart size={15} style={{ color: 'var(--bb-danger, #ef4444)' }} /> My Wishlist
-                      {wishlistCount > 0 && (
-                        <span className="badge rounded-pill bg-danger ms-auto">{wishlistCount}</span>
-                      )}
-                    </Link>
-                  </li>
-                  <li><Link to="/settings" className="dropdown-item premium-dropdown-item rounded-3 py-2 d-flex align-items-center gap-2">⚙️ Settings</Link></li>
-                  <li><Link to="/support" className="dropdown-item premium-dropdown-item rounded-3 py-2">🎧 Support</Link></li>
-                  <li className="mt-2 pt-2 border-top border-secondary border-opacity-25">
-                    <button className="dropdown-item rounded-3 py-2 text-danger fw-semibold d-flex align-items-center gap-2" onClick={handleLogout}><LogOut size={15} /> Logout</button>
-                  </li>
+                  {renderProfileMenu()}
                 </ul>
               </div>
             ) : (
@@ -347,20 +420,6 @@ export default function Header() {
                 <User size={22} />
               </Link>
             )}
-
-            {/* Mobile Search Toggle (Non-Home Pages) */}
-            {!isHome && (
-              <button
-                className="btn border-0 p-1 position-relative text-theme-muted hover-scale"
-                onClick={() => setShowMobileSearch(!showMobileSearch)}
-                aria-label="Toggle mobile search"
-                style={{ background: 'transparent' }}
-              >
-                <Search size={22} />
-              </button>
-            )}
-
-            <NotificationsPanel />
 
             <button
               className="btn border-0 p-1 position-relative text-theme-muted"
@@ -378,27 +437,11 @@ export default function Header() {
                 </span>
               )}
             </button>
-            <div className="scale-90 origin-right">
-              <ThemeToggle isFloating={false} />
             </div>
-            </div>
-
-            {/* Mobile Toggle Button */}
-            <button
-              className="navbar-toggler border-0 text-theme-title p-1 p-sm-2 ms-1"
-              type="button"
-              onClick={() => setIsOpen(!isOpen)}
-              aria-controls="navbarNav"
-              aria-expanded={isOpen}
-              aria-label="Toggle navigation"
-              style={{ outline: 'none', boxShadow: 'none' }}
-            >
-              {isOpen ? <X size={26} /> : <Menu size={26} />}
-            </button>
           </div>
 
           {/* Mobile Full Search Bar */}
-          {(isHome || showMobileSearch) && (
+          {showMobileSearch && (
             <div className="w-100 d-xl-none mt-3 mb-1 position-relative">
               <form onSubmit={handleSearchSubmit} className="position-relative">
                 <input
@@ -476,8 +519,8 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Center: Navigation Links */}
-            <ul className="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-2 fw-semibold">
+            {/* Desktop Center: Navigation Links */}
+            <ul className="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-2 fw-semibold d-none d-xl-flex">
 
               {/* Categories Hover Dropdown */}
               <li
@@ -661,16 +704,62 @@ export default function Header() {
                 </AnimatePresence>
               </li>
               
-              {/* Mobile Only Wishlist Link */}
-              <li className="nav-item d-xl-none mt-2 pt-2 border-top border-secondary border-opacity-25">
-                <button 
-                  className="nav-link premium-nav-link py-2 d-flex align-items-center gap-2 border-0 bg-transparent w-100 text-start"
-                  onClick={() => { navigate('/wishlist'); setIsOpen(false); }}
-                >
-                  <Heart size={18} className="text-danger" /> Wishlist ({wishlistCount})
-                </button>
-              </li>
             </ul>
+
+            {/* Mobile Sidebar Navigation */}
+            <div className="d-xl-none w-100 pb-5">
+              <div className="fw-bold text-theme-title mb-3" style={{ fontSize: '1rem' }}>Categories</div>
+              <ul className="list-unstyled d-flex flex-column gap-1 mb-4">
+                {megaMenuCategories.map((col, idx) => (
+                  <li key={idx} className="border-bottom border-secondary border-opacity-25 pb-1 mb-1">
+                    <div 
+                      className="d-flex align-items-center justify-content-between p-2 rounded-3 text-theme-title" 
+                      style={{ cursor: 'pointer' }} 
+                      onClick={() => setExpandedMobileCategory(expandedMobileCategory === idx ? null : idx)}
+                    >
+                      <div className="d-flex align-items-center gap-3">
+                        <div className="rounded-circle d-flex align-items-center justify-content-center bg-white" style={{ width: '45px', height: '45px', border: '1px solid var(--bb-border)', flexShrink: 0 }}>
+                          <img src={getMegaMenuImage(col.items[0])} alt="" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                        </div>
+                        <span className="fw-bold text-uppercase" style={{ fontSize: '0.9rem', letterSpacing: '0.5px' }}>{col.title}</span>
+                      </div>
+                      <ChevronDown size={18} className={`transition-all text-theme-muted ${expandedMobileCategory === idx ? 'rotate-180' : ''}`} />
+                    </div>
+                    
+                    <AnimatePresence>
+                      {expandedMobileCategory === idx && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                          <ul className="list-unstyled ps-5 ms-3 pe-2 py-2 mb-0 d-flex flex-column gap-3">
+                            {col.items.map((item, i) => (
+                              <li key={i}>
+                                <Link 
+                                  to={`/products?q=${encodeURIComponent(item.toLowerCase())}`} 
+                                  className="text-decoration-none text-theme-muted text-truncate d-block fw-semibold hover-text-primary" 
+                                  onClick={() => setIsOpen(false)} 
+                                  style={{ fontSize: '0.85rem' }}
+                                >
+                                  {item}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Other Links */}
+              <ul className="list-unstyled d-flex flex-column gap-3 border-top border-secondary border-opacity-25 pt-4 ps-2">
+                <li><Link to="/products?category=new" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>New Arrivals</Link></li>
+                <li><Link to="/gifting" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Corporate Gifting</Link></li>
+                <li><Link to="/support" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Warranty Registration</Link></li>
+                <li><Link to="/support" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Support</Link></li>
+                {!user && <li><Link to="/login" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Login</Link></li>}
+                <li><Link to="/orders" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Track your order</Link></li>
+              </ul>
+            </div>
 
             {/* Right: Search bar & Utility Icons */}
             <div className="d-flex flex-column flex-xl-row align-items-stretch align-items-xl-center gap-3">
@@ -703,7 +792,7 @@ export default function Header() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       className="position-absolute top-100 start-0 w-100 mt-2 rounded-3 shadow-lg"
-                      style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', zIndex: 10500, overflow: 'hidden' }}
+                      style={{ background: 'var(--bb-bg-navy)', border: '1px solid var(--bb-border)', zIndex: 10500, overflow: 'hidden' }}
                     >
                       <div className="list-group list-group-flush">
                         {searchSuggestions.map((item) => (
@@ -854,112 +943,7 @@ export default function Header() {
                         }}
                       >
 
-                        {/* User Top Section */}
-                        <li className="px-3 py-3 border-bottom border-secondary border-opacity-25">
-
-                          <div className="d-flex align-items-center gap-3">
-
-                            <div
-                              className="rounded-circle d-flex align-items-center justify-content-center"
-                              style={{
-                                width: '48px',
-                                height: '48px',
-                                background:
-                                  'linear-gradient(135deg, #00f3ff, #a820ff)'
-                              }}
-                            >
-                              <User size={22} color="#fff" />
-                            </div>
-
-                            <div>
-                              <h6 className="mb-1 text-theme-title fw-bold">
-                                {user.fullName}
-                              </h6>
-
-                              <p
-                                className="mb-0 text-theme-muted"
-                                style={{
-                                  fontSize: '0.75rem'
-                                }}
-                              >
-                                {user.email}
-                              </p>
-                            </div>
-
-                          </div>
-
-                        </li>
-
-                        {/* Menu Links */}
-
-                        {user.roles && user.roles.includes('Admin') && (
-                          <li>
-                            <Link
-                              to="/admin"
-                              className="dropdown-item premium-dropdown-item rounded-3 py-3 d-flex align-items-center gap-2 fw-bold text-primary"
-                            >
-                              🛡️ Admin Dashboard
-                            </Link>
-                          </li>
-                        )}
-
-                        <li>
-                          <Link
-                            to="/orders"
-                            className="dropdown-item premium-dropdown-item rounded-3 py-3 d-flex align-items-center gap-2"
-                            id="nav-my-orders"
-                          >
-                            <Package size={15} style={{ color: 'var(--bb-accent)' }} />
-                            My Orders
-                          </Link>
-                        </li>
-
-                        <li>
-                          <Link
-                            to="/wishlist"
-                            className="dropdown-item premium-dropdown-item rounded-3 py-3 d-flex align-items-center gap-2"
-                          >
-                            <Heart size={15} style={{ color: 'var(--bb-danger, #ef4444)' }} />
-                            My Wishlist
-                            {wishlistCount > 0 && (
-                              <span className="badge rounded-pill bg-danger ms-auto px-2">{wishlistCount}</span>
-                            )}
-                          </Link>
-                        </li>
-
-                        <li>
-                          <Link
-                            to="/settings"
-                            className="dropdown-item premium-dropdown-item rounded-3 py-3"
-                          >
-                            ⚙️ Settings
-                          </Link>
-                        </li>
-
-                        <li>
-                          <Link
-                            to="/support"
-                            className="dropdown-item premium-dropdown-item rounded-3 py-3"
-                          >
-                            🎧 Support
-                          </Link>
-                        </li>
-
-                        {/* Logout */}
-                        <li className="mt-2 pt-2 border-top border-secondary border-opacity-25">
-
-                          <button
-                            className="dropdown-item rounded-3 py-3 text-danger fw-semibold d-flex align-items-center gap-2"
-                            onClick={handleLogout}
-                            style={{
-                              transition: 'all 0.25s ease'
-                            }}
-                          >
-                            <LogOut size={16} />
-                            Logout
-                          </button>
-
-                        </li>
+                        {renderProfileMenu()}
 
                       </ul>
 
