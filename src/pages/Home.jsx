@@ -645,23 +645,42 @@ export default function Home() {
           <span className="text-success small fw-bold">73% Off (Limited Deal)</span>
         </div>
 
-        <button 
-          onClick={() => {
-            const realProduct = allProducts.find(p => p.name.includes("Airdopes")) || allProducts[0];
-            if (realProduct) {
-              handleAddToCartClick({ 
-                ...realProduct, 
-                price: 1199, // Promo price
-              });
-            } else {
-              toast.error("Deal product not loaded yet");
-            }
-          }}
-          className="btn btn-glow py-3 px-5 fw-bold d-flex align-items-center gap-2"
-          style={{ borderRadius: '12px', height: '55px' }}
-        >
-          Claim Deal <ArrowRight size={18} />
-        </button>
+        <div className="d-flex flex-wrap align-items-center gap-3">
+          <button 
+            onClick={() => {
+              const realProduct = allProducts.find(p => p.name.includes("Airdopes")) || allProducts[0];
+              if (realProduct) {
+                handleAddToCartClick({ 
+                  ...realProduct, 
+                  price: 1199, // Promo price
+                });
+              } else {
+                toast.error("Deal product not loaded yet");
+              }
+            }}
+            className="btn btn-glow py-3 px-4 fw-bold d-flex align-items-center gap-2"
+            style={{ borderRadius: '12px', height: '55px' }}
+          >
+            Claim Deal <ArrowRight size={18} />
+          </button>
+
+          <Link 
+            to="/daily-deals"
+            className="btn py-3 px-4 fw-bold d-flex align-items-center gap-2"
+            style={{ 
+              borderRadius: '12px', 
+              height: '55px',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              color: 'var(--bb-title-color)',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => { e.target.style.background = 'rgba(255, 255, 255, 0.08)'; e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)' }}
+            onMouseLeave={(e) => { e.target.style.background = 'rgba(255, 255, 255, 0.04)'; e.target.style.borderColor = 'rgba(255, 255, 255, 0.08)' }}
+          >
+            View All Deals <Sparkles size={16} className="text-danger" />
+          </Link>
+        </div>
       </div>
     </div>
   )

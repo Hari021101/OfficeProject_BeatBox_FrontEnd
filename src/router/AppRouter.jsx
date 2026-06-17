@@ -25,6 +25,7 @@ const Support = React.lazy(() => import('../pages/Support'))
 const SoundMatch = React.lazy(() => import('../pages/SoundMatch'))
 const BeatBoxStudio = React.lazy(() => import('../pages/BeatBoxStudio'))
 const Compare = React.lazy(() => import('../pages/Compare'))
+const DailyDeals = React.lazy(() => import('../pages/DailyDeals'))
 
 // Lazy Load Admin Pages
 const AdminDashboard = React.lazy(() => import('../pages/admin/Dashboard'))
@@ -91,6 +92,8 @@ export default function AppRouter() {
           <Route path="/soundmatch" element={<Layout><SoundMatch /></Layout>} />
           <Route path="/studio" element={<Layout><BeatBoxStudio /></Layout>} />
           <Route path="/compare" element={<Layout><Compare /></Layout>} />
+          <Route path="/daily-deals" element={<Layout><DailyDeals /></Layout>} />
+          <Route path="/deals" element={<Layout><DailyDeals /></Layout>} />
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>

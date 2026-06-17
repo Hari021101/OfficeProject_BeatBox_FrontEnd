@@ -627,7 +627,7 @@ export default function Header() {
               </li>
 
               <li className="nav-item">
-                <Link to="/products?sale=true" className="nav-link premium-nav-link py-2 text-danger fw-bold d-flex align-items-center gap-1" onClick={() => setIsOpen(false)}>
+                <Link to="/daily-deals" className="nav-link premium-nav-link py-2 text-danger fw-bold d-flex align-items-center gap-1" onClick={() => setIsOpen(false)}>
                   <Sparkles size={14} /> Daily Deals
                 </Link>
               </li>
