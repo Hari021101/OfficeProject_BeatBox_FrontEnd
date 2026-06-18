@@ -30,6 +30,23 @@ const escapeCSharp = (str) => {
   return (str || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
 };
 
+const getCategoryGuid = (catName) => {
+  const name = catName.toLowerCase().trim();
+  if (name === 'tws earbuds' || name === 'wireless earbuds') {
+    return '11111111-1111-1111-1111-111111111111';
+  }
+  if (name === 'wireless headphones' || name === 'over-ear headphones') {
+    return '22222222-2222-2222-2222-222222222222';
+  }
+  if (name === 'bluetooth speakers' || name === 'speakers') {
+    return '33333333-3333-3333-3333-333333333333';
+  }
+  if (name === 'gaming headsets' || name === 'gaming') {
+    return '44444444-4444-4444-4444-444444444444';
+  }
+  return null;
+};
+
 const mapCategoryName = (cat) => {
   if (!cat) return 'Uncategorized';
   const c = cat.toLowerCase().trim();
@@ -72,10 +89,12 @@ namespace Infrastructure.Data
 // Seed Categories
 for (const catName of uniqueCategoriesSet) {
     const key = catName.toLowerCase();
+    const fixedGuid = getCategoryGuid(catName);
+    const idValue = fixedGuid ? `Guid.Parse("${fixedGuid}")` : 'Guid.NewGuid()';
     csCode += `
             if (!existingCategories.ContainsKey("${key}"))
             {
-                var newCat = new Category { Id = Guid.NewGuid(), Name = "${catName}", Description = "${catName} Category" };
+                var newCat = new Category { Id = ${idValue}, Name = "${catName}", Description = "${catName} Category" };
                 context.Categories.Add(newCat);
                 existingCategories["${key}"] = newCat;
                 categoriesAdded = true;
@@ -112,13 +131,17 @@ for (const p of PRODUCTS) {
     
     // Product Images
     const imageList = [];
+    const mainImg = p.imageUrl || p.imageKey || 'hero_headphones';
+    const finalMainImg = mainImg.startsWith('http') ? mainImg : `${mainImg}.png`;
+    
     if (p.colors && p.colors.length > 0) {
         p.colors.forEach((col, idx) => {
-            const colorImg = col.image || col.imageUrl || p.imageKey || 'hero_headphones';
-            imageList.push(`new ProductImage { ImageUrl = "${escapeCSharp(colorImg)}.png", ColorName = "${escapeCSharp(col.name)}", ColorCode = "${escapeCSharp(col.code)}", IsPrimary = ${idx === 0 ? 'true' : 'false'} }`);
+            const colorImg = col.imageUrl || col.image || p.imageUrl || p.imageKey || 'hero_headphones';
+            const finalColorImg = colorImg.startsWith('http') ? colorImg : `${colorImg}.png`;
+            imageList.push(`new ProductImage { ImageUrl = "${escapeCSharp(finalColorImg)}", ColorName = "${escapeCSharp(col.name)}", ColorCode = "${escapeCSharp(col.code)}", IsPrimary = ${idx === 0 ? 'true' : 'false'} }`);
         });
     } else {
-        imageList.push(`new ProductImage { ImageUrl = "${escapeCSharp(p.imageKey || 'hero_headphones')}.png", ColorName = "${escapeCSharp(color)}", ColorCode = "#111111", IsPrimary = true }`);
+        imageList.push(`new ProductImage { ImageUrl = "${escapeCSharp(finalMainImg)}", ColorName = "${escapeCSharp(color)}", ColorCode = "#111111", IsPrimary = true }`);
     }
 
     // Product FAQs
@@ -140,7 +163,7 @@ for (const p of PRODUCTS) {
                     Price = ${price}m,
                     DiscountPrice = ${discountPrice}m,
                     StockQuantity = 100,
-                    ImageUrl = "${escapeCSharp(p.imageKey || 'hero_headphones')}.png",
+                    ImageUrl = "${escapeCSharp(finalMainImg)}",
                     CategoryId = existingCategories["${key}"].Id,
                     Brand = "BeatBox",
                     Rating = ${rating},

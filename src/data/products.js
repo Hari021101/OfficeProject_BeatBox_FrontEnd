@@ -86,6 +86,10 @@ import usbGamingSpeakersImage from '../assets/usb_gaming_speakers.png'
 import partySpeakerImage from '../assets/party_speaker.png'
 import wirelessMicImage from '../assets/wireless_mic.png'
 
+import alloyBikeHolderImage from '../assets/alloy_bike_holder.png'
+import flexiMobileHolderImage from '../assets/flexi_mobile_holder.png'
+import dashCarHolderImage from '../assets/dash_car_holder.png'
+
 export const IMAGE_MAP = {
   heroHeadphones,
   heroEarbuds,
@@ -105,6 +109,9 @@ export const IMAGE_MAP = {
   laptopBag,
   laptopStand,
   mobileHolder,
+  alloyBikeHolder: alloyBikeHolderImage,
+  flexiMobileHolder: flexiMobileHolderImage,
+  dashCarHolder: dashCarHolderImage,
   smartTracker,
   tyreInflator,
   usbHub,
@@ -347,7 +354,7 @@ export const PRODUCTS = [
     ],
   },
   {
-    id: 7, slug: 'trip-athletic-neon', name: 'Trip Athletic Neon',
+    id: 7, imageUrl: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=500&q=80', slug: 'trip-athletic-neon', name: 'Trip Athletic Neon',
     brand: 'BeatBox', category: 'neckbands', price: 999, oldPrice: 2990, discount: 66,
     rating: 4.6, reviewCount: 723, tag: 'Active Wear', usp: '30 Hours Athletic Playback',
     imageKey: 'wirelessNeckband', badge: 'Sporty Pick', inStock: true,
@@ -361,7 +368,7 @@ export const PRODUCTS = [
     ],
   },
   {
-    id: 8, slug: 'collar-flex-pro', name: 'Collar Flex Pro',
+    id: 8, imageUrl: 'https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?auto=format&fit=crop&w=500&q=80', slug: 'collar-flex-pro', name: 'Collar Flex Pro',
     brand: 'BeatBox', category: 'neckbands', price: 799, oldPrice: 1999, discount: 60,
     rating: 4.5, reviewCount: 534, tag: 'Budget King', usp: 'ASAP Charge 10min=10hrs',
     imageKey: 'wirelessNeckband', badge: 'Best Value', inStock: true,
@@ -404,7 +411,7 @@ export const PRODUCTS = [
     ],
   },
   {
-    id: 11, slug: 'rockerz-club-330', name: 'Rockerz Club 330',
+    id: 11, imageUrl: 'https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?auto=format&fit=crop&w=500&q=80', slug: 'rockerz-club-330', name: 'Rockerz Club 330',
     brand: 'BeatBox', category: 'neckbands', price: 699, oldPrice: 1799, discount: 61,
     rating: 4.4, reviewCount: 1104, tag: 'Top Seller', usp: 'IPX5 + 24Hr Battery',
     imageKey: 'wirelessNeckband', badge: 'Fan Favourite', inStock: true,
@@ -504,7 +511,7 @@ export const PRODUCTS = [
     id: 19, slug: 'flexi-mobile-holder', name: 'Flexi Mobile Holder',
     brand: 'BeatBox', category: 'mobile accessories', price: 399, oldPrice: 999, discount: 60,
     rating: 4.4, reviewCount: 500, tag: 'Useful', usp: '360° Rotation',
-    imageKey: 'mobileHolder', badge: 'Desk Essential', inStock: true,
+    imageKey: 'flexiMobileHolder', badge: 'Desk Essential', inStock: true,
     colors: [{ name: 'Silver', code: '#c0c0c0' }],
     specs: { 'Material': 'Aluminum', 'Compatibility': '4" to 7" devices', 'Rotation': '360 Degrees' },
     description: 'Ergonomic aluminum mobile holder for your desk. Perfect for video calls and content consumption.',
@@ -677,7 +684,7 @@ export const PRODUCTS = [
     reviews: [],
   },
   {
-    id: 35, slug: 'true-wireless-tws', name: 'True Wireless TWS',
+    id: 35, imageUrl: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=500&q=80', slug: 'true-wireless-tws', name: 'True Wireless TWS',
     brand: 'BeatBox', category: 'tws', price: 1499, oldPrice: 3999, discount: 62,
     rating: 4.7, reviewCount: 520, tag: 'Essential', usp: '50H Playback',
     imageKey: 'heroEarbuds', badge: 'Best Seller', inStock: true,
@@ -788,10 +795,10 @@ export const PRODUCTS = [
     id: 55, slug: 'car-bluetooth', name: 'Car Bluetooth Receiver', brand: 'BeatBox', category: 'car bluetooth', price: 399, oldPrice: 999, discount: 60, rating: 4.5, reviewCount: 330, tag: 'Audio', usp: 'AUX to Bluetooth', imageKey: 'carBluetoothAdapterImage', badge: 'Upgrade', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Bluetooth': '5.0'}, description: 'Upgrade your old car stereo to wireless with this compact Bluetooth AUX receiver.', highlights: ['Hands-free Calling', '10hr Battery'], reviews: []
   },
   {
-    id: 56, slug: 'car-mobile-holder', name: 'Dash Car Mobile Holder', brand: 'BeatBox', category: 'car mobile holder', price: 499, oldPrice: 1299, discount: 61, rating: 4.6, reviewCount: 450, tag: 'Nav', usp: 'Suction Cup', imageKey: 'mobileHolder', badge: 'Secure', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Mount': 'Dashboard/Windshield'}, description: 'Secure suction cup car mobile holder with a telescopic arm for optimal navigation viewing.', highlights: ['Strong Suction', 'Telescopic Arm'], reviews: []
+    id: 56, slug: 'car-mobile-holder', name: 'Dash Car Mobile Holder', brand: 'BeatBox', category: 'car mobile holder', price: 499, oldPrice: 1299, discount: 61, rating: 4.6, reviewCount: 450, tag: 'Nav', usp: 'Suction Cup', imageKey: 'dashCarHolder', badge: 'Secure', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Mount': 'Dashboard/Windshield'}, description: 'Secure suction cup car mobile holder with a telescopic arm for optimal navigation viewing.', highlights: ['Strong Suction', 'Telescopic Arm'], reviews: []
   },
   {
-    id: 57, slug: 'bike-mobile-holder', name: 'Alloy Bike Mobile Holder', brand: 'BeatBox', category: 'bike mobile holder', price: 599, oldPrice: 1499, discount: 60, rating: 4.8, reviewCount: 280, tag: 'Ride', usp: 'Anti-Shake', imageKey: 'mobileHolder', badge: 'Rugged', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], specs: {'Material': 'Aluminum Alloy'}, description: 'Rugged aluminum bike mobile holder that keeps your phone secure on the bumpiest trails.', highlights: ['Aluminum Build', '360° Rotation'], reviews: []
+    id: 57, slug: 'bike-mobile-holder', name: 'Alloy Bike Mobile Holder', brand: 'BeatBox', category: 'bike mobile holder', price: 599, oldPrice: 1499, discount: 60, rating: 4.8, reviewCount: 280, tag: 'Ride', usp: 'Anti-Shake', imageKey: 'alloyBikeHolder', badge: 'Rugged', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], specs: {'Material': 'Aluminum Alloy'}, description: 'Rugged aluminum bike mobile holder that keeps your phone secure on the bumpiest trails.', highlights: ['Aluminum Build', '360° Rotation'], reviews: []
   },
   {
     id: 58, slug: 'car-wireless-charger', name: 'MagGrip Car Wireless Charger', brand: 'BeatBox', category: 'car wireless charger', price: 1499, oldPrice: 3999, discount: 62, rating: 4.7, reviewCount: 150, tag: 'Tech', usp: '15W Auto-Clamping', imageKey: 'wirelessCharger', badge: 'Futuristic', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Output': '15W Max'}, description: 'Futuristic auto-clamping car wireless charger that detects your phone and securely grips it.', highlights: ['Auto-Clamping', '15W Fast Charge'], reviews: []
@@ -835,12 +842,12 @@ export const PRODUCTS = [
   { id: 77, slug: 'portable-bass', name: 'Portable Bass Booster', brand: 'BeatBox', category: 'portable speakers', price: 1999, oldPrice: 4499, discount: 55, rating: 4.7, reviewCount: 640, tag: 'Bass', usp: '360° Bass', imageKey: 'portableSpeakerHero', badge: 'Boom', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Bass': '360° Radiator', 'Battery': '16 Hours'}, description: 'Portable speaker with a 360° passive bass radiator for room-filling sound.', highlights: ['360° Sound', 'TWS Pairable'], reviews: [] },
   { id: 78, slug: 'portable-mini', name: 'Pocket Mini Speaker', brand: 'BeatBox', category: 'portable speakers', price: 999, oldPrice: 2499, discount: 60, rating: 4.5, reviewCount: 880, tag: 'Mini', usp: 'Pocket Size', imageKey: 'portableSpeakerHero', badge: 'Tiny', inStock: true, colors: [{name: 'Blue', code: '#00f'}], specs: {'Size': 'Pocket', 'Battery': '8 Hours'}, description: 'Ultra-compact pocket speaker that punches well above its size.', highlights: ['Clip & Go', 'USB-C Charging'], reviews: [] },
   { id: 79, slug: 'portable-fabric', name: 'Fabric Portable Speaker', brand: 'BeatBox', category: 'portable speakers', price: 1499, oldPrice: 3499, discount: 57, rating: 4.6, reviewCount: 390, tag: 'Style', usp: 'Premium Fabric', imageKey: 'portableSpeakerHero', badge: 'Chic', inStock: true, colors: [{name: 'Grey', code: '#888'}], specs: {'Cover': 'Premium Fabric', 'Battery': '20 Hours'}, description: 'Stylish fabric-wrapped portable speaker with rich, warm audio.', highlights: ['Premium Fabric', 'Multi-Color'], reviews: [] },
-  { id: 80, slug: 'tws-sport', name: 'TWS Sport Pro', brand: 'BeatBox', category: 'tws', price: 1999, oldPrice: 4999, discount: 60, rating: 4.7, reviewCount: 720, tag: 'Sport', usp: 'IPX5 Sweat Proof', imageKey: 'twsHero', badge: 'Active', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Rating': 'IPX5', 'Playback': '36 Hours'}, description: 'Sport-tuned TWS earbuds with secure ear hooks and sweat resistance.', highlights: ['IPX5 Rated', 'Ear Hook Design'], reviews: [] },
-  { id: 81, slug: 'tws-anc', name: 'TWS ANC Elite', brand: 'BeatBox', category: 'tws', price: 3499, oldPrice: 7999, discount: 56, rating: 4.9, reviewCount: 480, tag: 'ANC', usp: 'Hybrid ANC', imageKey: 'twsEarbudsProImage', badge: 'Quiet', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'ANC': 'Hybrid', 'Playback': '40 Hours'}, description: 'Premium hybrid ANC TWS earbuds for crystal-clear calls and music.', highlights: ['Hybrid ANC', '40Hr Total'], reviews: [] },
-  { id: 82, slug: 'tws-lite', name: 'TWS Lite Everyday', brand: 'BeatBox', category: 'tws', price: 799, oldPrice: 1999, discount: 60, rating: 4.5, reviewCount: 1100, tag: 'Budget', usp: 'Best Value', imageKey: 'twsHero', badge: 'Value', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Playback': '24 Hours', 'Connect': 'BT 5.0'}, description: 'Everyday TWS earbuds offering great sound at an unbeatable price.', highlights: ['24Hr Battery', 'Touch Controls'], reviews: [] },
-  { id: 83, slug: 'tws-gaming', name: 'TWS Gaming Buds', brand: 'BeatBox', category: 'tws', price: 2499, oldPrice: 5999, discount: 58, rating: 4.8, reviewCount: 350, tag: 'Gaming', usp: '50ms Low Latency', imageKey: 'twsHero', badge: 'Pro', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Latency': '50ms', 'Playback': '30 Hours'}, description: 'Low latency gaming TWS earbuds with a dedicated gaming mode.', highlights: ['50ms Latency', 'RGB Case'], reviews: [] },
-  { id: 84, slug: 'neckband-pro', name: 'Neckband Pro ANC', brand: 'BeatBox', category: 'neckbands', price: 1499, oldPrice: 3499, discount: 57, rating: 4.8, reviewCount: 560, tag: 'ANC', usp: 'Active Noise Cancel', imageKey: 'neckbandHero', badge: 'Smart', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'ANC': 'Active', 'Playback': '30 Hours'}, description: 'Neckband with active noise cancellation for undisturbed listening.', highlights: ['ANC Mode', 'Fast Charge'], reviews: [] },
-  { id: 85, slug: 'neckband-sport', name: 'Neckband Sport Flex', brand: 'BeatBox', category: 'neckbands', price: 1299, oldPrice: 2999, discount: 56, rating: 4.7, reviewCount: 430, tag: 'Sport', usp: 'Flexible Band', imageKey: 'neckbandHero', badge: 'Flex', inStock: true, colors: [{name: 'Blue', code: '#00f'}], specs: {'Band': 'Memory Flex', 'Playback': '28 Hours'}, description: 'Flexible memory-band neckband that fits every neck comfortably.', highlights: ['Memory Flex Band', 'IPX4 Rated'], reviews: [] },
+  { id: 80, imageUrl: 'https://images.unsplash.com/photo-1608156639585-b3a032ef9689?auto=format&fit=crop&w=500&q=80', slug: 'tws-sport', name: 'TWS Sport Pro', brand: 'BeatBox', category: 'tws', price: 1999, oldPrice: 4999, discount: 60, rating: 4.7, reviewCount: 720, tag: 'Sport', usp: 'IPX5 Sweat Proof', imageKey: 'twsHero', badge: 'Active', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Rating': 'IPX5', 'Playback': '36 Hours'}, description: 'Sport-tuned TWS earbuds with secure ear hooks and sweat resistance.', highlights: ['IPX5 Rated', 'Ear Hook Design'], reviews: [] },
+  { id: 81, imageUrl: 'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?auto=format&fit=crop&w=500&q=80', slug: 'tws-anc', name: 'TWS ANC Elite', brand: 'BeatBox', category: 'tws', price: 3499, oldPrice: 7999, discount: 56, rating: 4.9, reviewCount: 480, tag: 'ANC', usp: 'Hybrid ANC', imageKey: 'twsEarbudsProImage', badge: 'Quiet', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'ANC': 'Hybrid', 'Playback': '40 Hours'}, description: 'Premium hybrid ANC TWS earbuds for crystal-clear calls and music.', highlights: ['Hybrid ANC', '40Hr Total'], reviews: [] },
+  { id: 82, imageUrl: 'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=500&q=80', slug: 'tws-lite', name: 'TWS Lite Everyday', brand: 'BeatBox', category: 'tws', price: 799, oldPrice: 1999, discount: 60, rating: 4.5, reviewCount: 1100, tag: 'Budget', usp: 'Best Value', imageKey: 'twsHero', badge: 'Value', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Playback': '24 Hours', 'Connect': 'BT 5.0'}, description: 'Everyday TWS earbuds offering great sound at an unbeatable price.', highlights: ['24Hr Battery', 'Touch Controls'], reviews: [] },
+  { id: 83, imageUrl: 'https://images.unsplash.com/photo-1627989580309-bfaf3e58af6f?auto=format&fit=crop&w=500&q=80', slug: 'tws-gaming', name: 'TWS Gaming Buds', brand: 'BeatBox', category: 'tws', price: 2499, oldPrice: 5999, discount: 58, rating: 4.8, reviewCount: 350, tag: 'Gaming', usp: '50ms Low Latency', imageKey: 'twsHero', badge: 'Pro', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Latency': '50ms', 'Playback': '30 Hours'}, description: 'Low latency gaming TWS earbuds with a dedicated gaming mode.', highlights: ['50ms Latency', 'RGB Case'], reviews: [] },
+  { id: 84, imageUrl: 'https://images.unsplash.com/photo-1546213290-e1b76103e188?auto=format&fit=crop&w=500&q=80', slug: 'neckband-pro', name: 'Neckband Pro ANC', brand: 'BeatBox', category: 'neckbands', price: 1499, oldPrice: 3499, discount: 57, rating: 4.8, reviewCount: 560, tag: 'ANC', usp: 'Active Noise Cancel', imageKey: 'neckbandHero', badge: 'Smart', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'ANC': 'Active', 'Playback': '30 Hours'}, description: 'Neckband with active noise cancellation for undisturbed listening.', highlights: ['ANC Mode', 'Fast Charge'], reviews: [] },
+  { id: 85, imageUrl: 'https://images.unsplash.com/photo-1585298723682-7115561c51b7?auto=format&fit=crop&w=500&q=80', slug: 'neckband-sport', name: 'Neckband Sport Flex', brand: 'BeatBox', category: 'neckbands', price: 1299, oldPrice: 2999, discount: 56, rating: 4.7, reviewCount: 430, tag: 'Sport', usp: 'Flexible Band', imageKey: 'neckbandHero', badge: 'Flex', inStock: true, colors: [{name: 'Blue', code: '#00f'}], specs: {'Band': 'Memory Flex', 'Playback': '28 Hours'}, description: 'Flexible memory-band neckband that fits every neck comfortably.', highlights: ['Memory Flex Band', 'IPX4 Rated'], reviews: [] },
   { id: 86, slug: 'wireless-headphones-anc', name: 'ANC Headphones Pro', brand: 'BeatBox', category: 'wireless headphones', price: 4999, oldPrice: 10999, discount: 54, rating: 4.9, reviewCount: 290, tag: 'ANC', usp: '45dB Noise Cancel', imageKey: 'wirelessHeadphonesHero', badge: 'Silent', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'ANC': '45dB', 'Playback': '50 Hours'}, description: 'Industry-leading 45dB ANC headphones with premium leather cushions.', highlights: ['45dB ANC', '50Hr Playback'], reviews: [] },
   { id: 87, slug: 'wireless-headphones-lite', name: 'Wireless Headphones Lite', brand: 'BeatBox', category: 'wireless headphones', price: 1999, oldPrice: 4999, discount: 60, rating: 4.6, reviewCount: 780, tag: 'Value', usp: 'Best Value', imageKey: 'wirelessHeadphonesHero', badge: 'Popular', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'Playback': '40 Hours', 'Driver': '40mm'}, description: 'Lightweight wireless headphones with great sound for everyday use.', highlights: ['Foldable Design', '40Hr Playback'], reviews: [] },
   { id: 88, slug: 'wireless-headphones-studio', name: 'Studio Headphones X', brand: 'BeatBox', category: 'wireless headphones', price: 6999, oldPrice: 14999, discount: 53, rating: 4.9, reviewCount: 150, tag: 'Studio', usp: 'Studio Grade', imageKey: 'wirelessHeadphonesHero', badge: 'Creator', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], specs: {'Driver': '50mm', 'Freq': '5Hz-40kHz'}, description: 'Studio-grade wireless headphones for professional music production.', highlights: ['Studio Grade', 'Flat EQ'], reviews: [] },
@@ -865,8 +872,8 @@ export const PRODUCTS = [
   { id: 107, slug: 'pendrive-128gb', name: 'BeatBox Flash Pendrive', brand: 'BeatBox', category: 'pendrives', price: 999, oldPrice: 1999, discount: 50, rating: 4.6, reviewCount: 520, tag: 'Storage', usp: 'USB 3.2', imageKey: 'pendriveFlashImage', badge: 'Compact', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], capacities: ['16GB', '32GB', '64GB', '128GB', '256GB', '512GB', '1TB'], specs: {'Interface': 'USB 3.2'}, description: 'Compact and durable metal body pendrive.', highlights: ['Metal Body', 'Waterproof'], reviews: [] },
   { id: 108, slug: 'memory-card-256gb', name: 'BeatBox Ultra MicroSD', brand: 'BeatBox', category: 'memory cards', price: 1499, oldPrice: 2999, discount: 50, rating: 4.8, reviewCount: 410, tag: 'Storage', usp: 'Class 10 U3', imageKey: 'microsdCardImage', badge: 'Fast', inStock: true, colors: [{name: 'Black', code: '#000'}], capacities: ['16GB', '32GB', '64GB', '128GB', '256GB', '512GB', '1TB'], specs: {'Type': 'MicroSDXC'}, description: 'High-speed MicroSD card perfect for 4K video recording and smartphones.', highlights: ['130MB/s Read', 'Adapter Included'], reviews: [] },
   { id: 109, slug: 'calc-scientific', name: 'Scientific Calculator X1', brand: 'BeatBox', category: 'calculators', price: 799, oldPrice: 1499, discount: 46, rating: 4.7, reviewCount: 140, tag: 'Office', usp: '417 Functions', imageKey: 'scientificCalculatorImage', badge: 'Student', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Functions': '417', 'Display': '2-Line'}, description: 'Advanced scientific calculator perfect for engineering and science students.', highlights: ['Solar Powered', 'Matrix Calculations'], reviews: [] },
-  { id: 110, slug: 'smartwatch-active', name: 'BeatBox Watch Active', brand: 'BeatBox', category: 'smart watches', price: 2999, oldPrice: 6999, discount: 57, rating: 4.8, reviewCount: 890, tag: 'Wearable', usp: 'Amoled Display', imageKey: 'smartwatchProImage', badge: 'Hot', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Display': '1.4" Amoled', 'Battery': '7 Days'}, description: 'Feature-packed smartwatch with heart rate monitoring and fitness tracking.', highlights: ['SpO2 Monitor', 'IP68 Waterproof'], reviews: [] },
-  { id: 111, slug: 'smartwatch-pro', name: 'BeatBox Watch Pro', brand: 'BeatBox', category: 'smart watches', price: 4999, oldPrice: 9999, discount: 50, rating: 4.9, reviewCount: 450, tag: 'Wearable', usp: 'Bluetooth Calling', imageKey: 'smartwatchProImage', badge: 'Premium', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], specs: {'Display': '1.78" Amoled', 'Battery': '10 Days'}, description: 'Premium smartwatch with built-in speaker for Bluetooth calling.', highlights: ['Bluetooth Calling', 'Metal Body'], reviews: [] },
+  { id: 110, imageUrl: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=500&q=80', slug: 'smartwatch-active', name: 'BeatBox Watch Active', brand: 'BeatBox', category: 'smart watches', price: 2999, oldPrice: 6999, discount: 57, rating: 4.8, reviewCount: 890, tag: 'Wearable', usp: 'Amoled Display', imageKey: 'smartwatchProImage', badge: 'Hot', inStock: true, colors: [{name: 'Black', code: '#000'}], specs: {'Display': '1.4" Amoled', 'Battery': '7 Days'}, description: 'Feature-packed smartwatch with heart rate monitoring and fitness tracking.', highlights: ['SpO2 Monitor', 'IP68 Waterproof'], reviews: [] },
+  { id: 111, imageUrl: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=500&q=80', slug: 'smartwatch-pro', name: 'BeatBox Watch Pro', brand: 'BeatBox', category: 'smart watches', price: 4999, oldPrice: 9999, discount: 50, rating: 4.9, reviewCount: 450, tag: 'Wearable', usp: 'Bluetooth Calling', imageKey: 'smartwatchProImage', badge: 'Premium', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], specs: {'Display': '1.78" Amoled', 'Battery': '10 Days'}, description: 'Premium smartwatch with built-in speaker for Bluetooth calling.', highlights: ['Bluetooth Calling', 'Metal Body'], reviews: [] },
   { id: 112, slug: 'cctv-outdoor', name: 'Smart Outdoor Camera', brand: 'BeatBox', category: 'camera', price: 3499, oldPrice: 7999, discount: 56, rating: 4.7, reviewCount: 320, tag: 'Security', usp: '1080p PTZ', imageKey: 'cctvCameraImage', badge: 'Secure', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'Resolution': '1080p', 'Night Vision': 'Color'}, description: 'Outdoor PTZ camera with color night vision and motion tracking.', highlights: ['360° Pan', '2-Way Audio'], reviews: [] },
   { id: 113, slug: 'cctv-indoor', name: 'Mini Indoor WiFi Cam', brand: 'BeatBox', category: 'camera', price: 1999, oldPrice: 3999, discount: 50, rating: 4.6, reviewCount: 280, tag: 'Security', usp: 'Compact Size', imageKey: 'cctvCameraImage', badge: 'Baby Monitor', inStock: true, colors: [{name: 'White', code: '#fff'}], specs: {'Resolution': '1080p', 'Storage': 'MicroSD'}, description: 'Discreet indoor WiFi camera perfect for baby monitoring or pet watching.', highlights: ['Motion Alerts', 'Cloud Storage'], reviews: [] },
   { id: 114, slug: 'latest-drops-audio', name: 'BeatBox Latest Drops Edition', brand: 'BeatBox', category: 'latest drops', price: 12999, oldPrice: 24999, discount: 48, rating: 5.0, reviewCount: 15, tag: 'Exclusive', usp: 'Limited Run', imageKey: 'beatboxSmartCapsuleImage', badge: 'New', inStock: true, colors: [{name: 'Neon', code: '#00f3ff'}], specs: {'Type': 'Exclusive', 'Status': 'Just Dropped'}, description: 'Be the first to experience our latest drops. This exclusive edition is strictly limited in quantity.', highlights: ['Latest Drops', 'Collector Edition'], reviews: [] },
@@ -874,8 +881,7 @@ export const PRODUCTS = [
   { id: 116, slug: 'upcoming-releases-preview', name: 'BeatBox Upcoming Releases VIP', brand: 'BeatBox', category: 'upcoming releases', price: 499, oldPrice: 999, discount: 50, rating: 4.8, reviewCount: 20, tag: 'Pre-Order', usp: 'Early Access', imageKey: 'stoneGrenadeProImage', badge: 'Upcoming', inStock: true, colors: [{name: 'Silver', code: '#c0c0c0'}], specs: {'Type': 'Preview Pass', 'Release': 'Next Month'}, description: 'A VIP pass giving you early access to upcoming releases and exclusive discounts.', highlights: ['Upcoming Releases', 'VIP Access'], reviews: [] },
   { id: 117, slug: 'limited-editions-gold', name: 'BeatBox Limited Editions Gold', brand: 'BeatBox', category: 'limited editions', price: 29999, oldPrice: 49999, discount: 40, rating: 5.0, reviewCount: 5, tag: 'Luxury', usp: '24K Gold Plated', imageKey: 'soundbarEliteS9Image', badge: 'Limited', inStock: true, colors: [{name: 'Gold', code: '#ffd700'}], specs: {'Finish': '24K Gold', 'Units': '100 Worldwide'}, description: 'Part of our exclusive limited editions line. Only 100 units made globally.', highlights: ['Limited Editions', 'Certificate Included'], reviews: [] },
   {
-    id: 118,
-    slug: 'beatbox-chrome-ivory',
+    id: 118, imageUrl: 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-chrome-ivory',
     name: 'BeatBox Chrome Ivory',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -915,8 +921,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 119,
-    slug: 'beatbox-enigma-gem',
+    id: 119, imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-enigma-gem',
     name: 'BeatBox Enigma Gem',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -956,8 +961,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 120,
-    slug: 'beatbox-chrome-iris',
+    id: 120, imageUrl: 'https://images.unsplash.com/photo-1526045431048-f857369baa09?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-chrome-iris',
     name: 'BeatBox Chrome Iris',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -997,8 +1001,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 121,
-    slug: 'beatbox-enigma-daze',
+    id: 121, imageUrl: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-enigma-daze',
     name: 'BeatBox Enigma Daze',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1038,8 +1041,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 122,
-    slug: 'beatbox-lunar-vista',
+    id: 122, imageUrl: 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-lunar-vista',
     name: 'BeatBox Lunar Vista',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1079,8 +1081,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 123,
-    slug: 'beatbox-lunar-discovery',
+    id: 123, imageUrl: 'https://images.unsplash.com/photo-1594534475808-b18fc33b045e?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-lunar-discovery',
     name: 'BeatBox Lunar Discovery',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1120,8 +1121,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 124,
-    slug: 'beatbox-wave-sigma-3',
+    id: 124, imageUrl: 'https://images.unsplash.com/photo-1617048931411-14e3de2691b3?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-wave-sigma-3',
     name: 'BeatBox Wave Sigma 3',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1161,8 +1161,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 125,
-    slug: 'beatbox-lunar-discovery-neo',
+    id: 125, imageUrl: 'https://images.unsplash.com/photo-1617625802912-c7413579161a?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-lunar-discovery-neo',
     name: 'BeatBox Lunar Discovery Neo',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1202,8 +1201,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 126,
-    slug: 'beatbox-wave-fury',
+    id: 126, imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-wave-fury',
     name: 'BeatBox Wave Fury',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1243,8 +1241,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 127,
-    slug: 'beatbox-wave-call-2-plus',
+    id: 127, imageUrl: 'https://images.unsplash.com/photo-1628157582853-a796fa650a6a?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-wave-call-2-plus',
     name: 'BeatBox Wave Call 2 Plus',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1284,8 +1281,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 128,
-    slug: 'beatbox-wave-call',
+    id: 128, imageUrl: 'https://images.unsplash.com/photo-1631214500115-598fa2c47996?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-wave-call',
     name: 'BeatBox Wave Call',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1325,8 +1321,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 129,
-    slug: 'beatbox-lunar-atlas',
+    id: 129, imageUrl: 'https://images.unsplash.com/photo-1639006570490-79c0c53f1080?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-lunar-atlas',
     name: 'BeatBox Lunar Atlas',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1366,8 +1361,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 130,
-    slug: 'beatbox-storm-infinity-plus',
+    id: 130, imageUrl: 'https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-storm-infinity-plus',
     name: 'BeatBox Storm Infinity Plus',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1407,8 +1401,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 131,
-    slug: 'beatbox-storm-call',
+    id: 131, imageUrl: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-storm-call',
     name: 'BeatBox Storm Call',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1448,8 +1441,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 132,
-    slug: 'beatbox-storm-call-4',
+    id: 132, imageUrl: 'https://images.unsplash.com/photo-1508962914676-134849a727f0?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-storm-call-4',
     name: 'BeatBox Storm Call 4',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1489,8 +1481,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 133,
-    slug: 'beatbox-enigma-orion',
+    id: 133, imageUrl: 'https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-enigma-orion',
     name: 'BeatBox Enigma Orion',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1530,8 +1521,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 134,
-    slug: 'beatbox-storm-call-3',
+    id: 134, imageUrl: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-storm-call-3',
     name: 'BeatBox Storm Call 3',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1571,8 +1561,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 135,
-    slug: 'beatbox-wave-call-3',
+    id: 135, imageUrl: 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-wave-call-3',
     name: 'BeatBox Wave Call 3',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1612,8 +1601,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 136,
-    slug: 'beatbox-storm-infinity',
+    id: 136, imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-storm-infinity',
     name: 'BeatBox Storm Infinity',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1653,8 +1641,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 137,
-    slug: 'beatbox-ultima-ember',
+    id: 137, imageUrl: 'https://images.unsplash.com/photo-1526045431048-f857369baa09?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-ultima-ember',
     name: 'BeatBox Ultima Ember',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1694,8 +1681,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 138,
-    slug: 'beatbox-storm-call-3-plus',
+    id: 138, imageUrl: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-storm-call-3-plus',
     name: 'BeatBox Storm Call 3 Plus',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1735,8 +1721,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 139,
-    slug: 'beatbox-chrome-horizon',
+    id: 139, imageUrl: 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-chrome-horizon',
     name: 'BeatBox Chrome Horizon',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1776,8 +1761,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 140,
-    slug: 'beatbox-storm-infinity-max',
+    id: 140, imageUrl: 'https://images.unsplash.com/photo-1594534475808-b18fc33b045e?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-storm-infinity-max',
     name: 'BeatBox Storm Infinity Max',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1817,8 +1801,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 141,
-    slug: 'beatbox-wave-sigma-3-curv',
+    id: 141, imageUrl: 'https://images.unsplash.com/photo-1617048931411-14e3de2691b3?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-wave-sigma-3-curv',
     name: 'BeatBox Wave Sigma 3 Curv',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1858,8 +1841,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 142,
-    slug: 'beatbox-lunar-orbit',
+    id: 142, imageUrl: 'https://images.unsplash.com/photo-1617625802912-c7413579161a?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-lunar-orbit',
     name: 'BeatBox Lunar Orbit',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1899,8 +1881,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 143,
-    slug: 'beatbox-ultima-prime',
+    id: 143, imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-ultima-prime',
     name: 'BeatBox Ultima Prime',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1940,8 +1921,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 144,
-    slug: 'beatbox-ultima-aeris',
+    id: 144, imageUrl: 'https://images.unsplash.com/photo-1628157582853-a796fa650a6a?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-ultima-aeris',
     name: 'BeatBox Ultima Aeris',
     brand: 'BeatBox',
     category: 'smart-watch',
@@ -1968,539 +1948,6 @@ export const PRODUCTS = [
       'Waterproof': 'IP68'
     },
     description: 'Elevate your lifestyle with the BeatBox Ultima Aeris. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 145,
-    slug: 'beatbox-wave-astra-4',
-    name: 'BeatBox Wave Astra 4',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 1751,
-    oldPrice: 6632,
-    discount: 73,
-    rating: parseFloat(4.6),
-    reviewCount: 50,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Wave Astra 4. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 146,
-    slug: 'beatbox-wanderer-smart',
-    name: 'BeatBox Wanderer Smart',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 1655,
-    oldPrice: 5040,
-    discount: 67,
-    rating: parseFloat(4.0),
-    reviewCount: 366,
-    tag: 'Best Seller',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Wanderer Smart. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 147,
-    slug: 'beatbox-valour-watch-1r',
-    name: 'BeatBox Valour Watch 1R',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 2438,
-    oldPrice: 5266,
-    discount: 53,
-    rating: parseFloat(4.2),
-    reviewCount: 336,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Valour Watch 1R. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 148,
-    slug: 'beatbox-ultima-regal',
-    name: 'BeatBox Ultima Regal',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 3163,
-    oldPrice: 9357,
-    discount: 66,
-    rating: parseFloat(4.8),
-    reviewCount: 477,
-    tag: 'New Launch',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Ultima Regal. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 149,
-    slug: 'beatbox-enigma-radiant',
-    name: 'BeatBox Enigma Radiant',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 3796,
-    oldPrice: 8191,
-    discount: 53,
-    rating: parseFloat(4.1),
-    reviewCount: 154,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Enigma Radiant. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 150,
-    slug: 'beatbox-storm-verge',
-    name: 'BeatBox Storm Verge',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 1925,
-    oldPrice: 8090,
-    discount: 76,
-    rating: parseFloat(4.6),
-    reviewCount: 28,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Storm Verge. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 151,
-    slug: 'beatbox-enigma-ascend',
-    name: 'BeatBox Enigma Ascend',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 5104,
-    oldPrice: 7870,
-    discount: 35,
-    rating: parseFloat(4.5),
-    reviewCount: 58,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Enigma Ascend. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 152,
-    slug: 'beatbox-chrome-eon',
-    name: 'BeatBox Chrome Eon',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 5079,
-    oldPrice: 9141,
-    discount: 44,
-    rating: parseFloat(4.1),
-    reviewCount: 217,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Chrome Eon. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 153,
-    slug: 'beatbox-lunar-discovery-pro',
-    name: 'BeatBox Lunar Discovery Pro',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 4116,
-    oldPrice: 10269,
-    discount: 59,
-    rating: parseFloat(4.7),
-    reviewCount: 459,
-    tag: 'New Launch',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Lunar Discovery Pro. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 154,
-    slug: 'beatbox-ultima-rise',
-    name: 'BeatBox Ultima Rise',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 2871,
-    oldPrice: 6715,
-    discount: 57,
-    rating: parseFloat(4.2),
-    reviewCount: 284,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Ultima Rise. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 155,
-    slug: 'beatbox-chrome-endeavour',
-    name: 'BeatBox Chrome Endeavour',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 4252,
-    oldPrice: 8041,
-    discount: 47,
-    rating: parseFloat(4.9),
-    reviewCount: 372,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Chrome Endeavour. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 156,
-    slug: 'beatbox-lunar-orbit-2',
-    name: 'BeatBox Lunar Orbit 2',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 2740,
-    oldPrice: 9578,
-    discount: 71,
-    rating: parseFloat(4.1),
-    reviewCount: 284,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Lunar Orbit 2. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 157,
-    slug: 'beatbox-lunar-oasis',
-    name: 'BeatBox Lunar Oasis',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 4713,
-    oldPrice: 11616,
-    discount: 59,
-    rating: parseFloat(4.1),
-    reviewCount: 268,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Lunar Oasis. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
     highlights: [
       'Crisp HD Display for clear visuals',
       'Seamless Bluetooth Calling',
@@ -2555,787 +2002,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    id: 159,
-    slug: 'beatbox-wave-fortune',
-    name: 'BeatBox Wave Fortune',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 1573,
-    oldPrice: 4230,
-    discount: 62,
-    rating: parseFloat(4.7),
-    reviewCount: 25,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Wave Fortune. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 160,
-    slug: 'beatbox-valour-watch-1-gps',
-    name: 'BeatBox Valour Watch 1 GPS',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 2987,
-    oldPrice: 9441,
-    discount: 68,
-    rating: parseFloat(4.9),
-    reviewCount: 409,
-    tag: 'Best Seller',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Valour Watch 1 GPS. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 161,
-    slug: 'beatbox-lunar-connect-ace',
-    name: 'BeatBox Lunar Connect Ace',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 2790,
-    oldPrice: 9737,
-    discount: 71,
-    rating: parseFloat(4.1),
-    reviewCount: 221,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Lunar Connect Ace. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 162,
-    slug: 'beatbox-ultima-summit',
-    name: 'BeatBox Ultima Summit',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 4126,
-    oldPrice: 9946,
-    discount: 58,
-    rating: parseFloat(4.5),
-    reviewCount: 394,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Ultima Summit. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 163,
-    slug: 'beatbox-wave-astra-neo',
-    name: 'BeatBox Wave Astra Neo',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 4182,
-    oldPrice: 9084,
-    discount: 53,
-    rating: parseFloat(4.6),
-    reviewCount: 258,
-    tag: 'New Launch',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Wave Astra Neo. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 164,
-    slug: 'beatbox-wave-aura',
-    name: 'BeatBox Wave Aura',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 1548,
-    oldPrice: 7601,
-    discount: 79,
-    rating: parseFloat(4.9),
-    reviewCount: 313,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Wave Aura. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 165,
-    slug: 'beatbox-wave-astra-3',
-    name: 'BeatBox Wave Astra 3',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 3355,
-    oldPrice: 7336,
-    discount: 54,
-    rating: parseFloat(4.5),
-    reviewCount: 16,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Wave Astra 3. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 166,
-    slug: 'beatbox-wave-spin-voice',
-    name: 'BeatBox Wave Spin Voice',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 3644,
-    oldPrice: 5668,
-    discount: 35,
-    rating: parseFloat(4.9),
-    reviewCount: 362,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Wave Spin Voice. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 167,
-    slug: 'beatbox-lunar-embrace',
-    name: 'BeatBox Lunar Embrace',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 5263,
-    oldPrice: 10772,
-    discount: 51,
-    rating: parseFloat(4.8),
-    reviewCount: 454,
-    tag: 'Best Seller',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Lunar Embrace. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 168,
-    slug: 'beatbox-wave-spectra',
-    name: 'BeatBox Wave Spectra',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 1595,
-    oldPrice: 3607,
-    discount: 55,
-    rating: parseFloat(4.4),
-    reviewCount: 415,
-    tag: 'New Launch',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Wave Spectra. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 169,
-    slug: 'beatbox-ultima-select',
-    name: 'BeatBox Ultima Select',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 4814,
-    oldPrice: 10319,
-    discount: 53,
-    rating: parseFloat(4.2),
-    reviewCount: 174,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Ultima Select. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 170,
-    slug: 'beatbox-wave-magma',
-    name: 'BeatBox Wave Magma',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 1960,
-    oldPrice: 4068,
-    discount: 51,
-    rating: parseFloat(4.7),
-    reviewCount: 68,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Wave Magma. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 171,
-    slug: 'beatbox-enigma-switch',
-    name: 'BeatBox Enigma Switch',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 3737,
-    oldPrice: 7957,
-    discount: 53,
-    rating: parseFloat(4.1),
-    reviewCount: 466,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Enigma Switch. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 172,
-    slug: 'beatbox-enigma-z20',
-    name: 'BeatBox Enigma Z20',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 2643,
-    oldPrice: 6732,
-    discount: 60,
-    rating: parseFloat(4.8),
-    reviewCount: 363,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Enigma Z20. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 173,
-    slug: 'beatbox-enigma-z40',
-    name: 'BeatBox Enigma Z40',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 3809,
-    oldPrice: 9203,
-    discount: 58,
-    rating: parseFloat(4.1),
-    reviewCount: 235,
-    tag: 'New Launch',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Enigma Z40. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 174,
-    slug: 'beatbox-enigma-x400',
-    name: 'BeatBox Enigma X400',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 3832,
-    oldPrice: 10669,
-    discount: 64,
-    rating: parseFloat(4.7),
-    reviewCount: 167,
-    tag: 'Best Seller',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Enigma X400. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 175,
-    slug: 'beatbox-enigma-x700',
-    name: 'BeatBox Enigma X700',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 2120,
-    oldPrice: 6863,
-    discount: 69,
-    rating: parseFloat(4.5),
-    reviewCount: 85,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Enigma X700. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 176,
-    slug: 'beatbox-lunar-link',
-    name: 'BeatBox Lunar Link',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 2658,
-    oldPrice: 5028,
-    discount: 47,
-    rating: parseFloat(4.4),
-    reviewCount: 491,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Lunar Link. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 177,
-    slug: 'beatbox-lunar-pro-lte',
-    name: 'BeatBox Lunar Pro LTE',
-    brand: 'BeatBox',
-    category: 'smart-watch',
-    price: 4796,
-    oldPrice: 7697,
-    discount: 37,
-    rating: parseFloat(4.5),
-    reviewCount: 347,
-    tag: '',
-    usp: 'Bluetooth Calling & Health Tracking',
-    imageKey: 'smartTracker',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Cherry Blossom', code: '#ffb7c5' }
-    ],
-    specs: {
-      'Display': '1.83" HD Display',
-      'Battery': 'Up to 7 Days',
-      'Calling': 'Advanced BT Calling',
-      'Health': 'HR & SpO2',
-      'Sports': '100+ Sports Modes',
-      'Waterproof': 'IP68'
-    },
-    description: 'Elevate your lifestyle with the BeatBox Lunar Pro LTE. Features include a bright HD display, advanced bluetooth calling, comprehensive health monitoring, and a premium design built to keep you connected.',
-    highlights: [
-      'Crisp HD Display for clear visuals',
-      'Seamless Bluetooth Calling',
-      'Comprehensive Health & Sleep Tracking',
-      '100+ Active Sports Modes',
-      'IP68 Dust and Water Resistance'
-    ],
-    reviews: [
-      { user: 'Karan V.', rating: 5, comment: 'Amazing watch for the price! The calling feature is very clear.' },
-      { user: 'Neha R.', rating: 4, comment: 'Good display and battery life. Highly recommended.' }
-    ]
-  },
-  {
-    id: 178,
-    slug: 'beatbox-rockerz-255-pro',
+    id: 178, imageUrl: 'https://images.unsplash.com/photo-1623998021450-85c24c626a5a?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-255-pro',
     name: 'BeatBox Rockerz 255 Pro+',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3406,8 +2073,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 180,
-    slug: 'beatbox-rockerz-110',
+    id: 180, imageUrl: 'https://images.unsplash.com/photo-1558089687-f282ffcbd1d5?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-110',
     name: 'BeatBox Rockerz 110',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3442,8 +2108,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 181,
-    slug: 'beatbox-rockerz-200',
+    id: 181, imageUrl: 'https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-200',
     name: 'BeatBox Rockerz 200',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3478,8 +2143,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 182,
-    slug: 'beatbox-rockerz-235-pro',
+    id: 182, imageUrl: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-235-pro',
     name: 'BeatBox Rockerz 235 Pro',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3514,8 +2178,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 183,
-    slug: 'beatbox-rockerz-333',
+    id: 183, imageUrl: 'https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-333',
     name: 'BeatBox Rockerz 333',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3550,8 +2213,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 184,
-    slug: 'beatbox-rockerz-113',
+    id: 184, imageUrl: 'https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-113',
     name: 'BeatBox Rockerz 113',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3586,8 +2248,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 185,
-    slug: 'beatbox-rockerz-195-v2-pro',
+    id: 185, imageUrl: 'https://images.unsplash.com/photo-1546213290-e1b76103e188?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-195-v2-pro',
     name: 'BeatBox Rockerz 195 V2 Pro',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3622,8 +2283,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 186,
-    slug: 'beatbox-rockerz-301-anc',
+    id: 186, imageUrl: 'https://images.unsplash.com/photo-1585298723682-7115561c51b7?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-301-anc',
     name: 'BeatBox Rockerz 301 ANC',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3658,8 +2318,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 187,
-    slug: 'beatbox-rockerz-103-v2-pro',
+    id: 187, imageUrl: 'https://images.unsplash.com/photo-1623998021450-85c24c626a5a?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-103-v2-pro',
     name: 'BeatBox Rockerz 103 V2 Pro',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3694,8 +2353,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 188,
-    slug: 'beatbox-rockerz-261-pro',
+    id: 188, imageUrl: 'https://images.unsplash.com/photo-1558089687-f282ffcbd1d5?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-261-pro',
     name: 'BeatBox Rockerz 261 Pro',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3730,8 +2388,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 189,
-    slug: 'beatbox-rockerz-245-v2-pro',
+    id: 189, imageUrl: 'https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-245-v2-pro',
     name: 'BeatBox Rockerz 245 V2 Pro',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3766,8 +2423,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 190,
-    slug: 'beatbox-rockerz-103-pro',
+    id: 190, imageUrl: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-103-pro',
     name: 'BeatBox Rockerz 103 Pro',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3802,8 +2458,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 191,
-    slug: 'beatbox-rockerz-238-pro',
+    id: 191, imageUrl: 'https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-238-pro',
     name: 'BeatBox Rockerz 238 Pro',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3874,8 +2529,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 193,
-    slug: 'beatbox-rockerz-202',
+    id: 193, imageUrl: 'https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-202',
     name: 'BeatBox Rockerz 202',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3910,8 +2564,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 194,
-    slug: 'beatbox-rockerz-strive',
+    id: 194, imageUrl: 'https://images.unsplash.com/photo-1546213290-e1b76103e188?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-strive',
     name: 'BeatBox Rockerz Strive',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3946,8 +2599,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 195,
-    slug: 'rockerz-255-arc',
+    id: 195, imageUrl: 'https://images.unsplash.com/photo-1585298723682-7115561c51b7?auto=format&fit=crop&w=500&q=80', slug: 'rockerz-255-arc',
     name: 'Rockerz 255 ARC',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -3982,8 +2634,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 196,
-    slug: 'beatbox-rockerz-210-anc',
+    id: 196, imageUrl: 'https://images.unsplash.com/photo-1623998021450-85c24c626a5a?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-210-anc',
     name: 'BeatBox Rockerz 210 ANC',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -4018,8 +2669,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 197,
-    slug: 'beatbox-rockerz-330',
+    id: 197, imageUrl: 'https://images.unsplash.com/photo-1558089687-f282ffcbd1d5?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-330',
     name: 'BeatBox Rockerz 330',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -4054,8 +2704,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 198,
-    slug: 'beatbox-rockerz-112',
+    id: 198, imageUrl: 'https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-112',
     name: 'BeatBox Rockerz 112',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -4126,8 +2775,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 200,
-    slug: 'beatbox-rockerz-trinity-gen-2',
+    id: 200, imageUrl: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-trinity-gen-2',
     name: 'BeatBox Rockerz Trinity Gen 2',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -4162,8 +2810,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 201,
-    slug: 'beatbox-rockerz-378',
+    id: 201, imageUrl: 'https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-378',
     name: 'BeatBox Rockerz 378',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -4198,8 +2845,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 202,
-    slug: 'beatbox-rockerz-zen-anc',
+    id: 202, imageUrl: 'https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-zen-anc',
     name: 'BeatBox Rockerz Zen ANC',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -4234,8 +2880,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 203,
-    slug: 'beatbox-rockerz-245-pro',
+    id: 203, imageUrl: 'https://images.unsplash.com/photo-1546213290-e1b76103e188?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-245-pro',
     name: 'BeatBox Rockerz 245 Pro',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -4270,8 +2915,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 204,
-    slug: 'beatbox-rockerz-trinity-grande',
+    id: 204, imageUrl: 'https://images.unsplash.com/photo-1585298723682-7115561c51b7?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-trinity-grande',
     name: 'BeatBox Rockerz Trinity Grande',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -4342,8 +2986,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 206,
-    slug: 'beatbox-rockerz-203',
+    id: 206, imageUrl: 'https://images.unsplash.com/photo-1623998021450-85c24c626a5a?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-203',
     name: 'BeatBox Rockerz 203',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -4378,8 +3021,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 207,
-    slug: 'beatbox-rockerz-150-pro',
+    id: 207, imageUrl: 'https://images.unsplash.com/photo-1558089687-f282ffcbd1d5?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-150-pro',
     name: 'BeatBox Rockerz 150 Pro',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -4414,8 +3056,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 208,
-    slug: 'beatbox-nirvana-zenith-pro',
+    id: 208, imageUrl: 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-nirvana-zenith-pro',
     name: 'BeatBox Nirvana Zenith Pro',
     brand: 'BeatBox',
     category: 'tws',
@@ -4450,8 +3091,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 209,
-    slug: 'beatbox-airdopes-supreme',
+    id: 209, imageUrl: 'https://images.unsplash.com/photo-1588449668365-d15e397f6787?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-airdopes-supreme',
     name: 'BeatBox Airdopes Supreme',
     brand: 'BeatBox',
     category: 'tws',
@@ -4486,8 +3126,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 210,
-    slug: 'beatbox-airdopes-161',
+    id: 210, imageUrl: 'https://images.unsplash.com/photo-1631857455684-a54a2f03665f?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-airdopes-161',
     name: 'BeatBox Airdopes 161',
     brand: 'BeatBox',
     category: 'tws',
@@ -4522,8 +3161,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 211,
-    slug: 'beatbox-airdopes-311-pro',
+    id: 211, imageUrl: 'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-airdopes-311-pro',
     name: 'BeatBox Airdopes 311 PRO',
     brand: 'BeatBox',
     category: 'tws',
@@ -4558,8 +3196,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 212,
-    slug: 'beatbox-airdopes-loop',
+    id: 212, imageUrl: 'https://images.unsplash.com/photo-1628202878405-e69dfb1a7c55?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-airdopes-loop',
     name: 'BeatBox Airdopes Loop',
     brand: 'BeatBox',
     category: 'tws',
@@ -4594,8 +3231,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 213,
-    slug: 'beatbox-nirvana-ion-anc',
+    id: 213, imageUrl: 'https://images.unsplash.com/photo-1599669454699-248893623440?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-nirvana-ion-anc',
     name: 'BeatBox Nirvana Ion ANC',
     brand: 'BeatBox',
     category: 'tws',
@@ -4630,8 +3266,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 214,
-    slug: 'beatbox-airdopes-181-pro',
+    id: 214, imageUrl: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-airdopes-181-pro',
     name: 'BeatBox Airdopes 181 Pro',
     brand: 'BeatBox',
     category: 'tws',
@@ -4666,8 +3301,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 215,
-    slug: 'beatbox-nirvana-x-tws',
+    id: 215, imageUrl: 'https://images.unsplash.com/photo-1608156639585-b3a032ef9689?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-nirvana-x-tws',
     name: 'BeatBox Nirvana X TWS',
     brand: 'BeatBox',
     category: 'tws',
@@ -4702,8 +3336,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 216,
-    slug: 'beatbox-nirvana-ion',
+    id: 216, imageUrl: 'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-nirvana-ion',
     name: 'BeatBox Nirvana Ion',
     brand: 'BeatBox',
     category: 'tws',
@@ -4738,8 +3371,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 217,
-    slug: 'beatbox-airdopes-280-anc',
+    id: 217, imageUrl: 'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-airdopes-280-anc',
     name: 'BeatBox Airdopes 280 ANC',
     brand: 'BeatBox',
     category: 'tws',
@@ -4774,8 +3406,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 218,
-    slug: 'beatbox-airdopes-131',
+    id: 218, imageUrl: 'https://images.unsplash.com/photo-1627989580309-bfaf3e58af6f?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-airdopes-131',
     name: 'BeatBox Airdopes 131',
     brand: 'BeatBox',
     category: 'tws',
@@ -4810,8 +3441,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 219,
-    slug: 'beatbox-airdopes-alpha',
+    id: 219, imageUrl: 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-airdopes-alpha',
     name: 'BeatBox Airdopes Alpha',
     brand: 'BeatBox',
     category: 'tws',
@@ -4846,8 +3476,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 220,
-    slug: 'beatbox-airdopes-181-pro-ss-edition',
+    id: 220, imageUrl: 'https://images.unsplash.com/photo-1588449668365-d15e397f6787?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-airdopes-181-pro-ss-edition',
     name: 'BeatBox Airdopes 181 Pro SS Edition',
     brand: 'BeatBox',
     category: 'tws',
@@ -4882,8 +3511,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 221,
-    slug: 'beatbox-airdopes-alpha-ss-edition',
+    id: 221, imageUrl: 'https://images.unsplash.com/photo-1631857455684-a54a2f03665f?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-airdopes-alpha-ss-edition',
     name: 'BeatBox Airdopes Alpha SS Edition',
     brand: 'BeatBox',
     category: 'tws',
@@ -4918,8 +3546,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 222,
-    slug: 'beatbox-airdopes-121-pro-plus',
+    id: 222, imageUrl: 'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-airdopes-121-pro-plus',
     name: 'BeatBox Airdopes 121 Pro Plus',
     brand: 'BeatBox',
     category: 'tws',
@@ -4954,8 +3581,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 223,
-    slug: 'beatbox-airdopes-pulse',
+    id: 223, imageUrl: 'https://images.unsplash.com/photo-1628202878405-e69dfb1a7c55?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-airdopes-pulse',
     name: 'BeatBox Airdopes Pulse',
     brand: 'BeatBox',
     category: 'tws',
@@ -4980,474 +3606,6 @@ export const PRODUCTS = [
       'Features': 'ASAP Charge, ENx Tech'
     },
     description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Pulse. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 224,
-    slug: 'beatbox-nirvana-crystl',
-    name: 'BeatBox Nirvana Crystl',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1341,
-    oldPrice: 3676,
-    discount: 63,
-    rating: parseFloat(4.5),
-    reviewCount: 793,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Nirvana Crystl. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 225,
-    slug: 'beatbox-airdopes-161-metallic',
-    name: 'BeatBox Airdopes 161 (Metallic)',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1236,
-    oldPrice: 5131,
-    discount: 75,
-    rating: parseFloat(4.5),
-    reviewCount: 1389,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 161 (Metallic). Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 226,
-    slug: 'beatbox-airdopes-161-anc-elite',
-    name: 'BeatBox Airdopes 161 ANC Elite',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2090,
-    oldPrice: 5355,
-    discount: 60,
-    rating: parseFloat(4.7),
-    reviewCount: 1028,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 161 ANC Elite. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 227,
-    slug: 'beatbox-airdopes-ultra-plus',
-    name: 'BeatBox Airdopes Ultra Plus',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2302,
-    oldPrice: 5064,
-    discount: 54,
-    rating: parseFloat(4.9),
-    reviewCount: 823,
-    tag: 'Best Seller',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Ultra Plus. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 228,
-    slug: 'beatbox-airdopes-219',
-    name: 'BeatBox Airdopes 219',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3325,
-    oldPrice: 8326,
-    discount: 60,
-    rating: parseFloat(4.7),
-    reviewCount: 921,
-    tag: 'New Launch',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 219. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 229,
-    slug: 'beatbox-airdopes-71',
-    name: 'BeatBox Airdopes 71',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2647,
-    oldPrice: 6726,
-    discount: 60,
-    rating: parseFloat(5.0),
-    reviewCount: 1262,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 71. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 230,
-    slug: 'beatbox-airdopes-161-ss-edition',
-    name: 'BeatBox Airdopes 161 SS Edition',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3903,
-    oldPrice: 5807,
-    discount: 32,
-    rating: parseFloat(4.4),
-    reviewCount: 104,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 161 SS Edition. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 231,
-    slug: 'beatbox-airdopes-prime-701-anc',
-    name: 'BeatBox Airdopes Prime 701 ANC',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1665,
-    oldPrice: 7051,
-    discount: 76,
-    rating: parseFloat(4.8),
-    reviewCount: 1000,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Prime 701 ANC. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 232,
-    slug: 'beatbox-airdopes-131-ss-edition',
-    name: 'BeatBox Airdopes 131 SS Edition',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1302,
-    oldPrice: 5114,
-    discount: 74,
-    rating: parseFloat(4.6),
-    reviewCount: 1227,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 131 SS Edition. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 233,
-    slug: 'beatbox-airdopes-148',
-    name: 'BeatBox Airdopes 148',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1451,
-    oldPrice: 5491,
-    discount: 73,
-    rating: parseFloat(4.9),
-    reviewCount: 41,
-    tag: 'New Launch',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 148. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 234,
-    slug: 'beatbox-airdopes-800',
-    name: 'BeatBox Airdopes 800',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1246,
-    oldPrice: 4567,
-    discount: 72,
-    rating: parseFloat(4.8),
-    reviewCount: 610,
-    tag: 'Best Seller',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 800. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 235,
-    slug: 'beatbox-airdopes-141-gen-2',
-    name: 'BeatBox Airdopes 141 Gen 2',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2244,
-    oldPrice: 7689,
-    discount: 70,
-    rating: parseFloat(4.9),
-    reviewCount: 131,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 141 Gen 2. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 236,
-    slug: 'beatbox-airdopes-163',
-    name: 'BeatBox Airdopes 163',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3003,
-    oldPrice: 7096,
-    discount: 57,
-    rating: parseFloat(4.5),
-    reviewCount: 1085,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 163. Engineered for power, clarity, and deep bass to elevate your listening experience.',
     highlights: [
       'BeatBox Signature Sound',
       'ASAP Fast Charging',
@@ -5484,474 +3642,6 @@ export const PRODUCTS = [
       'Features': 'ASAP Charge, ENx Tech'
     },
     description: 'Experience immersive BeatBox Signature Sound with the BeatBox Immortal katana Blade 2.0. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 238,
-    slug: 'beatbox-airdopes-141',
-    name: 'BeatBox Airdopes 141',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1777,
-    oldPrice: 3396,
-    discount: 47,
-    rating: parseFloat(4.6),
-    reviewCount: 640,
-    tag: 'New Launch',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 141. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 239,
-    slug: 'beatbox-airdopes-71-gen-2',
-    name: 'BeatBox Airdopes 71 Gen 2',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3878,
-    oldPrice: 9172,
-    discount: 57,
-    rating: parseFloat(4.7),
-    reviewCount: 675,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 71 Gen 2. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 240,
-    slug: 'beatbox-airdopes-111v2',
-    name: 'BeatBox Airdopes 111v2',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1575,
-    oldPrice: 5078,
-    discount: 68,
-    rating: parseFloat(4.4),
-    reviewCount: 600,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 111v2. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 241,
-    slug: 'beatbox-airdopes-plus-311',
-    name: 'BeatBox Airdopes Plus 311',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3115,
-    oldPrice: 5438,
-    discount: 42,
-    rating: parseFloat(4.3),
-    reviewCount: 387,
-    tag: 'Best Seller',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Plus 311. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 242,
-    slug: 'beatbox-airdopes-131-gen-2',
-    name: 'BeatBox Airdopes 131 Gen 2',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2516,
-    oldPrice: 4203,
-    discount: 40,
-    rating: parseFloat(4.7),
-    reviewCount: 1095,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 131 Gen 2. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 243,
-    slug: 'beatbox-airdopes-800-hidef',
-    name: 'BeatBox Airdopes 800 HiDef',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1384,
-    oldPrice: 4717,
-    discount: 70,
-    rating: parseFloat(4.6),
-    reviewCount: 1458,
-    tag: 'New Launch',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 800 HiDef. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 244,
-    slug: 'beatbox-airdopes-101v2',
-    name: 'BeatBox Airdopes 101v2',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3258,
-    oldPrice: 6588,
-    discount: 50,
-    rating: parseFloat(5.0),
-    reviewCount: 153,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 101v2. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 245,
-    slug: 'beatbox-airdopes-prime-511',
-    name: 'BeatBox Airdopes Prime 511',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2059,
-    oldPrice: 4888,
-    discount: 57,
-    rating: parseFloat(4.5),
-    reviewCount: 1388,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Prime 511. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 246,
-    slug: 'beatbox-airdopes-131-pro-buds',
-    name: 'BeatBox Airdopes 131 Pro Buds',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3671,
-    oldPrice: 7159,
-    discount: 48,
-    rating: parseFloat(4.4),
-    reviewCount: 1067,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 131 Pro Buds. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 247,
-    slug: 'beatbox-airdopes-atom-81-pro',
-    name: 'BeatBox Airdopes Atom 81 Pro',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1360,
-    oldPrice: 5317,
-    discount: 74,
-    rating: parseFloat(4.5),
-    reviewCount: 1125,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Atom 81 Pro. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 248,
-    slug: 'beatbox-airdopes-161-pro-buds',
-    name: 'BeatBox Airdopes 161 Pro Buds',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3474,
-    oldPrice: 6345,
-    discount: 45,
-    rating: parseFloat(4.3),
-    reviewCount: 1447,
-    tag: 'New Launch',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 161 Pro Buds. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 249,
-    slug: 'beatbox-airdopes-ace-gen-2',
-    name: 'BeatBox Airdopes Ace Gen 2',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3205,
-    oldPrice: 4876,
-    discount: 34,
-    rating: parseFloat(4.4),
-    reviewCount: 1175,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Ace Gen 2. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 250,
-    slug: 'beatbox-airdopes-ace',
-    name: 'BeatBox Airdopes Ace',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3495,
-    oldPrice: 5587,
-    discount: 37,
-    rating: parseFloat(4.7),
-    reviewCount: 1186,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Ace. Engineered for power, clarity, and deep bass to elevate your listening experience.',
     highlights: [
       'BeatBox Signature Sound',
       'ASAP Fast Charging',
@@ -6034,150 +3724,6 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 253,
-    slug: 'beatbox-nirvana-ion-anc-pro',
-    name: 'BeatBox Nirvana Ion ANC Pro',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1907,
-    oldPrice: 6190,
-    discount: 69,
-    rating: parseFloat(4.7),
-    reviewCount: 921,
-    tag: 'New Launch',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Nirvana Ion ANC Pro. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 254,
-    slug: 'beatbox-airdopes-prime-512',
-    name: 'BeatBox Airdopes Prime 512',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3974,
-    oldPrice: 9392,
-    discount: 57,
-    rating: parseFloat(4.4),
-    reviewCount: 744,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Prime 512. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 255,
-    slug: 'beatbox-airdopes-prime-412',
-    name: 'BeatBox Airdopes Prime 412',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3767,
-    oldPrice: 7326,
-    discount: 48,
-    rating: parseFloat(4.7),
-    reviewCount: 1071,
-    tag: 'Best Seller',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Prime 412. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 256,
-    slug: 'beatbox-airdopes-131-elite-anc',
-    name: 'BeatBox Airdopes 131 Elite ANC',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2903,
-    oldPrice: 5378,
-    discount: 46,
-    rating: parseFloat(4.4),
-    reviewCount: 997,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 131 Elite ANC. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
     id: 257,
     slug: 'beatbox-nirvana-crown',
     name: 'BeatBox Nirvana Crown',
@@ -6250,114 +3796,6 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 259,
-    slug: 'beatbox-airdopes-beat',
-    name: 'BeatBox Airdopes Beat',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2005,
-    oldPrice: 5975,
-    discount: 66,
-    rating: parseFloat(4.3),
-    reviewCount: 1249,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Beat. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 260,
-    slug: 'beatbox-airdopes-190',
-    name: 'BeatBox Airdopes 190',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3459,
-    oldPrice: 6480,
-    discount: 46,
-    rating: parseFloat(4.5),
-    reviewCount: 529,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 190. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 261,
-    slug: 'beatbox-airdopes-prime-413',
-    name: 'BeatBox Airdopes Prime 413',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2181,
-    oldPrice: 6266,
-    discount: 65,
-    rating: parseFloat(4.7),
-    reviewCount: 577,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Prime 413. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
     id: 262,
     slug: 'beatbox-nirvana-ivy-pro',
     name: 'BeatBox Nirvana Ivy Pro',
@@ -6384,618 +3822,6 @@ export const PRODUCTS = [
       'Features': 'ASAP Charge, ENx Tech'
     },
     description: 'Experience immersive BeatBox Signature Sound with the BeatBox Nirvana Ivy Pro. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 263,
-    slug: 'beatbox-airdopes-120',
-    name: 'BeatBox Airdopes 120',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1474,
-    oldPrice: 5793,
-    discount: 74,
-    rating: parseFloat(4.9),
-    reviewCount: 1194,
-    tag: 'New Launch',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 120. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 264,
-    slug: 'beatbox-airdopes-138-pro',
-    name: 'BeatBox Airdopes 138 PRO',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3862,
-    oldPrice: 7003,
-    discount: 44,
-    rating: parseFloat(4.4),
-    reviewCount: 554,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 138 PRO. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 265,
-    slug: 'beatbox-airdopes-213',
-    name: 'BeatBox Airdopes 213',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1209,
-    oldPrice: 4711,
-    discount: 74,
-    rating: parseFloat(4.7),
-    reviewCount: 735,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 213. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 266,
-    slug: 'beatbox-airdopes-alpha-gen-2',
-    name: 'BeatBox Airdopes Alpha Gen 2',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2727,
-    oldPrice: 5141,
-    discount: 46,
-    rating: parseFloat(4.5),
-    reviewCount: 1132,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Alpha Gen 2. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 267,
-    slug: 'beatbox-airdopes-atom-83',
-    name: 'BeatBox Airdopes Atom 83',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3599,
-    oldPrice: 6245,
-    discount: 42,
-    rating: parseFloat(4.2),
-    reviewCount: 1105,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Atom 83. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 268,
-    slug: 'beatbox-airdopes-300',
-    name: 'BeatBox Airdopes 300',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2197,
-    oldPrice: 6622,
-    discount: 66,
-    rating: parseFloat(4.6),
-    reviewCount: 275,
-    tag: 'New Launch',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 300. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 269,
-    slug: 'beatbox-airdopes-138-gen-2',
-    name: 'BeatBox Airdopes 138 Gen 2',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1187,
-    oldPrice: 5032,
-    discount: 76,
-    rating: parseFloat(4.6),
-    reviewCount: 356,
-    tag: 'Best Seller',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 138 Gen 2. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 270,
-    slug: 'beatbox-airdopes-118-wrogn-edition',
-    name: 'BeatBox Airdopes 118 Wrogn Edition',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3723,
-    oldPrice: 9185,
-    discount: 59,
-    rating: parseFloat(4.7),
-    reviewCount: 1158,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 118 Wrogn Edition. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 271,
-    slug: 'beatbox-airdopes-161-anc',
-    name: 'BeatBox Airdopes 161 ANC',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2227,
-    oldPrice: 6331,
-    discount: 64,
-    rating: parseFloat(4.9),
-    reviewCount: 1444,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 161 ANC. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 272,
-    slug: 'beatbox-airdopes-91-prime',
-    name: 'BeatBox Airdopes 91 Prime',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1284,
-    oldPrice: 2905,
-    discount: 55,
-    rating: parseFloat(4.3),
-    reviewCount: 1386,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 91 Prime. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 273,
-    slug: 'beatbox-airdopes-212',
-    name: 'BeatBox Airdopes 212',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2348,
-    oldPrice: 6823,
-    discount: 65,
-    rating: parseFloat(4.4),
-    reviewCount: 362,
-    tag: 'New Launch',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 212. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 274,
-    slug: 'beatbox-airdopes-155',
-    name: 'BeatBox Airdopes 155',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2896,
-    oldPrice: 7945,
-    discount: 63,
-    rating: parseFloat(4.4),
-    reviewCount: 381,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 155. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 275,
-    slug: 'beatbox-airdopes-flex-454-anc',
-    name: 'BeatBox Airdopes Flex 454 ANC',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 3617,
-    oldPrice: 6807,
-    discount: 46,
-    rating: parseFloat(4.9),
-    reviewCount: 315,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Flex 454 ANC. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 276,
-    slug: 'beatbox-airdopes-prime-700-anc',
-    name: 'BeatBox Airdopes Prime 700 ANC',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2205,
-    oldPrice: 3892,
-    discount: 43,
-    rating: parseFloat(4.5),
-    reviewCount: 1353,
-    tag: 'Best Seller',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Prime 700 ANC. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 277,
-    slug: 'beatbox-airdopes-141-elite-anc',
-    name: 'BeatBox Airdopes 141 Elite ANC',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1205,
-    oldPrice: 3300,
-    discount: 63,
-    rating: parseFloat(4.4),
-    reviewCount: 1146,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes 141 Elite ANC. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 278,
-    slug: 'beatbox-airdopes-plus-318',
-    name: 'BeatBox Airdopes Plus 318',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 2623,
-    oldPrice: 5462,
-    discount: 51,
-    rating: parseFloat(4.2),
-    reviewCount: 1482,
-    tag: 'New Launch',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Plus 318. Engineered for power, clarity, and deep bass to elevate your listening experience.',
-    highlights: [
-      'BeatBox Signature Sound',
-      'ASAP Fast Charging',
-      'Long-lasting Battery Life',
-      'Ergonomic & Lightweight Design',
-      'Seamless Bluetooth Connectivity'
-    ],
-    reviews: []
-  },
-  {
-    id: 279,
-    slug: 'beatbox-airdopes-ultra-pro',
-    name: 'BeatBox Airdopes Ultra Pro',
-    brand: 'BeatBox',
-    category: 'tws',
-    price: 1120,
-    oldPrice: 3136,
-    discount: 64,
-    rating: parseFloat(4.9),
-    reviewCount: 552,
-    tag: '',
-    usp: 'BeatBox Signature Audio',
-    imageKey: 'smartEarbuds',
-    badge: '',
-    inStock: true,
-    colors: [
-      { name: 'Active Black', code: '#000000' },
-      { name: 'Bold Blue', code: '#0000ff' }
-    ],
-    specs: {
-      'Battery': 'Up to 40 Hours',
-      'Drivers': 'Custom Tuned Drivers',
-      'Connectivity': 'Bluetooth v5.3',
-      'Features': 'ASAP Charge, ENx Tech'
-    },
-    description: 'Experience immersive BeatBox Signature Sound with the BeatBox Airdopes Ultra Pro. Engineered for power, clarity, and deep bass to elevate your listening experience.',
     highlights: [
       'BeatBox Signature Sound',
       'ASAP Fast Charging',
@@ -8590,8 +5416,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 324,
-    slug: 'beatbox-rockerz-371',
+    id: 324, imageUrl: 'https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-371',
     name: 'BeatBox Rockerz 371',
     brand: 'BeatBox',
     category: 'neckbands',
@@ -8698,8 +5523,7 @@ export const PRODUCTS = [
     reviews: []
   },
   {
-    id: 327,
-    slug: 'beatbox-rockerz-370-pro',
+    id: 327, imageUrl: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=500&q=80', slug: 'beatbox-rockerz-370-pro',
     name: 'BeatBox Rockerz 370 Pro',
     brand: 'BeatBox',
     category: 'neckbands',

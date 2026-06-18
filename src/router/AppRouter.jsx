@@ -42,6 +42,7 @@ import { useEffect } from 'react'
 import { fetchCart } from '../redux/cartSlice'
 
 import AdminRoute from './AdminRoute'
+import ProtectedRoute from './ProtectedRoute'
 
 export default function AppRouter() {
   const dispatch = useDispatch()
@@ -70,7 +71,56 @@ export default function AppRouter() {
           }
         }}
       />
-      <Suspense fallback={<div style={{ display: 'flex', height: '100vh', alignItems: 'center', justifyContent: 'center', color: '#00f3ff' }}>Loading...</div>}>
+      <Suspense fallback={
+        <div style={{
+          display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw',
+          alignItems: 'center', justifyContent: 'center', backgroundColor: '#060b19',
+          fontFamily: 'Outfit, sans-serif'
+        }}>
+          <div style={{ position: 'relative', width: '80px', height: '80px' }}>
+            {/* Pulsing neon outer ring */}
+            <div style={{
+              position: 'absolute', inset: 0, border: '3px solid transparent',
+              borderTopColor: 'rgba(0, 243, 255, 0.7)', borderBottomColor: 'rgba(0, 243, 255, 0.7)',
+              borderRadius: '50%', animation: 'loader-spin 1.2s linear infinite',
+              boxShadow: '0 0 15px rgba(0, 243, 255, 0.2)'
+            }} />
+            {/* Inner reverse spin ring */}
+            <div style={{
+              position: 'absolute', inset: '12px', border: '2px solid transparent',
+              borderLeftColor: 'rgba(168, 32, 255, 0.7)', borderRightColor: 'rgba(168, 32, 255, 0.7)',
+              borderRadius: '50%', animation: 'loader-spin-reverse 1s linear infinite',
+              boxShadow: '0 0 10px rgba(168, 32, 255, 0.2)'
+            }} />
+            {/* Core glowing dot */}
+            <div style={{
+              position: 'absolute', inset: '30px', borderRadius: '50%',
+              background: 'linear-gradient(135deg, #a820ff, #00f3ff)',
+              boxShadow: '0 0 20px #00f3ff, 0 0 10px #a820ff'
+            }} />
+          </div>
+          
+          <style>{`
+            @keyframes loader-spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+            @keyframes loader-spin-reverse {
+              0% { transform: rotate(360deg); }
+              100% { transform: rotate(0deg); }
+            }
+          `}</style>
+          
+          <h4 style={{
+            marginTop: '24px', fontWeight: 900, textTransform: 'uppercase',
+            color: '#fff', fontSize: '0.8rem', letterSpacing: '3px',
+            background: 'linear-gradient(90deg, #fff, rgba(255,255,255,0.45))',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          }}>
+            Loading BeatBox
+          </h4>
+        </div>
+      }>
         <Routes>
           <Route path="/" element={<Layout><Home /></Layout>} />
           <Route path="/welcome" element={<App />} />
@@ -79,11 +129,11 @@ export default function AppRouter() {
           <Route path="/products" element={<Layout><ProductListing /></Layout>} />
           <Route path="/products/:id" element={<Layout><ProductDetail /></Layout>} />
           <Route path="/cart" element={<Layout><Cart /></Layout>} />
-          <Route path="/checkout" element={<Layout><Checkout /></Layout>} />
-          <Route path="/orders" element={<Layout><Orders /></Layout>} />
-          <Route path="/orders/:id" element={<Layout><OrderDetail /></Layout>} />
-          <Route path="/settings" element={<Layout><Settings /></Layout>} />
-          <Route path="/wishlist" element={<Layout><Wishlist /></Layout>} />
+          <Route path="/checkout" element={<ProtectedRoute><Layout><Checkout /></Layout></ProtectedRoute>} />
+          <Route path="/orders" element={<ProtectedRoute><Layout><Orders /></Layout></ProtectedRoute>} />
+          <Route path="/orders/:id" element={<ProtectedRoute><Layout><OrderDetail /></Layout></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Layout><Settings /></Layout></ProtectedRoute>} />
+          <Route path="/wishlist" element={<ProtectedRoute><Layout><Wishlist /></Layout></ProtectedRoute>} />
           <Route path="/personalisation" element={<Layout><Personalisation /></Layout>} />
           <Route path="/corporate" element={<Layout><CorporateOrders /></Layout>} />
           <Route path="/refer" element={<Layout><ReferAndEarn /></Layout>} />

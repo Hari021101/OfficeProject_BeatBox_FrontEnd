@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Star, ShoppingBag, Heart, Zap, Eye, Scale } from 'lucide-react'
@@ -10,7 +10,7 @@ import { IMAGE_MAP } from '../../data/products'
 import { toast } from 'react-hot-toast'
 import logo from '../../assets/beatbox_logo.png'
 
-export default function ProductCard({ product, index = 0 }) {
+const ProductCard = React.memo(function ProductCard({ product, index = 0 }) {
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
   const isWishlisted = useSelector(state => selectIsInWishlist(state, product.id))
@@ -96,7 +96,7 @@ const [selectedColor, setSelectedColor] =
 
           {/* Top row: badge + wishlist & compare */}
           <div className="position-absolute top-0 start-0 end-0 d-flex justify-content-between p-3" style={{ zIndex: 10 }}>
-            <span className="product-card-badge">{product.tag}</span>
+            {product.tag && <span className="product-card-badge">{product.tag}</span>}
             <div className="d-flex gap-2">
               <button
                 onClick={handleCompare}
@@ -122,7 +122,7 @@ const [selectedColor, setSelectedColor] =
             {img && img.includes('video') ? (
               <video src={img} autoPlay loop muted className="product-card-img" style={{ objectFit: 'contain' }} />
             ) : (
-              <img src={img} alt={product.name} className="product-card-img"  onError={(e) => {
+              <img src={img} alt={product.name} className="product-card-img" loading="lazy" onError={(e) => {
     e.target.src =
       IMAGE_MAP[product.imageKey] ||
       IMAGE_MAP.heroHeadphones;
@@ -215,4 +215,6 @@ const [selectedColor, setSelectedColor] =
       </Link>
     </motion.div>
   )
-}
+})
+
+export default ProductCard

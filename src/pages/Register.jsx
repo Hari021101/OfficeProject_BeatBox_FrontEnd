@@ -9,8 +9,11 @@ import ThemeToggle from '../components/ui/ThemeToggle'
 import { registerUser, resetState, setOtpStep, setAuthFromOtp } from '../redux/authSlice'
 import { otpService } from '../services/otpService'
 import { toast } from 'react-hot-toast'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
 
-// ─── 6-digit OTP input component ─────────────────────────────────────────────
+// --- 6-digit OTP input component ---------------------------------------------
 function OtpInput({ onComplete }) {
   const [digits, setDigits] = useState(['', '', '', '', '', ''])
   const refs = useRef([])
@@ -71,7 +74,7 @@ function OtpInput({ onComplete }) {
   )
 }
 
-// ─── Step indicator ───────────────────────────────────────────────────────────
+// --- Step indicator -----------------------------------------------------------
 function StepDots({ step, identifierType }) {
   const steps = [
     { id: 1, label: 'Details' },
@@ -105,7 +108,24 @@ function StepDots({ step, identifierType }) {
   )
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+const registerSchema = z.object({
+  fullName: z.string().min(2, 'Name must be at least 2 characters'),
+  identifier: z.string().min(1, 'Email or phone number is required').refine(val => {
+    const isPhone = /^[+]?[0-9\s-]{8,15}$/.test(val.replace(/\s+/g, ''));
+    if (isPhone) return true;
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    return isEmail;
+  }, {
+    message: 'Must be a valid email address or phone number (8-15 digits)'
+  }),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  confirmPassword: z.string().min(6, 'Confirm password must be at least 6 characters')
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ['confirmPassword']
+});
+
+// --- Main Component -----------------------------------------------------------
 export default function Register() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -115,11 +135,15 @@ export default function Register() {
   const [showConfirmPwd, setShowConfirmPwd] = useState(false)
   
   const [registerMode, setRegisterMode] = useState('email') // 'email' | 'phone'
-  const [formData, setFormData] = useState({ fullName: '', identifier: '', password: '', confirmPassword: '' })
   
   const [otpLoading, setOtpLoading] = useState(false)
   const [resendTimer, setResendTimer] = useState(0)
   const [step, setStep] = useState(1) // 1=form, 2=OTP
+
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { fullName: '', identifier: '', password: '', confirmPassword: '' }
+  })
 
   // Sync step with redux otpStep
   useEffect(() => {
@@ -143,27 +167,20 @@ export default function Register() {
 
   const handleModeSwitch = (mode) => {
     setRegisterMode(mode)
-    setFormData(prev => ({ ...prev, identifier: '' }))
+    setValue('identifier', '')
   }
 
-  const handleChange = e => setFormData({ ...formData, [e.target.name]: e.target.value })
-
-  // ── Step 1: Submit registration form ─────────────────────────────────────
-  const handleSubmit = e => {
-    e.preventDefault()
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match!')
-      return
-    }
+  // -- Step 1: Submit registration form -------------------------------------
+  const onSubmit = data => {
     dispatch(registerUser({
-      fullName: formData.fullName,
-      identifier: formData.identifier,
-      password: formData.password,
+      fullName: data.fullName,
+      identifier: data.identifier,
+      password: data.password,
     }))
     setResendTimer(30)
   }
 
-  // ── Step 2: Verify OTP → get JWT ───────────────────────────────────
+  // -- Step 2: Verify OTP - get JWT -----------------------------------
   const handleOtp = async (code) => {
     try {
       setOtpLoading(true)
@@ -176,7 +193,7 @@ export default function Register() {
       
       // Store JWT and set auth state
       dispatch(setAuthFromOtp({ fullName: data.fullName, email: data.email, token: data.token }))
-      toast.success('🎉 Account verified! Welcome to BeatBox.')
+      toast.success('-- Account verified! Welcome to BeatBox.')
       navigate('/')
     } catch (err) {
       toast.error(err.response?.data?.message || 'Invalid OTP. Please try again.')
@@ -185,7 +202,7 @@ export default function Register() {
     }
   }
 
-  // ── Resend OTP ────────────────────────────────────────────────────────────
+  // -- Resend OTP ------------------------------------------------------------
   const handleResend = async () => {
     if (resendTimer > 0) return
     try {
@@ -248,7 +265,7 @@ export default function Register() {
 
             <AnimatePresence mode="wait">
 
-              {/* ── STEP 1: Registration Form ─────────────────────────────────── */}
+              {/* -- STEP 1: Registration Form ----------------------------------- */}
               {step === 1 && (
                 <motion.div key="step1" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }}>
                   <div className="mb-4">
@@ -291,12 +308,17 @@ export default function Register() {
                     ))}
                   </div>
 
-                  <form onSubmit={handleSubmit}>
+                  <form onSubmit={handleSubmit(onSubmit)}>
                     {/* Full Name */}
-                    <div className="mb-3 input-group-custom position-relative">
+                    <div className="mb-4 input-group-custom position-relative">
                       <User size={20} className="icon position-absolute top-50 translate-middle-y" style={{ left: '18px' }} />
-                      <input type="text" name="fullName" className="form-control bb-input w-100"
-                        placeholder="Full Name" value={formData.fullName} onChange={handleChange} required />
+                      <input type="text" id="register-fullName" className="form-control bb-input w-100"
+                        placeholder="Full Name" {...register('fullName')} />
+                      {errors.fullName && (
+                        <div className="text-danger small mt-1 position-absolute w-100" style={{ fontSize: '0.75rem', bottom: '-20px', left: '4px' }}>
+                          {errors.fullName.message}
+                        </div>
+                      )}
                     </div>
                     
                     {/* Identifier (Email or Phone) */}
@@ -307,7 +329,7 @@ export default function Register() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: registerMode === 'email' ? 20 : -20 }}
                         transition={{ duration: 0.2 }}
-                        className="mb-3 input-group-custom position-relative"
+                        className="mb-4 input-group-custom position-relative"
                       >
                         {registerMode === 'email'
                           ? <Mail size={20} className="icon position-absolute top-50 translate-middle-y" style={{ left: '18px' }} />
@@ -315,34 +337,47 @@ export default function Register() {
                         }
                         <input
                           type={registerMode === 'email' ? 'email' : 'tel'}
-                          name="identifier"
+                          id={`register-identifier-${registerMode}`}
                           className="form-control bb-input w-100"
                           placeholder={registerMode === 'email' ? 'Email address' : 'Phone number (e.g. 9876543210)'}
-                          value={formData.identifier}
-                          onChange={handleChange}
-                          required
+                          {...register('identifier')}
                           maxLength={registerMode === 'phone' ? 15 : undefined}
                         />
+                        {errors.identifier && (
+                          <div className="text-danger small mt-1 position-absolute w-100" style={{ fontSize: '0.75rem', bottom: '-20px', left: '4px' }}>
+                            {errors.identifier.message}
+                          </div>
+                        )}
                       </motion.div>
                     </AnimatePresence>
 
                     {/* Password */}
-                    <div className="mb-3 input-group-custom position-relative">
+                    <div className="mb-4 input-group-custom position-relative">
                       <Lock size={20} className="icon position-absolute top-50 translate-middle-y" style={{ left: '18px' }} />
-                      <input type={showPwd ? 'text' : 'password'} name="password" className="form-control bb-input w-100"
-                        placeholder="Password" value={formData.password} onChange={handleChange} required minLength={6} />
+                      <input type={showPwd ? 'text' : 'password'} id="register-password" className="form-control bb-input w-100"
+                        placeholder="Password" {...register('password')} />
                       <button type="button" className="btn icon position-absolute top-50 translate-middle-y end-0 border-0 px-3" onClick={() => setShowPwd(!showPwd)}>
                         {showPwd ? <EyeOff size={20} /> : <Eye size={20} />}
                       </button>
+                      {errors.password && (
+                        <div className="text-danger small mt-1 position-absolute w-100" style={{ fontSize: '0.75rem', bottom: '-20px', left: '4px' }}>
+                          {errors.password.message}
+                        </div>
+                      )}
                     </div>
                     {/* Confirm Password */}
                     <div className="mb-4 input-group-custom position-relative">
                       <Lock size={20} className="icon position-absolute top-50 translate-middle-y" style={{ left: '18px' }} />
-                      <input type={showConfirmPwd ? 'text' : 'password'} name="confirmPassword" className="form-control bb-input w-100"
-                        placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} required minLength={6} />
+                      <input type={showConfirmPwd ? 'text' : 'password'} id="register-confirmPassword" className="form-control bb-input w-100"
+                        placeholder="Confirm Password" {...register('confirmPassword')} />
                       <button type="button" className="btn icon position-absolute top-50 translate-middle-y end-0 border-0 px-3" onClick={() => setShowConfirmPwd(!showConfirmPwd)}>
                         {showConfirmPwd ? <EyeOff size={20} /> : <Eye size={20} />}
                       </button>
+                      {errors.confirmPassword && (
+                        <div className="text-danger small mt-1 position-absolute w-100" style={{ fontSize: '0.75rem', bottom: '-20px', left: '4px' }}>
+                          {errors.confirmPassword.message}
+                        </div>
+                      )}
                     </div>
 
                     <button type="submit" disabled={isLoading}
@@ -363,7 +398,7 @@ export default function Register() {
                 </motion.div>
               )}
 
-              {/* ── STEP 2: OTP (Email or Phone) ─────────────────────────────────────────── */}
+              {/* -- STEP 2: OTP (Email or Phone) ------------------------------------------- */}
               {step === 2 && (
                 <motion.div key="step2" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }}>
                   <div className="text-center mb-4">
@@ -384,7 +419,7 @@ export default function Register() {
                       </strong>
                     </p>
                     <p className="text-theme-muted mt-1" style={{ fontSize: '0.75rem' }}>
-                      💡 Check the backend console if DevMode is on
+                      -- Check the backend console if DevMode is on
                     </p>
                   </div>
 

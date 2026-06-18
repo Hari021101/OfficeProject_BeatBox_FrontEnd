@@ -8,15 +8,34 @@ import ParticleBackground from '../components/ui/ParticleBackground'
 import ThemeToggle from '../components/ui/ThemeToggle'
 import { loginUser, resetState } from '../redux/authSlice'
 import { toast } from 'react-hot-toast'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+
+const loginSchema = z.object({
+  identifier: z.string().min(1, 'Email or phone number is required').refine(val => {
+    const isPhone = /^[+]?[0-9\s-]{8,15}$/.test(val.replace(/\s+/g, ''));
+    if (isPhone) return true;
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    return isEmail;
+  }, {
+    message: 'Must be a valid email address or phone number (8-15 digits)'
+  }),
+  password: z.string().min(6, 'Password must be at least 6 characters')
+})
 
 export default function Login() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [showPwd, setShowPwd] = useState(false)
   const [loginMode, setLoginMode] = useState('email') // 'email' | 'phone'
-  const [formData, setFormData] = useState({ identifier: '', password: '' })
 
   const { user, isLoading, isError, isSuccess, message } = useSelector(s => s.auth)
+
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { identifier: '', password: '' }
+  })
 
   useEffect(() => {
     if (isError) {
@@ -24,7 +43,7 @@ export default function Login() {
       dispatch(resetState())
     }
     if (isSuccess && user) {
-      toast.success(`Welcome back, ${user.fullName}! 🎧`)
+      toast.success(`Welcome back, ${user.fullName}! --`)
       navigate('/')
       dispatch(resetState())
     }
@@ -33,14 +52,11 @@ export default function Login() {
   // Clear identifier when switching modes
   const handleModeSwitch = (mode) => {
     setLoginMode(mode)
-    setFormData(prev => ({ ...prev, identifier: '' }))
+    setValue('identifier', '')
   }
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value })
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    dispatch(loginUser({ identifier: formData.identifier, password: formData.password }))
+  const onSubmit = (data) => {
+    dispatch(loginUser({ identifier: data.identifier, password: data.password }))
   }
 
   return (
@@ -98,7 +114,7 @@ export default function Login() {
               </p>
             </div>
 
-            {/* ── Email / Phone Toggle ───────────────────────────────────── */}
+            {/* -- Email / Phone Toggle ------------------------------------- */}
             <div
               className="d-none rounded-3 p-1 mb-4"
               style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}
@@ -132,8 +148,8 @@ export default function Login() {
               ))}
             </div>
 
-            <form onSubmit={handleSubmit}>
-              {/* ── Identifier Input (email or phone) ──────────────────── */}
+            <form onSubmit={handleSubmit(onSubmit)}>
+              {/* -- Identifier Input (email or phone) -------------------- */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={loginMode}
@@ -150,16 +166,18 @@ export default function Login() {
                   <input
                     key={loginMode}
                     type={loginMode === 'email' ? 'email' : 'tel'}
-                    name="identifier"
                     id={`login-identifier-${loginMode}`}
                     className="form-control bb-input w-100"
                     placeholder={loginMode === 'email' ? 'Email address' : 'Phone number (e.g. 9876543210)'}
-                    value={formData.identifier}
-                    onChange={handleChange}
-                    required
+                    {...register('identifier')}
                     autoFocus
                     maxLength={loginMode === 'phone' ? 15 : undefined}
                   />
+                  {errors.identifier && (
+                    <div className="text-danger small mt-1 position-absolute w-100" style={{ fontSize: '0.75rem', bottom: '-20px', left: '4px' }}>
+                      {errors.identifier.message}
+                    </div>
+                  )}
                 </motion.div>
               </AnimatePresence>
 
@@ -168,18 +186,20 @@ export default function Login() {
                 <Lock size={20} className="icon position-absolute top-50 translate-middle-y" style={{ left: '18px' }} />
                 <input
                   type={showPwd ? 'text' : 'password'}
-                  name="password"
                   id="login-password"
                   className="form-control bb-input w-100"
                   placeholder="Password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
+                  {...register('password')}
                 />
                 <button type="button" className="btn icon position-absolute top-50 translate-middle-y end-0 border-0 px-3"
                   onClick={() => setShowPwd(!showPwd)}>
                   {showPwd ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
+                {errors.password && (
+                  <div className="text-danger small mt-1 position-absolute w-100" style={{ fontSize: '0.75rem', bottom: '-20px', left: '4px' }}>
+                    {errors.password.message}
+                  </div>
+                )}
               </div>
 
               {/* Remember Me & Forgot Password */}

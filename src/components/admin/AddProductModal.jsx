@@ -72,17 +72,38 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
     }))
   }
 
-  const handleFileUpload = (file) => {
-    if (file.size > 15 * 1024 * 1024) {
-      toast.error('File size exceeds 15MB limit.');
+  const handleFileUpload = async (file) => {
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size exceeds 5MB limit.');
       return;
     }
-    
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData(prev => ({ ...prev, imageUrl: reader.result }));
-    };
-    reader.readAsDataURL(file);
+
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+    const extension = file.name.split('.').pop().toLowerCase();
+    if (!allowedExtensions.includes(extension)) {
+      toast.error('Invalid file format. Supported formats: JPG, PNG, WEBP.');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const loadingToast = toast.loading('Uploading product image...');
+      
+      const response = await productService.uploadProductImage(file);
+      
+      toast.dismiss(loadingToast);
+      if (response && response.success) {
+        setFormData(prev => ({ ...prev, imageUrl: response.data }));
+        toast.success('Image uploaded successfully!');
+      } else {
+        toast.error(response?.message || 'Failed to upload image');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || 'Error occurred during image upload');
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   const handleSubmit = async (e) => {

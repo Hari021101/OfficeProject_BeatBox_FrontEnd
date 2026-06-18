@@ -27,8 +27,19 @@ const mapImageKey = (url = '', name = '') => {
 };
 
 // ─── Resolve the actual image src: prefer backend URL, fall back to local asset ─
-const resolveImage = (imageUrl, imageKey) => {
-  if (imageUrl && imageUrl !== 'string' && (imageUrl.startsWith('http') || imageUrl.startsWith('data:'))) return imageUrl;
+const resolveImage = (imageUrl, dbProductImageUrl, imageKey) => {
+  if (imageUrl && imageUrl !== 'string') {
+    if (imageUrl.startsWith('http') || imageUrl.startsWith('data:')) {
+      return imageUrl;
+    }
+    if (imageUrl.startsWith('/uploads/')) {
+      const base = api.defaults.baseURL.replace('/api', '');
+      return `${base}${imageUrl}`;
+    }
+  }
+  if (dbProductImageUrl && dbProductImageUrl.startsWith('http')) {
+    return dbProductImageUrl;
+  }
   return IMAGE_MAP[imageKey] || IMAGE_MAP['heroHeadphones'];
 };
 
@@ -53,7 +64,13 @@ const mapProduct = (bp) => {
     name: bp.name,
     brand: bp.brand || 'BeatBox',
 
-    category: bp.categoryName?.toLowerCase() || 'headphones',
+    category: (() => {
+      const cat = (bp.categoryName || 'headphones').toLowerCase();
+      if (cat.includes('watch') || cat.includes('wearable')) return 'smartwatches';
+      if (cat.includes('tws') || cat.includes('earbud')) return 'tws';
+      if (cat.includes('neckband')) return 'neckbands';
+      return cat;
+    })(),
     categoryName: bp.categoryName || '',
 
     description: bp.description || '',
@@ -108,6 +125,7 @@ const mapProduct = (bp) => {
 
     imageUrl: resolveImage(
       bp.imageUrl,
+      bp.imageUrl,
       imageKey
     ),
 
@@ -138,13 +156,13 @@ colors:
     ? bp.images.map(img => ({
         name: img.colorName,
         code: img.colorCode,
-        imageUrl: img.imageUrl
+        imageUrl: resolveImage(img.imageUrl, bp.imageUrl, imageKey)
       }))
     : [
         {
           name: bp.color || 'Black',
           code: '#111111',
-          imageUrl: bp.imageUrl
+          imageUrl: resolveImage(bp.imageUrl, bp.imageUrl, imageKey)
         }
       ],
 
@@ -153,13 +171,13 @@ variants:
     ? bp.images.map(img => ({
         colorName: img.colorName,
         colorCode: img.colorCode,
-        imageUrl: img.imageUrl
+        imageUrl: resolveImage(img.imageUrl, bp.imageUrl, imageKey)
       }))
     : [
         {
           colorName: bp.color || 'Black',
           colorCode: '#111111',
-          imageUrl: bp.imageUrl
+          imageUrl: resolveImage(bp.imageUrl, bp.imageUrl, imageKey)
         }
       ],
 
@@ -296,5 +314,16 @@ export const productService = {
       }
     });
     return response.data;
+  },
+
+  uploadProductImage: async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await api.post('/upload/product-image', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data; // { success: true, message: "...", data: "/uploads/products/..." }
   },
 };

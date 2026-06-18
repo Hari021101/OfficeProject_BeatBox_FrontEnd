@@ -1,29 +1,66 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { fetchProfile, updateProfile, fetchAddresses, changePassword } from '../redux/profileSlice';
 import { addressService } from '../services/addressService';
 import { toast } from 'react-hot-toast';
 import { User, MapPin, Shield, Plus, Edit2, Trash2, CheckCircle, Save } from 'lucide-react';
+
+const profileSchema = z.object({
+  fullName: z.string().min(2, 'Name must be at least 2 characters'),
+  phoneNumber: z.string().regex(/^[6-9]\d{9}$/, 'Enter a valid 10-digit phone number starting with 6-9').or(z.literal(''))
+});
+
+const addressSchema = z.object({
+  fullName: z.string().min(2, 'Name must be at least 2 characters'),
+  phone: z.string().regex(/^[6-9]\d{9}$/, 'Enter a valid 10-digit phone number starting with 6-9'),
+  addressLine1: z.string().min(5, 'Address Line 1 must be at least 5 characters'),
+  addressLine2: z.string().optional().or(z.literal('')),
+  city: z.string().min(2, 'City must be at least 2 characters'),
+  state: z.string().min(1, 'State is required'),
+  postalCode: z.string().regex(/^\d{6}$/, 'PIN code must be exactly 6 digits'),
+  isDefault: z.boolean().default(false)
+});
+
+const passwordSchema = z.object({
+  currentPassword: z.string().min(6, 'Password must be at least 6 characters'),
+  newPassword: z.string().min(6, 'New password must be at least 6 characters'),
+  confirmNewPassword: z.string().min(6, 'Confirm new password must be at least 6 characters')
+}).refine(data => data.newPassword === data.confirmNewPassword, {
+  message: "New passwords do not match",
+  path: ['confirmNewPassword']
+});
 
 export default function Settings() {
   const dispatch = useDispatch();
   const { data: profile, addresses, loading } = useSelector(state => state.profile);
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
-  
-  const [formData, setFormData] = useState({
-    fullName: '',
-    phoneNumber: ''
-  });
-
   const [showAddressModal, setShowAddressModal] = useState(false);
-  const [addressForm, setAddressForm] = useState({
-    fullName: '', addressLine1: '', addressLine2: '', city: '', state: '', postalCode: '', phone: '', isDefault: false
+
+  const { register: registerProfile, handleSubmit: handleProfileSubmitForm, formState: { errors: profileErrors } } = useForm({
+    resolver: zodResolver(profileSchema),
+    values: {
+      fullName: profile?.fullName || '',
+      phoneNumber: profile?.phoneNumber || ''
+    }
   });
 
-  const [passwordForm, setPasswordForm] = useState({
-    currentPassword: '', newPassword: '', confirmNewPassword: ''
+  const { register: registerAddress, handleSubmit: handleAddressSubmitForm, reset: resetAddressForm, formState: { errors: addressErrors } } = useForm({
+    resolver: zodResolver(addressSchema),
+    defaultValues: {
+      fullName: '', addressLine1: '', addressLine2: '', city: '', state: '', postalCode: '', phone: '', isDefault: false
+    }
+  });
+
+  const { register: registerPassword, handleSubmit: handlePasswordSubmitForm, reset: resetPasswordForm, formState: { errors: passwordErrors } } = useForm({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: {
+      currentPassword: '', newPassword: '', confirmNewPassword: ''
+    }
   });
 
   useEffect(() => {
@@ -31,16 +68,9 @@ export default function Settings() {
     dispatch(fetchAddresses());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (profile) {
-      setFormData({ fullName: profile.fullName || '', phoneNumber: profile.phoneNumber || '' });
-    }
-  }, [profile]);
-
-  const handleProfileSubmit = async (e) => {
-    e.preventDefault();
+  const onProfileSubmit = async (data) => {
     try {
-      await dispatch(updateProfile(formData)).unwrap();
+      await dispatch(updateProfile(data)).unwrap();
       toast.success('Profile updated successfully!');
       setIsEditing(false);
     } catch (err) {
@@ -48,14 +78,13 @@ export default function Settings() {
     }
   };
 
-  const handleAddressSubmit = async (e) => {
-    e.preventDefault();
+  const onAddressSubmit = async (data) => {
     try {
-      await addressService.addAddress({ ...addressForm, country: 'India' });
+      await addressService.addAddress({ ...data, country: 'India' });
       toast.success('Address added!');
       setShowAddressModal(false);
       dispatch(fetchAddresses());
-      setAddressForm({ fullName: '', addressLine1: '', addressLine2: '', city: '', state: '', postalCode: '', phone: '', isDefault: false });
+      resetAddressForm();
     } catch (err) {
       toast.error('Failed to add address');
     }
@@ -83,16 +112,11 @@ export default function Settings() {
     }
   };
 
-  const handlePasswordSubmit = async (e) => {
-    e.preventDefault();
-    if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
-      toast.error('New passwords do not match');
-      return;
-    }
+  const onPasswordSubmit = async (data) => {
     try {
-      await dispatch(changePassword(passwordForm)).unwrap();
+      await dispatch(changePassword(data)).unwrap();
       toast.success('Password updated successfully!');
-      setPasswordForm({ currentPassword: '', newPassword: '', confirmNewPassword: '' });
+      resetPasswordForm();
     } catch (err) {
       toast.error(err || 'Failed to update password');
     }
@@ -160,25 +184,25 @@ export default function Settings() {
                       </button>
                     </div>
 
-                    <form onSubmit={handleProfileSubmit}>
+                     <form onSubmit={handleProfileSubmitForm(onProfileSubmit)}>
                       <div className="row g-4">
                         <div className="col-12 col-md-6">
                           <label className="form-label text-theme-muted small fw-semibold">Full Name</label>
                           <input 
                             className="form-control checkout-input" 
-                            value={formData.fullName} 
-                            onChange={e => setFormData({...formData, fullName: e.target.value})}
+                            {...registerProfile('fullName')}
                             disabled={!isEditing} 
                           />
+                          {profileErrors.fullName && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{profileErrors.fullName.message}</p>}
                         </div>
                         <div className="col-12 col-md-6">
                           <label className="form-label text-theme-muted small fw-semibold">Phone Number</label>
                           <input 
                             className="form-control checkout-input" 
-                            value={formData.phoneNumber} 
-                            onChange={e => setFormData({...formData, phoneNumber: e.target.value})}
+                            {...registerProfile('phoneNumber')}
                             disabled={!isEditing} 
                           />
+                          {profileErrors.phoneNumber && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{profileErrors.phoneNumber.message}</p>}
                         </div>
                         <div className="col-12">
                           <label className="form-label text-theme-muted small fw-semibold">Email Address</label>
@@ -211,33 +235,40 @@ export default function Settings() {
                     </div>
 
                     {showAddressModal && (
-                      <motion.form initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mb-5 p-4 rounded-4" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-accent)' }} onSubmit={handleAddressSubmit}>
+                      <motion.form initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mb-5 p-4 rounded-4" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-accent)' }} onSubmit={handleAddressSubmitForm(onAddressSubmit)}>
                         <h6 className="fw-bold text-theme-title mb-3 text-info">Add New Address</h6>
                         <div className="row g-3">
                           <div className="col-12 col-md-6">
-                            <input className="form-control checkout-input" placeholder="Full Name" required value={addressForm.fullName} onChange={e => setAddressForm({...addressForm, fullName: e.target.value})} />
+                            <input className="form-control checkout-input" placeholder="Full Name" {...registerAddress('fullName')} />
+                            {addressErrors.fullName && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{addressErrors.fullName.message}</p>}
                           </div>
                           <div className="col-12 col-md-6">
-                            <input className="form-control checkout-input" placeholder="Phone Number" required value={addressForm.phone} onChange={e => setAddressForm({...addressForm, phone: e.target.value})} />
+                            <input className="form-control checkout-input" placeholder="Phone Number" {...registerAddress('phone')} />
+                            {addressErrors.phone && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{addressErrors.phone.message}</p>}
                           </div>
                           <div className="col-12">
-                            <input className="form-control checkout-input" placeholder="Address Line 1" required value={addressForm.addressLine1} onChange={e => setAddressForm({...addressForm, addressLine1: e.target.value})} />
+                            <input className="form-control checkout-input" placeholder="Address Line 1" {...registerAddress('addressLine1')} />
+                            {addressErrors.addressLine1 && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{addressErrors.addressLine1.message}</p>}
                           </div>
                           <div className="col-12">
-                            <input className="form-control checkout-input" placeholder="Address Line 2 (Optional)" value={addressForm.addressLine2} onChange={e => setAddressForm({...addressForm, addressLine2: e.target.value})} />
+                            <input className="form-control checkout-input" placeholder="Address Line 2 (Optional)" {...registerAddress('addressLine2')} />
+                            {addressErrors.addressLine2 && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{addressErrors.addressLine2.message}</p>}
                           </div>
                           <div className="col-12 col-md-4">
-                            <input className="form-control checkout-input" placeholder="City" required value={addressForm.city} onChange={e => setAddressForm({...addressForm, city: e.target.value})} />
+                            <input className="form-control checkout-input" placeholder="City" {...registerAddress('city')} />
+                            {addressErrors.city && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{addressErrors.city.message}</p>}
                           </div>
                           <div className="col-12 col-md-4">
-                            <input className="form-control checkout-input" placeholder="State" required value={addressForm.state} onChange={e => setAddressForm({...addressForm, state: e.target.value})} />
+                            <input className="form-control checkout-input" placeholder="State" {...registerAddress('state')} />
+                            {addressErrors.state && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{addressErrors.state.message}</p>}
                           </div>
                           <div className="col-12 col-md-4">
-                            <input className="form-control checkout-input" placeholder="PIN Code" required value={addressForm.postalCode} onChange={e => setAddressForm({...addressForm, postalCode: e.target.value})} />
+                            <input className="form-control checkout-input" placeholder="PIN Code" {...registerAddress('postalCode')} />
+                            {addressErrors.postalCode && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{addressErrors.postalCode.message}</p>}
                           </div>
                           <div className="col-12">
                             <div className="form-check mt-2">
-                              <input className="form-check-input" type="checkbox" id="isDefault" checked={addressForm.isDefault} onChange={e => setAddressForm({...addressForm, isDefault: e.target.checked})} />
+                              <input className="form-check-input" type="checkbox" id="isDefault" {...registerAddress('isDefault')} />
                               <label className="form-check-label text-theme-title small fw-bold" htmlFor="isDefault">Set as Default Address</label>
                             </div>
                           </div>
@@ -296,37 +327,34 @@ export default function Settings() {
                     <h4 className="fw-black text-theme-title mb-4">Security Settings</h4>
                     <p className="text-theme-muted mb-4">Manage your password and security preferences.</p>
                     
-                    <form onSubmit={handlePasswordSubmit}>
+                    <form onSubmit={handlePasswordSubmitForm(onPasswordSubmit)}>
                       <div className="row g-4 max-w-2xl">
                         <div className="col-12 col-md-8">
                           <label className="form-label text-theme-muted small fw-semibold">Current Password</label>
                           <input 
                             type="password"
                             className="form-control checkout-input" 
-                            required
-                            value={passwordForm.currentPassword}
-                            onChange={e => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
+                            {...registerPassword('currentPassword')}
                           />
+                          {passwordErrors.currentPassword && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{passwordErrors.currentPassword.message}</p>}
                         </div>
                         <div className="col-12 col-md-8">
                           <label className="form-label text-theme-muted small fw-semibold">New Password</label>
                           <input 
                             type="password"
                             className="form-control checkout-input" 
-                            required
-                            value={passwordForm.newPassword}
-                            onChange={e => setPasswordForm({...passwordForm, newPassword: e.target.value})}
+                            {...registerPassword('newPassword')}
                           />
+                          {passwordErrors.newPassword && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{passwordErrors.newPassword.message}</p>}
                         </div>
                         <div className="col-12 col-md-8">
                           <label className="form-label text-theme-muted small fw-semibold">Confirm New Password</label>
                           <input 
                             type="password"
                             className="form-control checkout-input" 
-                            required
-                            value={passwordForm.confirmNewPassword}
-                            onChange={e => setPasswordForm({...passwordForm, confirmNewPassword: e.target.value})}
+                            {...registerPassword('confirmNewPassword')}
                           />
+                          {passwordErrors.confirmNewPassword && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{passwordErrors.confirmNewPassword.message}</p>}
                         </div>
                         <div className="col-12 mt-4">
                           <button type="submit" className="btn btn-outline-info fw-bold py-2 px-4 rounded-3 d-flex align-items-center gap-2">

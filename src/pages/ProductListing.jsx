@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SlidersHorizontal, X, ChevronDown, Search, ArrowUpDown, Tag } from 'lucide-react'
@@ -31,13 +31,32 @@ export default function ProductListing() {
   const [minRating, setMinRating] = useState(0)
   const [searchParams] = useSearchParams()
   const initialQuery = searchParams.get('q') || ''
+  
+  // Performance optimizations: separated display search query and debounced query
+  const [displaySearchQuery, setDisplaySearchQuery] = useState(initialQuery)
   const [searchQuery, setSearchQuery] = useState(initialQuery)
+  
+  // Pagination optimization: load 12 items initially and support Load More
+  const [visibleCount, setVisibleCount] = useState(12)
   const [showFilters, setShowFilters] = useState(false)
   const [inStockOnly, setInStockOnly] = useState(false)
 
   const dispatch = useDispatch()
   const allProducts = useSelector(selectAllProducts)
   const productStatus = useSelector(selectProductStatus)
+
+  // Debounce search query updates to prevent laggy typing
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearchQuery(displaySearchQuery)
+    }, 300)
+    return () => clearTimeout(handler)
+  }, [displaySearchQuery])
+
+  // Reset pagination when search query or filter options change
+  useEffect(() => {
+    setVisibleCount(12)
+  }, [activeCategory, activeSort, activePriceRange, minRating, searchQuery, inStockOnly])
 
   useEffect(() => {
     if (productStatus === 'idle') {
@@ -48,8 +67,8 @@ export default function ProductListing() {
   // Sync URL search params with local state
   useEffect(() => {
     const q = searchParams.get('q')
-    if (q !== null && q !== searchQuery) {
-      setSearchQuery(q)
+    if (q !== null && q !== displaySearchQuery) {
+      setDisplaySearchQuery(q)
     }
     
     const cat = searchParams.get('category')
@@ -107,13 +126,14 @@ export default function ProductListing() {
     inStockOnly,
   ].filter(Boolean).length
 
-  const clearAll = () => {
+  const clearAll = useCallback(() => {
     setActiveCategory('all')
     setActivePriceRange('all')
     setMinRating(0)
     setInStockOnly(false)
+    setDisplaySearchQuery('')
     setSearchQuery('')
-  }
+  }, [])
 
   return (
     <div className="min-vh-100 pb-5" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
@@ -149,18 +169,18 @@ export default function ProductListing() {
               type="text"
               className="form-control"
               placeholder="Search headphones, earbuds, speakers..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              value={displaySearchQuery}
+              onChange={e => setDisplaySearchQuery(e.target.value)}
               style={{
                 background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', color: 'var(--bb-text)',
-                borderRadius: 50, paddingLeft: 44, paddingRight: searchQuery ? 40 : 20, height: 46,
+                borderRadius: 50, paddingLeft: 44, paddingRight: displaySearchQuery ? 40 : 20, height: 46,
                 fontSize: '0.9rem', outline: 'none'
               }}
               onFocus={e => { e.target.style.borderColor = 'var(--bb-accent)'; e.target.style.boxShadow = '0 0 20px var(--bb-accent-glow)' }}
               onBlur={e => { e.target.style.borderColor = 'var(--bb-border)'; e.target.style.boxShadow = 'none' }}
             />
-            {searchQuery && (
-              <button onClick={() => setSearchQuery('')} className="btn border-0 p-0 position-absolute" style={{ right: 14, top: '50%', transform: 'translateY(-50%)', background: 'transparent', color: 'var(--bb-muted)' }}>
+            {displaySearchQuery && (
+              <button onClick={() => { setDisplaySearchQuery(''); setSearchQuery('') }} className="btn border-0 p-0 position-absolute" style={{ right: 14, top: '50%', transform: 'translateY(-50%)', background: 'transparent', color: 'var(--bb-muted)' }}>
                 <X size={14} />
               </button>
             )}
@@ -282,22 +302,55 @@ export default function ProductListing() {
                 <button onClick={clearAll} className="btn btn-glow mt-3 px-4 py-2 fw-bold" style={{ borderRadius: 10 }}>Clear Filters</button>
               </div>
             ) : (
-              <motion.div layout className="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4">
-                <AnimatePresence mode="popLayout">
-                  {filtered.map((product, i) => (
-                    <motion.div
-                      key={product.id} layout
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.2 }}
-                      className="col"
+              <>
+                <motion.div layout className="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4">
+                  <AnimatePresence mode="popLayout">
+                    {filtered.slice(0, visibleCount).map((product, i) => (
+                      <motion.div
+                        key={product.id} layout
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="col"
+                      >
+                        <VirtualVisible height={400}>
+                          <ProductCard product={product} index={i} />
+                        </VirtualVisible>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+
+                {visibleCount < filtered.length && (
+                  <div className="text-center mt-5">
+                    <button
+                      onClick={() => setVisibleCount(prev => prev + 12)}
+                      className="btn btn-glow px-5 py-3 fw-bold"
+                      style={{
+                        borderRadius: '50px',
+                        background: 'linear-gradient(135deg, var(--bb-primary), var(--bb-accent))',
+                        color: '#fff',
+                        border: 'none',
+                        boxShadow: '0 0 25px var(--bb-accent-glow)',
+                        fontSize: '0.9rem',
+                        letterSpacing: '0.5px',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={e => {
+                        e.target.style.transform = 'translateY(-2px)'
+                        e.target.style.boxShadow = '0 0 35px var(--bb-accent-glow), 0 0 15px var(--bb-primary-glow)'
+                      }}
+                      onMouseLeave={e => {
+                        e.target.style.transform = 'translateY(0)'
+                        e.target.style.boxShadow = '0 0 25px var(--bb-accent-glow)'
+                      }}
                     >
-                      <ProductCard product={product} index={i} />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </motion.div>
+                      Load More Products ({filtered.length - visibleCount} remaining)
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -306,8 +359,8 @@ export default function ProductListing() {
   )
 }
 
-// ── Filter Panel (reused desktop + mobile) ───────────────────────────────────
-function FilterPanel({ activeCategory, setActiveCategory, activePriceRange, setActivePriceRange, minRating, setMinRating, inStockOnly, setInStockOnly, activeFilterCount, clearAll }) {
+// ── Filter Panel (reused desktop + mobile, memoized) ─────────────────────────
+const FilterPanel = React.memo(function FilterPanel({ activeCategory, setActiveCategory, activePriceRange, setActivePriceRange, minRating, setMinRating, inStockOnly, setInStockOnly, activeFilterCount, clearAll }) {
   const [showAllCategories, setShowAllCategories] = useState(false);
   const visibleCategories = showAllCategories ? CATEGORIES : CATEGORIES.slice(0, 8);
 
@@ -411,9 +464,9 @@ function FilterPanel({ activeCategory, setActiveCategory, activePriceRange, setA
       </FilterSection>
     </div>
   )
-}
+})
 
-function FilterSection({ title, children }) {
+const FilterSection = React.memo(function FilterSection({ title, children }) {
   const [open, setOpen] = useState(true)
   return (
     <div className="rounded-3 p-3" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
@@ -434,7 +487,7 @@ function FilterSection({ title, children }) {
       </AnimatePresence>
     </div>
   )
-}
+})
 
 function FilterPill({ label, onRemove }) {
   return (
@@ -445,5 +498,39 @@ function FilterPill({ label, onRemove }) {
       {label}
       <button onClick={onRemove} className="btn border-0 p-0 ms-1" style={{ background: 'transparent', color: 'var(--bb-accent)', lineHeight: 1 }}><X size={11} /></button>
     </span>
+  )
+}
+
+// ── Lightweight IntersectionObserver-based Viewport Virtualizer ──────────────
+function VirtualVisible({ children, height = 300 }) {
+  const [isVisible, setIsVisible] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '200px 0px' } // Pre-load 200px before scrolling into view
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div ref={ref} style={{ minHeight: isVisible ? 'auto' : height, width: '100%' }}>
+      {isVisible ? children : (
+        <div className="rounded-4 overflow-hidden" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', height }}>
+          <div className="skeleton-pulse w-100 h-100" />
+        </div>
+      )}
+    </div>
   )
 }

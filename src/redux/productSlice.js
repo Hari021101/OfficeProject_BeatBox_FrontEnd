@@ -42,7 +42,13 @@ const productSlice = createSlice({
             slug: bp.name?.toLowerCase().replace(/ /g, '-') || 'product',
             name: bp.name,
             brand: bp.brand || 'BeatBox',
-            category: bp.categoryName?.toLowerCase() || bp.category || 'headphones',
+            category: (() => {
+              const cat = (bp.categoryName || bp.category || 'headphones').toLowerCase();
+              if (cat.includes('watch') || cat.includes('wearable')) return 'smartwatches';
+              if (cat.includes('tws') || cat.includes('earbud')) return 'tws';
+              if (cat.includes('neckband')) return 'neckbands';
+              return cat;
+            })(),
             // bp.price = original/MRP; bp.discountPrice = sale price
             price: bp.discountPrice ?? bp.price,          // sale price shown on card
             oldPrice: bp.price ?? bp.oldPrice,                            // strikethrough price

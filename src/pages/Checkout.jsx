@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
 import { MapPin, CreditCard, CheckCircle, ArrowRight, ArrowLeft, Lock, Truck, Package } from 'lucide-react'
 import { clearCart, selectCartItems, selectCartSubtotal, selectCartCount, selectAppliedPromo } from '../redux/cartSlice'
 import { orderService } from '../services/orderService'
@@ -12,6 +14,16 @@ import { useEffect } from 'react'
 import { IMAGE_MAP } from '../data/products'
 import logo from '../assets/beatbox_logo.png'
 import { paymentService } from '../services/paymentService'
+
+const checkoutSchema = z.object({
+  fullName: z.string().min(2, 'Name must be at least 2 characters'),
+  phone: z.string().regex(/^[6-9]\d{9}$/, 'Enter a valid 10-digit phone number starting with 6-9'),
+  address1: z.string().min(5, 'Address Line 1 must be at least 5 characters'),
+  address2: z.string().optional().or(z.literal('')),
+  city: z.string().min(2, 'City must be at least 2 characters'),
+  state: z.string().min(1, 'Please select a state'),
+  pincode: z.string().regex(/^\d{6}$/, 'PIN code must be exactly 6 digits')
+})
 
 const STEPS = [
   { id: 1, label: 'Delivery', icon: <MapPin size={16} /> },
@@ -43,7 +55,9 @@ export default function Checkout() {
   const couponDiscount = appliedPromo?.discountPercentage ? Math.round(subtotal * (appliedPromo.discountPercentage / 100)) : 0
   const total = subtotal + shipping + gst - couponDiscount
 
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(checkoutSchema)
+  })
 
   useEffect(() => {
     dispatch(fetchAddresses())
@@ -257,7 +271,7 @@ const onPlaceOrder = async () => {
             </h1>
           </div>
           <div className="d-flex align-items-center justify-content-center gap-1 text-theme-muted small">
-            <Lock size={12} /> SSL Encrypted · 100% Safe & Secure
+            <Lock size={12} /> SSL Encrypted - 100% Safe & Secure
           </div>
         </div>
 
@@ -353,17 +367,17 @@ const onPlaceOrder = async () => {
                         <div className="row g-3">
                           <div className="col-12 col-sm-6">
                             <label className="form-label text-theme-muted small fw-semibold">Full Name *</label>
-                            <input {...register('fullName', { required: 'Full name is required' })} className="form-control checkout-input" placeholder="Arjun Sharma" />
+                            <input {...register('fullName')} className="form-control checkout-input" placeholder="Arjun Sharma" />
                             {errors.fullName && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.fullName.message}</p>}
                           </div>
                           <div className="col-12 col-sm-6">
                             <label className="form-label text-theme-muted small fw-semibold">Phone Number *</label>
-                            <input {...register('phone', { required: 'Phone is required', pattern: { value: /^[6-9]\d{9}$/, message: 'Enter valid 10-digit number' } })} className="form-control checkout-input" placeholder="9876543210" maxLength={10} />
+                            <input {...register('phone')} className="form-control checkout-input" placeholder="9876543210" maxLength={10} />
                             {errors.phone && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.phone.message}</p>}
                           </div>
                           <div className="col-12">
                             <label className="form-label text-theme-muted small fw-semibold">Address Line 1 *</label>
-                            <input {...register('address1', { required: 'Address is required' })} className="form-control checkout-input" placeholder="Flat / House No., Building Name" />
+                            <input {...register('address1')} className="form-control checkout-input" placeholder="Flat / House No., Building Name" />
                             {errors.address1 && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.address1.message}</p>}
                           </div>
                           <div className="col-12">
@@ -372,12 +386,12 @@ const onPlaceOrder = async () => {
                           </div>
                           <div className="col-12 col-sm-4">
                             <label className="form-label text-theme-muted small fw-semibold">City *</label>
-                            <input {...register('city', { required: 'City is required' })} className="form-control checkout-input" placeholder="Mumbai" />
+                            <input {...register('city')} className="form-control checkout-input" placeholder="Mumbai" />
                             {errors.city && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.city.message}</p>}
                           </div>
                           <div className="col-12 col-sm-4">
                             <label className="form-label text-theme-muted small fw-semibold">State *</label>
-                            <select {...register('state', { required: 'State is required' })} className="form-select checkout-input" style={{ color: 'var(--bb-text)' }}>
+                            <select {...register('state')} className="form-select checkout-input" style={{ color: 'var(--bb-text)' }}>
                               <option value="">Select State</option>
                               {['Maharashtra','Tamil Nadu','Karnataka','Delhi','Gujarat','Rajasthan','Uttar Pradesh','West Bengal','Kerala','Telangana'].map(s => (
                                 <option key={s} value={s} style={{ background: 'var(--bb-surface)' }}>{s}</option>
@@ -387,7 +401,7 @@ const onPlaceOrder = async () => {
                           </div>
                           <div className="col-12 col-sm-4">
                             <label className="form-label text-theme-muted small fw-semibold">PIN Code *</label>
-                            <input {...register('pincode', { required: 'PIN code is required', pattern: { value: /^\d{6}$/, message: '6-digit PIN required' } })} className="form-control checkout-input" placeholder="400001" maxLength={6} />
+                            <input {...register('pincode')} className="form-control checkout-input" placeholder="400001" maxLength={6} />
                             {errors.pincode && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.pincode.message}</p>}
                           </div>
                         </div>
@@ -414,7 +428,7 @@ const onPlaceOrder = async () => {
                         <Truck size={14} style={{ color: 'var(--bb-accent)' }} />
                         <span className="text-theme-title fw-bold small">Delivering to:</span>
                       </div>
-                      <p className="text-theme-muted mb-0 small">{addressData?.fullName} · {addressData?.phone}</p>
+                      <p className="text-theme-muted mb-0 small">{addressData?.fullName} - {addressData?.phone}</p>
                       <p className="text-theme-muted mb-0 small">{addressData?.address1}{addressData?.address2 ? `, ${addressData.address2}` : ''}</p>
                       <p className="text-theme-muted mb-0 small">{addressData?.city}, {addressData?.state} - {addressData?.pincode}</p>
                       <button onClick={() => setStep(1)} className="btn border-0 p-0 mt-1 small fw-semibold" style={{ color: 'var(--bb-primary-light)', background: 'transparent', fontSize: '0.8rem' }}>Change</button>
@@ -423,9 +437,9 @@ const onPlaceOrder = async () => {
                     {/* Payment options */}
                     <div className="d-flex flex-column gap-3">
                       {[
-                        { id: 'card', label: 'Credit / Debit Card', emoji: '💳', desc: 'Visa, Mastercard, RuPay' },
-                        { id: 'netbanking', label: 'Net Banking', emoji: '🏦', desc: 'All major Indian banks' },
-                        { id: 'cod', label: 'Cash on Delivery', emoji: '💵', desc: 'Pay when you receive' },
+                        { id: 'card', label: 'Credit / Debit Card', emoji: '--', desc: 'Visa, Mastercard, RuPay' },
+                        { id: 'netbanking', label: 'Net Banking', emoji: '--', desc: 'All major Indian banks' },
+                        { id: 'cod', label: 'Cash on Delivery', emoji: '--', desc: 'Pay when you receive' },
                       ].map(method => (
                         <label
                           key={method.id}
@@ -448,7 +462,7 @@ const onPlaceOrder = async () => {
                         <ArrowLeft size={16} /> Back
                       </button>
                       <button onClick={onPlaceOrder} className="btn btn-glow flex-grow-1 py-3 fw-black d-flex align-items-center justify-content-center gap-2" style={{ borderRadius: 12 }}>
-                        <Lock size={16} /> Place Order · ₹{total.toLocaleString('en-IN')}
+                        <Lock size={16} /> Place Order - -{total.toLocaleString('en-IN')}
                       </button>
                     </div>
                   </div>
@@ -467,13 +481,13 @@ const onPlaceOrder = async () => {
                     >
                       <CheckCircle size={48} style={{ color: '#39ff14' }} />
                     </motion.div>
-                    <h2 className="fw-black text-theme-title mb-2" style={{ letterSpacing: '-1px' }}>Order Placed! 🎉</h2>
+                    <h2 className="fw-black text-theme-title mb-2" style={{ letterSpacing: '-1px' }}>Order Placed! --</h2>
                     <p className="text-theme-muted mb-1">Thank you for your purchase.</p>
                     <div className="my-3 px-4 py-2 rounded-2 d-inline-block" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
                       <span className="text-theme-muted small">Order ID: </span>
                       <span className="fw-black" style={{ color: 'var(--bb-accent)', fontSize: '0.9rem', fontFamily: 'monospace' }}>#{createdOrderId || orderId}</span>
                     </div>
-                    <p className="text-theme-muted small mb-4">Your order will be delivered within <strong className="text-theme-title">3–5 business days</strong>. A confirmation has been sent to your email.</p>
+                    <p className="text-theme-muted small mb-4">Your order will be delivered within <strong className="text-theme-title">3-5 business days</strong>. A confirmation has been sent to your email.</p>
 
                     <div className="d-flex gap-2 flex-column flex-sm-row justify-content-center">
                       <button onClick={() => navigate('/orders')} className="btn btn-glow px-4 py-2 fw-bold" style={{ borderRadius: 10 }}>
@@ -508,21 +522,21 @@ const onPlaceOrder = async () => {
                         <p className="text-theme-title fw-semibold mb-0 text-truncate" style={{ fontSize: '0.8rem' }}>{item.name}</p>
                         <p className="text-theme-muted mb-0" style={{ fontSize: '0.7rem' }}>Qty: {item.quantity}</p>
                       </div>
-                      <span className="text-theme-title fw-bold" style={{ fontSize: '0.85rem', flexShrink: 0 }}>₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
+                      <span className="text-theme-title fw-bold" style={{ fontSize: '0.85rem', flexShrink: 0 }}>-{(item.price * item.quantity).toLocaleString('en-IN')}</span>
                     </div>
                   ))}
                 </div>
                 <div className="d-flex flex-column gap-1 pt-3" style={{ borderTop: '1px solid var(--bb-border)' }}>
-                  <div className="d-flex justify-content-between text-theme-muted small"><span>Subtotal</span><span>₹{subtotal.toLocaleString('en-IN')}</span></div>
-                  <div className="d-flex justify-content-between text-theme-muted small"><span>GST (18%)</span><span>₹{gst.toLocaleString('en-IN')}</span></div>
+                  <div className="d-flex justify-content-between text-theme-muted small"><span>Subtotal</span><span>-{subtotal.toLocaleString('en-IN')}</span></div>
+                  <div className="d-flex justify-content-between text-theme-muted small"><span>GST (18%)</span><span>-{gst.toLocaleString('en-IN')}</span></div>
                   <div className="d-flex justify-content-between small">
                     <span className="text-theme-muted">Shipping</span>
-                    <span style={{ color: shipping === 0 ? '#39ff14' : 'var(--bb-muted)', fontWeight: 600 }}>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
+                    <span style={{ color: shipping === 0 ? '#39ff14' : 'var(--bb-muted)', fontWeight: 600 }}>{shipping === 0 ? 'FREE' : `-${shipping}`}</span>
                   </div>
                   {appliedPromo && couponDiscount > 0 && (
                     <div className="d-flex justify-content-between small text-success">
                       <span className="fw-bold">Discount ({appliedPromo.code})</span>
-                      <span className="fw-bold">-₹{couponDiscount.toLocaleString('en-IN')}</span>
+                      <span className="fw-bold">--{couponDiscount.toLocaleString('en-IN')}</span>
                     </div>
                   )}
                   {appliedPromo && appliedPromo.isFreeShipping && (
@@ -533,7 +547,7 @@ const onPlaceOrder = async () => {
                   )}
                   <div className="d-flex justify-content-between fw-black mt-2 pt-2" style={{ borderTop: '1px solid var(--bb-border)' }}>
                     <span className="text-theme-title">Total</span>
-                    <span className="text-theme-title" style={{ color: 'var(--bb-accent)' }}>₹{total.toLocaleString('en-IN')}</span>
+                    <span className="text-theme-title" style={{ color: 'var(--bb-accent)' }}>-{total.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
               </div>
