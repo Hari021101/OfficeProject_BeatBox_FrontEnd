@@ -53,7 +53,7 @@ export default function Inventory() {
       label: 'Stock Quantity', 
       sortable: true,
       render: (row) => {
-        const stock = row.stockQuantity || 0;
+        const stock = row.stockQuantity ?? 0;
         const isOut = stock === 0;
         const isLow = stock > 0 && stock < 10;
         return (
@@ -73,7 +73,7 @@ export default function Inventory() {
       key: 'status', 
       label: 'Status', 
       sortable: false,
-      render: (row) => <StockBadge stock={row.stockQuantity || 0} />
+      render: (row) => <StockBadge stock={row.stockQuantity ?? 0} />
     },
     { 
       key: 'actions', 

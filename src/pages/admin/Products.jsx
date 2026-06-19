@@ -104,7 +104,7 @@ export default function Products() {
       key: 'stockQuantity', 
       label: 'Status', 
       sortable: true,
-      render: (row) => <StockBadge stock={row.stockQuantity || 0} />
+      render: (row) => <StockBadge stock={row.stockQuantity ?? 0} />
     },
     { 
       key: 'actions', 

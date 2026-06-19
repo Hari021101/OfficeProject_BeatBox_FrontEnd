@@ -1,5 +1,44 @@
 import api from './authService';
-import { IMAGE_MAP, PRODUCTS as MOCK_PRODUCTS } from '../data/products';
+import { IMAGE_MAP } from '../data/products';
+
+
+// API URL
+const API_BASE =
+  import.meta.env.VITE_API_URL ||
+  'http://localhost:5089';
+
+// Convert relative image paths to absolute URLs
+const buildImageUrl = (url) => {
+  if (!url) return '';
+
+  if (
+    url.startsWith('http://') ||
+    url.startsWith('https://') ||
+    url.startsWith('data:')
+  ) {
+    return url;
+  }
+
+  return `${API_BASE}${url}`;
+};
+
+const getPrimaryImage = (product) => {
+  const variant = product.variants?.[0];
+
+  if (!variant?.images?.length) {
+    return null;
+  }
+
+  const primary =
+    variant.images.find(i => i.isPrimary);
+
+  return (
+    primary?.imageUrl ||
+    variant.images[0]?.imageUrl ||
+    null
+  );
+};
+
 
 // ─── Derive a local image-key from the backend imageUrl string + product name ─
 const mapImageKey = (url = '', name = '') => {
@@ -27,26 +66,32 @@ const mapImageKey = (url = '', name = '') => {
 };
 
 // ─── Resolve the actual image src: prefer backend URL, fall back to local asset ─
-const resolveImage = (imageUrl, dbProductImageUrl, imageKey) => {
-  if (imageUrl && imageUrl !== 'string') {
-    if (imageUrl.startsWith('http') || imageUrl.startsWith('data:')) {
-      return imageUrl;
-    }
-    if (imageUrl.startsWith('/uploads/')) {
-      const base = api.defaults.baseURL.replace('/api', '');
-      return `${base}${imageUrl}`;
-    }
+const resolveImage = (imageUrl, imageKey) => {
+  if (imageUrl) {
+    return buildImageUrl(imageUrl);
   }
-  if (dbProductImageUrl && dbProductImageUrl.startsWith('http')) {
-    return dbProductImageUrl;
-  }
-  return IMAGE_MAP[imageKey] || IMAGE_MAP['heroHeadphones'];
+
+  return IMAGE_MAP[imageKey] || IMAGE_MAP.heroHeadphones;
 };
 
 // ─── Transform raw API product into the shape the UI expects ──────────────────
 const mapProduct = (bp) => {
-  const originalPrice = bp.price ?? 0;
-  const salePrice = bp.discountPrice ?? originalPrice;
+  const defaultVariant =
+  bp.variants?.[0] || null;
+
+  const totalStock =
+  bp.variants?.reduce(
+    (sum, v) => sum + (v.stockQuantity || 0),
+    0
+  ) ?? 0;
+
+const originalPrice =
+  defaultVariant?.price ?? 0;
+
+const salePrice =
+  defaultVariant?.discountPrice ??
+  defaultVariant?.price ??
+  0;
 
   const discount =
     originalPrice > salePrice
@@ -55,7 +100,12 @@ const mapProduct = (bp) => {
         )
       : 0;
 
-  const imageKey = mapImageKey(bp.imageUrl, bp.name);
+ const primaryImage = getPrimaryImage(bp);
+
+const imageKey = mapImageKey(
+  primaryImage,
+  bp.name
+);
 
   return {
     id: bp.id,
@@ -86,8 +136,8 @@ const mapProduct = (bp) => {
 
     // =========================
 
-    stockQuantity: bp.stockQuantity ?? 0,
-    inStock: (bp.stockQuantity ?? 0) > 0,
+stockQuantity: totalStock,
+inStock: totalStock > 0,
 
     // =========================
     // FIXED RATING
@@ -123,11 +173,9 @@ const mapProduct = (bp) => {
 
     imageKey,
 
-    imageUrl: resolveImage(
-      bp.imageUrl,
-      bp.imageUrl,
-      imageKey
-    ),
+imageUrl: primaryImage
+  ? buildImageUrl(primaryImage)
+  : resolveImage(null, imageKey),
 
     images: bp.images ?? [],
 
@@ -152,34 +200,42 @@ const mapProduct = (bp) => {
 // ===================================
 
 colors:
-  bp.images?.length > 0
-    ? bp.images.map(img => ({
-        name: img.colorName,
-        code: img.colorCode,
-        imageUrl: resolveImage(img.imageUrl, bp.imageUrl, imageKey)
-      }))
-    : [
-        {
-          name: bp.color || 'Black',
-          code: '#111111',
-          imageUrl: resolveImage(bp.imageUrl, bp.imageUrl, imageKey)
-        }
-      ],
+  bp.variants?.length > 0
+    ? bp.variants.map(v => ({
+        id: v.id,
+        name: v.color,
+        color: v.color,
+        code: v.colorCode,
+        colorCode: v.colorCode,
 
-variants:
-  bp.images?.length > 0
-    ? bp.images.map(img => ({
-        colorName: img.colorName,
-        colorCode: img.colorCode,
-        imageUrl: resolveImage(img.imageUrl, bp.imageUrl, imageKey)
+        price: v.price,
+        discountPrice: v.discountPrice,
+        stockQuantity: v.stockQuantity,
+
+        imageUrl: buildImageUrl(
+          v.images?.find(i => i.isPrimary)?.imageUrl ||
+          v.images?.[0]?.imageUrl ||
+          ''
+        )
       }))
-    : [
-        {
-          colorName: bp.color || 'Black',
-          colorCode: '#111111',
-          imageUrl: resolveImage(bp.imageUrl, bp.imageUrl, imageKey)
-        }
-      ],
+    : [],
+variants:
+  bp.variants?.length > 0
+    ? bp.variants.map(v => ({
+        id: v.id,
+        color: v.color,
+        colorCode: v.colorCode,
+        price: v.price,
+        discountPrice: v.discountPrice,
+        stockQuantity: v.stockQuantity,
+
+        images:
+          v.images?.map(img => ({
+            ...img,
+            imageUrl: buildImageUrl(img.imageUrl)
+          })) || []
+      }))
+    : [],
 
     specs: {
       Brand: bp.brand || 'BeatBox',
@@ -202,7 +258,10 @@ variants:
       Warranty:
         '1 Year Standard Warranty',
       'In Stock':
-        bp.stockQuantity ?? 0
+  bp.variants?.reduce(
+    (sum, v) => sum + v.stockQuantity,
+    0
+  ) ?? 0
     },
 
     features:
@@ -226,28 +285,14 @@ variants:
 // ─── Service ──────────────────────────────────────────────────────────────────
 export const productService = {
   getAllProducts: async () => {
-    try {
-      const response = await api.get('/product');
-      const apiProducts = response.data.map(mapProduct);
-      const apiProductNames = new Set(apiProducts.map(p => p.name?.toLowerCase() || ''));
-      const mockExtras = MOCK_PRODUCTS.filter(p => !apiProductNames.has(p.name?.toLowerCase() || ''));
-      return [...apiProducts, ...mockExtras];
-    } catch (err) {
-      console.warn("Failed to fetch products from API, falling back to mock data", err);
-      return MOCK_PRODUCTS;
-    }
-  },
+  const response = await api.get('/product');
+  return response.data.map(mapProduct);
+},
 
-  getProductById: async (id) => {
-    const mockProd = MOCK_PRODUCTS.find(p => p.id === Number(id));
-    try {
-      const response = await api.get(`/product/${id}`);
-      return mapProduct(response.data);
-    } catch (err) {
-      if (mockProd) return mockProd;
-      throw err;
-    }
-  },
+getProductById: async (id) => {
+  const response = await api.get(`/product/${id}`);
+  return mapProduct(response.data);
+},
 
   // Admin Methods
   createProduct: async (productData) => {

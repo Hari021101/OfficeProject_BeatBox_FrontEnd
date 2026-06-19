@@ -17,21 +17,44 @@ const ProductCard = React.memo(function ProductCard({ product, index = 0 }) {
 const [selectedColor, setSelectedColor] =
   useState(product.colors?.[0] || null)
   const [adding, setAdding] = useState(false)
+  const currentPrice =
+  selectedColor?.discountPrice ??
+  selectedColor?.price ??
+  product.discountPrice ??
+  product.price;
+
+const currentOldPrice =
+  selectedColor?.price ??
+  product.oldPrice ??
+  product.price;
 
   const handleAddToCart = (e) => {
     e.preventDefault()
     e.stopPropagation()
     setAdding(true)
     dispatch(addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      imageKey: product.imageKey,
-      selectedColor: selectedColor?.name || product.color,
-      selectedColorCode: selectedColor?.code || '#111111',
-      category: product.category,
-      imageUrl: selectedColor?.imageUrl || product.imageUrl,
-    }))
+  id: product.id,
+  variantId: selectedColor?.id,
+
+  name: product.name,
+
+  price:
+    selectedColor?.discountPrice ||
+    selectedColor?.price ||
+    product.price,
+
+  imageUrl:
+    selectedColor?.imageUrl ||
+    product.imageUrl,
+
+  selectedColor:
+    selectedColor?.color ||
+    selectedColor?.name,
+
+  selectedColorCode:
+    selectedColor?.colorCode ||
+    selectedColor?.code
+}))
     toast.success(`🎸 ${product.name} added to cart!`, {
       style: { background: '#060b19', color: '#fff', border: '1px solid rgba(0,243,255,0.3)', borderRadius: '10px' }
     })
@@ -152,7 +175,8 @@ const [selectedColor, setSelectedColor] =
           >
             <span className="text-uppercase" style={{ letterSpacing: '0.3px' }}>{product.usp}</span>
             <span className="d-flex align-items-center gap-1 bg-white px-2 rounded-pill" style={{ fontSize: '0.65rem', color: '#000', fontWeight: 800, padding: '2px 8px' }}>
-              <Star size={9} fill="#000" /> {product.averageRating || product.rating || 0}
+             <Star size={9} fill="#000" />
+{Number(product.averageRating || product.rating || 0).toFixed(1)}
             </span>
           </div>
 
@@ -163,7 +187,7 @@ const [selectedColor, setSelectedColor] =
               {(product.colors || []).map((clr, i) => (
                 <button
                   key={i}
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedColor(clr) }}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); console.log("Clicked:", clr); setSelectedColor(clr) }}
                   className="btn p-0 rounded-circle border-0"
                   style={{
                     width: 16, height: 16,
@@ -189,11 +213,11 @@ const [selectedColor, setSelectedColor] =
             <div className="d-flex align-items-baseline justify-content-between mb-3">
               <div>
                 <span className="fw-black fs-5 text-theme-title">
-  ₹{(product.discountPrice ?? product.price).toLocaleString('en-IN')}
+  ₹{currentPrice.toLocaleString('en-IN')}
 </span>
 
 <span className="text-decoration-line-through text-theme-muted small ms-2">
-  ₹{(product.oldPrice ?? product.price).toLocaleString('en-IN')}
+ ₹{currentOldPrice.toLocaleString('en-IN')}
 </span>              </div>
               <span className="text-success small fw-bold">{Math.max(product.discount, 0)}% OFF</span>
             </div>

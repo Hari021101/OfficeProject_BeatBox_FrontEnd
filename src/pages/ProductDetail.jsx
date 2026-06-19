@@ -17,6 +17,7 @@ import logo from '../assets/beatbox_logo.png'
 import { productService } from '../services/productService'
 import { fetchMyOrders, selectAllOrders } from '../redux/orderSlice'
 import { addRecentlyViewed } from '../redux/recentlyViewedSlice'
+import { toggleWishlistItem } from '../redux/wishlistSlice'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -27,7 +28,8 @@ export default function ProductDetail() {
   //const product = allProducts.find(p => p.id.toString() === id)
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
-
+  const [selectedVariant, setSelectedVariant] =
+  useState(null)
   const myOrders = useSelector(selectAllOrders)
   const { user } = useSelector(state => state.auth)
 
@@ -88,6 +90,12 @@ export default function ProductDetail() {
     }
   }, [product])
 
+  useEffect(() => {
+  if (selectedVariant) {
+    setActiveImageIndex(0)
+  }
+}, [selectedVariant])
+
   // Scroll to top when product page loads or id changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
@@ -126,14 +134,18 @@ export default function ProductDetail() {
   }
 
   // Initialize selectedColor once product is loaded
-  useEffect(() => {
-    if (product && !selectedColor) {
-      setSelectedColor({
-        name: product.color || 'Black',
-        code: '#000000'
-      })
-    }
-  }, [product])
+useEffect(() => {
+  if (product?.variants?.length > 0) {
+    const firstVariant = product.variants[0]
+
+    setSelectedVariant(firstVariant)
+
+    setSelectedColor({
+      name: firstVariant.color,
+      code: firstVariant.colorCode
+    })
+  }
+}, [product])
 
   if (loading) {
     return (
@@ -176,62 +188,71 @@ export default function ProductDetail() {
     }
   }
 
-  // Two-level fallback: backend URL → local bundled asset
-  const img =
-    (product.imageUrl && product.imageUrl !== 'string' && product.imageUrl.startsWith('http')
-      ? product.imageUrl
-      : null) ||
-    IMAGE_MAP[product.imageKey] ||
-    IMAGE_MAP['heroHeadphones']
+  // Three-level fallback: variant URL → backend URL → local bundled asset
+const variantImages =
+  selectedVariant?.images?.length
+    ? [...selectedVariant.images].sort(
+        (a, b) => a.displayOrder - b.displayOrder
+      )
+    : []
 
-  const getCapacityMultiplier = (cap) => {
-    if (!cap) return 1;
-    if (cap.includes('16GB')) return 0.5;
-    if (cap.includes('32GB')) return 0.7;
-    if (cap.includes('64GB')) return 0.85;
-    if (cap.includes('128GB')) return 1;
-    if (cap.includes('256GB')) return 1.5;
-    if (cap.includes('500GB') || cap.includes('512GB')) return 2;
-    if (cap.includes('1TB')) return 3.5;
-    if (cap.includes('2TB')) return 6;
-    return 1;
-  }
+const img =
+  variantImages[activeImageIndex]?.imageUrl ||
+  variantImages[0]?.imageUrl ||
+  null
 
-  const multiplier = getCapacityMultiplier(selectedCapacity);
 
-  const salePrice = Math.round((product?.price || 0) * multiplier);
+const salePrice =
+  selectedVariant?.discountPrice ??
+  selectedVariant?.price ??
+  0
 
-  const originalPrice = Math.round((product?.oldPrice || product?.price || 0) * multiplier);
+const originalPrice =
+  selectedVariant?.price ??
+  0
+const savings =
+  originalPrice - salePrice
 
-  const savings = originalPrice - salePrice;
-
+  
   const handleAddToCart = () => {
-    if (!(product.stockQuantity > 0 || product.inStock)) return
+
+    console.log("Selected Variant:", selectedVariant);
+console.log("Variant Id:", selectedVariant?.id);
+console.log("Color:", selectedVariant?.color);
+    if (selectedVariant?.stockQuantity <= 0) return
     setAdding(true)
+    
     dispatch(addToCart({
       id: product.id, name: product.name, price: salePrice,
+      variantId: selectedVariant?.id,
       imageKey: product.imageKey, quantity: quantity,
       selectedColor: selectedColor?.name,
       selectedColorCode: selectedColor?.code,
       selectedCapacity: selectedCapacity || product?.capacities?.[0],
       category: product.category,
-      imageUrl: product.imageUrl,
+      imageUrl:
+  selectedVariant?.images?.find(x => x.isPrimary)?.imageUrl ||
+  selectedVariant?.images?.[0]?.imageUrl,
     }))
     toast.success(`🎸 ${product.name} added to cart!`, {
       style: { background: '#060b19', color: '#fff', border: '1px solid rgba(0,243,255,0.3)', borderRadius: '10px' }
     })
     setTimeout(() => setAdding(false), 600)
+    
   }
 
   const handleBuyNow = () => {
-    if (!(product.stockQuantity > 0 || product.inStock)) return
+    if (selectedVariant?.stockQuantity <= 0) return
     dispatch(addToCart({
       id: product.id, name: product.name, price: salePrice,
       imageKey: product.imageKey, quantity: quantity,
       selectedColor: selectedColor?.name, selectedColorCode: selectedColor?.code,
       selectedCapacity: selectedCapacity || product?.capacities?.[0],
       category: product.category,
-      imageUrl: product.imageUrl,
+      imageUrl:
+  selectedVariant?.images?.find(x => x.isPrimary)?.imageUrl ||
+  selectedVariant?.images?.[0]?.imageUrl,
+      variantId: selectedVariant?.id,
     }))
     navigate('/checkout')
   }
@@ -254,6 +275,8 @@ const discount =
       toast.error('Failed to copy link')
     }
   }
+
+  
 
   const handleCheckDelivery = async () => {
     if (pincode.length !== 6 || isNaN(pincode)) {
@@ -313,6 +336,21 @@ const handleSubmitReview = async (e) => {
     toast.error('Failed to add review')
   }
 }
+const handleWishlist = async () => {
+  try {
+    await dispatch(toggleWishlistItem(product.id)).unwrap()
+
+    setWishlisted(prev => !prev)
+
+    toast.success(
+      wishlisted
+        ? 'Removed from wishlist'
+        : '❤️ Added to wishlist'
+    )
+  } catch (err) {
+    toast.error('Wishlist update failed')
+  }
+}
 
   return (
     <div className="min-vh-100 pb-5" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
@@ -348,7 +386,7 @@ const handleSubmitReview = async (e) => {
               style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', minHeight: 380, overflow: 'hidden' }}
             >
               {/* Out of stock badge */}
-              {product.stockQuantity <= 0 && (
+              {selectedVariant?.stockQuantity <= 0 && (
                 <div className="position-absolute top-0 end-0 m-3 z-10">
                   <span className="badge px-3 py-2 fw-black" style={{ background: 'rgba(220,53,69,0.9)', letterSpacing: 1, fontSize: '0.75rem' }}>OUT OF STOCK</span>
                 </div>
@@ -391,23 +429,37 @@ const handleSubmitReview = async (e) => {
               )}
             </div>
 
-            {/* Thumbnail row (same image for mock) */}
-            <div className="d-flex gap-2 mt-3 justify-content-center">
-              {[0, 1, 2].map(i => (
-                <div
-                  key={i}
-                  onClick={() => setActiveImageIndex(i)}
-                  className="rounded-3 d-flex align-items-center justify-content-center"
-                  style={{ width: 70, height: 70, background: 'var(--bb-surface)', border: `1px solid ${i === activeImageIndex ? 'var(--bb-accent)' : 'var(--bb-border)'}`, cursor: 'pointer', overflow: 'hidden', transition: 'border-color 0.2s' }}
-                >
-                  {img && img.includes('video') ? (
-                    <video src={img} muted style={{ width: 50, height: 50, objectFit: 'contain', opacity: i === activeImageIndex ? 1 : 0.5, transform: `rotate(${i === 1 ? -25 : i === 2 ? 25 : 0}deg) scale(${i === 0 ? 1 : 1.05})`, filter: selectedColor && selectedColor.name !== 'Black' && selectedColor.name !== 'White' ? 'hue-rotate(45deg)' : '' }} />
-                  ) : (
-                    <img src={img} alt="" style={{ width: 50, height: 50, objectFit: 'contain', opacity: i === activeImageIndex ? 1 : 0.5, transform: `rotate(${i === 1 ? -25 : i === 2 ? 25 : 0}deg) scale(${i === 0 ? 1 : 1.05})`, filter: selectedColor && selectedColor.name !== 'Black' && selectedColor.name !== 'White' ? 'hue-rotate(45deg)' : '' }} />
-                  )}
-                </div>
-              ))}
-            </div>
+ {/* Thumbnail row */}
+<div className="d-flex gap-2 mt-3 justify-content-center">
+  {variantImages?.map((image, i) => (
+    <div
+      key={image.id}
+      onClick={() => setActiveImageIndex(i)}
+      className="rounded-3 d-flex align-items-center justify-content-center"
+      style={{
+        width: 70,
+        height: 70,
+        background: 'var(--bb-surface)',
+        border:
+          i === activeImageIndex
+            ? '2px solid #00f3ff'
+            : '1px solid var(--bb-border)',
+        cursor: 'pointer',
+        overflow: 'hidden'
+      }}
+    >
+      <img
+        src={image.imageUrl}
+        alt=""
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover'
+        }}
+      />
+    </div>
+  ))}
+</div>
           </motion.div>
 
           {/* Right: Product Info */}
@@ -431,8 +483,8 @@ const handleSubmitReview = async (e) => {
                 <span className="fw-bold ms-1" style={{ color: '#ffc700' }}>{Number(product.averageRating || product.rating || 0).toFixed(1)}</span>
               </div>
               <span className="text-theme-muted small">({(product.reviewCount || 0).toLocaleString('en-IN')} reviews)</span>
-              <span className={`badge px-2 py-1 small fw-bold ${product.stockQuantity > 0 || product.inStock ? 'text-success' : 'text-danger'}`} style={{ background: product.stockQuantity > 0 || product.inStock ? 'rgba(39,255,20,0.08)' : 'rgba(220,53,69,0.08)', border: `1px solid ${product.stockQuantity > 0 || product.inStock ? 'rgba(39,255,20,0.2)' : 'rgba(220,53,69,0.2)'}` }}>
-                {product.stockQuantity > 0 || product.inStock ? '✓ In Stock' : '✗ Out of Stock'}
+              <span className={`badge px-2 py-1 small fw-bold ${selectedVariant?.stockQuantity > 0 ? 'text-success' : 'text-danger'}`} style={{ background: selectedVariant?.stockQuantity > 0 ? 'rgba(39,255,20,0.08)' : 'rgba(220,53,69,0.08)', border: `1px solid ${selectedVariant?.stockQuantity > 0 ? 'rgba(39,255,20,0.2)' : 'rgba(220,53,69,0.2)'}` }}>
+                {selectedVariant?.stockQuantity > 0 ? '✓ In Stock' : '✗ Out of Stock'}
               </span>
             </div>
 
@@ -484,72 +536,42 @@ const handleSubmitReview = async (e) => {
             </div>
 
             {/* Color selection */}
-            {product?.colors?.length > 0 && (
-              <div className="mb-4">
-                <p className="text-theme-muted small fw-semibold mb-3">
-                  COLOR —
-                  <span className="text-theme-title ms-2">
-                    {selectedColor?.name}
-                  </span>
-                </p>
+            <div className="mb-4">
+              <p className="text-theme-muted small fw-semibold mb-3">
+                COLOR —
+                <span className="text-theme-title ms-2">
+                  {selectedVariant?.color}
+                </span>
+              </p>
 
-                <div className="d-flex gap-3">
-                  {product.colors.map((color, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedColor(color)}
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: '50%',
-                        background: color.code,
-                        border:
-                          selectedColor?.name === color.name
-                            ? '3px solid white'
-                            : '1px solid var(--bb-border)',
-                        cursor: 'pointer',
-                        boxShadow: selectedColor?.name === color.name ? `0 0 15px ${color.code}` : 'none',
-                        transition: 'all 0.2s'
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
+<div className="d-flex gap-3">
+  {product.variants?.map(v => (
+    <button
+      key={v.id}
+      type="button"
+      onClick={() => {
+        setSelectedVariant(v)
 
-            {/* Capacity selection */}
-            {product?.capacities?.length > 0 && (
-              <div className="mb-4">
-                <p className="text-theme-muted small fw-semibold mb-3">
-                  CAPACITY —
-                  <span className="text-theme-title ms-2">
-                    {selectedCapacity || product.capacities[0]}
-                  </span>
-                </p>
-
-                <div className="d-flex gap-2 flex-wrap">
-                  {product.capacities.map((cap, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedCapacity(cap)}
-                      className={`btn fw-bold px-3 py-2 ${
-                        (selectedCapacity || product.capacities[0]) === cap
-                          ? 'btn-glow'
-                          : 'btn-outline-secondary'
-                      }`}
-                      style={{
-                        borderRadius: '8px',
-                        border: (selectedCapacity || product.capacities[0]) === cap ? 'none' : '1px solid var(--bb-border)',
-                        background: (selectedCapacity || product.capacities[0]) === cap ? '' : 'var(--bb-surface-2)',
-                        color: (selectedCapacity || product.capacities[0]) === cap ? '#fff' : 'var(--bb-muted)'
-                      }}
-                    >
-                      {cap}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+        setSelectedColor({
+          name: v.color,
+          code: v.colorCode
+        })
+      }}
+      style={{
+        width: "40px",
+        height: "40px",
+        borderRadius: "50%",
+        backgroundColor: v.colorCode,
+        border:
+          selectedVariant?.id === v.id
+            ? "3px solid #00f3ff"
+            : "2px solid #ccc",
+        cursor: "pointer"
+      }}
+    />
+  ))}
+</div>
+            </div>
 
             {/* Quantity */}
             <div className="d-flex align-items-center gap-4 mb-4">
@@ -565,22 +587,23 @@ const handleSubmitReview = async (e) => {
             <div className="d-flex gap-3 mb-4 flex-wrap">
               <button
                 onClick={handleAddToCart}
-                disabled={!(product.stockQuantity > 0 || product.inStock) || adding}
+                disabled={selectedVariant?.stockQuantity <= 0 || adding}
                 className="btn btn-glow flex-grow-1 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
                 style={{ borderRadius: 12, minWidth: 200, height: 56 }}
               >
                 {adding ? <><span className="spinner-border spinner-border-sm" /> Adding...</> : <><ShoppingBag size={18} /> Add to Cart</>}
               </button>
+              
               <button
                 onClick={handleBuyNow}
-                disabled={!(product.stockQuantity > 0 || product.inStock)}
+                disabled={selectedVariant?.stockQuantity <= 0}
                 className="btn flex-grow-1 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
                 style={{ borderRadius: 12, minWidth: 180, height: 56, background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }}
               >
                 Buy Now <ChevronRight size={16} />
               </button>
               <button
-                onClick={() => { setWishlisted(!wishlisted); toast.success(wishlisted ? 'Removed from wishlist' : '❤️ Added to wishlist!') }}
+                onClick={() => { handleWishlist() }}
                 className="btn d-flex align-items-center justify-content-center"
                 style={{ width: 56, height: 56, borderRadius: 12, background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: wishlisted ? '#ff4d7d' : 'var(--bb-muted)', flexShrink: 0 }}
               >

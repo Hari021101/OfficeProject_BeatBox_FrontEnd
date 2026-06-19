@@ -17,7 +17,9 @@ export default function Cart() {
   const subtotal = useSelector(selectCartSubtotal)
   const count = useSelector(selectCartCount)
   const appliedPromo = useSelector(selectAppliedPromo)
-
+  const API_BASE =
+  import.meta.env.VITE_API_URL ||
+  'http://localhost:5089';
   const [couponInput, setCouponInput] = useState('')
   const [couponError, setCouponError] = useState('')
   const [isValidatingPromo, setIsValidatingPromo] = useState(false)
@@ -202,6 +204,7 @@ export default function Cart() {
                       <div className="row g-4 align-items-center">
                         {/* Product Image Stage */}
                         <div className="col-4 col-sm-3 col-md-2">
+                          
                           <Link to={`/products/${item.id}`} className="d-block text-decoration-none">
                             <div 
                               className="rounded-3 d-flex align-items-center justify-content-center position-relative" 
@@ -213,6 +216,7 @@ export default function Cart() {
                                 overflow: 'hidden' 
                               }}
                             >
+                              
                               {/* Soft backdrop glow based on item color or default */}
                               <div className="position-absolute w-100 h-100" style={{ background: item.selectedColorCode || 'var(--bb-accent)', opacity: 0.1, filter: 'blur(20px)' }} />
                               {item.imageUrl && item.imageUrl.includes('video') ? (
@@ -223,9 +227,14 @@ export default function Cart() {
                                   style={{ objectFit: 'contain', filter: 'drop-shadow(0 10px 10px rgba(0,0,0,0.4))' }} 
                                 />
                               ) : (
+                                
                                 <img 
-                                  src={item.imageUrl || IMAGE_MAP[item.imageKey]} 
-                                  alt={item.name} 
+                                   src={
+    item.imageUrl?.startsWith('http')
+      ? item.imageUrl
+      : `${API_BASE}${item.imageUrl}`
+  }
+  alt={item.name} 
                                   className="img-fluid position-relative z-1" 
                                   style={{ objectFit: 'contain', filter: 'drop-shadow(0 10px 10px rgba(0,0,0,0.4))' }} 
                                 />
@@ -249,7 +258,15 @@ export default function Cart() {
                                 {item.selectedColor && (
                                   <div className="d-flex align-items-center gap-2 px-2 py-1 rounded-pill" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
                                     <div style={{ width: 12, height: 12, borderRadius: '50%', background: item.selectedColorCode || '#888', border: '1px solid rgba(255,255,255,0.2)' }} />
-                                    <span className="text-theme-title fw-semibold" style={{ fontSize: '0.75rem' }}>{item.selectedColor}</span>
+                                    <span
+  className="fw-semibold"
+  style={{
+    fontSize: '0.75rem',
+    color: item.selectedColorCode || 'var(--bb-title-color)'
+  }}
+>
+  {item.selectedColor}
+</span>
                                   </div>
                                 )}
                                 <span className="d-flex align-items-center gap-1 text-success fw-bold" style={{ fontSize: '0.75rem' }}>

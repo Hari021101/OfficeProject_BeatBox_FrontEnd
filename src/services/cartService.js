@@ -37,7 +37,11 @@ export const cartService = {
 
   addToCart: async (productId, quantity, fullProductDetails = null) => {
     try {
-      const response = await api.post('/cart/add', { productId, quantity });
+     const response = await api.post('/cart/add', {
+    productId,
+    quantity,
+    variantId: fullProductDetails?.variantId
+  });
       return response.data;
     } catch (err) {
       const cart = getLocalCart();
@@ -45,13 +49,19 @@ export const cartService = {
       if (existing) {
         existing.quantity += quantity;
       } else {
-        cart.items.push({ 
-          cartItemId: Date.now() + Math.floor(Math.random()*1000), 
-          productId, 
-          quantity, 
-          unitPrice: fullProductDetails?.price || 999,
-          productName: fullProductDetails?.name || 'Unknown'
-        });
+       cart.items.push({
+  cartItemId: Date.now() + Math.floor(Math.random() * 1000),
+  productId,
+  variantId: fullProductDetails?.variantId,
+  quantity,
+
+  unitPrice: fullProductDetails?.price || 999,
+  productName: fullProductDetails?.name || 'Unknown',
+
+  color: fullProductDetails?.selectedColor,
+  colorCode: fullProductDetails?.selectedColorCode,
+  productImage: fullProductDetails?.imageUrl
+});
       }
       cart.totalAmount = cart.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
       saveLocalCart(cart);

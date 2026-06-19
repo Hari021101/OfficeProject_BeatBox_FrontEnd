@@ -6,7 +6,14 @@ import { addToCart } from '../redux/cartSlice';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { Heart, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
+  const API_BASE = 'http://localhost:5089';
+  export const getImageUrl = (path) => {
+  if (!path) return '/placeholder-product.png';
 
+  if (path.startsWith('http')) return path;
+
+  return `${API_BASE}${path}`;
+};
 export default function Wishlist() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -30,7 +37,7 @@ export default function Wishlist() {
       id: item.productId,
       name: item.productName,
       price: item.productDiscountPrice || item.productPrice,
-      image: item.productImage,
+      image: getImageUrl(item.productImage) || '/placeholder-product.png',
       quantity: 1
     }));
     handleRemove(item.productId); // Optionally remove from wishlist after adding to cart
@@ -98,7 +105,7 @@ export default function Wishlist() {
                   <div className="position-relative bg-white" style={{ paddingTop: '100%', borderRadius: '24px 24px 0 0' }}>
                     <Link to={`/products/${item.productId}`}>
                       <img 
-                        src={item.productImage} 
+                        src={getImageUrl(item.productImage) || '/placeholder-product.png'} 
                         alt={item.productName}
                         className="position-absolute top-0 start-0 w-100 h-100 object-fit-contain p-4 transition-transform hover-scale"
                       />

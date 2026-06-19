@@ -33,33 +33,33 @@ export default function NotificationsPanel() {
   const panelRef = useRef(null)
 
   // Fetch initial notifications from DB
-  useEffect(() => {
-    if (!user) return;
+  // useEffect(() => {
+  //   if (!user) return;
     
-    const loadNotifs = async () => {
-      try {
-        const data = await notificationService.getNotifications();
-        const mapped = data.map(n => ({
-          id: n.id,
-          type: n.title.toLowerCase().includes('order') ? 'order' 
-                : n.title.toLowerCase().includes('stock') ? 'alert' 
-                : 'info',
-          title: n.title,
-          body: n.message,
-          time: new Date(n.createdAt),
-          read: n.isRead,
-        }));
+  //   const loadNotifs = async () => {
+  //     try {
+  //       const data = await notificationService.getNotifications();
+  //       const mapped = data.map(n => ({
+  //         id: n.id,
+  //         type: n.title.toLowerCase().includes('order') ? 'order' 
+  //               : n.title.toLowerCase().includes('stock') ? 'alert' 
+  //               : 'info',
+  //         title: n.title,
+  //         body: n.message,
+  //         time: new Date(n.createdAt),
+  //         read: n.isRead,
+  //       }));
         
-        // No mock data - only display real notifications from the DB
+  //       // No mock data - only display real notifications from the DB
         
-        setNotifs(mapped.sort((a, b) => b.time - a.time));
-      } catch (err) {
-        console.error("Failed to load notifications", err);
-      }
-    };
+  //       setNotifs(mapped.sort((a, b) => b.time - a.time));
+  //     } catch (err) {
+  //       console.error("Failed to load notifications", err);
+  //     }
+  //   };
     
-    loadNotifs();
-  }, [user]);
+  //   loadNotifs();
+  // }, [user]);
 
   // Setup SignalR Real-time Connection
   useEffect(() => {
@@ -69,7 +69,7 @@ export default function NotificationsPanel() {
     let isMounted = true;
     
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:7142/hubs/notifications", {
+      .withUrl("http://localhost:5089/hubs/notifications", {
         accessTokenFactory: () => token
       })
       .configureLogging(signalR.LogLevel.Warning) // Hides Information logs

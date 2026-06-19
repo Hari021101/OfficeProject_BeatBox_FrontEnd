@@ -11,7 +11,9 @@ export default function CartDrawer({ isOpen, onClose }) {
   const items = useSelector(selectCartItems)
   const subtotal = useSelector(selectCartSubtotal)
   const count = useSelector(selectCartCount)
-
+  const API_BASE =
+  import.meta.env.VITE_API_URL ||
+  'http://localhost:5089';
   const shipping = subtotal >= 999 ? 0 : 79
   const gst = Math.round(subtotal * 0.18)
   const total = subtotal + shipping + gst
@@ -175,11 +177,12 @@ export default function CartDrawer({ isOpen, onClose }) {
                         >
                           <div className="position-absolute w-100 h-100" style={{ background: item.selectedColorCode || 'var(--bb-accent)', opacity: 0.1, filter: 'blur(10px)' }} />
                           <img
-                            src={
-                              item.imageUrl ||
-                              IMAGE_MAP[item.imageKey]
-                            }
-                            alt={item.name}
+                             src={
+    item.imageUrl?.startsWith('http')
+      ? item.imageUrl
+      : `${API_BASE}${item.imageUrl}`
+  }
+  alt={item.name}
                             className="position-relative z-1"
                             style={{ width: 60, height: 60, objectFit: 'contain', filter: 'drop-shadow(0 5px 5px rgba(0,0,0,0.3))' }}
                           />
@@ -192,12 +195,29 @@ export default function CartDrawer({ isOpen, onClose }) {
                           </p>
 
                           {item.selectedColor && (
-                            <div className="d-flex align-items-center gap-2 mb-2">
-                              <div
-                                style={{ width: 8, height: 8, borderRadius: '50%', background: item.selectedColorCode || '#888', border: '1px solid rgba(255,255,255,0.2)' }}
-                              />
-                              <span className="text-theme-muted fw-medium" style={{ fontSize: '0.75rem' }}>{item.selectedColor}</span>
-                            </div>
+                            <div
+  className="d-flex align-items-center gap-2"
+>
+  <span
+    style={{
+      width: '12px',
+      height: '12px',
+      borderRadius: '50%',
+      backgroundColor:
+        item.selectedColorCode || '#ccc',
+      border: '1px solid #ddd'
+    }}
+  />
+
+  <span
+    style={{
+      color: item.selectedColorCode || '#666',
+      fontWeight: 600
+    }}
+  >
+    {item.selectedColor}
+  </span>
+</div>
                           )}
 
                           <div className="d-flex align-items-end justify-content-between mt-auto">

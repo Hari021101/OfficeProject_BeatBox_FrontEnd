@@ -42,6 +42,13 @@ function fmtDate(dateStr) {
     day: 'numeric', month: 'long', year: 'numeric',
   })
 }
+const getImageUrl = (path) => {
+  if (!path) return '/placeholder-product.png'
+
+  if (path.startsWith('http')) return path
+
+  return `http://localhost:5089${path}`
+}
 
 function estimatedDelivery(dateStr) {
   if (!dateStr) return 'N/A'
@@ -391,7 +398,15 @@ export default function OrderDetail() {
                             border: '1px solid var(--bb-border)',
                           }}
                         >
-                          <ShoppingBag size={22} style={{ color: 'var(--bb-accent)', opacity: 0.7 }} />
+<img
+  src={getImageUrl(item.productImageUrl)}
+  alt={item.productName}
+  style={{
+    width: 50,
+    height: 50,
+    objectFit: 'contain'
+  }}
+/>
                         </div>
 
                         {/* Name & meta */}
@@ -403,6 +418,20 @@ export default function OrderDetail() {
                             Qty: {item.quantity} × ₹{fmt(item.unitPrice)}
                           </p>
                         </div>
+                       {item.color && (
+  <div className="d-flex align-items-center gap-2 mt-1">
+    <span
+      style={{
+        width: 14,
+        height: 14,
+        borderRadius: '50%',
+        background: item.colorCode,
+        border: '1px solid #ccc'
+      }}
+    />
+    <small>{item.color}</small>
+  </div>
+)}
 
                         {/* Line total */}
                         <div className="text-end flex-shrink-0">

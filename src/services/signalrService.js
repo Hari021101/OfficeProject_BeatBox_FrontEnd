@@ -16,7 +16,7 @@ class SignalRService {
 
         try {
             this.connection = new signalR.HubConnectionBuilder()
-                .withUrl("https://localhost:7198/notificationHub", {
+                .withUrl("http://localhost:5089/notificationHub", {
                     skipNegotiation: true,
                     transport: signalR.HttpTransportType.WebSockets
                 })

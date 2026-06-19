@@ -114,78 +114,21 @@ export default function Checkout() {
       setStep(2);
     }
   }
-const onPlaceOrder = async () => {
-  try {
+  console.log({
+    subtotal,
+    gst,
+    shipping,
+    couponDiscount,
+    total,
+    appliedPromo
+  });
+  const onPlaceOrder = async () => {
+    try {
 
-    // ==========================
-    // CASH ON DELIVERY
-    // ==========================
-    if (paymentMethod === "cod") {
-
-      const orderData = {
-        shippingAddress: {
-          fullName: addressData.fullName,
-          addressLine1: addressData.address1,
-          addressLine2: addressData.address2 || "",
-          city: addressData.city,
-          state: addressData.state,
-          postalCode: addressData.pincode,
-          country: "India",
-          phone: addressData.phone
-        },
-
-        paymentMethod: "COD",
-
-        paymentDetails: {
-          transactionReference: `COD-${Date.now()}`
-        },
-        
-        items: items.map(item => ({
-          productId: item.id.toString(),
-          quantity: item.quantity,
-          unitPrice: item.price
-        }))
-      }
-
-      const result = await orderService.checkout(orderData)
-
-      setCreatedOrderId(result.orderId)
-
-      setOrdered(true)
-      setStep(3)
-
-      dispatch(clearCart())
-
-      toast.success("Order placed successfully!")
-
-      return
-    }
-
-    // ==========================
-    // RAZORPAY METHODS
-    // UPI / CARD / NETBANKING
-    // ==========================
-
-    const razorpayOrder =
-      await paymentService.createRazorpayOrder(
-        Date.now(),
-        total
-      )
-
-    const options = {
-      key: "rzp_test_SzoeIy8fRZ4hB9",
-
-      amount: razorpayOrder.data.amount,
-
-      currency: "INR",
-
-      order_id: razorpayOrder.data.razorpayOrderId,
-
-      name: "BeatBox",
-
-      description: "Premium Audio Store",
-
-      handler: async function (response) {
+      // ==========================
+      // CASH ON DELIVERY
+      // ==========================
+      if (paymentMethod === "cod") {
 
         const orderData = {
           shippingAddress: {
@@ -199,63 +142,145 @@ const onPlaceOrder = async () => {
             phone: addressData.phone
           },
 
-          paymentMethod: paymentMethod,
+          paymentMethod: "COD",
 
+            promoCode: appliedPromo?.code || null,
+
+  discountAmount: couponDiscount || 0,
           paymentDetails: {
-            razorpayOrderId: response.razorpay_order_id,
-            razorpayPaymentId: response.razorpay_payment_id,
-            razorpaySignature: response.razorpay_signature
+            transactionReference: `COD-${Date.now()}`
           },
-          
+
           items: items.map(item => ({
             productId: item.id.toString(),
             quantity: item.quantity,
-            unitPrice: item.price
+            unitPrice: item.price,
+
+            color: item.selectedColor,
+            colorCode: item.selectedColorCode,
+            productVariantId: item.variantId,
+            productImageUrl: item.image
           }))
         }
 
-        const result =
-          await orderService.checkout(orderData)
+        const result = await orderService.checkout(orderData)
 
-        const backendOrderId = result.orderId
+        setCreatedOrderId(result.orderId)
 
-        setCreatedOrderId(backendOrderId)
-
-        await paymentService.processPayment({
-          orderId: backendOrderId,
-          amount: total,
-          method: paymentMethod.toUpperCase(),
-          transactionId:
-            response.razorpay_payment_id
-        })
-
-        setStep(3)
         setOrdered(true)
+        setStep(3)
 
         dispatch(clearCart())
 
-        toast.success("Payment Successful!")
-      },
+        toast.success("Order placed successfully!")
 
-      prefill: {
-        name: addressData.fullName,
-        contact: addressData.phone
-      },
-
-      theme: {
-        color: "#00f3ff"
+        return
       }
+
+      // ==========================
+      // RAZORPAY METHODS
+      // UPI / CARD / NETBANKING
+      // ==========================
+
+      const razorpayOrder =
+        await paymentService.createRazorpayOrder(
+          Date.now(),
+          total
+        )
+
+      const options = {
+        key: "rzp_test_SzoeIy8fRZ4hB9",
+
+        amount: razorpayOrder.data.amount,
+
+        currency: "INR",
+
+        order_id: razorpayOrder.data.razorpayOrderId,
+
+        name: "BeatBox",
+
+        description: "Premium Audio Store",
+
+        handler: async function (response) {
+
+          const orderData = {
+            shippingAddress: {
+              fullName: addressData.fullName,
+              addressLine1: addressData.address1,
+              addressLine2: addressData.address2 || "",
+              city: addressData.city,
+              state: addressData.state,
+              postalCode: addressData.pincode,
+              country: "India",
+              phone: addressData.phone
+            },
+
+              promoCode: appliedPromo?.code || null,
+
+            discountAmount: couponDiscount || 0,
+
+            paymentMethod: paymentMethod,
+
+            paymentDetails: {
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature
+            },
+
+            items: items.map(item => ({
+              productId: item.id.toString(),
+              quantity: item.quantity,
+              unitPrice: item.price,
+
+              color: item.selectedColor,
+              colorCode: item.selectedColorCode,
+              productVariantId: item.variantId,
+              productImageUrl: item.image
+            }))
+          }
+
+          const result =
+            await orderService.checkout(orderData)
+
+          const backendOrderId = result.orderId
+
+          setCreatedOrderId(backendOrderId)
+
+          await paymentService.processPayment({
+            orderId: backendOrderId,
+           amount: parseInt(total * 100),
+            method: paymentMethod.toUpperCase(),
+            transactionId:
+              response.razorpay_payment_id
+          })
+
+          setStep(3)
+          setOrdered(true)
+
+          dispatch(clearCart())
+
+          toast.success("Payment Successful!")
+        },
+
+        prefill: {
+          name: addressData.fullName,
+          contact: addressData.phone
+        },
+
+        theme: {
+          color: "#00f3ff"
+        }
+      }
+
+      const razorpay = new window.Razorpay(options)
+
+      razorpay.open()
+
+    } catch (err) {
+      console.log(err)
+      toast.error("Payment failed")
     }
-
-    const razorpay = new window.Razorpay(options)
-
-    razorpay.open()
-
-  } catch (err) {
-    console.log(err)
-    toast.error("Payment failed")
   }
-}
   return (
     <div className="min-vh-100 pb-5" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
       <div className="bg-glow-orb" style={{ width: 400, height: 400, background: 'var(--bb-primary-glow)', top: '5%', left: '-5%', filter: 'blur(130px)' }} />
@@ -315,17 +340,17 @@ const onPlaceOrder = async () => {
                     <h5 className="fw-black text-theme-title mb-4 d-flex align-items-center gap-2">
                       <MapPin size={18} style={{ color: 'var(--bb-accent)' }} /> Delivery Address
                     </h5>
-                    
+
                     {addresses && addresses.length > 0 && !showNewAddressForm && (
                       <div className="mb-4">
                         <p className="text-theme-muted small fw-semibold mb-3">Select a saved address</p>
                         <div className="row g-3">
                           {addresses.map(addr => (
                             <div key={addr.userAddressId} className="col-12 col-md-6">
-                              <div 
-                                className="p-3 rounded-3 position-relative cursor-pointer h-100" 
-                                style={{ 
-                                  background: selectedAddressId === addr.userAddressId ? 'rgba(0, 243, 255, 0.05)' : 'var(--bb-surface-2)', 
+                              <div
+                                className="p-3 rounded-3 position-relative cursor-pointer h-100"
+                                style={{
+                                  background: selectedAddressId === addr.userAddressId ? 'rgba(0, 243, 255, 0.05)' : 'var(--bb-surface-2)',
                                   border: `1px solid ${selectedAddressId === addr.userAddressId ? 'var(--bb-accent)' : 'var(--bb-border)'}`,
                                   cursor: 'pointer'
                                 }}
@@ -339,7 +364,7 @@ const onPlaceOrder = async () => {
                                 <h6 className="fw-bold text-theme-title mb-1 small">{addr.fullName}</h6>
                                 <p className="text-theme-muted mb-0" style={{ fontSize: '0.75rem' }}>{addr.phone}</p>
                                 <p className="text-theme-title mb-0 mt-2" style={{ fontSize: '0.75rem' }}>
-                                  {addr.addressLine1}, {addr.city}<br/>{addr.state} - {addr.postalCode}
+                                  {addr.addressLine1}, {addr.city}<br />{addr.state} - {addr.postalCode}
                                 </p>
                               </div>
                             </div>
@@ -393,7 +418,7 @@ const onPlaceOrder = async () => {
                             <label className="form-label text-theme-muted small fw-semibold">State *</label>
                             <select {...register('state')} className="form-select checkout-input" style={{ color: 'var(--bb-text)' }}>
                               <option value="">Select State</option>
-                              {['Maharashtra','Tamil Nadu','Karnataka','Delhi','Gujarat','Rajasthan','Uttar Pradesh','West Bengal','Kerala','Telangana'].map(s => (
+                              {['Maharashtra', 'Tamil Nadu', 'Karnataka', 'Delhi', 'Gujarat', 'Rajasthan', 'Uttar Pradesh', 'West Bengal', 'Kerala', 'Telangana'].map(s => (
                                 <option key={s} value={s} style={{ background: 'var(--bb-surface)' }}>{s}</option>
                               ))}
                             </select>
@@ -461,6 +486,7 @@ const onPlaceOrder = async () => {
                       <button onClick={() => setStep(1)} className="btn fw-bold d-flex align-items-center gap-2 px-4" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-muted)', borderRadius: 12 }}>
                         <ArrowLeft size={16} /> Back
                       </button>
+
                       <button onClick={onPlaceOrder} className="btn btn-glow flex-grow-1 py-3 fw-black d-flex align-items-center justify-content-center gap-2" style={{ borderRadius: 12 }}>
                         <Lock size={16} /> Place Order - -{total.toLocaleString('en-IN')}
                       </button>

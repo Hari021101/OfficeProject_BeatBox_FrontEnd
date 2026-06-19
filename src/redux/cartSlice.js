@@ -74,16 +74,46 @@ export const selectCartItems = createSelector(
   [(state) => state.cart.items, (state) => state.products.items],
   (cartItems, productsItems) => {
     return cartItems.map(cartItem => {
-      const product = productsItems?.find(p => p.id === cartItem.productId);
+      const product =
+        productsItems?.find(
+          p => p.id === cartItem.productId
+        );
+console.log(cartItem);
       return {
         cartKey: cartItem.cartItemId,
+
         id: cartItem.productId,
-        name: cartItem.productName || (product ? product.name : 'Unknown Product'),
+
+        name:
+          cartItem.productName ||
+          product?.name ||
+          'Unknown Product',
+
         price: cartItem.unitPrice,
+
         quantity: cartItem.quantity,
-        imageKey: product ? product.imageKey : 'heroHeadphones',
-        selectedColor: null, // Backend doesn't support colors yet
-        selectedColorCode: null
+
+        imageKey:
+          product?.imageKey ||
+          'heroHeadphones',
+
+        imageUrl:
+          cartItem.productImage ||
+          cartItem.productImageUrl ||
+          product?.imageUrl,
+
+        selectedColor:
+          cartItem.color,
+
+        selectedColorCode:
+  cartItem.colorCode ||
+  product?.colors?.find(
+    c => c.name === cartItem.color
+  )?.code ||
+  "#111111",
+
+        variantId:
+          cartItem.variantId
       };
     });
   }

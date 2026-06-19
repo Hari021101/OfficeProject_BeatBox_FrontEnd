@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { SlidersHorizontal, X, ChevronDown, Search, ArrowUpDown, Tag } from 'lucide-react'
-import { CATEGORIES, IMAGE_MAP } from '../data/products'
+import { IMAGE_MAP } from '../data/products'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectAllProducts, selectProductStatus, fetchProducts } from '../redux/productSlice'
 import ProductCard from '../components/ui/ProductCard'
@@ -43,6 +43,44 @@ export default function ProductListing() {
 
   const dispatch = useDispatch()
   const allProducts = useSelector(selectAllProducts)
+  console.log("activeCategory:", activeCategory, typeof activeCategory);
+
+  console.table(
+    allProducts.slice(0, 10).map(p => ({
+      name: p.name,
+      categoryId: p.categoryId,
+      type: typeof p.categoryId,
+      categoryName: p.categoryName
+    }))
+  );
+  const categories = useMemo(() => {
+    const uniqueCategories = [
+      {
+        id: 'all',
+        label: 'All Products',
+        emoji: '🛍️'
+      }
+    ]
+
+    const names = [
+      ...new Set(
+        allProducts
+          .map(p => p.categoryName)
+          .filter(Boolean)
+      )
+    ].sort()
+
+    names.forEach(name => {
+      uniqueCategories.push({
+        id: name.toLowerCase(),
+        label: name,
+        emoji: '📦'
+      })
+    })
+
+    return uniqueCategories
+  }, [allProducts])
+
   const productStatus = useSelector(selectProductStatus)
 
   // Debounce search query updates to prevent laggy typing
@@ -70,12 +108,35 @@ export default function ProductListing() {
     if (q !== null && q !== displaySearchQuery) {
       setDisplaySearchQuery(q)
     }
-    
+
     const cat = searchParams.get('category')
     if (cat !== null && cat !== activeCategory) {
       setActiveCategory(cat)
     }
   }, [searchParams])
+
+  const categoryMap = {
+    airpods: ["tws"],
+    tws: ["tws"],
+
+    speaker: [
+      "usb speakers",
+      "party speakers",
+      "portable speakers",
+      "conference speakers",
+      "soundbars",
+      "audio"
+    ],
+
+    gaming: [
+      "gaming keyboard"
+    ],
+
+    care: [
+      "ear cleaners",
+      "gadget cleaners"
+    ]
+  };
 
   const filtered = useMemo(() => {
     let list = [...allProducts]
@@ -83,17 +144,33 @@ export default function ProductListing() {
     // Search
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
-      list = list.filter(p => 
-        (p.name?.toLowerCase() || '').includes(q) || 
-        (p.category?.toLowerCase() || '').includes(q) || 
+      list = list.filter(p =>
+        (p.name?.toLowerCase() || '').includes(q) ||
+        (p.category?.toLowerCase() || '').includes(q) ||
         (p.usp?.toLowerCase() || '').includes(q)
       )
     }
 
     // Category
-    if (activeCategory !== 'all') {
-      const targetCat = activeCategory.toLowerCase();
-      list = list.filter(p => p.category && p.category.toLowerCase().includes(targetCat))
+    if (
+      activeCategory &&
+      activeCategory !== 'all'
+    ) {
+      if (categoryMap[activeCategory]) {
+        const allowed = categoryMap[activeCategory]
+
+        list = list.filter(p =>
+          allowed.includes(
+            p.categoryName?.toLowerCase()
+          )
+        )
+      } else {
+        list = list.filter(
+          p =>
+            p.categoryName?.toLowerCase() ===
+            activeCategory.toLowerCase()
+        )
+      }
     }
 
     // Price
@@ -220,11 +297,17 @@ export default function ProductListing() {
           {/* ── SIDEBAR FILTERS (desktop) ─────────── */}
           <div className="col-12 col-md-3 d-none d-md-block">
             <FilterPanel
-              activeCategory={activeCategory} setActiveCategory={setActiveCategory}
-              activePriceRange={activePriceRange} setActivePriceRange={setActivePriceRange}
-              minRating={minRating} setMinRating={setMinRating}
-              inStockOnly={inStockOnly} setInStockOnly={setInStockOnly}
-              activeFilterCount={activeFilterCount} clearAll={clearAll}
+              categories={categories}
+              activeCategory={activeCategory}
+              setActiveCategory={setActiveCategory}
+              activePriceRange={activePriceRange}
+              setActivePriceRange={setActivePriceRange}
+              minRating={minRating}
+              setMinRating={setMinRating}
+              inStockOnly={inStockOnly}
+              setInStockOnly={setInStockOnly}
+              activeFilterCount={activeFilterCount}
+              clearAll={clearAll}
             />
           </div>
 
@@ -246,11 +329,17 @@ export default function ProductListing() {
                     <button onClick={() => setShowFilters(false)} className="btn border-0 p-1" style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-muted)', borderRadius: 8 }}><X size={18} /></button>
                   </div>
                   <FilterPanel
-                    activeCategory={activeCategory} setActiveCategory={v => { setActiveCategory(v); setShowFilters(false) }}
-                    activePriceRange={activePriceRange} setActivePriceRange={setActivePriceRange}
-                    minRating={minRating} setMinRating={setMinRating}
-                    inStockOnly={inStockOnly} setInStockOnly={setInStockOnly}
-                    activeFilterCount={activeFilterCount} clearAll={clearAll}
+                    categories={categories}
+                    activeCategory={activeCategory}
+                    setActiveCategory={setActiveCategory}
+                    activePriceRange={activePriceRange}
+                    setActivePriceRange={setActivePriceRange}
+                    minRating={minRating}
+                    setMinRating={setMinRating}
+                    inStockOnly={inStockOnly}
+                    setInStockOnly={setInStockOnly}
+                    activeFilterCount={activeFilterCount}
+                    clearAll={clearAll}
                   />
                 </motion.div>
               </>
@@ -264,7 +353,7 @@ export default function ProductListing() {
               <div className="d-flex flex-wrap gap-2 mb-4 align-items-center">
                 <span className="text-theme-muted small d-flex align-items-center gap-1"><Tag size={12} /> Active:</span>
                 {activeCategory !== 'all' && (
-                  <FilterPill label={CATEGORIES.find(c => c.id === activeCategory)?.label || (activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1))} onRemove={() => setActiveCategory('all')} />
+                  <FilterPill label={categories.find(c => c.id === activeCategory)?.label} onRemove={() => setActiveCategory('all')} />
                 )}
                 {activePriceRange !== 'all' && (
                   <FilterPill label={PRICE_RANGES.find(r => r.id === activePriceRange)?.label} onRemove={() => setActivePriceRange('all')} />
@@ -359,10 +448,22 @@ export default function ProductListing() {
   )
 }
 
-// ── Filter Panel (reused desktop + mobile, memoized) ─────────────────────────
-const FilterPanel = React.memo(function FilterPanel({ activeCategory, setActiveCategory, activePriceRange, setActivePriceRange, minRating, setMinRating, inStockOnly, setInStockOnly, activeFilterCount, clearAll }) {
+// ── Filter Panel (reused desktop + mobile) ───────────────────────────────────
+function FilterPanel({
+  categories,
+  activeCategory,
+  setActiveCategory,
+  activePriceRange,
+  setActivePriceRange,
+  minRating,
+  setMinRating,
+  inStockOnly,
+  setInStockOnly,
+  activeFilterCount,
+  clearAll
+}) {
   const [showAllCategories, setShowAllCategories] = useState(false);
-  const visibleCategories = showAllCategories ? CATEGORIES : CATEGORIES.slice(0, 8);
+  const visibleCategories = showAllCategories ? categories : categories.slice(0, 12);
 
   return (
     <div className="d-flex flex-column gap-4" style={{ position: 'sticky', top: 120 }}>
@@ -396,13 +497,13 @@ const FilterPanel = React.memo(function FilterPanel({ activeCategory, setActiveC
               {activeCategory === cat.id && <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--bb-accent)' }} />}
             </button>
           ))}
-          {CATEGORIES.length > 8 && (
-            <button 
+          {categories.length > 12 && (
+            <button
               onClick={() => setShowAllCategories(!showAllCategories)}
               className="btn text-start px-3 py-2 border-0 fw-bold mt-1"
               style={{ color: 'var(--bb-primary)', fontSize: '0.85rem', background: 'rgba(0,243,255,0.05)', borderRadius: '8px' }}
             >
-              {showAllCategories ? 'View Less' : `View All ${CATEGORIES.length} Categories`}
+              {showAllCategories ? 'Show Less' : `Show More (+${categories.length - 12})`}
             </button>
           )}
         </div>
@@ -464,7 +565,7 @@ const FilterPanel = React.memo(function FilterPanel({ activeCategory, setActiveC
       </FilterSection>
     </div>
   )
-})
+}
 
 const FilterSection = React.memo(function FilterSection({ title, children }) {
   const [open, setOpen] = useState(true)

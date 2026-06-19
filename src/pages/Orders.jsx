@@ -19,6 +19,14 @@ const STATUS_CONFIG = {
   Cancelled:  { label: 'Cancelled',  color: '#ef4444', glow: 'rgba(239,68,68,0.25)',  bg: 'rgba(239,68,68,0.08)', Icon: XCircle },
 }
 
+const getImageUrl = (path) => {
+  if (!path) return '/placeholder-product.png'
+
+  if (path.startsWith('http')) return path
+
+  return `http://localhost:5089${path}`
+}
+
 const TABS = ['All', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled']
 
 // ─── Skeleton Card ────────────────────────────────────────────────────────────
@@ -124,7 +132,15 @@ function OrderCard({ order, index }) {
               }}
             >
               <div className="text-center px-1">
-                <ShoppingBag size={16} style={{ color: 'var(--bb-accent)', opacity: 0.6 }} />
+ <img
+  src={getImageUrl(item.productImageUrl)}
+  alt={item.productName}
+  style={{
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain'
+  }}
+/>
                 <div style={{ fontSize: '0.55rem', marginTop: 2, color: 'var(--bb-muted)', lineHeight: 1.2 }}>
                   {item.productName?.split(' ')[0] || 'Item'}
                 </div>

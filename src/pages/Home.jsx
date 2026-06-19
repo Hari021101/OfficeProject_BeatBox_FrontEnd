@@ -5,12 +5,12 @@ import { addToCart } from '../redux/cartSlice'
 import { IMAGE_MAP } from '../data/products'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
-import { 
-  ArrowRight, 
-  Star, 
-  Sparkles, 
-  TrendingUp, 
-  Clock, 
+import {
+  ArrowRight,
+  Star,
+  Sparkles,
+  TrendingUp,
+  Clock,
   Award,
   ChevronLeft,
   ChevronRight,
@@ -20,6 +20,7 @@ import {
 import { toast } from 'react-hot-toast'
 import AntiGravityPlayground from '../components/ui/AntiGravityPlayground'
 import RecentlyViewed from '../components/ui/RecentlyViewed'
+import ExploreBestsellers from '../components/ui/ExploreBestsellers'
 
 // Asset imports
 import heroHeadphones from '../assets/hero_headphones.png'
@@ -46,97 +47,96 @@ import logo from '../assets/beatbox_logo.png'
 export default function Home() {
   // 1. HERO CAROUSEL STATE
   const [currentSlide, setCurrentSlide] = useState(0)
-  const slides = [
-    {
-      id: 1,
-      title: "BEATBOX ROCKERZ 550",
-      searchKeyword: "rockerz",
-      subtitle: "SILENCE THE NOISE, UNLEASH THE BASS",
-      description: "Experience true audio purity with high-fidelity 40mm dynamic drivers, hybrid Active Noise Cancellation (ANC), and up to 60 hours of massive playback.",
-      price: "₹1,999",
-      oldPrice: "₹7,990",
-      discount: "75% OFF",
-      image: heroHeadphones,
-      color: "var(--bb-primary-glow)",
-      badge: "Flagship Launch"
-    },
-    {
-      id: 2,
-      title: "AIRDOPES CYBER 141",
-      searchKeyword: "airdopes",
-      subtitle: "NEXT-GEN TWS FOR CYBER GAMERS",
-      description: "Equipped with 13mm immersive drivers, BEAST™ mode for 40ms low latency gaming, quad mics with ENx™ technology for clear calls, and a glowing neon charging case.",
-      price: "₹1,299",
-      oldPrice: "₹4,490",
-      discount: "71% OFF",
-      image: heroEarbuds,
-      color: "var(--bb-accent-glow)",
-      badge: "Bestseller"
-    },
-    {
-      id: 3,
-      title: "STONE BEAT BEAST 1200",
-      searchKeyword: "stone beat",
-      subtitle: "RUGGED OUTDOOR PARTY SOUND",
-      description: "IPX7 waterproof portable bluetooth speaker. Features dual passive radiators, 14W signature high-bass sound, custom RGB light ring, and active water splash resistance.",
-      price: "₹2,499",
-      oldPrice: "₹6,990",
-      discount: "64% OFF",
-      image: heroSpeaker,
-      color: "rgba(168, 32, 255, 0.4)",
-      badge: "Summer Special"
-    },
-    {
-      id: 4,
-      title: "IMMORTAL CYBER PRO",
-      searchKeyword: "immortal",
-      subtitle: "PRO GAMING VIRTUAL 7.1 SURROUND",
-      description: "Level up your gaming with dedicated RGB lights, 50mm dynamic drivers, a professional boom mic, and low-latency cybernetic soundscapes built for esports pros.",
-      price: "₹1,599",
-      oldPrice: "₹4,999",
-      discount: "68% OFF",
-      image: gamingHeadset,
-      color: "rgba(57, 255, 20, 0.35)",
-      badge: "Cyber Launch"
-    },
-    {
-      id: 5,
-      title: "TRIP ATHLETIC NEON",
-      searchKeyword: "trip",
-      subtitle: "PREMIUM SPORTY COLLAR EARPHONES",
-      description: "Featherlight flexible silicon collar neckband. Features magnetic metal earbud tips, dual EQ modes for heavy bass, and up to 30 hours of continuous athletic playback.",
-      price: "₹999",
-      oldPrice: "₹2,990",
-      discount: "66% OFF",
-      image: wirelessNeckband,
-      color: "rgba(0, 243, 255, 0.3)",
-      badge: "Active Wear"
-    },
-    {
-      id: 6,
-      title: "CYBERWATCH X1",
-      searchKeyword: "cyberwatch",
-      subtitle: "FUTURISTIC FITNESS TRACKING",
-      description: "Premium futuristic smartwatch with a glowing neon interface, health tracking, and 7-day battery life.",
-      price: "₹3,499",
-      oldPrice: "₹8,990",
-      discount: "61% OFF",
-      image: smartEarbuds,
-      color: "rgba(255, 0, 243, 0.35)",
-      badge: "Limited Edition"
+  const [activeDealIndex, setActiveDealIndex] = useState(0)
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const allProducts = useSelector(selectAllProducts)
+  const productStatus = useSelector(selectProductStatus)
+  const dealProducts = allProducts.slice(0, 5)
+
+  const dealProduct =
+    dealProducts[activeDealIndex] ||
+    null
+ 
+    const featuredProducts =
+  (allProducts || []).filter(p => p.isFeatured)
+
+  const slides =
+  (
+    featuredProducts.length
+      ? featuredProducts
+      : (allProducts || [])
+  )
+    .slice(0, 6)
+    .map(p => ({
+      id: p.id,
+      title: p.name,
+      subtitle: p.categoryName,
+      description: p.description,
+      price: `₹${p.price ?? 0}`,
+      oldPrice: `₹${p.oldPrice ?? 0}`,
+      discount: `${p.discount ?? 0}% OFF`,
+      image: p.imageUrl,
+      productId: p.id,
+      badge: p.tag || 'Popular',
+      color: '#00f3ff'
+    }))
+
+
+    useEffect(() => {
+  if (productStatus === 'idle') {
+    dispatch(fetchProducts())
+  }
+}, [dispatch, productStatus])
+
+  const currentSlideData =
+    slides[currentSlide] || {
+      title: '',
+      subtitle: '',
+      description: '',
+      price: '',
+      oldPrice: '',
+      discount: '',
+      image: '',
+      productId: '',
+      badge: 'Popular',
+      color: '#00f3ff'
     }
-  ]
+  useEffect(() => {
+    const categories = [
+      ...new Set(
+        allProducts.map(
+          p => (p.categoryName || p.category || '').toLowerCase()
+        )
+      )
+    ]
+
+    console.log('CATEGORIES:')
+    console.log(categories)
+  }, [allProducts])
+
 
   // Auto slide effect
   useEffect(() => {
+    if (!slides.length) return
+
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length)
+      setCurrentSlide(prev => (prev + 1) % slides.length)
     }, 6000)
+
     return () => clearInterval(timer)
   }, [slides.length])
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length)
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
+  const nextSlide = () => {
+    if (!slides.length) return
+    setCurrentSlide(prev => (prev + 1) % slides.length)
+  }
+
+  const prevSlide = () => {
+    if (!slides.length) return
+    setCurrentSlide(prev => (prev - 1 + slides.length) % slides.length)
+  }
 
   // 2. BEST SELLERS STATE & COLOR SWATCH HANDLING
   const [selectedColors, setSelectedColors] = useState({
@@ -148,24 +148,61 @@ export default function Home() {
 
   const [activeFilter, setActiveFilter] = useState('all')
 
+
   const handleColorChange = (productId, colorName) => {
     setSelectedColors(prev => ({ ...prev, [productId]: colorName }))
     toast.success(`Selected ${colorName} theme color!`, { id: `color-${productId}` })
   }
 
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const allProducts = useSelector(selectAllProducts)
-  const productStatus = useSelector(selectProductStatus)
 
-  useEffect(() => {
-    if (productStatus === 'idle') {
-      dispatch(fetchProducts())
-    }
-  }, [productStatus, dispatch])
 
   const topProducts = allProducts.length > 0 ? allProducts.slice(0, 4) : []
-  const displayProducts = allProducts.length > 0 ? allProducts.filter(prod => activeFilter === 'all' || (prod.category && prod.category.toLowerCase().includes(activeFilter.toLowerCase()))).slice(0, 4) : []
+  const displayProducts =
+    activeFilter === 'all'
+      ? allProducts.slice(0, 4)
+      : allProducts
+        .filter(prod => {
+          const category = (
+            prod.categoryName ||
+            prod.category ||
+            ''
+          ).toLowerCase()
+
+          if (activeFilter === 'earbuds')
+            return (
+              category.includes('earbud') ||
+              category.includes('earbuds') ||
+              category.includes('tws')
+            )
+
+          if (activeFilter === 'headphones')
+            return (
+              category.includes('headphone') ||
+              category.includes('headphones') ||
+              category.includes('headset')
+            )
+
+          if (activeFilter === 'speakers')
+            return category.includes('speaker')
+
+          if (activeFilter === 'gaming')
+            return category.includes('gaming')
+
+          if (activeFilter === 'gadgets')
+            return (
+              category.includes('smart gadgets') ||
+              category.includes('gadget')
+            )
+
+          if (activeFilter === 'wired')
+            return (
+              category.includes('wired') ||
+              category.includes('earphone')
+            )
+
+          return true
+        })
+        .slice(0, 4)
 
 
 
@@ -191,18 +228,19 @@ export default function Home() {
   const handleAddToCartClick = (product) => {
     const selectedColor = selectedColors[product.id] || (product.colors && product.colors[0]?.name) || 'Default';
     const colorCode = (product.colors && product.colors.find(c => c.name === selectedColor)?.code) || '#000';
-    
+
     dispatch(addToCart({
       id: product.id || product.name,
       name: product.name,
       price: product.price,
       quantity: 1,
       imageKey: product.imageKey || 'heroHeadphones',
+      imageUrl: product.imageUrl,
       selectedColor,
       selectedColorCode: colorCode,
       category: product.category || 'General'
     }))
-    
+
     toast.success(`🎸 Added ${product.name} to your Cart!`, {
       icon: '🛒',
       style: {
@@ -218,12 +256,12 @@ export default function Home() {
   useEffect(() => {
     const locations = ['California', 'New York', 'London', 'Texas', 'Sydney', 'Mumbai', 'Berlin'];
     const productsList = ['BeatBox Pro 5.1', 'Airdopes Cyber 141', 'Gaming Headset X', 'Stone Beat 1200', 'Neon Neckband'];
-    
+
     // Fire the first toast after 4 seconds
     const initialTimeout = setTimeout(() => {
       const loc = locations[Math.floor(Math.random() * locations.length)];
       const prod = productsList[Math.floor(Math.random() * productsList.length)];
-      
+
       toast(`Someone in ${loc} just purchased a ${prod}!`, {
         icon: '🔥',
         position: 'bottom-left',
@@ -242,7 +280,7 @@ export default function Home() {
     const interval = setInterval(() => {
       const loc = locations[Math.floor(Math.random() * locations.length)];
       const prod = productsList[Math.floor(Math.random() * productsList.length)];
-      
+
       toast(`Someone in ${loc} just purchased a ${prod}!`, {
         icon: '🚀',
         position: 'bottom-left',
@@ -306,7 +344,7 @@ export default function Home() {
           render: item.render
         }
       })
-      
+
       setZeroGravityElements(captured)
       setIsZeroGravity(true)
       toast.success("🌌 Defying Gravity! Drag & Fling Everything!", {
@@ -337,58 +375,54 @@ export default function Home() {
     <div style={{ zIndex: 10 }} className="text-start">
       {/* Launch Pill */}
       <div className="d-flex align-items-center gap-2 mb-3">
-        <span 
-          className="badge text-white px-3 py-2 fw-black text-uppercase tracking-wider" 
-          style={{ 
+        <span
+          className="badge text-white px-3 py-2 fw-black text-uppercase tracking-wider"
+          style={{
             background: 'linear-gradient(135deg, var(--bb-primary), var(--bb-accent))',
             fontSize: '0.75rem',
             borderRadius: '50px',
             boxShadow: '0 4px 15px rgba(0, 243, 255, 0.3)'
           }}
         >
-          <Zap size={12} className="d-inline-block me-1 align-text-top" /> {slides[currentSlide].badge}
+          <Zap size={12} className="d-inline-block me-1 align-text-top" /> {currentSlideData.badge || 'Popular'}
         </span>
       </div>
 
       {/* Headline titles */}
-      <h2 
-        className="display-5 fw-black text-theme-title mb-2" 
+      <h2
+        className="display-5 fw-black text-theme-title mb-2"
         style={{ letterSpacing: '-1.5px', lineHeight: '1.1' }}
       >
-        {slides[currentSlide].title}
+        {currentSlideData.title || ''}
       </h2>
-      <h4 
+      <h4
         className="gradient-text fw-extrabold mb-4 fs-4 text-uppercase tracking-wide"
       >
-        {slides[currentSlide].subtitle}
+        {currentSlideData.subtitle || ''}
       </h4>
 
       {/* Description */}
       <p className="text-theme-muted fs-6 mb-4" style={{ lineHeight: '1.7', maxWidth: '520px' }}>
-        {slides[currentSlide].description}
+        {currentSlideData.description || ''}
       </p>
 
       {/* Price and Action Section */}
       <div className="d-flex flex-wrap align-items-center gap-4 mb-3">
         <div>
           <div className="d-flex align-items-baseline gap-2">
-            <span className="fs-1 fw-black text-theme-title">{slides[currentSlide].price}</span>
-            <span className="text-decoration-line-through text-theme-muted fs-5">{slides[currentSlide].oldPrice}</span>
+            <span className="fs-1 fw-black text-theme-title">{currentSlideData.price}</span>
+            <span className="text-decoration-line-through text-theme-muted fs-5">{currentSlideData.oldPrice}</span>
           </div>
           <span className="badge bg-success bg-opacity-25 text-success border border-success border-opacity-20 px-2 py-1 small fw-bold">
-            {slides[currentSlide].discount}
+            {currentSlideData.discount}
           </span>
         </div>
         
         <div className="d-flex gap-3 w-100 mt-2">
           <button 
             onClick={() => {
-              const realProduct = allProducts.find(p => p.name.toLowerCase().includes(slides[currentSlide].searchKeyword)) || allProducts[0];
-              if (realProduct) {
-                navigate(`/products/${realProduct.id}`);
-              } else {
-                toast.error("Products not loaded yet");
-              }
+              if (!currentSlideData.productId) return
+              navigate(`/products/${currentSlideData.productId}`)
             }}
             className="btn btn-glow d-flex align-items-center justify-content-center gap-2 py-3 fw-bold w-100 w-sm-auto px-sm-5"
             style={{ borderRadius: '12px', height: '55px' }}
@@ -400,31 +434,34 @@ export default function Home() {
     </div>
   )
 
-  const renderHeroImage = () => {
-    const realProduct = allProducts.find(p => p.name.toLowerCase().includes(slides[currentSlide].searchKeyword)) || allProducts[0];
-    
-    return (
-      <div 
-        className="position-relative text-center w-100 hover-scale transition-all" 
-        style={{ zIndex: 5, cursor: 'pointer' }}
-        onClick={() => {
-          if (realProduct) navigate(`/products/${realProduct.id}`);
+  const renderHeroImage = () => (
+    <div
+      className="position-relative text-center w-100 hover-scale transition-all d-flex justify-content-center align-items-center"
+      style={{
+        zIndex: 5,
+        cursor: 'pointer',
+        minHeight: '500px'
+      }}
+      onClick={() =>
+        navigate(`/products/${currentSlideData.productId}`)
+      }
+    >
+      <img
+        src={currentSlideData.image || '/placeholder-product.png'}
+        alt={currentSlideData.title}
+        className="hero-float"
+        style={{
+          width: '100%',
+          maxWidth: '500px',
+          height: '500px',
+          objectFit: 'contain'
         }}
-      >
-      <img 
-        src={slides[currentSlide].image} 
-        alt={slides[currentSlide].title} 
-        className="img-fluid hero-float"
-        style={{ 
-          maxHeight: '380px', 
-          objectFit: 'contain',
-          filter: 'drop-shadow(0 25px 50px rgba(0,0,0,0.5)) drop-shadow(0 0 30px rgba(0, 243, 255, 0.15))' 
-        }} 
+        onError={(e) => {
+          e.target.src = '/placeholder-product.png';
+        }}
       />
-
     </div>
-    )
-  }
+  )
   const renderCategories = () => (
     <div className="row g-4 row-cols-2 row-cols-sm-3 row-cols-md-5 justify-content-center w-100 m-0">
       {[
@@ -433,7 +470,6 @@ export default function Home() {
         { id: 'neckbands', name: 'Neckbands', shortName: 'Neckbands', image: wirelessNeckband, badge: 'DAILY' },
         { id: 'gaming', name: 'Gaming Headsets', shortName: 'Gaming', image: gamingHeadset, badge: 'CYBER' },
         { id: 'wired earphones', name: 'Wired Headphones', shortName: 'Wired', image: wiredEarphones, badge: 'PURE' },
-        { id: 'smartwatches', name: 'Smart Watches', shortName: 'Watches', image: heroSmartwatch, badge: 'NEW' },
         { id: 'speakers', name: 'Speakers', shortName: 'Speakers', image: heroSpeaker, badge: 'LOUD' },
         { id: 'power bank', name: 'Power Banks', shortName: 'Power', image: powerBank, badge: 'CHARGE' },
         { id: 'soundbars', name: 'Soundbars', shortName: 'Soundbars', image: soundbar, badge: 'CINEMA' },
@@ -445,22 +481,22 @@ export default function Home() {
         { id: 'mobile accessories', name: 'Mobile Accessories', shortName: 'Mobile', image: phoneWallet, badge: 'TECH' }
       ].map((cat, idx) => (
         <div key={idx} className="col">
-          <button 
+          <button
             onClick={() => navigate(`/products?category=${cat.id}`)}
             className="category-card btn p-0 border-0 d-flex flex-column align-items-center justify-content-center text-center text-decoration-none w-100"
           >
             {cat.badge && <span className="category-badge">{cat.badge}</span>}
-            
+
             <div className="image-wrapper mb-3">
-              <img 
-                src={cat.image} 
-                alt={cat.name} 
-                className="category-img" 
+              <img
+                src={cat.image}
+                alt={cat.name}
+                className="category-img"
               />
             </div>
-            
+
             <h6 className="fw-bold mb-1 text-theme-title" style={{ fontSize: '0.95rem', letterSpacing: '-0.2px' }}>{cat.shortName}</h6>
-            
+
             <span className="text-accent small d-flex align-items-center gap-1 mt-2 fw-semibold" style={{ fontSize: '0.75rem' }}>
               Shop Now <ArrowRight size={10} />
             </span>
@@ -472,13 +508,13 @@ export default function Home() {
 
   const renderProductCard = (prod) => {
     // Dynamically retrieve the current display image based on color swatch state
-    let displayImage = IMAGE_MAP[prod.imageKey] || prod.image;
-    if (selectedColors[prod.id] === 'black' && prod.id === 1) {
-      displayImage = heroHeadphones; // Add alternative dynamic state visual mapping if preferred
-    }
+    let displayImage =
+      prod.imageUrl ||
+      IMAGE_MAP[prod.imageKey] ||
+      prod.image;
 
     return (
-      <div 
+      <div
         className="card bestseller-card border-1 h-100 overflow-hidden text-start position-relative"
         onClick={() => navigate(`/products/${prod.id}`)}
         style={{ cursor: 'pointer' }}
@@ -493,28 +529,33 @@ export default function Home() {
         {/* Product Visual Frame */}
         <div className="product-frame w-100 position-relative">
           <Link to={`/products/${prod.id}`} className="d-flex align-items-center justify-content-center w-100 h-100 text-decoration-none">
-            <img 
-              src={displayImage} 
-              alt={prod.name} 
+            <img
+              src={displayImage}
+              alt={prod.name}
               className="product-img"
+              onError={(e) => {
+                e.target.src =
+                  IMAGE_MAP[prod.imageKey] ||
+                  IMAGE_MAP.heroHeadphones;
+              }}
             />
           </Link>
         </div>
 
         {/* Signature boAt Gold Feature Ribbon */}
-        <div 
+        <div
           className="d-flex align-items-center justify-content-between px-3 py-2 fw-bold"
-          style={{ 
-            background: 'linear-gradient(90deg, #ffc700, #ffb800)', 
-            color: '#000000', 
-            fontSize: '0.75rem', 
+          style={{
+            background: 'linear-gradient(90deg, #ffc700, #ffb800)',
+            color: '#000000',
+            fontSize: '0.75rem',
             letterSpacing: '0.2px',
             borderTop: '1px solid rgba(0,0,0,0.05)',
             borderBottom: '1px solid rgba(0,0,0,0.05)'
           }}
         >
           <span className="text-uppercase tracking-wider" style={{ fontSize: '0.7rem' }}>{prod.usp}</span>
-          <span 
+          <span
             className="d-flex align-items-center gap-1 bg-white px-2 py-0.5 rounded-pill"
             style={{ fontSize: '0.65rem', color: '#000000', fontWeight: '800', boxShadow: '0 2px 4px rgba(0,0,0,0.08)' }}
           >
@@ -528,7 +569,7 @@ export default function Home() {
           <div>
             {/* Interactive Color Swatches */}
             <div className="d-flex gap-2 mb-3">
-              {prod.colors.map((clr, cIdx) => (
+              {(prod.colors || []).map((clr, cIdx) => (
                 <button
                   key={cIdx}
                   onClick={(e) => {
@@ -555,21 +596,21 @@ export default function Home() {
               </h5>
             </Link>
             <span className="text-theme-muted small d-block mb-3">
-  Reviews ({prod.reviewCount || prod.reviews?.length || 0})
-</span>
+              Reviews ({prod.reviewCount || prod.reviews?.length || 0})
+            </span>
           </div>
 
           {/* Price and Purchase CTA Row */}
           <div>
             <div className="d-flex justify-content-between align-items-baseline mb-3">
               <div>
-                <span className="fw-black fs-4 text-theme-title">₹{prod.price.toLocaleString('en-IN')}</span>
-                <span className="text-decoration-line-through text-theme-muted small ms-2">₹{prod.oldPrice.toLocaleString('en-IN')}</span>
+                <span className="fw-black fs-4 text-theme-title">₹{Number(prod.price || 0).toLocaleString('en-IN')}</span>
+                <span className="text-decoration-line-through text-theme-muted small ms-2">₹{Number(prod.oldPrice || 0).toLocaleString('en-IN')}</span>
               </div>
               <span className="text-success small fw-bold">{prod.discount}% OFF</span>
             </div>
 
-            <button 
+            <button
               onClick={(e) => {
                 e.stopPropagation()
                 handleAddToCartClick(prod)
@@ -584,115 +625,160 @@ export default function Home() {
     )
   }
 
-  const renderDealImage = () => (
-    <div className="text-center position-relative w-100">
-      <img 
-        src={heroEarbuds} 
-        alt="Airdopes Cyber 141" 
-        className="img-fluid hero-float"
-        style={{ 
-          maxHeight: '300px', 
-          objectFit: 'contain',
-          filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.6)) drop-shadow(0 0 25px var(--bb-accent-glow))'
-        }} 
-      />
 
+
+  const sideDeals =
+    dealProducts.filter(
+      (_, index) => index !== activeDealIndex
+    )
+
+  const renderDealImage = () => (
+    <div className="text-center">
+      <img
+        src={
+          dealProduct?.imageUrl ||
+          IMAGE_MAP[dealProduct?.imageKey]
+        }
+        alt={dealProduct?.name}
+        className="img-fluid"
+        style={{
+          maxHeight: '320px',
+          objectFit: 'contain',
+          filter:
+            'drop-shadow(0 20px 40px rgba(0,0,0,.25))'
+        }}
+      />
     </div>
   )
+
 
   const renderDealDetails = () => (
-    <div className="text-start">
-      <div className="d-flex align-items-center gap-2 mb-3">
-        <span className="badge bg-danger text-white px-3 py-2 fw-black text-uppercase" style={{ fontSize: '0.7rem', borderRadius: '50px', letterSpacing: '1px' }}>
-          ⚡ DEAL OF THE DAY
-        </span>
-      </div>
+    <div>
+      <span
+        className="badge text-white px-3 py-2 mb-3"
+        style={{
+          background:
+            'linear-gradient(135deg,#ef4444,#f97316)',
+          borderRadius: '999px'
+        }}
+      >
+        🔥 DEAL OF THE DAY
+      </span>
 
-      <h3 className="fw-black text-theme-title display-6 mb-2">Airdopes Cyber 141</h3>
-      <h5 className="gradient-text fw-bold mb-4">Ultimate Low-Latency Cyber Gaming TWS</h5>
-      <p className="text-theme-muted small mb-4" style={{ lineHeight: 1.6 }}>
-        Featuring BEAST™ Mode for 40ms audio low latency, perfect for hardcore mobile gaming. Take control with advanced touch widgets, ENx™ technology, and up to 42 hours of audio playtime. Grab this deal before time runs out!
+      <h2 className="fw-bold mb-2">
+        {dealProduct?.name}
+      </h2>
+
+      <h5
+        style={{
+          color: '#06b6d4'
+        }}
+        className="mb-3"
+      >
+        {dealProduct?.categoryName}
+      </h5>
+
+      <p className="text-muted mb-4">
+        {dealProduct?.description}
       </p>
 
-      {/* Countdown clock */}
-      <div className="mb-4">
-        <span className="small text-theme-muted d-block mb-2 fw-semibold">Offer Ends In:</span>
-        <div className="d-flex align-items-center gap-2">
-          <div className="p-3 rounded text-center text-theme-title" style={{ minWidth: '68px', background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
-            <span className="d-block fw-black fs-4">{String(timeLeft.hours).padStart(2, '0')}</span>
-            <span className="text-theme-muted" style={{ fontSize: '0.6rem' }}>Hours</span>
-          </div>
-          <span className="fw-bold fs-4 text-theme-title">:</span>
-          <div className="p-3 rounded text-center text-theme-title" style={{ minWidth: '68px', background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
-            <span className="d-block fw-black fs-4">{String(timeLeft.minutes).padStart(2, '0')}</span>
-            <span className="text-theme-muted" style={{ fontSize: '0.6rem' }}>Mins</span>
-          </div>
-          <span className="fw-bold fs-4 text-theme-title">:</span>
-          <div className="p-3 rounded text-center text-theme-title" style={{ minWidth: '68px', background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
-            <span className="d-block fw-black fs-4">{String(timeLeft.seconds).padStart(2, '0')}</span>
-            <span className="text-theme-muted" style={{ fontSize: '0.6rem' }}>Secs</span>
-          </div>
+      <div className="d-flex gap-3 mb-4">
+        <div className="text-center p-3 border rounded">
+          <h4>{String(timeLeft.hours).padStart(2, '0')}</h4>
+          <small>Hours</small>
+        </div>
+
+        <div className="text-center p-3 border rounded">
+          <h4>{String(timeLeft.minutes).padStart(2, '0')}</h4>
+          <small>Mins</small>
+        </div>
+
+        <div className="text-center p-3 border rounded">
+          <h4>{String(timeLeft.seconds).padStart(2, '0')}</h4>
+          <small>Secs</small>
         </div>
       </div>
 
-      {/* Special Price and CTA */}
-      <div className="d-flex flex-wrap align-items-center gap-4 mt-4">
+      <div className="d-flex align-items-center gap-4">
         <div>
-          <div className="d-flex align-items-baseline gap-2">
-            <span className="fs-2 fw-black text-theme-title">₹1,199</span>
-            <span className="text-decoration-line-through text-theme-muted">₹4,490</span>
+          <h2 className="fw-bold mb-0">
+            ₹{dealProduct?.price}
+          </h2>
+
+          <span
+            style={{
+              textDecoration: 'line-through',
+              color: '#888'
+            }}
+          >
+            ₹{dealProduct?.oldPrice || dealProduct?.price}
+          </span>
+
+          <div
+            style={{
+              color: '#16a34a',
+              fontWeight: 'bold'
+            }}
+          >
+            {dealProduct?.discount || 0}% OFF
           </div>
-          <span className="text-success small fw-bold">73% Off (Limited Deal)</span>
         </div>
 
-        <div className="d-flex flex-wrap align-items-center gap-3">
-          <button 
-            onClick={() => {
-              const realProduct = allProducts.find(p => p.name.includes("Airdopes")) || allProducts[0];
-              if (realProduct) {
-                handleAddToCartClick({ 
-                  ...realProduct, 
-                  price: 1199, // Promo price
-                });
-              } else {
-                toast.error("Deal product not loaded yet");
-              }
-            }}
-            className="btn btn-glow py-3 px-4 fw-bold d-flex align-items-center gap-2"
-            style={{ borderRadius: '12px', height: '55px' }}
-          >
-            Claim Deal <ArrowRight size={18} />
-          </button>
-
-          <Link 
-            to="/daily-deals"
-            className="btn py-3 px-4 fw-bold d-flex align-items-center gap-2"
-            style={{ 
-              borderRadius: '12px', 
-              height: '55px',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              color: 'var(--bb-title-color)',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => { e.target.style.background = 'rgba(255, 255, 255, 0.08)'; e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)' }}
-            onMouseLeave={(e) => { e.target.style.background = 'rgba(255, 255, 255, 0.04)'; e.target.style.borderColor = 'rgba(255, 255, 255, 0.08)' }}
-          >
-            View All Deals <Sparkles size={16} className="text-danger" />
-          </Link>
-        </div>
+        <button
+          onClick={() =>
+            navigate(`/products/${dealProduct?.id}`)
+          }
+          className="btn fw-bold d-flex align-items-center gap-2"
+          style={{
+            background:
+              'linear-gradient(135deg,#7c3aed,#06b6d4)',
+            color: '#fff',
+            border: 'none',
+            padding: '14px 32px',
+            borderRadius: '14px',
+            boxShadow:
+              '0 10px 30px rgba(124,58,237,.35)'
+          }}
+        >
+          Claim Deal
+          <ArrowRight size={18} />
+        </button>
       </div>
     </div>
   )
 
+  useEffect(() => {
+    if (!dealProducts.length) return
+
+    const timer = setInterval(() => {
+      setActiveDealIndex(prev =>
+        (prev + 1) % dealProducts.length
+      )
+    }, 5000)
+
+    return () => clearInterval(timer)
+  }, [dealProducts.length])
+
+    if (productStatus === 'loading') {
+    return (
+      <div className="text-center py-5">
+        Loading products...
+      </div>
+    )
+  }
+
+  if (!allProducts.length) {
+    return null
+  }
+  
   const renderHighlight = (index, icon, title, text) => (
     <div className="highlight-card h-100 text-center">
-      <div className="icon-wrapper" style={{ 
-        background: index % 2 === 0 ? 'rgba(0, 243, 255, 0.05)' : 'rgba(168, 32, 255, 0.05)', 
-        color: index % 2 === 0 ? 'var(--bb-accent)' : 'var(--bb-primary-light)' 
+      <div className="icon-wrapper" style={{
+        background: index % 2 === 0 ? 'rgba(0, 243, 255, 0.05)' : 'rgba(168, 32, 255, 0.05)',
+        color: index % 2 === 0 ? 'var(--bb-accent)' : 'var(--bb-primary-light)'
       }}>
-        <div className="icon-glow" style={{ 
-          backgroundColor: index % 2 === 0 ? 'var(--bb-accent)' : 'var(--bb-primary-light)' 
+        <div className="icon-glow" style={{
+          backgroundColor: index % 2 === 0 ? 'var(--bb-accent)' : 'var(--bb-primary-light)'
         }}></div>
         {icon}
       </div>
@@ -702,17 +788,22 @@ export default function Home() {
   )
 
   return (
+
     <div className="w-100 min-vh-100 overflow-hidden position-relative" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
-      
+      {productStatus === 'loading' && (
+        <div className="text-center py-5">
+          Loading products...
+        </div>
+      )}
       {/* BACKGROUND GLOWS FOR AMBIENCE */}
       <div className="bg-glow-orb" style={{ width: '500px', height: '500px', background: 'var(--bb-primary-glow)', top: '10%', left: '-10%', filter: 'blur(130px)', pointerEvents: 'none' }}></div>
       <div className="bg-glow-orb" style={{ width: '600px', height: '600px', background: 'var(--bb-accent-glow)', bottom: '15%', right: '-15%', filter: 'blur(150px)', animationDelay: '3s', pointerEvents: 'none' }}></div>
 
       {/* ZERO-GRAVITY INTERACTIVE PHYSICS SANDBOX MODE */}
       {isZeroGravity && (
-        <AntiGravityPlayground 
-          elements={zeroGravityElements} 
-          onRestoreComplete={handleRestoreComplete} 
+        <AntiGravityPlayground
+          elements={zeroGravityElements}
+          onRestoreComplete={handleRestoreComplete}
         />
       )}
 
@@ -722,12 +813,12 @@ export default function Home() {
         <section className="position-relative pt-3 pb-5 pt-lg-0 pb-lg-0 d-flex align-items-center" style={{ minHeight: 'calc(80vh - 104px)' }}>
           <div className="container-fluid px-lg-5">
             <div className="position-relative overflow-hidden rounded-4 p-4 p-md-5 glass-card hero-carousel-card" style={{ border: '1px solid rgba(0, 243, 255, 0.15)' }}>
-              
+
               {/* Slide background glow ring */}
-              <div className="position-absolute rounded-circle bg-glow-orb" style={{ width: '400px', height: '400px', background: slides[currentSlide].color, top: '20%', right: '20%', filter: 'blur(100px)', opacity: 0.3 }}></div>
+              <div className="position-absolute rounded-circle bg-glow-orb" style={{ width: '400px', height: '400px', background: currentSlideData.color || '#00f3ff', top: '20%', right: '20%', filter: 'blur(100px)', opacity: 0.3 }}></div>
 
               <div className="row align-items-center g-5 py-3">
-                
+
                 {/* Left Side: Product Information */}
                 <div id="gravity-hero-text" className="col-12 col-lg-6 position-relative">
                   {renderHeroText()}
@@ -738,12 +829,12 @@ export default function Home() {
                   {renderHeroImage()}
 
                   {/* Cybernetic Grid design circles in background */}
-                  <div 
-                    className="position-absolute rounded-circle border border-info border-opacity-10" 
+                  <div
+                    className="position-absolute rounded-circle border border-info border-opacity-10"
                     style={{ width: '450px', height: '450px', zIndex: 1, animation: 'spin 30s linear infinite' }}
                   ></div>
-                  <div 
-                    className="position-absolute rounded-circle border border-primary border-opacity-10" 
+                  <div
+                    className="position-absolute rounded-circle border border-primary border-opacity-10"
                     style={{ width: '320px', height: '320px', zIndex: 1, animation: 'spin 20s linear infinite reverse' }}
                   ></div>
                 </div>
@@ -753,7 +844,7 @@ export default function Home() {
               {/* Slider Nav & Indicators Console (Unified Bottom Row) */}
               <div className="d-flex align-items-center justify-content-center gap-3 mt-4" style={{ zIndex: 30 }}>
                 {/* Left Arrow Button */}
-                <button 
+                <button
                   onClick={prevSlide}
                   className="rounded-circle console-btn d-flex align-items-center justify-content-center"
                   style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)', width: '36px', height: '36px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' }}
@@ -763,7 +854,7 @@ export default function Home() {
 
                 {/* Slide Indicators / Dots */}
                 <div className="d-flex align-items-center gap-2">
-                  {slides.map((_, index) => (
+                  {(slides || []).map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentSlide(index)}
@@ -782,7 +873,7 @@ export default function Home() {
                 </div>
 
                 {/* Right Arrow Button */}
-                <button 
+                <button
                   onClick={nextSlide}
                   className="rounded-circle console-btn d-flex align-items-center justify-content-center"
                   style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)', width: '36px', height: '36px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' }}
@@ -790,10 +881,12 @@ export default function Home() {
                   <ChevronRight size={18} />
                 </button>
               </div>
-
             </div>
           </div>
         </section>
+
+        {/* ==================== EXPLORE BESTSELLERS ==================== */}
+        <ExploreBestsellers />
 
         {/* ==================== 2. QUICK CATEGORIES NAV ==================== */}
         <section className="py-5" id="categories">
@@ -812,7 +905,7 @@ export default function Home() {
         {/* ==================== 3. BEST SELLERS & TRENDING GRID ==================== */}
         <section className="py-5" id="bestsellers">
           <div className="container px-lg-5">
-            
+
             <div className="d-flex flex-column flex-md-row align-items-center justify-content-between mb-4 text-center text-md-start">
               <div>
                 <h3 className="fw-black text-theme-title mb-2 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
@@ -833,7 +926,10 @@ export default function Home() {
                 { id: 'headphones', label: '🎧 Headphones' },
                 { id: 'speakers', label: '🔊 Speakers' },
                 { id: 'gaming', label: '🎮 Gaming Gear' },
-                { id: 'watches', label: '⌚ Smart Watches' },
+                {
+                  id: 'gadgets',
+                  label: '⚡ Smart Gadgets'
+                },
                 { id: 'wired', label: '🎧 Wired' }
               ].map((pill) => {
                 const isActive = activeFilter === pill.id;
@@ -844,8 +940,8 @@ export default function Home() {
                     className="btn px-4 py-2 border-0 rounded-pill fw-bold text-nowrap transition-all hover-scale"
                     style={{
                       fontSize: '0.85rem',
-                      background: isActive 
-                        ? 'linear-gradient(135deg, var(--bb-primary), var(--bb-accent))' 
+                      background: isActive
+                        ? 'linear-gradient(135deg, var(--bb-primary), var(--bb-accent))'
                         : 'var(--bb-surface)',
                       color: isActive ? '#ffffff' : 'var(--bb-title-color)',
                       border: isActive ? 'none' : '1px solid var(--bb-border)',
@@ -864,7 +960,7 @@ export default function Home() {
               <AnimatePresence mode="popLayout">
                 {displayProducts
                   .map((prod) => (
-                    <motion.div 
+                    <motion.div
                       layout
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -885,28 +981,290 @@ export default function Home() {
         </section>
 
         {/* ==================== 4. DAILY DEALS Promotional Section ==================== */}
+        {/* ==================== DAILY DEALS PREMIUM ==================== */}
         <section className="py-5" id="newlaunches">
           <div className="container px-lg-5">
-            <div className="position-relative overflow-hidden p-5 rounded-4 glass-card" style={{ 
-              border: '1px solid var(--bb-border)',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
-            }}>
-              
-              {/* Background glowing particles */}
-              <div className="bg-glow-orb" style={{ width: '300px', height: '300px', background: 'var(--bb-primary-glow)', bottom: '-5%', left: '-5%', filter: 'blur(90px)', pointerEvents: 'none' }}></div>
-              <div className="bg-glow-orb" style={{ width: '400px', height: '400px', background: 'var(--bb-accent-glow)', top: '-10%', right: '-10%', filter: 'blur(100px)', animationDelay: '2s', pointerEvents: 'none' }}></div>
 
-              <div className="row align-items-center g-5">
-                
-                {/* Product Visual */}
-                <div id="gravity-deal-image" className="col-12 col-lg-5 text-center position-relative">
-                  {renderDealImage()}
+            <div
+              className="glass-card p-4 p-lg-5 rounded-4"
+              style={{
+                border: '1px solid var(--bb-border)',
+                overflow: 'hidden'
+              }}
+            >
+              <div className="text-center mb-5">
+                <span
+                  className="badge px-4 py-2 mb-3"
+                  style={{
+                    background:
+                      'linear-gradient(135deg,#ef4444,#f97316)',
+                    fontSize: '.85rem'
+                  }}
+                >
+                  🔥 LIMITED TIME OFFERS
+                </span>
+
+                <h2 className="fw-black">
+                  Daily <span className="gradient-text">Deals</span>
+                </h2>
+
+                <p className="text-theme-muted">
+                  Best discounts selected from our premium collection
+                </p>
+              </div>
+
+              {/* FEATURED PRODUCT */}
+
+              <motion.div
+                key={dealProduct?.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: .4 }}
+                className="row align-items-center mb-5"
+              >
+
+                <div className="col-lg-5 text-center">
+
+                  <img
+                    src={dealProduct?.imageUrl}
+                    alt={dealProduct?.name}
+                    className="img-fluid"
+                    style={{
+                      width: '100%',
+                      maxWidth: '420px',
+                      height: '420px',
+                      objectFit: 'contain',
+                      filter:
+                        'drop-shadow(0 25px 50px rgba(0,0,0,.25))'
+                    }}
+                  />
+
                 </div>
 
-                {/* Deal description & countdown timer */}
-                <div id="gravity-deal-details" className="col-12 col-lg-7">
-                  {renderDealDetails()}
+                <div className="col-lg-7">
+
+                  <span
+                    className="badge mb-3"
+                    style={{
+                      background:
+                        'linear-gradient(135deg,#ef4444,#f97316)',
+                      fontSize: '.8rem'
+                    }}
+                  >
+                    DEAL OF THE DAY
+                  </span>
+
+                  <h1
+                    className="fw-black mb-3"
+                    style={{
+                      fontSize: '3rem'
+                    }}
+                  >
+                    {dealProduct?.name}
+                  </h1>
+
+                  <h4
+                    className="mb-4"
+                    style={{
+                      color: '#06b6d4'
+                    }}
+                  >
+                    {dealProduct?.categoryName}
+                  </h4>
+
+                  <p
+                    className="text-theme-muted mb-4"
+                    style={{
+                      maxWidth: '600px'
+                    }}
+                  >
+                    {dealProduct?.description}
+                  </p>
+
+                  {/* TIMER */}
+
+                  <div className="d-flex gap-3 mb-4">
+
+                    {[
+                      {
+                        value: String(timeLeft.hours).padStart(
+                          2,
+                          '0'
+                        ),
+                        label: 'Hours'
+                      },
+                      {
+                        value: String(timeLeft.minutes).padStart(
+                          2,
+                          '0'
+                        ),
+                        label: 'Mins'
+                      },
+                      {
+                        value: String(timeLeft.seconds).padStart(
+                          2,
+                          '0'
+                        ),
+                        label: 'Secs'
+                      }
+                    ].map(item => (
+
+                      <div
+                        key={item.label}
+                        className="text-center"
+                        style={{
+                          minWidth: '80px'
+                        }}
+                      >
+                        <div
+                          className="glass-card py-3"
+                          style={{
+                            border:
+                              '1px solid var(--bb-border)'
+                          }}
+                        >
+                          <h3 className="fw-bold mb-0">
+                            {item.value}
+                          </h3>
+                        </div>
+
+                        <small>{item.label}</small>
+                      </div>
+
+                    ))}
+
+                  </div>
+
+                  {/* PRICE */}
+
+                  <div className="mb-4">
+
+                    <div className="d-flex align-items-center gap-3">
+
+                      <h1 className="fw-black mb-0">
+                        ₹{dealProduct?.price}
+                      </h1>
+
+                      <span
+                        style={{
+                          textDecoration: 'line-through',
+                          color: '#888',
+                          fontSize: '1.3rem'
+                        }}
+                      >
+                        ₹
+                        {dealProduct?.oldPrice ||
+                          dealProduct?.price}
+                      </span>
+
+                    </div>
+
+                    <div
+                      className="fw-bold"
+                      style={{
+                        color: '#16a34a',
+                        fontSize: '1.1rem'
+                      }}
+                    >
+                      {dealProduct?.discount || 0}% OFF
+                    </div>
+
+                  </div>
+
+                  {/* BUTTON */}
+
+                  <button
+                    onClick={() =>
+                      navigate(
+                        `/products/${dealProduct?.id}`
+                      )
+                    }
+                    className="btn fw-bold d-flex align-items-center gap-2"
+                    style={{
+                      background:
+                        'linear-gradient(135deg,#7c3aed,#06b6d4)',
+                      color: '#fff',
+                      border: 'none',
+                      padding: '16px 40px',
+                      borderRadius: '14px',
+                      boxShadow:
+                        '0 15px 40px rgba(124,58,237,.35)'
+                    }}
+                  >
+                    Claim Deal
+                    <ArrowRight size={18} />
+                  </button>
+
                 </div>
+
+              </motion.div>
+
+              {/* OTHER DEALS */}
+
+              <div className="row g-4">
+
+                {sideDeals.map(product => (
+
+                  <div
+                    key={product.id}
+                    className="col-12 col-md-6 col-xl-3"
+                  >
+                    <motion.div
+                      whileHover={{
+                        y: -10,
+                        scale: 1.03
+                      }}
+                      className="glass-card p-3 h-100"
+                      style={{
+                        cursor: 'pointer',
+                        border:
+                          '1px solid var(--bb-border)'
+                      }}
+                      onClick={() =>
+                        navigate(
+                          `/products/${product.id}`
+                        )
+                      }
+                    >
+
+                      <div
+                        className="d-flex justify-content-center align-items-center mb-3"
+                        style={{
+                          height: '220px'
+                        }}
+                      >
+
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          style={{
+                            width: '100%',
+                            height: '200px',
+                            objectFit: 'contain'
+                          }}
+                        />
+
+                      </div>
+
+                      <h6
+                        className="fw-bold mb-2"
+                        style={{
+                          minHeight: '48px'
+                        }}
+                      >
+                        {product.name}
+                      </h6>
+
+                      <div
+                        className="text-info fw-bold fs-5"
+                      >
+                        ₹{product.price}
+                      </div>
+
+                    </motion.div>
+                  </div>
+
+                ))}
 
               </div>
 
@@ -918,7 +1276,7 @@ export default function Home() {
         <section className="py-5 bg-theme-surface text-center border-top border-bottom" id="support">
           <div className="container px-lg-5">
             <div className="row g-4 row-cols-1 row-cols-md-3">
-              
+
               <div id="gravity-highlight-1" className="col">
                 {renderHighlight(0, <Award size={32} />, "Top Rated Brand", "Millions of music enthusiasts choose BeatBox for outstanding signature high-bass soundscapes.")}
               </div>
