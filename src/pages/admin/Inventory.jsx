@@ -88,53 +88,32 @@ export default function Inventory() {
 
   return (
     <div className="py-2">
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-        <div>
-          <h2 className="fw-black text-theme-title mb-1">Inventory Management</h2>
-          <p className="text-theme-muted mb-0">Monitor stock levels and replenish inventory</p>
-        </div>
+      <div className="mb-4">
+        <h2 className="fw-black text-theme-title mb-1" style={{ fontSize: 'clamp(1.2rem, 4vw, 1.7rem)' }}>Inventory Management</h2>
+        <p className="text-theme-muted mb-0" style={{ fontSize: '0.875rem' }}>Monitor stock levels and replenish inventory</p>
       </div>
 
-      <div className="row g-4 mb-4">
-        <div className="col-12 col-md-4">
-          <div className="card border-0 p-4 h-100" style={{ background: 'var(--bb-surface)', borderRadius: '16px' }}>
-            <div className="d-flex align-items-center gap-3">
-              <div className="p-3 rounded-circle" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444' }}>
-                <AlertTriangle size={24} />
-              </div>
-              <div>
-                <h3 className="fw-black text-theme-title mb-0">{outOfStockCount}</h3>
-                <p className="text-theme-muted mb-0" style={{ fontSize: '0.85rem' }}>Out of Stock Items</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-12 col-md-4">
-          <div className="card border-0 p-4 h-100" style={{ background: 'var(--bb-surface)', borderRadius: '16px' }}>
-            <div className="d-flex align-items-center gap-3">
-              <div className="p-3 rounded-circle" style={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b' }}>
-                <TrendingDown size={24} />
-              </div>
-              <div>
-                <h3 className="fw-black text-theme-title mb-0">{lowStockCount}</h3>
-                <p className="text-theme-muted mb-0" style={{ fontSize: '0.85rem' }}>Low Stock Items (&lt; 10)</p>
+      <div className="row g-3 mb-4">
+        {[
+          { label: 'Out of Stock', count: outOfStockCount, icon: AlertTriangle, iconColor: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
+          { label: 'Low Stock (< 10)', count: lowStockCount, icon: TrendingDown, iconColor: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
+          { label: 'Healthy Stock', count: healthyStockCount, icon: CheckCircle2, iconColor: '#39ff14', bg: 'rgba(57,255,20,0.1)' },
+        ].map(({ label, count, icon: Icon, iconColor, bg }) => (
+          <div className="col-12 col-md-4" key={label}>
+            <div className="card border-0 h-100" style={{ background: 'var(--bb-surface)', borderRadius: '16px', padding: 'clamp(12px, 3vw, 20px)' }}>
+              <div className="d-flex align-items-center gap-3">
+                <div className="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
+                  style={{ width: 'clamp(40px, 7vw, 52px)', height: 'clamp(40px, 7vw, 52px)', background: bg, color: iconColor }}>
+                  <Icon size={22} />
+                </div>
+                <div>
+                  <h3 className="fw-black text-theme-title mb-0" style={{ fontSize: 'clamp(1.2rem, 4vw, 1.75rem)' }}>{count}</h3>
+                  <p className="text-theme-muted mb-0" style={{ fontSize: 'clamp(0.72rem, 1.5vw, 0.85rem)' }}>{label}</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="col-12 col-md-4">
-          <div className="card border-0 p-4 h-100" style={{ background: 'var(--bb-surface)', borderRadius: '16px' }}>
-            <div className="d-flex align-items-center gap-3">
-              <div className="p-3 rounded-circle" style={{ background: 'rgba(57,255,20,0.1)', color: '#39ff14' }}>
-                <CheckCircle2 size={24} />
-              </div>
-              <div>
-                <h3 className="fw-black text-theme-title mb-0">{healthyStockCount}</h3>
-                <p className="text-theme-muted mb-0" style={{ fontSize: '0.85rem' }}>Healthy Stock Items</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
 
       {isLoading ? (

@@ -160,35 +160,68 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
 
   return (
     <AnimatePresence>
-      <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 1050, backdropFilter: 'blur(5px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="modal-content overflow-hidden"
-          style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', borderRadius: '16px', width: '100%', maxWidth: '800px', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}
+      <div
+        className="modal-backdrop"
+        style={{
+          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+          backgroundColor: 'rgba(0,0,0,0.75)',
+          zIndex: 1050,
+          backdropFilter: 'blur(6px)',
+          display: 'flex',
+          alignItems: 'flex-end',       // sheet from bottom on mobile
+          justifyContent: 'center'
+        }}
+      >
+        <style>{`
+          @media (min-width: 640px) {
+            .product-modal-sheet {
+              align-self: center !important;
+              border-radius: 16px !important;
+              max-width: 820px !important;
+              max-height: 90vh !important;
+            }
+          }
+        `}</style>
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 60 }}
+          className="product-modal-sheet"
+          style={{
+            background: 'var(--bb-surface)',
+            border: '1px solid var(--bb-border)',
+            borderRadius: '20px 20px 0 0',
+            width: '100%',
+            maxWidth: '100%',
+            maxHeight: '95dvh',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+          }}
         >
-          <div className="p-4 border-bottom d-flex justify-content-between align-items-center" style={{ borderColor: 'var(--bb-border)' }}>
-            <h5 className="mb-0 fw-bold text-theme-title d-flex align-items-center gap-2">
-              <Upload size={20} className="text-info" /> {editingProduct ? 'Edit Product' : 'Add New Product'}
+          <div className="p-3 p-md-4 border-bottom d-flex justify-content-between align-items-center flex-shrink-0" style={{ borderColor: 'var(--bb-border)' }}>
+            {/* Drag indicator on mobile */}
+            <div className="d-sm-none position-absolute start-50 top-0 translate-middle-x" style={{ marginTop: '6px', width: '36px', height: '4px', background: 'var(--bb-border)', borderRadius: '4px' }} />
+            <h5 className="mb-0 fw-bold text-theme-title d-flex align-items-center gap-2" style={{ fontSize: 'clamp(0.95rem, 2.5vw, 1.15rem)' }}>
+              <Upload size={18} className="text-info flex-shrink-0" /> {editingProduct ? 'Edit Product' : 'Add New Product'}
             </h5>
-            <button onClick={onClose} className="btn border-0 p-1 text-theme-muted hover-scale">
-              <X size={24} />
+            <button onClick={onClose} className="btn border-0 p-1 text-theme-muted hover-scale flex-shrink-0">
+              <X size={22} />
             </button>
           </div>
 
-          <div className="p-4 overflow-auto custom-scrollbar" style={{ flex: 1 }}>
+          <div className="overflow-auto custom-scrollbar flex-grow-1" style={{ padding: 'clamp(12px, 3vw, 24px)' }}>
             <form id="addProductForm" onSubmit={handleSubmit} className="row g-3">
-              <div className="col-md-8">
+              <div className="col-12 col-md-8">
                 <label className="form-label text-theme-muted small fw-bold">Product Name *</label>
                 <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} required style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} placeholder="e.g. Rockerz 550" />
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-md-4">
                 <label className="form-label text-theme-muted small fw-bold">Brand</label>
                 <input type="text" className="form-control" name="brand" value={formData.brand} onChange={handleChange} style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
               </div>
 
-              <div className="col-md-6">
+              <div className="col-12 col-md-6">
                 <label className="form-label text-theme-muted small fw-bold">Category *</label>
                 <select className="form-select" name="categoryId" value={formData.categoryId} onChange={handleChange} required style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }}>
                   {categories.map(cat => (
@@ -258,20 +291,20 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
                 )}
               </div>
 
-              <div className="col-md-4">
+              <div className="col-12 col-sm-4">
                 <label className="form-label text-theme-muted small fw-bold">Price (₹) *</label>
                 <input type="number" step="0.01" className="form-control" name="price" value={formData.price} onChange={handleChange} required style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-sm-4">
                 <label className="form-label text-theme-muted small fw-bold">Sale Price (₹)</label>
                 <input type="number" step="0.01" className="form-control" name="discountPrice" value={formData.discountPrice} onChange={handleChange} style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-sm-4">
                 <label className="form-label text-theme-muted small fw-bold">Initial Stock</label>
                 <input type="number" className="form-control" name="stockQuantity" value={formData.stockQuantity} onChange={handleChange} style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
               </div>
 
-              <div className="col-md-4">
+              <div className="col-12 col-sm-4">
                 <label className="form-label text-theme-muted small fw-bold">Color</label>
                <select
   className="form-select"
@@ -287,11 +320,11 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
   <option value="Green">Green</option>
 </select>
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-sm-4">
                 <label className="form-label text-theme-muted small fw-bold">Battery Life</label>
                 <input type="text" className="form-control" name="batteryLife" value={formData.batteryLife} onChange={handleChange} placeholder="e.g. 40 Hours" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
               </div>
-              <div className="col-md-4">
+              <div className="col-12 col-sm-4">
                 <label className="form-label text-theme-muted small fw-bold">Connectivity</label>
                 <input type="text" className="form-control" name="connectivity" value={formData.connectivity} onChange={handleChange} placeholder="e.g. Bluetooth v5.3" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
               </div>
@@ -311,10 +344,16 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
             </form>
           </div>
 
-          <div className="p-4 border-top d-flex justify-content-end gap-3" style={{ borderColor: 'var(--bb-border)', background: 'var(--bb-surface-2)' }}>
-            <button type="button" onClick={onClose} className="btn fw-bold text-theme-muted px-4" style={{ background: 'transparent', border: '1px solid var(--bb-border)' }}>Cancel</button>
-            <button type="submit" form="addProductForm" disabled={isLoading} className="btn btn-glow fw-bold px-4 d-flex align-items-center gap-2" style={{ borderRadius: '8px' }}>
-              {isLoading ? <span className="spinner-border spinner-border-sm"></span> : <Save size={18} />}
+          <div className="flex-shrink-0 d-flex justify-content-end gap-2 p-3 p-md-4"
+               style={{ borderTop: '1px solid var(--bb-border)', background: 'var(--bb-surface-2)', paddingBottom: 'calc(env(safe-area-inset-bottom) + 12px)' }}>
+            <button type="button" onClick={onClose} className="btn fw-bold text-theme-muted px-4"
+              style={{ background: 'transparent', border: '1px solid var(--bb-border)', borderRadius: '10px', fontSize: '0.875rem' }}>
+              Cancel
+            </button>
+            <button type="submit" form="addProductForm" disabled={isLoading}
+              className="btn btn-glow fw-bold px-4 d-flex align-items-center gap-2"
+              style={{ borderRadius: '10px', fontSize: '0.875rem' }}>
+              {isLoading ? <span className="spinner-border spinner-border-sm" /> : <Save size={16} />}
               {isLoading ? 'Saving...' : 'Save Product'}
             </button>
           </div>

@@ -73,7 +73,6 @@ import { selectWishlistCount } from '../../redux/wishlistSlice'
 import { selectAllProducts, selectProductStatus, fetchProducts } from '../../redux/productSlice'
 import { toast } from 'react-hot-toast'
 import ThemeToggle from '../ui/ThemeToggle'
-import CartDrawer from '../ui/CartDrawer'
 import NotificationsPanel from '../ui/NotificationsPanel'
 
 
@@ -85,7 +84,6 @@ export default function Header() {
   const [showMore, setShowMore] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
-  const [showCart, setShowCart] = useState(false)
   const [megaMenuExpanded, setMegaMenuExpanded] = useState(false)
   const { user } = useSelector((state) => state.auth)
   const cartCount = useSelector(selectCartCount)
@@ -423,7 +421,7 @@ export default function Header() {
 
             <button
               className="btn border-0 p-1 position-relative text-theme-muted"
-              onClick={() => setShowCart(true)}
+              onClick={() => navigate('/cart')}
               aria-label="Open cart mobile"
               style={{ background: 'transparent' }}
             >
@@ -826,7 +824,7 @@ export default function Header() {
                 {/* Shopping Cart Trigger */}
                 <button
                   className="btn border-0 p-2 position-relative text-theme-muted hover-scale d-none d-xl-block"
-                  onClick={() => setShowCart(true)}
+                  onClick={() => navigate('/cart')}
                   style={{ background: 'transparent', transition: 'all 0.2s' }}
                   aria-label="Open cart"
                 >
@@ -978,8 +976,6 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* Cart Drawer */}
-      <CartDrawer isOpen={showCart} onClose={() => setShowCart(false)} />
     </header>
   )
 }

@@ -135,68 +135,60 @@ export default function Dashboard() {
 
   return (
     <div className="py-2">
-      <div className="d-flex align-items-center justify-content-between mb-4">
+      {/* Header */}
+      <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 mb-4">
         <div>
-          <h2 className="fw-black text-theme-title mb-1">Dashboard Overview</h2>
-          <p className="text-theme-muted mb-0">Welcome back, Admin. Here's what's happening today.</p>
+          <h2 className="fw-black text-theme-title mb-1" style={{ fontSize: 'clamp(1.2rem, 4vw, 1.7rem)' }}>Dashboard Overview</h2>
+          <p className="text-theme-muted mb-0" style={{ fontSize: '0.875rem' }}>Welcome back, Admin. Here's what's happening today.</p>
         </div>
-        <button className="btn btn-glow d-flex align-items-center gap-2 px-4 py-2 fw-bold" style={{ borderRadius: '10px' }}>
-          <Activity size={18} /> Generate Report
+        <button className="btn btn-glow d-flex align-items-center gap-2 px-3 py-2 fw-bold align-self-start align-self-sm-center" style={{ borderRadius: '10px', whiteSpace: 'nowrap', fontSize: '0.875rem' }}>
+          <Activity size={16} /> <span className="d-none d-sm-inline">Generate Report</span><span className="d-sm-none">Report</span>
         </button>
       </div>
 
-      {/* Metrics Row */}
-      <div className="row g-4 mb-4">
-        <div className="col-12 col-md-6 col-xl-3">
-          <StatWidget title="Total Revenue" value={`₹${stats.totalRevenue.toLocaleString('en-IN')}`} trend={`${stats.revenueTrend >= 0 ? '+' : ''}${stats.revenueTrend}%`} isPositive={stats.revenueTrend >= 0} icon={IndianRupee} delay={0.1} />
+      {/* Stat widgets — 2 col on xs/sm, 4 col on xl */}
+      <div className="row g-3 mb-4">
+        <div className="col-6 col-xl-3">
+          <StatWidget title="Revenue" value={`₹${stats.totalRevenue.toLocaleString('en-IN')}`} trend={`${stats.revenueTrend >= 0 ? '+' : ''}${stats.revenueTrend}%`} isPositive={stats.revenueTrend >= 0} icon={IndianRupee} delay={0.05} />
         </div>
-        <div className="col-12 col-md-6 col-xl-3">
-          <StatWidget title="Total Orders" value={stats.totalOrders.toLocaleString('en-IN')} trend={`${stats.ordersTrend >= 0 ? '+' : ''}${stats.ordersTrend}%`} isPositive={stats.ordersTrend >= 0} icon={ShoppingCart} delay={0.2} />
+        <div className="col-6 col-xl-3">
+          <StatWidget title="Orders" value={stats.totalOrders.toLocaleString('en-IN')} trend={`${stats.ordersTrend >= 0 ? '+' : ''}${stats.ordersTrend}%`} isPositive={stats.ordersTrend >= 0} icon={ShoppingCart} delay={0.1} />
         </div>
-        <div className="col-12 col-md-6 col-xl-3">
-          <StatWidget title="Active Users" value={stats.activeUsers.toLocaleString('en-IN')} trend={`${stats.usersTrend >= 0 ? '+' : ''}${stats.usersTrend}%`} isPositive={stats.usersTrend >= 0} icon={Users} delay={0.3} />
+        <div className="col-6 col-xl-3">
+          <StatWidget title="Users" value={stats.activeUsers.toLocaleString('en-IN')} trend={`${stats.usersTrend >= 0 ? '+' : ''}${stats.usersTrend}%`} isPositive={stats.usersTrend >= 0} icon={Users} delay={0.15} />
         </div>
-        <div className="col-12 col-md-6 col-xl-3">
-          <StatWidget title="Conversion Rate" value={`${stats.conversionRate}%`} trend={`${stats.conversionTrend >= 0 ? '+' : ''}${stats.conversionTrend}%`} isPositive={stats.conversionTrend >= 0} icon={TrendingUp} delay={0.4} />
-        </div>
-      </div>
-
-      {/* Charts Row */}
-      <div className="row g-4 mb-4">
-        <div className="col-12 col-xl-8">
-          <ChartCard title="Revenue Overview (This Year)" data={revenueData} type="line" dataKey="value" colors={['#00f3ff']} />
-        </div>
-        <div className="col-12 col-xl-4">
-          <ChartCard title="Product Distribution" data={productData} type="pie" dataKey="value" colors={[
-            '#00f3ff',
-            '#a820ff',
-            '#0025fa',
-            '#f59e0b',
-            '#0dd406',
-            '#ac90ec4f',
-            '#ec4899',
-            '#b8142a'
-          ]} />
+        <div className="col-6 col-xl-3">
+          <StatWidget title="Conversion" value={`${stats.conversionRate}%`} trend={`${stats.conversionTrend >= 0 ? '+' : ''}${stats.conversionTrend}%`} isPositive={stats.conversionTrend >= 0} icon={TrendingUp} delay={0.2} />
         </div>
       </div>
 
-      <div className="row g-4 mb-4">
+      {/* Charts row 1 */}
+      <div className="row g-3 mb-3">
+        <div className="col-12 col-xl-8">
+          <ChartCard title="Revenue Overview (This Year)" data={revenueData} type="line" dataKey="value" colors={['#00f3ff']} height={260} />
+        </div>
         <div className="col-12 col-xl-4">
-          <ChartCard title="Weekly Sales" data={salesData} type="bar" dataKey="value" colors={['#a820ff']} />
+          <ChartCard title="Product Distribution" data={productData} type="pie" dataKey="value" colors={['#00f3ff','#a820ff','#0025fa','#f59e0b','#0dd406','#ac90ec4f','#ec4899','#b8142a']} height={260} />
+        </div>
+      </div>
+
+      {/* Charts row 2 + Recent Orders */}
+      <div className="row g-3 mb-4">
+        <div className="col-12 col-xl-4">
+          <ChartCard title="Weekly Sales" data={salesData} type="bar" dataKey="value" colors={['#a820ff']} height={240} />
         </div>
         <div className="col-12 col-xl-8">
-          <div className="mb-3 d-flex align-items-center justify-content-between px-2">
-            <h5 className="fw-bold text-theme-title mb-0">Recent Orders</h5>
+          <div className="mb-2 d-flex align-items-center justify-content-between">
+            <h5 className="fw-bold text-theme-title mb-0" style={{ fontSize: '1rem' }}>Recent Orders</h5>
           </div>
           <DataTable
             columns={orderColumns}
             data={recentOrders}
-            searchPlaceholder="Search order ID or customer..."
+            searchPlaceholder="Search orders..."
             searchableFields={['orderId', 'userId', 'status']}
           />
         </div>
       </div>
-
     </div>
   )
 }

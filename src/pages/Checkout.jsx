@@ -38,6 +38,7 @@ export default function Checkout() {
   const subtotal = useSelector(selectCartSubtotal)
   const count = useSelector(selectCartCount)
   const appliedPromo = useSelector(selectAppliedPromo)
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5089';
 
   const { addresses } = useSelector(state => state.profile)
 
@@ -159,7 +160,7 @@ export default function Checkout() {
             color: item.selectedColor,
             colorCode: item.selectedColorCode,
             productVariantId: item.variantId,
-            productImageUrl: item.image
+            productImageUrl: item.imageUrl
           }))
         }
 
@@ -235,7 +236,7 @@ export default function Checkout() {
               color: item.selectedColor,
               colorCode: item.selectedColorCode,
               productVariantId: item.variantId,
-              productImageUrl: item.image
+              productImageUrl: item.imageUrl
             }))
           }
 
@@ -488,7 +489,7 @@ export default function Checkout() {
                       </button>
 
                       <button onClick={onPlaceOrder} className="btn btn-glow flex-grow-1 py-3 fw-black d-flex align-items-center justify-content-center gap-2" style={{ borderRadius: 12 }}>
-                        <Lock size={16} /> Place Order - -{total.toLocaleString('en-IN')}
+                        <Lock size={16} /> Place Order - ₹{total.toLocaleString('en-IN')}
                       </button>
                     </div>
                   </div>
@@ -507,7 +508,7 @@ export default function Checkout() {
                     >
                       <CheckCircle size={48} style={{ color: '#39ff14' }} />
                     </motion.div>
-                    <h2 className="fw-black text-theme-title mb-2" style={{ letterSpacing: '-1px' }}>Order Placed! --</h2>
+                    <h2 className="fw-black text-theme-title mb-2" style={{ letterSpacing: '-1px' }}>Order Placed! 🎉</h2>
                     <p className="text-theme-muted mb-1">Thank you for your purchase.</p>
                     <div className="my-3 px-4 py-2 rounded-2 d-inline-block" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
                       <span className="text-theme-muted small">Order ID: </span>
@@ -541,28 +542,38 @@ export default function Checkout() {
                 <div className="d-flex flex-column gap-2 mb-3" style={{ maxHeight: 200, overflowY: 'auto' }}>
                   {items.map(item => (
                     <div key={item.cartKey} className="d-flex align-items-center gap-2">
-                      <div className="rounded-2 flex-shrink-0" style={{ width: 40, height: 40, background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <img src={IMAGE_MAP[item.imageKey]} alt="" style={{ width: 30, height: 30, objectFit: 'contain' }} />
+                      <div className="rounded-2 flex-shrink-0" style={{ width: 40, height: 40, background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', display: 'flex', alignItems: 'center', justifycontent: 'center' }}>
+                        <img 
+                          src={
+                            item.imageUrl?.startsWith('http') 
+                              ? item.imageUrl 
+                              : item.imageUrl?.startsWith('/images/') 
+                                ? `${API_BASE}${item.imageUrl}` 
+                                : IMAGE_MAP[item.imageKey] || item.imageUrl
+                          } 
+                          alt="" 
+                          style={{ width: 30, height: 30, objectFit: 'contain' }} 
+                        />
                       </div>
                       <div className="flex-grow-1 min-width-0">
                         <p className="text-theme-title fw-semibold mb-0 text-truncate" style={{ fontSize: '0.8rem' }}>{item.name}</p>
                         <p className="text-theme-muted mb-0" style={{ fontSize: '0.7rem' }}>Qty: {item.quantity}</p>
                       </div>
-                      <span className="text-theme-title fw-bold" style={{ fontSize: '0.85rem', flexShrink: 0 }}>-{(item.price * item.quantity).toLocaleString('en-IN')}</span>
+                      <span className="text-theme-title fw-bold" style={{ fontSize: '0.85rem', flexShrink: 0 }}>₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
                     </div>
                   ))}
                 </div>
                 <div className="d-flex flex-column gap-1 pt-3" style={{ borderTop: '1px solid var(--bb-border)' }}>
-                  <div className="d-flex justify-content-between text-theme-muted small"><span>Subtotal</span><span>-{subtotal.toLocaleString('en-IN')}</span></div>
-                  <div className="d-flex justify-content-between text-theme-muted small"><span>GST (18%)</span><span>-{gst.toLocaleString('en-IN')}</span></div>
+                  <div className="d-flex justify-content-between text-theme-muted small"><span>Subtotal</span><span>₹{subtotal.toLocaleString('en-IN')}</span></div>
+                  <div className="d-flex justify-content-between text-theme-muted small"><span>GST (18%)</span><span>₹{gst.toLocaleString('en-IN')}</span></div>
                   <div className="d-flex justify-content-between small">
                     <span className="text-theme-muted">Shipping</span>
-                    <span style={{ color: shipping === 0 ? '#39ff14' : 'var(--bb-muted)', fontWeight: 600 }}>{shipping === 0 ? 'FREE' : `-${shipping}`}</span>
+                    <span style={{ color: shipping === 0 ? '#39ff14' : 'var(--bb-muted)', fontWeight: 600 }}>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>
                   </div>
                   {appliedPromo && couponDiscount > 0 && (
                     <div className="d-flex justify-content-between small text-success">
                       <span className="fw-bold">Discount ({appliedPromo.code})</span>
-                      <span className="fw-bold">--{couponDiscount.toLocaleString('en-IN')}</span>
+                      <span className="fw-bold">-₹{couponDiscount.toLocaleString('en-IN')}</span>
                     </div>
                   )}
                   {appliedPromo && appliedPromo.isFreeShipping && (
@@ -573,7 +584,7 @@ export default function Checkout() {
                   )}
                   <div className="d-flex justify-content-between fw-black mt-2 pt-2" style={{ borderTop: '1px solid var(--bb-border)' }}>
                     <span className="text-theme-title">Total</span>
-                    <span className="text-theme-title" style={{ color: 'var(--bb-accent)' }}>-{total.toLocaleString('en-IN')}</span>
+                    <span className="text-theme-title" style={{ color: 'var(--bb-accent)' }}>₹{total.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
               </div>
