@@ -6,8 +6,9 @@ import { Clock, ChevronLeft, ChevronRight, X, Trash2 } from 'lucide-react'
 import { selectRecentlyViewed, clearRecentlyViewed } from '../../redux/recentlyViewedSlice'
 import { IMAGE_MAP } from '../../data/products'
 
-export default function RecentlyViewed({ excludeId = null }) {
-  const items = useSelector(selectRecentlyViewed)
+export default function RecentlyViewed({ excludeId = null, products = null }) {
+  const reduxItems = useSelector(selectRecentlyViewed)
+  const items = products || reduxItems
   const dispatch = useDispatch()
   const scrollRef = useRef(null)
 

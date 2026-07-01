@@ -1292,3 +1292,64 @@ body {
   color: var(--bb-accent) !important;
   transform: translateX(4px);
 }
+
+/* Related Products Responsive Layout: Mobile (scrollable carousel) to Desktop (grid) */
+.related-products-container {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+.related-products-container::-webkit-scrollbar {
+  display: none;
+}
+.related-product-col {
+  flex: 0 0 auto;
+  width: 280px;
+}
+@media (min-width: 768px) {
+  .related-products-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    overflow-x: visible;
+    padding-bottom: 0;
+  }
+  .related-product-col {
+    width: auto;
+  }
+}
+@media (min-width: 992px) {
+  .related-products-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (min-width: 1200px) {
+  .related-products-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+
+/* ==========================================================================
+   BeatBoxCollections — float animation & responsive grid
+   ========================================================================== */
+
+@keyframes bbCollectionFloat {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-14px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Desktop: side-by-side (default grid-template-areas defined inline) */
+/* Mobile: stack vertically */
+@media (max-width: 767px) {
+  .bb-collection-grid {
+    grid-template-columns: 1fr !important;
+    grid-template-areas: "text" "image" !important;
+    min-height: unset !important;
+    gap: 0 !important;
+    padding: 0 !important;
+  }
+}

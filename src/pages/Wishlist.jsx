@@ -6,14 +6,8 @@ import { addToCart } from '../redux/cartSlice';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { Heart, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
-  const API_BASE = 'http://localhost:5089';
-  export const getImageUrl = (path) => {
-  if (!path) return '/placeholder-product.png';
+import { getImageUrl } from '../config/api';
 
-  if (path.startsWith('http')) return path;
-
-  return `${API_BASE}${path}`;
-};
 export default function Wishlist() {
   const dispatch = useDispatch();
   const navigate = useNavigate();

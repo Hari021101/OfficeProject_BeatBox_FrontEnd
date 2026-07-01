@@ -159,7 +159,7 @@ export default function Checkout() {
             color: item.selectedColor,
             colorCode: item.selectedColorCode,
             productVariantId: item.variantId,
-            productImageUrl: item.image
+            productImageUrl: item.imageUrl
           }))
         }
 
@@ -189,7 +189,7 @@ export default function Checkout() {
         )
 
       const options = {
-        key: "rzp_test_SzoeIy8fRZ4hB9",
+        key: import.meta.env.VITE_RAZORPAY_KEY || "rzp_test_SzoeIy8fRZ4hB9",
 
         amount: razorpayOrder.data.amount,
 
@@ -235,7 +235,7 @@ export default function Checkout() {
               color: item.selectedColor,
               colorCode: item.selectedColorCode,
               productVariantId: item.variantId,
-              productImageUrl: item.image
+              productImageUrl: item.imageUrl
             }))
           }
 
@@ -248,10 +248,11 @@ export default function Checkout() {
 
           await paymentService.processPayment({
             orderId: backendOrderId,
-           amount: parseInt(total * 100),
+            amount: parseInt(total * 100),
             method: paymentMethod.toUpperCase(),
-            transactionId:
-              response.razorpay_payment_id
+            transactionId: response.razorpay_payment_id,
+            razorpayOrderId: response.razorpay_order_id,
+            razorpaySignature: response.razorpay_signature
           })
 
           setStep(3)

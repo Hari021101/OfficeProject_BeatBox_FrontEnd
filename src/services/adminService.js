@@ -63,6 +63,38 @@ const adminService = {
       console.error('Error fetching low stock:', error);
       throw error;
     }
+  },
+
+  // --- Audit Logs ---
+  getAuditLogs: async (params = {}) => {
+    try {
+      const response = await api.get('/auditlogs', { params });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching audit logs:', error);
+      throw error;
+    }
+  },
+
+  // --- User Modifications ---
+  updateUserRole: async (userId, role) => {
+    try {
+      const response = await api.put(`/account/users/${userId}/role`, { role });
+      return response.data;
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      throw error;
+    }
+  },
+
+  lockUser: async (userId, lockUser) => {
+    try {
+      const response = await api.put(`/account/users/${userId}/lock`, { lockUser });
+      return response.data;
+    } catch (error) {
+      console.error('Error locking user:', error);
+      throw error;
+    }
   }
 };
 

@@ -5,15 +5,13 @@ import { X, Plus, Minus, ShoppingBag, ArrowRight, Package } from 'lucide-react'
 import { removeFromCart, updateQuantity, selectCartItems, selectCartSubtotal, selectCartCount } from '../../redux/cartSlice'
 import { IMAGE_MAP } from '../../data/products'
 import logo from '../../assets/beatbox_logo.png'
+import { getImageUrl } from '../../config/api'
 
 export default function CartDrawer({ isOpen, onClose }) {
   const dispatch = useDispatch()
   const items = useSelector(selectCartItems)
   const subtotal = useSelector(selectCartSubtotal)
   const count = useSelector(selectCartCount)
-  const API_BASE =
-  import.meta.env.VITE_API_URL ||
-  'http://localhost:5089';
   const shipping = subtotal >= 999 ? 0 : 79
   const gst = Math.round(subtotal * 0.18)
   const total = subtotal + shipping + gst
@@ -177,12 +175,8 @@ export default function CartDrawer({ isOpen, onClose }) {
                         >
                           <div className="position-absolute w-100 h-100" style={{ background: item.selectedColorCode || 'var(--bb-accent)', opacity: 0.1, filter: 'blur(10px)' }} />
                           <img
-                             src={
-    item.imageUrl?.startsWith('http')
-      ? item.imageUrl
-      : `${API_BASE}${item.imageUrl}`
-  }
-  alt={item.name}
+                            src={getImageUrl(item.imageUrl)}
+                            alt={item.name}
                             className="position-relative z-1"
                             style={{ width: 60, height: 60, objectFit: 'contain', filter: 'drop-shadow(0 5px 5px rgba(0,0,0,0.3))' }}
                           />

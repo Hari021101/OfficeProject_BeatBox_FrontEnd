@@ -1,25 +1,23 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Upload, Save, AlertCircle } from 'lucide-react'
+import { X, Save, AlertCircle, Plus, Trash2 } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { toast } from 'react-hot-toast'
 
 export default function AddProductModal({ isOpen, onClose, onProductAdded, editingProduct }) {
+  const navigate = useNavigate()
   const [categories, setCategories] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const defaultForm = {
     name: '',
     description: '',
-    price: '',
-    discountPrice: '',
-    stockQuantity: '',
-    imageUrl: '',
     categoryId: '',
     brand: 'BeatBox',
     batteryLife: '',
-    color: '',
     connectivity: '',
-    isFeatured: false
+    isFeatured: false,
+    faqs: []
   }
   const [formData, setFormData] = useState(defaultForm)
 
@@ -30,16 +28,12 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
         setFormData({
           name: editingProduct.name || '',
           description: editingProduct.description || '',
-          price: editingProduct.oldPrice || editingProduct.price || '',
-          discountPrice: editingProduct.discountPrice || '',
-          stockQuantity: editingProduct.stockQuantity || '',
-          imageUrl: editingProduct.imageUrl || '',
-          categoryId: editingProduct.categoryId || '', // Ideally maps to id
+          categoryId: editingProduct.categoryId || '',
           brand: editingProduct.brand || 'BeatBox',
           batteryLife: editingProduct.batteryLife || '',
-          color: editingProduct.color || '',
           connectivity: editingProduct.connectivity || '',
-          isFeatured: editingProduct.isFeatured || false
+          isFeatured: editingProduct.isFeatured || false,
+          faqs: editingProduct.faqs || []
         })
       } else {
         setFormData(defaultForm)
@@ -72,46 +66,32 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
     }))
   }
 
-  const handleFileUpload = async (file) => {
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('File size exceeds 5MB limit.');
-      return;
-    }
+  const handleFaqChange = (index, field, value) => {
+    const newFaqs = [...formData.faqs];
+    newFaqs[index][field] = value;
+    setFormData(prev => ({ ...prev, faqs: newFaqs }));
+  }
 
-    const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
-    const extension = file.name.split('.').pop().toLowerCase();
-    if (!allowedExtensions.includes(extension)) {
-      toast.error('Invalid file format. Supported formats: JPG, PNG, WEBP.');
-      return;
-    }
+  const addFaq = () => {
+    setFormData(prev => ({
+      ...prev,
+      faqs: [...prev.faqs, { question: '', answer: '' }]
+    }));
+  }
 
-    try {
-      setIsLoading(true);
-      const loadingToast = toast.loading('Uploading product image...');
-      
-      const response = await productService.uploadProductImage(file);
-      
-      toast.dismiss(loadingToast);
-      if (response && response.success) {
-        setFormData(prev => ({ ...prev, imageUrl: response.data }));
-        toast.success('Image uploaded successfully!');
-      } else {
-        toast.error(response?.message || 'Failed to upload image');
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || 'Error occurred during image upload');
-    } finally {
-      setIsLoading(false);
-    }
+  const removeFaq = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      faqs: prev.faqs.filter((_, i) => i !== index)
+    }));
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     
     // Validation
-    if (!formData.name || !formData.categoryId || !formData.price) {
-      toast.error('Please fill required fields (Name, Category, Price)')
+    if (!formData.name || !formData.categoryId) {
+      toast.error('Please fill required fields (Name, Category)')
       return
     }
 
@@ -121,31 +101,27 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
       const payload = {
         name: formData.name,
         description: formData.description,
-        price: parseFloat(formData.price),
-        discountPrice: formData.discountPrice ? parseFloat(formData.discountPrice) : parseFloat(formData.price),
-        stockQuantity: parseInt(formData.stockQuantity) || 0,
-        imageUrl: formData.imageUrl || 'hero_headphones.png',
         categoryId: formData.categoryId,
         brand: formData.brand,
         batteryLife: formData.batteryLife,
-        color: formData.color,
         connectivity: formData.connectivity,
-        isFeatured: formData.isFeatured
+        isFeatured: formData.isFeatured,
+        faqs: formData.faqs
       }
 
       let resultProduct;
       if (editingProduct) {
         resultProduct = await productService.updateProduct(editingProduct.id, payload)
         toast.success('Product updated successfully!')
+        onProductAdded(resultProduct, true)
       } else {
         resultProduct = await productService.createProduct(payload)
         toast.success('Product created successfully!')
+        onProductAdded(resultProduct, false)
+        navigate(`/admin/products/${resultProduct.id}/edit`)
       }
       
-      onProductAdded(resultProduct, !!editingProduct)
       onClose()
-      
-      // Reset form
       setFormData(defaultForm)
       
     } catch (err) {
@@ -170,7 +146,7 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
         >
           <div className="p-4 border-bottom d-flex justify-content-between align-items-center" style={{ borderColor: 'var(--bb-border)' }}>
             <h5 className="mb-0 fw-bold text-theme-title d-flex align-items-center gap-2">
-              <Upload size={20} className="text-info" /> {editingProduct ? 'Edit Product' : 'Add New Product'}
+              <Plus size={20} className="text-info" /> {editingProduct ? 'Edit Product' : 'Add New Product'}
             </h5>
             <button onClick={onClose} className="btn border-0 p-1 text-theme-muted hover-scale">
               <X size={24} />
@@ -188,110 +164,21 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
                 <input type="text" className="form-control" name="brand" value={formData.brand} onChange={handleChange} style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
               </div>
 
-              <div className="col-md-6">
+              <div className="col-md-12">
                 <label className="form-label text-theme-muted small fw-bold">Category *</label>
                 <select className="form-select" name="categoryId" value={formData.categoryId} onChange={handleChange} required style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }}>
+                  <option value="">Select Category</option>
                   {categories.map(cat => (
                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                   ))}
                 </select>
               </div>
-              <div className="col-12 mt-3">
-                <label className="form-label text-theme-muted small fw-bold">Product Media (Image / Video)</label>
-                <div 
-                  className="d-flex flex-column align-items-center justify-content-center p-4 rounded-4" 
-                  style={{ 
-                    border: '2px dashed var(--bb-border)', 
-                    background: 'var(--bb-surface-2)', 
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    position: 'relative',
-                    minHeight: '180px',
-                    overflow: 'hidden'
-                  }}
-                  onClick={() => document.getElementById('mediaUpload').click()}
-                  onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'var(--bb-accent)'; }}
-                  onDragLeave={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'var(--bb-border)'; }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    e.currentTarget.style.borderColor = 'var(--bb-border)';
-                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                      handleFileUpload(e.dataTransfer.files[0]);
-                    }
-                  }}
-                >
-                  <input 
-                    type="file" 
-                    id="mediaUpload" 
-                    className="d-none" 
-                    accept="image/*,video/*" 
-                    onChange={(e) => {
-                      if (e.target.files && e.target.files[0]) {
-                        handleFileUpload(e.target.files[0]);
-                      }
-                    }} 
-                  />
-                  
-                  {formData.imageUrl && formData.imageUrl.startsWith('data:') ? (
-                    formData.imageUrl.includes('video') ? (
-                      <video src={formData.imageUrl} autoPlay loop muted style={{ width: '100%', height: '100%', objectFit: 'contain', position: 'absolute', top: 0, left: 0 }} />
-                    ) : (
-                      <img src={formData.imageUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain', position: 'absolute', top: 0, left: 0 }} />
-                    )
-                  ) : formData.imageUrl ? (
-                    <div className="text-center">
-                       <img src={formData.imageUrl} alt="Static Asset" style={{ height: '120px', objectFit: 'contain', opacity: 0.6 }} onError={(e) => e.target.style.display='none'} />
-                       <p className="mt-2 mb-0 fw-bold" style={{ color: 'var(--bb-accent)' }}>Using asset: {formData.imageUrl}</p>
-                    </div>
-                  ) : (
-                    <div className="text-center">
-                      <Upload size={32} className="mb-2 text-theme-muted" />
-                      <p className="fw-bold mb-1 text-theme-title">Click or Drag to Upload Media</p>
-                      <p className="small text-theme-muted mb-0">Supports JPG, PNG, WEBP, MP4 (Max 15MB)</p>
-                    </div>
-                  )}
-                </div>
-                {formData.imageUrl && (
-                  <div className="text-end mt-2">
-                    <button type="button" onClick={() => setFormData(p => ({ ...p, imageUrl: '' }))} className="btn btn-sm btn-outline-danger" style={{ fontSize: '0.75rem', borderRadius: '8px' }}>Remove Media</button>
-                  </div>
-                )}
-              </div>
 
-              <div className="col-md-4">
-                <label className="form-label text-theme-muted small fw-bold">Price (₹) *</label>
-                <input type="number" step="0.01" className="form-control" name="price" value={formData.price} onChange={handleChange} required style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
-              </div>
-              <div className="col-md-4">
-                <label className="form-label text-theme-muted small fw-bold">Sale Price (₹)</label>
-                <input type="number" step="0.01" className="form-control" name="discountPrice" value={formData.discountPrice} onChange={handleChange} style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
-              </div>
-              <div className="col-md-4">
-                <label className="form-label text-theme-muted small fw-bold">Initial Stock</label>
-                <input type="number" className="form-control" name="stockQuantity" value={formData.stockQuantity} onChange={handleChange} style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
-              </div>
-
-              <div className="col-md-4">
-                <label className="form-label text-theme-muted small fw-bold">Color</label>
-               <select
-  className="form-select"
-  name="color"
-  value={formData.color}
-  onChange={handleChange}
->
-  <option value="">Select Color</option>
-  <option value="Black">Black</option>
-  <option value="White">White</option>
-  <option value="Blue">Blue</option>
-  <option value="Red">Red</option>
-  <option value="Green">Green</option>
-</select>
-              </div>
-              <div className="col-md-4">
+              <div className="col-md-6">
                 <label className="form-label text-theme-muted small fw-bold">Battery Life</label>
                 <input type="text" className="form-control" name="batteryLife" value={formData.batteryLife} onChange={handleChange} placeholder="e.g. 40 Hours" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
               </div>
-              <div className="col-md-4">
+              <div className="col-md-6">
                 <label className="form-label text-theme-muted small fw-bold">Connectivity</label>
                 <input type="text" className="form-control" name="connectivity" value={formData.connectivity} onChange={handleChange} placeholder="e.g. Bluetooth v5.3" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
               </div>
@@ -299,6 +186,39 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
               <div className="col-12">
                 <label className="form-label text-theme-muted small fw-bold">Description</label>
                 <textarea className="form-control" name="description" value={formData.description} onChange={handleChange} rows="3" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }}></textarea>
+              </div>
+
+              {/* FAQs Section */}
+              <div className="col-12 mt-4">
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <h6 className="mb-0 fw-bold text-theme-title">Product FAQs</h6>
+                  <button type="button" onClick={addFaq} className="btn btn-sm btn-glow d-flex align-items-center gap-1">
+                    <Plus size={14} /> Add FAQ
+                  </button>
+                </div>
+                {formData.faqs.length === 0 ? (
+                  <div className="text-center p-3 rounded-3" style={{ background: 'var(--bb-surface-2)', border: '1px dashed var(--bb-border)', color: 'var(--bb-muted)' }}>
+                    No FAQs added yet.
+                  </div>
+                ) : (
+                  <div className="d-flex flex-column gap-3">
+                    {formData.faqs.map((faq, index) => (
+                      <div key={index} className="p-3 rounded-3 position-relative" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
+                        <button type="button" onClick={() => removeFaq(index)} className="btn btn-link text-danger position-absolute top-0 end-0 m-2 p-1" title="Remove FAQ" style={{ border: 'none', background: 'transparent' }}>
+                          <Trash2 size={16} />
+                        </button>
+                        <div className="mb-2 pe-4">
+                          <label className="form-label text-theme-muted small fw-bold">Question</label>
+                          <input type="text" className="form-control form-control-sm" value={faq.question} onChange={(e) => handleFaqChange(index, 'question', e.target.value)} placeholder="e.g. Is it water resistant?" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
+                        </div>
+                        <div>
+                          <label className="form-label text-theme-muted small fw-bold">Answer</label>
+                          <textarea className="form-control form-control-sm" rows="2" value={faq.answer} onChange={(e) => handleFaqChange(index, 'answer', e.target.value)} placeholder="e.g. Yes, it has IPX5 rating." style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="col-12 mt-4">

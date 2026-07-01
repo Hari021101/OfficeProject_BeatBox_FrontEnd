@@ -30,6 +30,7 @@ const DailyDeals = React.lazy(() => import('../pages/DailyDeals'))
 // Lazy Load Admin Pages
 const AdminDashboard = React.lazy(() => import('../pages/admin/Dashboard'))
 const AdminProducts = React.lazy(() => import('../pages/admin/Products'))
+const AdminEditProduct = React.lazy(() => import('../pages/admin/EditProduct'))
 const AdminOrders = React.lazy(() => import('../pages/admin/Orders'))
 const AdminInventory = React.lazy(() => import('../pages/admin/Inventory'))
 const AdminUsers = React.lazy(() => import('../pages/admin/Users'))
@@ -150,6 +151,7 @@ export default function AppRouter() {
             <Route index element={<AdminDashboard />} />
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="products" element={<AdminProducts />} />
+            <Route path="products/:id/edit" element={<AdminEditProduct />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="inventory" element={<AdminInventory />} />
             <Route path="users" element={<AdminUsers />} />

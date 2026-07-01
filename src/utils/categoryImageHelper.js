@@ -1,13 +1,13 @@
-import twsImg from '../assets/category-covers/tws.png';
-import headphonesImg from '../assets/category-covers/wireless_headphones.png';
-import speakersImg from '../assets/category-covers/portable_speakers.png';
+import twsImg from '../assets/category-images/airpods.png';
+import headphonesImg from '../assets/category-images/headphones.png';
+import speakersImg from '../assets/category-images/bluetooth_speaker.png';
 import soundbarsImg from '../assets/category-covers/soundbars.png';
-import mobileAccImg from '../assets/category-covers/mobile_accessories.png';
-import computerAccImg from '../assets/category-covers/computer_accessories.png';
+import mobileAccImg from '../assets/category-images/wired_headphones.png';
+import computerAccImg from '../assets/category-images/gaming_keyboard.png';
 import carAccImg from '../assets/category-covers/car_accessories.png';
-import smartGadgetsImg from '../assets/category-covers/smart_gadgets.png';
+import smartGadgetsImg from '../assets/category-images/smartwatch.png';
+import { getImageUrl } from '../config/api';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5089';
 
 // Map normalized category names to pre-generated cover assets
 const COVER_MAP = {
@@ -29,14 +29,7 @@ const COVER_MAP = {
 export const getCategoryCover = (categoryName = '', dbImageUrl = '') => {
   // 1. Return database image if available
   if (dbImageUrl) {
-    if (
-      dbImageUrl.startsWith('http://') ||
-      dbImageUrl.startsWith('https://') ||
-      dbImageUrl.startsWith('data:')
-    ) {
-      return dbImageUrl;
-    }
-    return `${API_BASE}${dbImageUrl}`;
+    return getImageUrl(dbImageUrl);
   }
 
   // 2. Return pre-generated assets from COVER_MAP

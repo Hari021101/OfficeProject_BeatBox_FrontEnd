@@ -6,6 +6,7 @@ import { IMAGE_MAP } from '../data/products'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectAllProducts, selectProductStatus, fetchProducts } from '../redux/productSlice'
 import ProductCard from '../components/ui/ProductCard'
+import { categoryService } from '../services/categoryService'
 
 const SORT_OPTIONS = [
   { id: 'popular', label: 'Most Popular' },
@@ -53,33 +54,41 @@ export default function ProductListing() {
       categoryName: p.categoryName
     }))
   );
+  const [dbCategories, setDbCategories] = useState([])
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await categoryService.getCategories()
+        setDbCategories(data)
+      } catch (err) {
+        console.error("Error loading categories in ProductListing:", err)
+      }
+    };
+    loadCategories()
+  }, [])
+
   const categories = useMemo(() => {
     const uniqueCategories = [
       {
         id: 'all',
         label: 'All Products',
-        emoji: '🛍️'
+        emoji: '🛍️',
+        slug: 'all'
       }
     ]
 
-    const names = [
-      ...new Set(
-        allProducts
-          .map(p => p.categoryName)
-          .filter(Boolean)
-      )
-    ].sort()
-
-    names.forEach(name => {
+    dbCategories.forEach(cat => {
       uniqueCategories.push({
-        id: name.toLowerCase(),
-        label: name,
-        emoji: '📦'
+        id: cat.id,
+        label: cat.name,
+        emoji: '📦',
+        slug: cat.slug
       })
     })
 
     return uniqueCategories
-  }, [allProducts])
+  }, [dbCategories])
 
   const productStatus = useSelector(selectProductStatus)
 
@@ -115,29 +124,6 @@ export default function ProductListing() {
     }
   }, [searchParams])
 
-  const categoryMap = {
-    airpods: ["tws"],
-    tws: ["tws"],
-
-    speaker: [
-      "usb speakers",
-      "party speakers",
-      "portable speakers",
-      "conference speakers",
-      "soundbars",
-      "audio"
-    ],
-
-    gaming: [
-      "gaming keyboard"
-    ],
-
-    care: [
-      "ear cleaners",
-      "gadget cleaners"
-    ]
-  };
-
   const filtered = useMemo(() => {
     let list = [...allProducts]
 
@@ -152,24 +138,42 @@ export default function ProductListing() {
     }
 
     // Category
-    if (
-      activeCategory &&
-      activeCategory !== 'all'
-    ) {
-      if (categoryMap[activeCategory]) {
-        const allowed = categoryMap[activeCategory]
+    if (activeCategory && activeCategory !== 'all') {
+      const activeLower = activeCategory.toLowerCase();
 
-        list = list.filter(p =>
-          allowed.includes(
-            p.categoryName?.toLowerCase()
-          )
-        )
+      // Collection / Group mappings (dynamic keyword matches)
+      if (activeLower === 'signature-series') {
+        list = list.filter(p => 
+          /earbud|tws|headphone|earphone|neckband/i.test(p.categoryName)
+        );
+      } else if (activeLower === 'gaming-collection' || activeLower === 'gaming') {
+        list = list.filter(p => 
+          /gaming|keyboard|mouse/i.test(p.categoryName)
+        );
+      } else if (activeLower === 'home-audio') {
+        list = list.filter(p => 
+          /soundbar|home audio/i.test(p.categoryName)
+        );
+      } else if (activeLower === 'portable-audio' || activeLower === 'speakers' || activeLower === 'speaker') {
+        list = list.filter(p => 
+          /speaker|party/i.test(p.categoryName)
+        );
+      } else if (activeLower === 'pro-collection') {
+        list = list.filter(p => 
+          /watch|keyboard|mouse|gadget/i.test(p.categoryName)
+        );
       } else {
-        list = list.filter(
-          p =>
-            p.categoryName?.toLowerCase() ===
-            activeCategory.toLowerCase()
-        )
+        // Direct category slug or Guid ID match
+        const matched = categories.find(c => c.slug === activeCategory || c.id === activeCategory);
+        if (matched) {
+          list = list.filter(p => p.categoryName?.toLowerCase() === matched.label?.toLowerCase());
+        } else {
+          // Fallback direct name/slug comparison
+          list = list.filter(p => {
+            const pSlug = p.categoryName?.toLowerCase().replace(/ /g, '-').replace(/&/g, 'and') || '';
+            return pSlug === activeLower || p.categoryName?.toLowerCase() === activeLower;
+          });
+        }
       }
     }
 

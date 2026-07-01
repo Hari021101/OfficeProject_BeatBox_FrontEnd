@@ -1,26 +1,9 @@
 import api from './authService';
 import { IMAGE_MAP } from '../data/products';
-
-
-// API URL
-const API_BASE =
-  import.meta.env.VITE_API_URL ||
-  'http://localhost:5089';
+import { getImageUrl } from '../config/api';
 
 // Convert relative image paths to absolute URLs
-const buildImageUrl = (url) => {
-  if (!url) return '';
-
-  if (
-    url.startsWith('http://') ||
-    url.startsWith('https://') ||
-    url.startsWith('data:')
-  ) {
-    return url;
-  }
-
-  return `${API_BASE}${url}`;
-};
+const buildImageUrl = getImageUrl;
 
 const getPrimaryImage = (product) => {
   const variant = product.variants?.[0];
@@ -228,6 +211,9 @@ variants:
         price: v.price,
         discountPrice: v.discountPrice,
         stockQuantity: v.stockQuantity,
+        sku: v.sku,
+        capacity: v.capacity,
+        isActive: v.isActive,
 
         images:
           v.images?.map(img => ({
@@ -370,5 +356,50 @@ getProductById: async (id) => {
       }
     });
     return response.data; // { success: true, message: "...", data: "/uploads/products/..." }
+  },
+
+  // --- Variants API ---
+  addVariant: async (productId, variantData) => {
+    const response = await api.post(`/products/${productId}/variants`, variantData);
+    return response.data;
+  },
+
+  updateVariant: async (variantId, variantData) => {
+    const response = await api.put(`/variants/${variantId}`, variantData);
+    return response.data;
+  },
+
+  deleteVariant: async (variantId) => {
+    const response = await api.delete(`/variants/${variantId}`);
+    return response.data;
+  },
+
+  // --- Variant Images API ---
+  uploadVariantImages: async (variantId, files) => {
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]);
+    }
+    const response = await api.post(`/variants/${variantId}/images`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  },
+
+  deleteImage: async (imageId) => {
+    const response = await api.delete(`/images/${imageId}`);
+    return response.data;
+  },
+
+  reorderImages: async (imageOrders) => {
+    const response = await api.put('/images/reorder', imageOrders);
+    return response.data;
+  },
+
+  setPrimaryImage: async (imageId) => {
+    const response = await api.put(`/images/${imageId}/primary`);
+    return response.data;
   },
 };

@@ -37,6 +37,29 @@ export default function Users() {
     fetchUsers()
   }, [])
 
+  const handleToggleRole = async (userRow) => {
+    try {
+      const newRole = userRow.role === 'Admin' ? 'Customer' : 'Admin';
+      await adminService.updateUserRole(userRow.id, newRole);
+      setUsers(prev => prev.map(u => u.id === userRow.id ? { ...u, role: newRole } : u));
+      toast.success(`Role updated successfully to ${newRole}`);
+    } catch (error) {
+      toast.error("Failed to update role");
+    }
+  }
+
+  const handleToggleLock = async (userRow) => {
+    try {
+      const shouldLock = userRow.status === 'Active';
+      await adminService.lockUser(userRow.id, shouldLock);
+      const newStatus = shouldLock ? 'Suspended' : 'Active';
+      setUsers(prev => prev.map(u => u.id === userRow.id ? { ...u, status: newStatus } : u));
+      toast.success(shouldLock ? "User account suspended" : "User account reactivated");
+    } catch (error) {
+      toast.error("Failed to update account status");
+    }
+  }
+
   const columns = [
     { key: 'name', label: 'User', sortable: true, render: (row) => {
       const isAdmin = row.role === 'Admin'
@@ -109,10 +132,44 @@ export default function Users() {
       )
     }},
     { key: 'actions', label: 'Actions', render: (row) => (
-      <div className="text-end">
-        <button className="btn border-0 p-2 text-theme-muted hover-scale" title="Actions" onClick={() => toast("User management actions")}>
+      <div className="dropdown text-end">
+        <button 
+          className="btn border-0 p-2 text-theme-muted hover-scale" 
+          type="button" 
+          data-bs-toggle="dropdown" 
+          aria-expanded="false"
+          title="Actions"
+        >
           <MoreVertical size={16} />
         </button>
+        <ul 
+          className="dropdown-menu dropdown-menu-end p-2" 
+          style={{ 
+            background: 'var(--bb-surface-2)', 
+            border: '1px solid var(--bb-border)',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+            zIndex: 1050
+          }}
+        >
+          <li>
+            <button 
+              className="dropdown-item text-theme-title py-2 px-3 rounded text-start" 
+              style={{ fontSize: '0.85rem', background: 'transparent', border: 0 }}
+              onClick={() => handleToggleRole(row)}
+            >
+              Make {row.role === 'Admin' ? 'Customer' : 'Admin'}
+            </button>
+          </li>
+          <li>
+            <button 
+              className="dropdown-item text-theme-title py-2 px-3 rounded text-start" 
+              style={{ fontSize: '0.85rem', background: 'transparent', border: 0 }}
+              onClick={() => handleToggleLock(row)}
+            >
+              {row.status === 'Active' ? 'Suspend Account' : 'Reactivate Account'}
+            </button>
+          </li>
+        </ul>
       </div>
     )}
   ]

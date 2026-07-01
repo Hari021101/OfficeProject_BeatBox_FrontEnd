@@ -18,6 +18,7 @@ import {
 import OrderTimeline from '../components/ui/OrderTimeline'
 import logo from '../assets/beatbox_logo.png'
 import { orderService } from '../services/orderService'
+import { getImageUrl } from '../config/api'
 
 
 // ─── Status config ────────────────────────────────────────────────────────────
@@ -42,14 +43,6 @@ function fmtDate(dateStr) {
     day: 'numeric', month: 'long', year: 'numeric',
   })
 }
-const getImageUrl = (path) => {
-  if (!path) return '/placeholder-product.png'
-
-  if (path.startsWith('http')) return path
-
-  return `http://localhost:5089${path}`
-}
-
 function estimatedDelivery(dateStr) {
   if (!dateStr) return 'N/A'
   const d = new Date(dateStr)

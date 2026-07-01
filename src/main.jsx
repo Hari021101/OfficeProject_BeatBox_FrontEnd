@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { store } from './redux/store'
 import AppRouter from './router/AppRouter'
+import ErrorBoundary from './components/common/ErrorBoundary'
 
 // Import Bootstrap CSS for base styling structure
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -32,7 +33,9 @@ console.error = (...args) => {
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
-      <AppRouter />
+      <ErrorBoundary>
+        <AppRouter />
+      </ErrorBoundary>
     </Provider>
   </React.StrictMode>,
 )
