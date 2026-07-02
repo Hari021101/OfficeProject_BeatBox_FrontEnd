@@ -8,7 +8,8 @@ import {
   Archive,
   RefreshCcw,
   Tag,
-  ShieldAlert
+  ShieldAlert,
+  UserCog
 } from 'lucide-react'
 
 export const NAV_ITEMS = [
@@ -19,6 +20,7 @@ export const NAV_ITEMS = [
   { id: 'inventory', label: 'Inventory', icon: Archive, path: '/admin/inventory' },
   { id: 'promotions', label: 'Promotions', icon: Tag, path: '/admin/promotions' },
   { id: 'users', label: 'Users', icon: Users, path: '/admin/users' },
+  { id: 'accounts', label: 'Account Management', icon: UserCog, path: '/admin/accounts' },
   { id: 'audit-logs', label: 'Audit Logs', icon: ShieldAlert, path: '/admin/audit-logs' },
 ]
 

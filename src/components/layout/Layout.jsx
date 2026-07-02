@@ -1,6 +1,7 @@
 import Header from './Header'
 import Footer from './Footer'
 import CompareDock from '../ui/CompareDock'
+import ChatBot from '../ui/ChatBot'
 
 export default function Layout({ children }) {
   return (
@@ -15,8 +16,11 @@ export default function Layout({ children }) {
       {/* Premium Sticky Header */}
       <Header />
 
-      {/* Main Content Area: Offset paddingTop for sticky Header & announcement bar (approx 110px) */}
-      <main className="flex-grow-1" style={{ paddingTop: '104px' }}>
+      {/* Main Content Area — responsive paddingTop to clear fixed header.
+          Mobile: ~86px (26px banner + ~60px navbar)
+          Desktop: ~104px (34px banner + ~70px navbar)
+      */}
+      <main className="flex-grow-1 layout-main-offset">
         {children}
       </main>
 
@@ -25,6 +29,9 @@ export default function Layout({ children }) {
 
       {/* Global Compare Dock */}
       <CompareDock />
+
+      {/* BeatBot — AI Shopping Assistant */}
+      <ChatBot />
     </div>
   )
 }

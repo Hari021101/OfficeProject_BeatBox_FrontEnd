@@ -39,6 +39,26 @@ const adminService = {
     }
   },
 
+  toggleUserStatus: async (userId) => {
+    try {
+      const response = await api.put(`/account/${userId}/toggle-status`);
+      return response.data;
+    } catch (error) {
+      console.error('Error toggling user status:', error);
+      throw error;
+    }
+  },
+
+  toggleUserRole: async (userId) => {
+    try {
+      const response = await api.put(`/account/${userId}/toggle-role`);
+      return response.data;
+    } catch (error) {
+      console.error('Error toggling user role:', error);
+      throw error;
+    }
+  },
+
   // --- Inventory ---
   updateStock: async (productId, quantity, type, reason) => {
     try {
