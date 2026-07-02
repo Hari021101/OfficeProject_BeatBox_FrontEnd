@@ -7,6 +7,7 @@ import {
   Truck, XCircle, RefreshCw, ArrowRight, Filter
 } from 'lucide-react'
 import { fetchMyOrders, selectAllOrders, selectOrderStatus } from '../redux/orderSlice'
+import { getImageUrl } from '../config/api'
 import logo from '../assets/beatbox_logo.png'
 
 // ─── Status config ────────────────────────────────────────────────────────────
@@ -17,14 +18,6 @@ const STATUS_CONFIG = {
   Shipped:    { label: 'Shipped',    color: '#00f3ff', glow: 'rgba(0,243,255,0.25)',  bg: 'rgba(0,243,255,0.1)',   Icon: Truck },
   Delivered:  { label: 'Delivered',  color: '#39ff14', glow: 'rgba(57,255,20,0.25)',  bg: 'rgba(57,255,20,0.08)', Icon: CheckCircle },
   Cancelled:  { label: 'Cancelled',  color: '#ef4444', glow: 'rgba(239,68,68,0.25)',  bg: 'rgba(239,68,68,0.08)', Icon: XCircle },
-}
-
-const getImageUrl = (path) => {
-  if (!path) return '/placeholder-product.png'
-
-  if (path.startsWith('http')) return path
-
-  return `http://localhost:5089${path}`
 }
 
 const TABS = ['All', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled']

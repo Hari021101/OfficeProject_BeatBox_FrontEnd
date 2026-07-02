@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchProducts, selectAllProducts, selectProductStatus } from '../redux/productSlice'
 import { addToCart } from '../redux/cartSlice'
 import { IMAGE_MAP } from '../data/products'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight,
@@ -20,7 +20,32 @@ import {
 import { toast } from 'react-hot-toast'
 import AntiGravityPlayground from '../components/ui/AntiGravityPlayground'
 import RecentlyViewed from '../components/ui/RecentlyViewed'
-import ExploreBestsellers from '../components/ui/ExploreBestsellers'
+import ProductCard from '../components/ui/ProductCard'
+import { productService } from '../services/productService'
+import { BestSellersSkeleton } from '../components/ui/HomeSkeleton'
+import BeatBoxCollections from '../components/ui/BeatBoxCollections'
+import ShopByCategories from '../components/ui/ShopByCategories'
+import PromotionalBanners from '../components/ui/PromotionalBanners'
+
+// ScrollReveal component to handle scroll animations
+function ScrollReveal({ children, id, className, style }) {
+  const shouldReduceMotion = useReducedMotion()
+  return (
+    <motion.div
+      id={id}
+      className={className}
+      style={style}
+      initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 50 }}
+      whileInView={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ type: "spring", stiffness: 80, damping: 15 }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+const MotionLink = motion(Link)
 
 // Asset imports
 import heroHeadphones from '../assets/hero_headphones.png'
@@ -45,6 +70,7 @@ import gamingKeyboard from '../assets/gaming_keyboard.png'
 import logo from '../assets/beatbox_logo.png'
 
 export default function Home() {
+  const shouldReduceMotion = useReducedMotion()
   // 1. HERO CAROUSEL STATE
   const [currentSlide, setCurrentSlide] = useState(0)
   const [activeDealIndex, setActiveDealIndex] = useState(0)
@@ -84,11 +110,30 @@ export default function Home() {
     }))
 
 
-    useEffect(() => {
-  if (productStatus === 'idle') {
-    dispatch(fetchProducts())
-  }
-}, [dispatch, productStatus])
+  const [categories, setCategories] = useState([])
+  const [categoriesLoading, setCategoriesLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        setCategoriesLoading(true)
+        const data = await productService.fetchCategories()
+        const sorted = [...data].sort((a, b) => b.productCount - a.productCount)
+        setCategories(sorted)
+      } catch (err) {
+        console.error("Failed to load categories:", err)
+      } finally {
+        setCategoriesLoading(false)
+      }
+    }
+    loadCategories()
+  }, [])
+
+  useEffect(() => {
+    if (productStatus === 'idle') {
+      dispatch(fetchProducts())
+    }
+  }, [dispatch, productStatus])
 
   const currentSlideData =
     slides[currentSlide] || {
@@ -156,53 +201,49 @@ export default function Home() {
 
 
 
-  const topProducts = allProducts.length > 0 ? allProducts.slice(0, 4) : []
-  const displayProducts =
-    activeFilter === 'all'
-      ? allProducts.slice(0, 4)
-      : allProducts
-        .filter(prod => {
-          const category = (
-            prod.categoryName ||
-            prod.category ||
-            ''
-          ).toLowerCase()
+  const sortedAllProducts = useMemo(() => {
+    if (!allProducts || allProducts.length === 0) return []
+    return [...allProducts].sort((a, b) => {
+      // 1. Highest soldCount
+      const aSold = a.soldCount || 0
+      const bSold = b.soldCount || 0
+      if (bSold !== aSold) return bSold - aSold
+      
+      // 2. Featured status
+      const aFeatured = a.isFeatured || a.tag === 'Featured' ? 1 : 0
+      const bFeatured = b.isFeatured || b.tag === 'Featured' ? 1 : 0
+      if (bFeatured !== aFeatured) return bFeatured - aFeatured
+      
+      // 3. Highest rating
+      const aRating = a.averageRating || a.rating || 0
+      const bRating = b.averageRating || b.rating || 0
+      return bRating - aRating
+    })
+  }, [allProducts])
 
+  const topProducts = useMemo(() => sortedAllProducts.slice(0, 4), [sortedAllProducts])
+
+  const displayProducts = useMemo(() => {
+    const list = activeFilter === 'all'
+      ? sortedAllProducts
+      : sortedAllProducts.filter(prod => {
+          const category = (prod.categoryName || prod.category || '').toLowerCase()
           if (activeFilter === 'earbuds')
-            return (
-              category.includes('earbud') ||
-              category.includes('earbuds') ||
-              category.includes('tws')
-            )
-
+            return category.includes('earbud') || category.includes('earbuds') || category.includes('tws')
           if (activeFilter === 'headphones')
-            return (
-              category.includes('headphone') ||
-              category.includes('headphones') ||
-              category.includes('headset')
-            )
-
+            return category.includes('headphone') || category.includes('headphones') || category.includes('headset')
           if (activeFilter === 'speakers')
             return category.includes('speaker')
-
           if (activeFilter === 'gaming')
             return category.includes('gaming')
-
           if (activeFilter === 'gadgets')
-            return (
-              category.includes('smart gadgets') ||
-              category.includes('gadget')
-            )
-
+            return category.includes('smart gadgets') || category.includes('gadget')
           if (activeFilter === 'wired')
-            return (
-              category.includes('wired') ||
-              category.includes('earphone')
-            )
-
+            return category.includes('wired') || category.includes('earphone')
           return true
         })
-        .slice(0, 4)
+    return list.slice(0, 8) // Limit to top 8 best sellers
+  }, [activeFilter, sortedAllProducts])
 
 
 
@@ -419,16 +460,18 @@ export default function Home() {
         </div>
         
         <div className="d-flex gap-3 w-100 mt-2">
-          <button 
+          <motion.button 
+            whileHover={{ scale: 1.03, y: -2 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => {
               if (!currentSlideData.productId) return
               navigate(`/products/${currentSlideData.productId}`)
             }}
             className="btn btn-glow d-flex align-items-center justify-content-center gap-2 py-3 fw-bold w-100 w-sm-auto px-sm-5"
-            style={{ borderRadius: '12px', height: '55px' }}
+            style={{ borderRadius: '12px', height: '55px', border: 'none' }}
           >
             View Product <ArrowRight size={18} />
-          </button>
+          </motion.button>
         </div>
       </div>
     </div>
@@ -506,123 +549,9 @@ export default function Home() {
     </div>
   )
 
-  const renderProductCard = (prod) => {
-    // Dynamically retrieve the current display image based on color swatch state
-    let displayImage =
-      prod.imageUrl ||
-      IMAGE_MAP[prod.imageKey] ||
-      prod.image;
-
-    return (
-      <div
-        className="card bestseller-card border-1 h-100 overflow-hidden text-start position-relative"
-        onClick={() => navigate(`/products/${prod.id}`)}
-        style={{ cursor: 'pointer' }}
-      >
-        {/* Card Badge Tag */}
-        <div className="position-absolute top-0 start-0 m-3 z-3">
-          <span className="badge badge-left text-white px-2 py-1 fw-bold text-uppercase">
-            {prod.tag}
-          </span>
-        </div>
-
-        {/* Product Visual Frame */}
-        <div className="product-frame w-100 position-relative">
-          <Link to={`/products/${prod.id}`} className="d-flex align-items-center justify-content-center w-100 h-100 text-decoration-none">
-            <img
-              src={displayImage}
-              alt={prod.name}
-              className="product-img"
-              onError={(e) => {
-                e.target.src =
-                  IMAGE_MAP[prod.imageKey] ||
-                  IMAGE_MAP.heroHeadphones;
-              }}
-            />
-          </Link>
-        </div>
-
-        {/* Signature boAt Gold Feature Ribbon */}
-        <div
-          className="d-flex align-items-center justify-content-between px-3 py-2 fw-bold"
-          style={{
-            background: 'linear-gradient(90deg, #ffc700, #ffb800)',
-            color: '#000000',
-            fontSize: '0.75rem',
-            letterSpacing: '0.2px',
-            borderTop: '1px solid rgba(0,0,0,0.05)',
-            borderBottom: '1px solid rgba(0,0,0,0.05)'
-          }}
-        >
-          <span className="text-uppercase tracking-wider" style={{ fontSize: '0.7rem' }}>{prod.usp}</span>
-          <span
-            className="d-flex align-items-center gap-1 bg-white px-2 py-0.5 rounded-pill"
-            style={{ fontSize: '0.65rem', color: '#000000', fontWeight: '800', boxShadow: '0 2px 4px rgba(0,0,0,0.08)' }}
-          >
-            <Star size={10} className="fill-dark text-dark" style={{ fill: '#000000' }} />
-            {Number(prod.rating || 0).toFixed(1)}
-          </span>
-        </div>
-
-        {/* Product Details Panel */}
-        <div className="card-body d-flex flex-column justify-content-between">
-          <div>
-            {/* Interactive Color Swatches */}
-            <div className="d-flex gap-2 mb-3">
-              {(prod.colors || []).map((clr, cIdx) => (
-                <button
-                  key={cIdx}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleColorChange(prod.id, clr.name)
-                  }}
-                  className="btn p-0 rounded-circle border transition-all hover-scale"
-                  style={{
-                    width: '18px',
-                    height: '18px',
-                    backgroundColor: clr.code,
-                    borderColor: selectedColors[prod.id] === clr.name ? '#ffffff' : 'transparent',
-                    boxShadow: selectedColors[prod.id] === clr.name ? `0 0 8px ${clr.code}` : 'none'
-                  }}
-                  title={clr.name}
-                ></button>
-              ))}
-            </div>
-
-            {/* Product Name */}
-            <Link to={`/products/${prod.id}`} className="text-decoration-none">
-              <h5 className="fw-bold text-theme-title mb-2 text-truncate hover-text-accent transition-all" style={{ fontSize: '1rem', letterSpacing: '-0.2px' }}>
-                {prod.name}
-              </h5>
-            </Link>
-            <span className="text-theme-muted small d-block mb-3">
-              Reviews ({prod.reviewCount || prod.reviews?.length || 0})
-            </span>
-          </div>
-
-          {/* Price and Purchase CTA Row */}
-          <div>
-            <div className="d-flex justify-content-between align-items-baseline mb-3">
-              <div>
-                <span className="fw-black fs-4 text-theme-title">₹{Number(prod.price || 0).toLocaleString('en-IN')}</span>
-                <span className="text-decoration-line-through text-theme-muted small ms-2">₹{Number(prod.oldPrice || 0).toLocaleString('en-IN')}</span>
-              </div>
-              <span className="text-success small fw-bold">{prod.discount}% OFF</span>
-            </div>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                handleAddToCartClick(prod)
-              }}
-              className="btn btn-add-to-cart w-100 py-2 d-flex align-items-center justify-content-center gap-2 fw-bold"
-            >
-              Add to Cart
-            </button>
-          </div>
-        </div>
-      </div>
-    )
+  const renderProductCard = (prod, index = 0) => {
+    if (!prod) return null
+    return <ProductCard product={prod} index={index} />
   }
 
 
@@ -724,7 +653,9 @@ export default function Home() {
           </div>
         </div>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.03, y: -2 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() =>
             navigate(`/products/${dealProduct?.id}`)
           }
@@ -742,7 +673,7 @@ export default function Home() {
         >
           Claim Deal
           <ArrowRight size={18} />
-        </button>
+        </motion.button>
       </div>
     </div>
   )
@@ -759,15 +690,10 @@ export default function Home() {
     return () => clearInterval(timer)
   }, [dealProducts.length])
 
+  if (!allProducts || allProducts.length === 0) {
     if (productStatus === 'loading') {
-    return (
-      <div className="text-center py-5">
-        Loading products...
-      </div>
-    )
-  }
-
-  if (!allProducts.length) {
+      return <BestSellersSkeleton />
+    }
     return null
   }
   
@@ -885,25 +811,23 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ==================== EXPLORE BESTSELLERS ==================== */}
-        <ExploreBestsellers />
 
-        {/* ==================== 2. QUICK CATEGORIES NAV ==================== */}
-        <section className="py-5" id="categories">
-          <div className="container px-lg-5">
-            <div className="text-center mb-5">
-              <h3 className="fw-black text-theme-title mb-2">Shop by <span className="gradient-text">Categories</span></h3>
-              <p className="text-theme-muted small">Find the perfect gear tailor-made for your lifestyle.</p>
-            </div>
 
-            <div id="gravity-categories" className="w-100">
-              {renderCategories()}
-            </div>
-          </div>
-        </section>
+        {/* ==================== SHOP BY CATEGORIES ==================== */}
+        <ShopByCategories />
+
+        {/* ==================== BEATBOX COLLECTIONS ==================== */}
+        <BeatBoxCollections />
 
         {/* ==================== 3. BEST SELLERS & TRENDING GRID ==================== */}
-        <section className="py-5" id="bestsellers">
+        <motion.section 
+          className="py-5" 
+          id="bestsellers"
+          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 50 }}
+          whileInView={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ type: "spring", stiffness: 80, damping: 15 }}
+        >
           <div className="container px-lg-5">
 
             <div className="d-flex flex-column flex-md-row align-items-center justify-content-between mb-4 text-center text-md-start">
@@ -913,9 +837,15 @@ export default function Home() {
                 </h3>
                 <p className="text-theme-muted small mb-0">Our top-selling products that bassheads swear by.</p>
               </div>
-              <Link to="/products" className="btn btn-outline-secondary hover-scale text-theme-title border-secondary border-opacity-25 px-4 mt-3 mt-md-0" style={{ borderRadius: '10px' }}>
+              <MotionLink 
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+                to="/products" 
+                className="btn btn-outline-secondary text-theme-title border-secondary border-opacity-25 px-4 mt-3 mt-md-0" 
+                style={{ borderRadius: '10px' }}
+              >
                 View All Products
-              </Link>
+              </MotionLink>
             </div>
 
             {/* Interactive Category Filter Pills Bar (boAt style) */}
@@ -926,10 +856,6 @@ export default function Home() {
                 { id: 'headphones', label: '🎧 Headphones' },
                 { id: 'speakers', label: '🔊 Speakers' },
                 { id: 'gaming', label: '🎮 Gaming Gear' },
-                {
-                  id: 'gadgets',
-                  label: '⚡ Smart Gadgets'
-                },
                 { id: 'wired', label: '🎧 Wired' }
               ].map((pill) => {
                 const isActive = activeFilter === pill.id;
@@ -956,10 +882,12 @@ export default function Home() {
             </div>
 
             {/* Framer Motion Filtered Grid */}
-            <div className="row g-4 row-cols-1 row-cols-sm-2 row-cols-lg-4 justify-content-center">
-              <AnimatePresence mode="popLayout">
-                {displayProducts
-                  .map((prod) => (
+            {productStatus === 'loading' ? (
+              <BestSellersSkeleton />
+            ) : (
+              <div className="related-products-container">
+                <AnimatePresence mode="popLayout">
+                  {displayProducts.map((prod, idx) => (
                     <motion.div
                       layout
                       initial={{ opacity: 0, scale: 0.9 }}
@@ -967,22 +895,31 @@ export default function Home() {
                       exit={{ opacity: 0, scale: 0.9 }}
                       transition={{ duration: 0.4, cubicBezier: [0.165, 0.84, 0.44, 1] }}
                       key={prod.id}
-                      className="col"
+                      className="related-product-col"
                       id={`gravity-prod-${prod.id}`}
                     >
-                      {renderProductCard(prod)}
+                      <ProductCard product={prod} index={idx} />
                     </motion.div>
-                  ))
-                }
-              </AnimatePresence>
-            </div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            )}
 
           </div>
-        </section>
+        </motion.section>
+
+       
 
         {/* ==================== 4. DAILY DEALS Promotional Section ==================== */}
         {/* ==================== DAILY DEALS PREMIUM ==================== */}
-        <section className="py-5" id="newlaunches">
+        <motion.section 
+          className="py-5" 
+          id="newlaunches"
+          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 50 }}
+          whileInView={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ type: "spring", stiffness: 80, damping: 15 }}
+        >
           <div className="container px-lg-5">
 
             <div
@@ -1270,10 +1207,17 @@ export default function Home() {
 
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* ==================== 5. KEY COMPANY HIGHLIGHTS / BRAND STORY ==================== */}
-        <section className="py-5 bg-theme-surface text-center border-top border-bottom" id="support">
+        <motion.section 
+          className="py-5 bg-theme-surface text-center border-top border-bottom" 
+          id="support"
+          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 50 }}
+          whileInView={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ type: "spring", stiffness: 80, damping: 15 }}
+        >
           <div className="container px-lg-5">
             <div className="row g-4 row-cols-1 row-cols-md-3">
 
@@ -1291,10 +1235,17 @@ export default function Home() {
 
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* ==================== SOCIAL PROOF & UGC ==================== */}
-        <section className="py-5" id="social-proof">
+        <motion.section 
+          className="py-5" 
+          id="social-proof"
+          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 50 }}
+          whileInView={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ type: "spring", stiffness: 80, damping: 15 }}
+        >
           <div className="container px-lg-5">
             <div className="text-center mb-5">
               <h3 className="fw-black text-theme-title mb-2">#BeatBox<span className="gradient-text">Vibes</span></h3>
@@ -1322,14 +1273,20 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* ==================== RECENTLY VIEWED ==================== */}
-        <section className="py-4 px-3 px-lg-5">
+        <motion.section 
+          className="py-4 px-3 px-lg-5"
+          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 50 }}
+          whileInView={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ type: "spring", stiffness: 80, damping: 15 }}
+        >
           <div className="container-fluid px-0">
             <RecentlyViewed />
           </div>
-        </section>
+        </motion.section>
 
       </div>
 

@@ -3,39 +3,48 @@ import { createSlice } from '@reduxjs/toolkit'
 const MAX_ITEMS = 8
 const STORAGE_KEY = 'bb_recently_viewed'
 
-// Load from localStorage on boot
+// Load from localStorage on boot (hardened to migrate objects to IDs)
 function loadFromStorage() {
   try {
     const data = localStorage.getItem(STORAGE_KEY)
-    return data ? JSON.parse(data) : []
+    if (!data) return [];
+    const parsed = JSON.parse(data);
+    if (Array.isArray(parsed)) {
+      return parsed
+        .map(item => (typeof item === 'object' && item !== null ? item.id : item))
+        .filter(id => typeof id === 'number' || typeof id === 'string');
+    }
+    return [];
   } catch {
     return []
   }
 }
 
-function saveToStorage(items) {
+function saveToStorage(ids) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(ids))
   } catch {}
 }
 
 const recentlyViewedSlice = createSlice({
   name: 'recentlyViewed',
   initialState: {
-    items: loadFromStorage(),
+    ids: loadFromStorage(),
   },
   reducers: {
     addRecentlyViewed: (state, action) => {
-      const product = action.payload
+      const payload = action.payload
+      const id = typeof payload === 'object' && payload !== null ? payload.id : payload
+      if (id === null || id === undefined) return
       // Remove duplicate if already exists
-      const filtered = state.items.filter(p => p.id !== product.id)
+      const filtered = state.ids.filter(existingId => existingId !== id)
       // Prepend and cap at MAX_ITEMS
-      const updated = [product, ...filtered].slice(0, MAX_ITEMS)
-      state.items = updated
+      const updated = [id, ...filtered].slice(0, MAX_ITEMS)
+      state.ids = updated
       saveToStorage(updated)
     },
     clearRecentlyViewed: (state) => {
-      state.items = []
+      state.ids = []
       saveToStorage([])
     },
   },
@@ -43,6 +52,12 @@ const recentlyViewedSlice = createSlice({
 
 export const { addRecentlyViewed, clearRecentlyViewed } = recentlyViewedSlice.actions
 
-export const selectRecentlyViewed = (state) => state.recentlyViewed.items
+export const selectRecentlyViewedIds = (state) => state.recentlyViewed.ids || []
+
+export const selectRecentlyViewed = (state) => {
+  const ids = state.recentlyViewed.ids || []
+  const products = state.products.items || []
+  return ids.map(id => products.find(p => p.id === id)).filter(Boolean)
+}
 
 export default recentlyViewedSlice.reducer

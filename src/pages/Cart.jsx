@@ -9,6 +9,7 @@ import { toast } from 'react-hot-toast'
 import logo from '../assets/beatbox_logo.png'
 
 import { validatePromoCode } from '../services/promoService'
+import { getImageUrl } from '../config/api'
 
 export default function Cart() {
   const dispatch = useDispatch()
@@ -17,9 +18,6 @@ export default function Cart() {
   const subtotal = useSelector(selectCartSubtotal)
   const count = useSelector(selectCartCount)
   const appliedPromo = useSelector(selectAppliedPromo)
-  const API_BASE =
-  import.meta.env.VITE_API_URL ||
-  'http://localhost:5089';
   const [couponInput, setCouponInput] = useState('')
   const [couponError, setCouponError] = useState('')
   const [isValidatingPromo, setIsValidatingPromo] = useState(false)
@@ -229,11 +227,7 @@ export default function Cart() {
                               ) : (
                                 
                                 <img 
-                                   src={
-    item.imageUrl?.startsWith('http')
-      ? item.imageUrl
-      : `${API_BASE}${item.imageUrl}`
-  }
+                                   src={getImageUrl(item.imageUrl)}
   alt={item.name} 
                                   className="img-fluid position-relative z-1" 
                                   style={{ objectFit: 'contain', filter: 'drop-shadow(0 10px 10px rgba(0,0,0,0.4))' }} 

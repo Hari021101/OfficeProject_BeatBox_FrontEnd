@@ -74,6 +74,7 @@ import { selectAllProducts, selectProductStatus, fetchProducts } from '../../red
 import { toast } from 'react-hot-toast'
 import ThemeToggle from '../ui/ThemeToggle'
 import NotificationsPanel from '../ui/NotificationsPanel'
+import { categoryService } from '../../services/categoryService'
 
 
 export default function Header() {
@@ -280,33 +281,39 @@ export default function Header() {
     return heroEarbuds; // Ultimate fallback
   }
 
-  const [megaMenuCategories, setMegaMenuCategories] = useState([
-    {
-      title: "Audio",
-      expanded: false,
-      items: ["Soundbars", "Party Speakers", "Portable Speakers", "TWS", "Neckbands", "Wireless Headphones", "Wired Earphones", "USB Speakers", "Conference Speakers", "Wireless Microphones"]
-    },
-    {
-      title: "Mobile Accessories",
-      expanded: false,
-      items: ["Power bank", "Cables", "Wireless Charger", "Chargers", "Mobile Holder", "Gadget Cleaners", "Phone Wallet", "Cable Organiser"]
-    },
-    {
-      title: "Computer Accessories",
-      expanded: false,
-      items: ["Keyboard And Mouse", "Wireless Keyboard", "Wired Keyboard", "Gaming Keyboard", "Wireless Mouse", "Wired Mouse", "Laptop Stand", "Laptop Table", "Extension Board", "Projectors", "USB Hub", "LCD Writing Pads", "Laptop Bags", "Computer Cables", "Wireless Presenter"]
-    },
-    {
-      title: "Car Accessories",
-      expanded: false,
-      items: ["Car Charger", "Car Bluetooth", "Tyre Inflator", "Car Mobile Holder", "Bike Mobile Holder", "Vacuum Cleaner", "Car Wireless Charger", "Pressure Washer"]
-    },
-    {
-      title: "Smart Gadgets",
-      expanded: false,
-      items: ["Ear Cleaners", "Portable Fans", "Selfie Stick", "Flashlight", "Stylus", "Location tracker", "Electric Kettle", "Hair Dryer", "Tool Kit", "Humidifiers", "Air Blower", "Timers", "Massagers", "smart Sealers", "Rechargeable Battery"]
-    }
-  ])
+  const [categoriesList, setCategoriesList] = useState([]);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await categoryService.getCategories();
+        setCategoriesList(data);
+      } catch (err) {
+        console.error("Error loading categories in header:", err);
+      }
+    };
+    loadCategories();
+  }, []);
+
+  const megaMenuCategories = useMemo(() => {
+    if (!categoriesList.length) return [];
+
+    const audioGear = categoriesList.filter(c => 
+      /earbud|tws|headphone|earphone|neckband|headset/i.test(c.name)
+    );
+    const speakers = categoriesList.filter(c => 
+      /speaker|soundbar|audio/i.test(c.name)
+    );
+    const accessories = categoriesList.filter(c => 
+      !/earbud|tws|headphone|earphone|neckband|headset|speaker|soundbar|audio/i.test(c.name)
+    );
+
+    return [
+      { title: "Audio Gear", items: audioGear },
+      { title: "Speakers & Cinema", items: speakers },
+      { title: "Smart Tech & Gear", items: accessories }
+    ].filter(col => col.items.length > 0);
+  }, [categoriesList]);
 
   return (
     <header className="fixed-top w-100" style={{ zIndex: 10000 }}>
@@ -575,16 +582,43 @@ export default function Header() {
                               {col.items.slice(0, megaMenuExpanded ? col.items.length : 5).map((item, i) => (
                                 <li key={i}>
                                   <Link
-                                    to={`/products?q=${encodeURIComponent(item.toLowerCase())}`}
-                                    className="text-decoration-none text-theme-title transition-all d-flex align-items-center gap-3 mega-menu-item"
-                                    style={{ fontSize: '0.85rem', fontWeight: 600 }}
-                                    onClick={() => { setShowCategories(false); setIsOpen(false); setMegaMenuExpanded(false); }}
-                                  >
-                                    <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px', background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', flexShrink: 0 }}>
-                                      <img src={getMegaMenuImage(item)} alt="" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
-                                    </div>
-                                    <span className="text-theme-muted transition-all text-start mega-menu-text" style={{ lineHeight: '1.2' }}>{item}</span>
-                                  </Link>
+    to={`/products?category=${item.slug}`}
+    className="text-decoration-none text-theme-title transition-all d-flex align-items-center gap-3 mega-menu-item"
+    style={{ fontSize: '0.85rem', fontWeight: 600 }}
+    onClick={() => {
+        setShowCategories(false)
+        setIsOpen(false)
+        setMegaMenuExpanded(false)
+    }}
+>
+    <div
+        className="rounded-circle d-flex align-items-center justify-content-center"
+        style={{
+            width: '40px',
+            height: '40px',
+            background: 'var(--bb-surface-2)',
+            border: '1px solid var(--bb-border)',
+            flexShrink: 0
+        }}
+    >
+        <img
+            src={getMegaMenuImage(item.name)}
+            alt={item.name}
+            style={{
+                width: '24px',
+                height: '24px',
+                objectFit: 'contain'
+            }}
+        />
+    </div>
+
+    <span
+        className="text-theme-muted transition-all text-start mega-menu-text"
+        style={{ lineHeight: '1.2' }}
+    >
+        {item.name}
+    </span>
+</Link>
                                 </li>
                               ))}
                             </ul>
@@ -717,7 +751,7 @@ export default function Header() {
                     >
                       <div className="d-flex align-items-center gap-3">
                         <div className="rounded-circle d-flex align-items-center justify-content-center bg-white" style={{ width: '45px', height: '45px', border: '1px solid var(--bb-border)', flexShrink: 0 }}>
-                          <img src={getMegaMenuImage(col.items[0])} alt="" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                          <img src={getMegaMenuImage(col.items[0]?.name || '')} alt="" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
                         </div>
                         <span className="fw-bold text-uppercase" style={{ fontSize: '0.9rem', letterSpacing: '0.5px' }}>{col.title}</span>
                       </div>
@@ -731,12 +765,12 @@ export default function Header() {
                             {col.items.map((item, i) => (
                               <li key={i}>
                                 <Link 
-                                  to={`/products?q=${encodeURIComponent(item.toLowerCase())}`} 
+                                  to={`/products?category=${item.slug}`} 
                                   className="text-decoration-none text-theme-muted text-truncate d-block fw-semibold hover-text-primary" 
                                   onClick={() => setIsOpen(false)} 
                                   style={{ fontSize: '0.85rem' }}
                                 >
-                                  {item}
+                                  {item.name}
                                 </Link>
                               </li>
                             ))}

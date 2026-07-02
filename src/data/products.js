@@ -6641,8 +6641,6 @@ export const PRODUCTS = [
 
 export const getProductById = (id) => PRODUCTS.find((p) => p.id === Number(id))
 export const getProductsByCategory = (cat) => cat === 'all' ? PRODUCTS : PRODUCTS.filter((p) => p.category === cat)
-export const getRelatedProducts = (product, count = 4) =>
-  PRODUCTS.filter((p) => p.category === product.category && p.id !== product.id).slice(0, count)
 
 
 

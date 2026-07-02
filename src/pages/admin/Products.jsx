@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Edit2, Trash2, MoreVertical, Star } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { toast } from 'react-hot-toast'
@@ -8,6 +9,7 @@ import StockBadge from '../../components/admin/StockBadge'
 import AddProductModal from '../../components/admin/AddProductModal'
 
 export default function Products() {
+  const navigate = useNavigate()
   const [products, setProducts] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -61,11 +63,7 @@ export default function Products() {
   }
 
   const handleEdit = (id) => {
-    const product = products.find(p => p.id === id);
-    if (product) {
-      setEditingProduct(product);
-      setIsAddModalOpen(true);
-    }
+    navigate(`/admin/products/${id}/edit`)
   }
 
   const columns = [
@@ -95,16 +93,47 @@ export default function Products() {
       render: (row) => <span className="text-theme-muted fw-medium" style={{ fontSize: '0.9rem' }}>{row.categoryName || 'Uncategorized'}</span>
     },
     { 
-      key: 'price', 
-      label: 'Price', 
+      key: 'brand', 
+      label: 'Brand', 
       sortable: true,
-      render: (row) => <span className="fw-black text-theme-title">₹{Number(row.discountPrice || row.price || 0).toLocaleString('en-IN')}</span>
+      render: (row) => <span className="text-theme-muted fw-medium" style={{ fontSize: '0.9rem' }}>{row.brand || 'BeatBox'}</span>
     },
     { 
-      key: 'stockQuantity', 
-      label: 'Status', 
+      key: 'variantsCount', 
+      label: 'Variants', 
+      sortable: false,
+      render: (row) => {
+        const variantList = row.variants?.map(v => v.color).filter(Boolean) || [];
+        const count = variantList.length;
+        return (
+          <div>
+            <span className="badge bg-info text-dark fw-bold" style={{ fontSize: '0.75rem' }}>{count} {count === 1 ? 'Variant' : 'Variants'}</span>
+            {count > 0 && (
+              <p className="mb-0 text-theme-muted mt-1" style={{ fontSize: '0.7rem', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={variantList.join(', ')}>
+                {variantList.join(', ')}
+              </p>
+            )}
+          </div>
+        );
+      }
+    },
+    { 
+      key: 'totalStock', 
+      label: 'Total Stock', 
       sortable: true,
-      render: (row) => <StockBadge stock={row.stockQuantity ?? 0} />
+      render: (row) => {
+        const totalStock = row.variants?.reduce((sum, v) => sum + (v.stockQuantity || 0), 0) ?? 0;
+        return <span className="fw-bold text-theme-title">{totalStock}</span>;
+      }
+    },
+    { 
+      key: 'status', 
+      label: 'Status', 
+      sortable: false,
+      render: (row) => {
+        const totalStock = row.variants?.reduce((sum, v) => sum + (v.stockQuantity || 0), 0) ?? 0;
+        return <StockBadge stock={totalStock} />;
+      }
     },
     { 
       key: 'actions', 

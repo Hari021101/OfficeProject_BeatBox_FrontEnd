@@ -2,9 +2,11 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bell, X, Package, Tag, Heart, Info, CheckCheck, Trash2, AlertTriangle } from 'lucide-react'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import notificationService from '../../services/notificationService'
 import * as signalR from '@microsoft/signalr'
 import toast from 'react-hot-toast'
+import { getSignalRUrl } from '../../config/api'
 
 // ─── Notification types config ────────────────────────────────────────────────
 const TYPE_CONFIG = {
@@ -27,39 +29,40 @@ function timeAgo(date) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function NotificationsPanel() {
   const { user } = useSelector((state) => state.auth)
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [notifs, setNotifs] = useState([])
   const [filter, setFilter] = useState('all')
   const panelRef = useRef(null)
 
   // Fetch initial notifications from DB
-  // useEffect(() => {
-  //   if (!user) return;
+  useEffect(() => {
+    if (!user) return;
     
-  //   const loadNotifs = async () => {
-  //     try {
-  //       const data = await notificationService.getNotifications();
-  //       const mapped = data.map(n => ({
-  //         id: n.id,
-  //         type: n.title.toLowerCase().includes('order') ? 'order' 
-  //               : n.title.toLowerCase().includes('stock') ? 'alert' 
-  //               : 'info',
-  //         title: n.title,
-  //         body: n.message,
-  //         time: new Date(n.createdAt),
-  //         read: n.isRead,
-  //       }));
+    const loadNotifs = async () => {
+      try {
+        const data = await notificationService.getNotifications();
+        const mapped = data.map(n => ({
+          id: n.id,
+          type: (n.type || 'info').toLowerCase(),
+          title: n.title,
+          body: n.message,
+          time: new Date(n.createdAt),
+          read: n.isRead,
+          navigationUrl: n.navigationUrl,
+          orderId: n.orderId,
+          productId: n.productId
+        }));
         
-  //       // No mock data - only display real notifications from the DB
-        
-  //       setNotifs(mapped.sort((a, b) => b.time - a.time));
-  //     } catch (err) {
-  //       console.error("Failed to load notifications", err);
-  //     }
-  //   };
+        setNotifs(mapped.sort((a, b) => b.time - a.time));
+      } catch (err) {
+        console.error("Failed to load notifications", err);
+      }
+    };
     
-  //   loadNotifs();
-  // }, [user]);
+    loadNotifs();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, open]);
 
   // Setup SignalR Real-time Connection
   useEffect(() => {
@@ -69,18 +72,35 @@ export default function NotificationsPanel() {
     let isMounted = true;
     
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5089/hubs/notifications", {
+      .withUrl(getSignalRUrl('/hubs/notifications'), {
         accessTokenFactory: () => token
       })
       .configureLogging(signalR.LogLevel.Warning) // Hides Information logs
       .withAutomaticReconnect()
       .build();
 
+    connection.on("ReceiveNotification", (n) => {
+      const mapped = {
+        id: n.id,
+        type: (n.type || 'info').toLowerCase(),
+        title: n.title,
+        body: n.message,
+        time: new Date(n.createdAt),
+        read: n.isRead,
+        navigationUrl: n.navigationUrl,
+        orderId: n.orderId,
+        productId: n.productId
+      };
+      setNotifs(prev => [mapped, ...prev]);
+      toast(n.title, { icon: mapped.type === 'order' ? '📦' : '🔔' });
+    });
+
     connection.on("NewOrderPlaced", (data) => {
       setNotifs(prev => [{
         id: `order-${data.orderId}-${Date.now()}`, type: 'order',
         title: 'New Order Placed!', body: `Order #${data.orderId} has been successfully placed.`,
-        time: new Date(), read: false
+        time: new Date(), read: false,
+        navigationUrl: `/admin/orders`
       }, ...prev]);
       toast('New Order Placed!', { icon: '📦' });
     });
@@ -88,18 +108,11 @@ export default function NotificationsPanel() {
     connection.on("LowStockAlert", (data) => {
       setNotifs(prev => [{
         id: `stock-${data.productId}-${Date.now()}`, type: 'alert',
-        title: 'Low Stock Alert', body: `Product ID ${data.productId} is running low! Only ${data.availableStock} left.`,
-        time: new Date(), read: false
+        title: 'Low Stock Alert', body: `Product is running low!`,
+        time: new Date(), read: false,
+        navigationUrl: `/admin/inventory`
       }, ...prev]);
-      toast.error(`Low Stock Alert for Product ${data.productId}`);
-    });
-
-    connection.on("FlashSaleStarted", (data) => {
-      setNotifs(prev => [{
-        id: `flash-${Date.now()}`, type: 'promo',
-        title: '🔥 Flash Sale!', body: 'A new flash sale has just started!',
-        time: new Date(), read: false
-      }, ...prev]);
+      toast.error(`Low Stock Alert!`);
     });
 
     const startConnection = async () => {
@@ -137,16 +150,37 @@ export default function NotificationsPanel() {
   const unreadCount = notifs.filter(n => !n.read).length
   const filtered = filter === 'all' ? notifs : notifs.filter(n => n.type === filter)
 
-  const markAllRead = () => setNotifs(prev => prev.map(n => ({ ...n, read: true })))
-  
-  const markRead = async (id) => {
-    setNotifs(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
-    if (!id.toString().startsWith('promo')) {
-      try { await notificationService.markAsRead(id); } catch (e) {}
+  const markAllRead = async () => {
+    try {
+      await notificationService.markAllAsRead();
+      setNotifs(prev => prev.map(n => ({ ...n, read: true })));
+    } catch (e) {
+      console.error(e);
     }
   }
   
-  const dismiss = (id) => setNotifs(prev => prev.filter(n => n.id !== id))
+  const markRead = async (notif) => {
+    setNotifs(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n));
+    try {
+      await notificationService.markAsRead(notif.id);
+    } catch (e) {
+      console.error(e);
+    }
+    if (notif.navigationUrl) {
+      navigate(notif.navigationUrl);
+      setOpen(false);
+    }
+  }
+  
+  const dismiss = async (id) => {
+    try {
+      await notificationService.deleteNotification(id);
+      setNotifs(prev => prev.filter(n => n.id !== id));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  
   const clearAll = () => setNotifs([])
 
   return (
@@ -323,7 +357,7 @@ export default function NotificationsPanel() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20, height: 0 }}
                         transition={{ duration: 0.22, delay: idx * 0.04 }}
-                        onClick={() => markRead(notif.id)}
+                        onClick={() => markRead(notif)}
                         className="d-flex align-items-start gap-3 px-4 py-3 position-relative"
                         style={{
                           borderBottom: '1px solid var(--bb-border)',

@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { ShieldAlert, User, Edit, Trash2, PlusCircle, Search, Filter } from 'lucide-react'
 
-const MOCK_LOGS = [
-  { id: 1, admin: 'Sarah Jenkins', role: 'Super Admin', action: 'UPDATED', target: 'Product: BeatBox Soundbar Pro 5.1', details: 'Changed price from ₹7999 to ₹6999', timestamp: '2 mins ago', icon: Edit, color: 'text-info', bg: 'bg-info' },
-  { id: 2, admin: 'John Doe', role: 'Store Manager', action: 'DELETED', target: 'Product: Old Stock Earbuds', details: 'Removed item from catalog', timestamp: '1 hour ago', icon: Trash2, color: 'text-danger', bg: 'bg-danger' },
-  { id: 3, admin: 'System', role: 'Automated', action: 'ALERT', target: 'Inventory', details: 'Stock for "TWS Sport Pro" dropped below critical threshold (5 units)', timestamp: '3 hours ago', icon: ShieldAlert, color: 'text-warning', bg: 'bg-warning' },
-  { id: 4, admin: 'Sarah Jenkins', role: 'Super Admin', action: 'CREATED', target: 'Coupon: SUMMER50', details: 'Created 50% discount code valid until Aug 31', timestamp: 'Yesterday', icon: PlusCircle, color: 'text-success', bg: 'bg-success' },
-  { id: 5, admin: 'Mike Ross', role: 'Support Agent', action: 'REFUNDED', target: 'Order #ORD-8821', details: 'Issued full refund of ₹2499 to customer wallet', timestamp: 'Yesterday', icon: User, color: 'text-primary', bg: 'bg-primary' },
-]
+const ICONS = {
+  ShieldAlert, User, Edit, Trash2, PlusCircle,
+  XCircle: ShieldAlert, LogIn: User, Shield: User,
+  PlusCircle, Trash2, Key: Edit, UserPlus: User,
+  Upload: Edit, Star: Edit, Truck: Edit, ShoppingBag: Edit,
+  Info: Edit
+}
 
 const ACTION_COLORS = {
   UPDATED: { bg: 'rgba(0,243,255,0.1)', text: '#00f3ff', border: 'rgba(0,243,255,0.3)' },
@@ -19,6 +19,10 @@ const ACTION_COLORS = {
 
 export default function AuditLogs() {
   const [searchTerm, setSearchTerm] = useState('')
+  const [logs, setLogs] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
 
   const filteredLogs = MOCK_LOGS.filter(log =>
     log.admin.toLowerCase().includes(searchTerm.toLowerCase()) ||

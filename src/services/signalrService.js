@@ -1,4 +1,5 @@
 import * as signalR from '@microsoft/signalr';
+import { getSignalRUrl } from '../config/api';
 
 class SignalRService {
     constructor() {
@@ -16,7 +17,7 @@ class SignalRService {
 
         try {
             this.connection = new signalR.HubConnectionBuilder()
-                .withUrl("http://localhost:5089/notificationHub", {
+                .withUrl(getSignalRUrl('/hubs/notifications'), {
                     skipNegotiation: true,
                     transport: signalR.HttpTransportType.WebSockets
                 })

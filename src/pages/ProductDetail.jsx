@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,38 +9,103 @@ import {
 } from 'lucide-react'
 import { addToCart } from '../redux/cartSlice'
 import { addToCompare } from '../redux/compareSlice'
-import { getRelatedProducts, IMAGE_MAP } from '../data/products'
 import ProductCard from '../components/ui/ProductCard'
 import RecentlyViewed from '../components/ui/RecentlyViewed'
 import { toast } from 'react-hot-toast'
 import logo from '../assets/beatbox_logo.png'
 import { productService } from '../services/productService'
 import { fetchMyOrders, selectAllOrders } from '../redux/orderSlice'
-import { addRecentlyViewed } from '../redux/recentlyViewedSlice'
+import { addRecentlyViewed, selectRecentlyViewedIds } from '../redux/recentlyViewedSlice'
 import { toggleWishlistItem } from '../redux/wishlistSlice'
+import { selectAllProducts, selectProductStatus, fetchProducts } from '../redux/productSlice'
+
 
 export default function ProductDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  //const allProducts = useSelector(selectAllProducts)
-  //const productStatus = useSelector(selectProductStatus)
-  //const product = allProducts.find(p => p.id.toString() === id)
+  const allProducts = useSelector(selectAllProducts)
+  const productStatus = useSelector(selectProductStatus)
+  const recentlyViewedIds = useSelector(selectRecentlyViewedIds)
+
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [selectedVariant, setSelectedVariant] =
-  useState(null)
+  const [selectedVariant, setSelectedVariant] = useState(null)
   const myOrders = useSelector(selectAllOrders)
   const { user } = useSelector(state => state.auth)
 
-  // Use a fallback to local getRelatedProducts for now until we have related product logic in backend
-  const related = product ? getRelatedProducts(product, 4) : []
+  const relatedProducts = useMemo(() => {
+    if (!product || !allProducts || allProducts.length === 0) return []
 
-  //   useEffect(() => {
-  //   if (productStatus === 'idle') {
-  //     dispatch(fetchProducts())
-  //   }
-  // }, [productStatus, dispatch])
+    // 1. Same category products, excluding currently viewed product
+    const sameCategory = allProducts.filter(p => 
+      p.category === product.category && p.id.toString() !== product.id.toString()
+    )
+
+    // Selection logic: sort by rating, reviews/sold count, or featured status
+    const sortProducts = (list) => {
+      return [...list].sort((a, b) => {
+        const aFeatured = a.isFeatured || a.tag === 'Featured' ? 1 : 0
+        const bFeatured = b.isFeatured || b.tag === 'Featured' ? 1 : 0
+        if (bFeatured !== aFeatured) return bFeatured - aFeatured
+
+        const aRating = a.averageRating || a.rating || 0
+        const bRating = b.averageRating || b.rating || 0
+        if (bRating !== aRating) return bRating - aRating
+
+        const aReviews = a.reviewCount || a.soldCount || 0
+        const bReviews = b.reviewCount || b.soldCount || 0
+        return bReviews - aReviews
+      })
+    }
+
+    let candidates = sortProducts(sameCategory)
+
+    // Fallback: if category contains fewer than 4 products, supplement with featured products
+    if (candidates.length < 4) {
+      const otherFeatured = allProducts.filter(p => 
+        p.id.toString() !== product.id.toString() && 
+        p.category !== product.category && 
+        (p.isFeatured || p.tag === 'Featured')
+      )
+      const sortedOtherFeatured = sortProducts(otherFeatured)
+      for (const item of sortedOtherFeatured) {
+        if (candidates.length >= 4) break
+        if (!candidates.some(c => c.id.toString() === item.id.toString())) {
+          candidates.push(item)
+        }
+      }
+    }
+
+    // If still under 4, supplement with highest-rated products
+    if (candidates.length < 4) {
+      const otherProducts = allProducts.filter(p => 
+        p.id.toString() !== product.id.toString() && 
+        p.category !== product.category && 
+        !candidates.some(c => c.id.toString() === p.id.toString())
+      )
+      const sortedOther = sortProducts(otherProducts)
+      for (const item of sortedOther) {
+        if (candidates.length >= 4) break
+        candidates.push(item)
+      }
+    }
+
+    return candidates.slice(0, 8)
+  }, [allProducts, product])
+
+  const recentlyViewedProducts = useMemo(() => {
+    if (!recentlyViewedIds || !allProducts) return []
+    return recentlyViewedIds
+      .map(id => allProducts.find(p => p.id.toString() === id.toString()))
+      .filter(Boolean)
+  }, [recentlyViewedIds, allProducts])
+
+  useEffect(() => {
+    if (productStatus === 'idle') {
+      dispatch(fetchProducts())
+    }
+  }, [productStatus, dispatch])
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -63,24 +128,9 @@ export default function ProductDetail() {
   // Track recently viewed when product is loaded
   useEffect(() => {
     if (product) {
-      dispatch(addRecentlyViewed({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        oldPrice: product.oldPrice,
-        discount: product.discount,
-        imageKey: product.imageKey,
-        imageUrl: product.imageUrl,
-        category: product.category,
-      }))
+      dispatch(addRecentlyViewed(product.id))
     }
   }, [product, dispatch])
-
-  // useEffect(() => {
-  //   if (productStatus === 'idle') {
-  //     dispatch(fetchProducts())
-  //   }
-  // }, [productStatus, dispatch])
   useEffect(() => {
     if (product?.colors?.length > 0) {
       setSelectedColor(product.colors[0])
@@ -149,12 +199,76 @@ useEffect(() => {
 
   if (loading) {
     return (
-      <div className="min-vh-100 d-flex flex-column align-items-center justify-content-center text-center gap-4 px-4" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
-        <div className="spinner-border" style={{ color: 'var(--bb-accent)', width: '3rem', height: '3rem' }} />
-        <h2 className="text-theme-title fw-black">Loading Product...</h2>
+      <div className="min-vh-100 pb-5" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
+        {/* Ambient orbs */}
+        <div className="bg-glow-orb" style={{ width: 400, height: 400, background: 'var(--bb-primary-glow)', top: '0%', left: '-5%', filter: 'blur(130px)' }} />
+        <div className="bg-glow-orb" style={{ width: 350, height: 350, background: 'var(--bb-accent-glow)', top: '10%', right: '-5%', filter: 'blur(130px)' }} />
+
+        <div className="container px-3 px-lg-5 py-4">
+          {/* Breadcrumb skeleton */}
+          <div className="d-flex gap-2 mb-4">
+            <div className="skeleton-pulse rounded" style={{ width: 60, height: 16 }} />
+            <div className="skeleton-pulse rounded" style={{ width: 10, height: 16 }} />
+            <div className="skeleton-pulse rounded" style={{ width: 80, height: 16 }} />
+            <div className="skeleton-pulse rounded" style={{ width: 10, height: 16 }} />
+            <div className="skeleton-pulse rounded" style={{ width: 120, height: 16 }} />
+          </div>
+
+          {/* Back button skeleton */}
+          <div className="skeleton-pulse rounded-3 mb-4" style={{ width: 90, height: 38 }} />
+
+          {/* Main Product row */}
+          <div className="row g-5 mb-5">
+            {/* Left: Image Gallery Skeleton */}
+            <div className="col-12 col-lg-5">
+              <div className="skeleton-pulse rounded-4" style={{ minHeight: 380 }} />
+              {/* Thumbnail row */}
+              <div className="d-flex gap-2 mt-3 justify-content-center">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="skeleton-pulse rounded-3" style={{ width: 70, height: 70 }} />
+                ))}
+              </div>
+            </div>
+
+            {/* Right: Product Info Skeleton */}
+            <div className="col-12 col-lg-7 d-flex flex-column gap-3">
+              <div className="d-flex gap-2 align-items-center">
+                <div className="skeleton-pulse rounded-pill" style={{ width: 80, height: 22 }} />
+                <div className="skeleton-pulse rounded" style={{ width: 60, height: 16 }} />
+              </div>
+              
+              <div className="skeleton-pulse rounded" style={{ width: '80%', height: 40 }} />
+              
+              <div className="d-flex gap-2">
+                <div className="skeleton-pulse rounded" style={{ width: 120, height: 20 }} />
+                <div className="skeleton-pulse rounded" style={{ width: 80, height: 20 }} />
+              </div>
+
+              <div className="skeleton-pulse rounded-pill" style={{ width: 150, height: 28 }} />
+
+              <div className="skeleton-pulse rounded-3" style={{ height: 100 }} />
+
+              <div className="d-flex flex-column gap-2 mt-2">
+                <div className="skeleton-pulse rounded" style={{ width: 100, height: 16 }} />
+                <div className="d-flex gap-3">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="skeleton-pulse rounded-circle" style={{ width: 40, height: 40 }} />
+                  ))}
+                </div>
+              </div>
+
+              <div className="d-flex gap-3 mt-3 flex-wrap">
+                <div className="skeleton-pulse rounded-3 flex-grow-1" style={{ height: 56, minWidth: 200 }} />
+                <div className="skeleton-pulse rounded-3 flex-grow-1" style={{ height: 56, minWidth: 180 }} />
+                <div className="skeleton-pulse rounded-3" style={{ width: 56, height: 56 }} />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
+
 
   if (!product) {
     return (
@@ -376,24 +490,33 @@ const handleWishlist = async () => {
         >
           <ArrowLeft size={16} /> Back
         </button>
-
         {/* ── MAIN PRODUCT SECTION ─── */}
         <div className="row g-5 mb-5">
           {/* Left: Image Gallery */}
-          <motion.div className="col-12 col-lg-5" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-            <div
-              className="position-relative rounded-4 d-flex align-items-center justify-content-center"
-              style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', minHeight: 380, overflow: 'hidden' }}
-            >
+         <motion.div
+  className="col-12 col-lg-5"
+  initial={{ opacity: 0, x: -30 }}
+  animate={{ opacity: 1, x: 0 }}
+  transition={{ duration: 0.5 }}
+>
+  <div
+    className="position-relative rounded-4 d-flex align-items-center justify-content-center"
+    style={{
+      background: 'var(--bb-surface)',
+      border: '1px solid var(--bb-border)',
+      height: '500px',
+      overflow: 'hidden'
+    }}
+  >
               {/* Out of stock badge */}
               {selectedVariant?.stockQuantity <= 0 && (
-                <div className="position-absolute top-0 end-0 m-3 z-10">
+                <div className="position-absolute top-0 end-0 m-3 z-10"  style={{ zIndex: 100 }}>
                   <span className="badge px-3 py-2 fw-black" style={{ background: 'rgba(220,53,69,0.9)', letterSpacing: 1, fontSize: '0.75rem' }}>OUT OF STOCK</span>
                 </div>
               )}
 
               {/* Discount badge */}
-              <div className="position-absolute top-0 start-0 m-3 z-10">
+              <div className="position-absolute top-0 start-0 m-3 z-10"  style={{ zIndex: 100 }}>
                 <span className="badge px-3 py-2 fw-black text-white" style={{ background: 'linear-gradient(135deg,var(--bb-primary),var(--bb-accent))', borderRadius: 50, fontSize: '0.75rem' }}>
                   <Zap size={11} className="me-1" />{discount}% OFF
                 </span>
@@ -424,7 +547,15 @@ const handleWishlist = async () => {
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.4 }}
                   className="img-fluid hero-float"
-                  style={{ maxHeight: 340, objectFit: 'contain', zIndex: 1, filter: `drop-shadow(0 20px 40px rgba(0,0,0,0.5)) ${selectedColor && selectedColor.name !== 'Black' && selectedColor.name !== 'White' ? 'hue-rotate(45deg)' : ''}`, transform: `rotate(${activeImageIndex === 1 ? -25 : activeImageIndex === 2 ? 25 : 0}deg) scale(${activeImageIndex === 0 ? 1 : 1.05})` }}
+                  style={{
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain',
+  padding: '30px',
+  position: 'relative',
+  zIndex: 1,
+  filter: `drop-shadow(0 20px 40px rgba(0,0,0,0.5))`,
+}}
                 />
               )}
             </div>
@@ -448,18 +579,20 @@ const handleWishlist = async () => {
         overflow: 'hidden'
       }}
     >
-      <img
-        src={image.imageUrl}
-        alt=""
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover'
-        }}
-      />
+     <img
+  src={image.imageUrl}
+  alt=""
+  style={{
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain',
+    padding: '4px'
+  }}
+/>
     </div>
   ))}
 </div>
+
           </motion.div>
 
           {/* Right: Product Info */}
@@ -917,7 +1050,7 @@ const handleWishlist = async () => {
         </div>
 
         {/* ── RELATED PRODUCTS ─── */}
-        {related.length > 0 && (
+        {relatedProducts.length > 0 && (
           <div>
             <div className="d-flex align-items-center justify-content-between mb-4">
               <h3 className="fw-black text-theme-title mb-0">You May Also <span className="gradient-text">Like</span></h3>
@@ -925,9 +1058,9 @@ const handleWishlist = async () => {
                 View All <ChevronRight size={14} />
               </Link>
             </div>
-            <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
-              {related.map((p, i) => (
-                <div key={p.id} className="col">
+            <div className="related-products-container">
+              {relatedProducts.map((p, i) => (
+                <div key={p.id} className="related-product-col">
                   <ProductCard product={p} index={i} />
                 </div>
               ))}
@@ -937,7 +1070,7 @@ const handleWishlist = async () => {
 
         {/* ── RECENTLY VIEWED ─── */}
         <div className="mt-5 pt-3" style={{ borderTop: '1px solid var(--bb-border)' }}>
-          <RecentlyViewed excludeId={product?.id} />
+          <RecentlyViewed products={recentlyViewedProducts} excludeId={product?.id} />
         </div>
 
       </div>
