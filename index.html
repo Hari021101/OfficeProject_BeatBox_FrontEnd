@@ -5,10 +5,24 @@
     <link rel="icon" type="image/png" href="/OfficeProject_BeatBox_FrontEnd/favicon.png?v=2" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BeatBox - Premium Audio</title>
-    <script type="module" crossorigin src="/OfficeProject_BeatBox_FrontEnd/assets/index-BdZok-3X.js"></script>
-    <link rel="stylesheet" crossorigin href="/OfficeProject_BeatBox_FrontEnd/assets/index-BrNPxomz.css">
+    <script>
+      (function() {
+        try {
+          var savedTheme = localStorage.getItem('bb_theme');
+          if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+          } else {
+            // Default to dark theme if no preference is saved
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script type="module" crossorigin src="/OfficeProject_BeatBox_FrontEnd/assets/index-D7eeD5yB.js"></script>
+    <link rel="stylesheet" crossorigin href="/OfficeProject_BeatBox_FrontEnd/assets/index-ChT7G1V9.css">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"></div>
   </body>
 </html>
