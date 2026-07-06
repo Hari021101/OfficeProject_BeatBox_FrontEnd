@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Gift, Tag, ChevronRight, ShoppingCart, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PRODUCTS, IMAGE_MAP } from '../data/products';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectAllProducts, selectProductStatus, fetchProducts } from '../redux/productSlice';
+import { useEffect } from 'react';
 import ProductCard from '../components/ui/ProductCard';
 
 import giftingHero from '../assets/gifting_hero_banner.png';
@@ -20,8 +22,34 @@ export default function Gifting() {
     'Neckbands And Headphones'
   ];
 
-  // Dummy filter just to show some products for the design
-  const displayedProducts = PRODUCTS.slice(0, 8);
+  const dispatch = useDispatch();
+  const allProducts = useSelector(selectAllProducts);
+  const productStatus = useSelector(selectProductStatus);
+
+  useEffect(() => {
+    if (productStatus === 'idle') {
+      dispatch(fetchProducts());
+    }
+  }, [productStatus, dispatch]);
+
+  const getDisplayedProducts = () => {
+    if (!allProducts || allProducts.length === 0) return [];
+    
+    let filtered = allProducts;
+    if (activeCategory === 'True Wireless Earbuds') {
+      filtered = allProducts.filter(p => p.category?.toLowerCase().includes('tws') || p.category?.toLowerCase().includes('earbud'));
+    } else if (activeCategory === 'Smartwatches') {
+      filtered = allProducts.filter(p => p.category?.toLowerCase().includes('watch'));
+    } else if (activeCategory === 'Speakers And Soundbars') {
+      filtered = allProducts.filter(p => p.category?.toLowerCase().includes('speaker') || p.category?.toLowerCase().includes('soundbar'));
+    } else if (activeCategory === 'Neckbands And Headphones') {
+      filtered = allProducts.filter(p => p.category?.toLowerCase().includes('neckband') || p.category?.toLowerCase().includes('headphone'));
+    }
+    
+    return filtered.slice(0, 8);
+  };
+
+  const displayedProducts = getDisplayedProducts();
 
   return (
     <div className="pb-5" style={{ paddingTop: '80px', backgroundColor: 'var(--bb-bg-navy)' }}>
@@ -140,7 +168,13 @@ export default function Gifting() {
         </div>
 
         {/* Collection Grid */}
-        {displayedProducts.length === 0 ? (
+        {productStatus === 'loading' ? (
+          <div className="d-flex justify-content-center align-items-center py-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        ) : displayedProducts.length === 0 ? (
           <div className="text-center py-5 glass-card rounded-4 border border-secondary border-opacity-10">
             <Info className="text-theme-muted mb-2" size={32} />
             <p className="text-theme-muted mb-0">No items available in this handpicked category at the moment.</p>

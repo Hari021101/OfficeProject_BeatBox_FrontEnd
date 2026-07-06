@@ -77,9 +77,15 @@ export default function CorporateOrders() {
   const displayedProducts = useMemo(() => {
     let list = [...allProducts]
     if (activeTab !== 'all') {
-      list = list.filter(p => p.categoryName?.toLowerCase().includes(activeTab))
+      list = list.filter(p => {
+        const cat = (p.categoryName || p.category || '').toLowerCase()
+        if (activeTab === 'headphone') return cat.includes('headphone') || cat.includes('neckband') || cat.includes('earphone')
+        if (activeTab === 'tws') return cat.includes('tws') || cat.includes('earbud')
+        if (activeTab === 'speaker') return cat.includes('speaker') || cat.includes('soundbar')
+        if (activeTab === 'watch') return cat.includes('watch') || cat.includes('wearable')
+        return cat.includes(activeTab)
+      })
     }
-    // Prioritise featured products first
     list.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0))
     return list.slice(0, 12)
   }, [allProducts, activeTab])
