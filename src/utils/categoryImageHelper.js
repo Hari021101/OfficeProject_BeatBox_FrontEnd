@@ -14,11 +14,11 @@ const COVER_MAP = {
   'tws': twsImg,
   'wireless headphones': headphonesImg,
   'portable speakers': speakersImg,
-  'soundbars': soundbarsImg,
   'mobile accessories': mobileAccImg,
   'computer accessories': computerAccImg,
   'car accessories': carAccImg,
-  'smart gadgets': smartGadgetsImg
+  'smart gadgets': smartGadgetsImg,
+  'keyboards': computerAccImg
 };
 
 /**

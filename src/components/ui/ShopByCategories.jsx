@@ -31,7 +31,18 @@ export default function ShopByCategories() {
       try {
         setLoading(true)
         const data = await categoryService.getCategories()
-        const sorted = [...data].sort((a, b) => (b.productCount || 0) - (a.productCount || 0))
+        const sorted = [...data].sort((a, b) => {
+          const countDiff = (b.productCount || 0) - (a.productCount || 0);
+          if (countDiff !== 0) return countDiff;
+          
+          // Prioritize Keyboards when product counts are equal
+          const aIsKeyboard = a.name.toLowerCase().includes('keyboard');
+          const bIsKeyboard = b.name.toLowerCase().includes('keyboard');
+          if (aIsKeyboard && !bIsKeyboard) return -1;
+          if (!aIsKeyboard && bIsKeyboard) return 1;
+          
+          return a.name.localeCompare(b.name);
+        });
         setCategoriesList(sorted.slice(0, 6))
       } catch (err) {
         console.error("Error loading categories in ShopByCategories:", err)
