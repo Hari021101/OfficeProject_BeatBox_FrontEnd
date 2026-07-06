@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
@@ -6,7 +6,7 @@ import { toast } from 'react-hot-toast'
 import {
   ArrowLeft, Printer, Package, MapPin, CreditCard,
   Clock, CheckCircle, Truck, XCircle, RefreshCw,
-  ShoppingBag, Receipt, Download
+  ShoppingBag, Receipt, Download, RotateCcw, Upload, AlertCircle
 } from 'lucide-react'
 import {
   fetchOrderById,
@@ -15,6 +15,7 @@ import {
   selectOrderDetailStatus,
   cancelOrderThunk
 } from '../redux/orderSlice'
+import { selectUserId, selectUser } from '../redux/authSlice'
 import OrderTimeline from '../components/ui/OrderTimeline'
 import logo from '../assets/beatbox_logo.png'
 import { orderService } from '../services/orderService'
@@ -180,6 +181,193 @@ function PrintInvoice({ order }) {
   )
 }
 
+// ─── Return Reason Options ─────────────────────────────────────────────────────
+const RETURN_REASONS = [
+  'Damaged Product',
+  'Wrong Item',
+  'Missing Parts',
+  'Defective',
+  'Not as Expected',
+  'Other',
+]
+
+const RETURN_WINDOW_DAYS = 10
+
+// ─── Return Request Modal ─────────────────────────────────────────────────────
+function ReturnRequestModal({ order, onClose, onSuccess }) {
+  const userId = selectUserId()
+  const [reason, setReason] = useState('')
+  const [description, setDescription] = useState('')
+  const [resolution, setResolution] = useState('Refund')
+  const [imageFiles, setImageFiles] = useState([])
+  const [submitting, setSubmitting] = useState(false)
+
+  const items = order?.items || []
+  const firstProductId = items[0]?.productId
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files).slice(0, 3)
+    setImageFiles(files)
+  }
+
+  const handleSubmit = async () => {
+    if (!reason) { toast.error('Please select a return reason'); return }
+    if (!description.trim()) { toast.error('Please provide a description'); return }
+    if (!firstProductId) { toast.error('Product information missing'); return }
+
+    setSubmitting(true)
+    try {
+      // Convert images to comma-delimited base64 (optional, for display)
+      let imageUrls = null
+      if (imageFiles.length > 0) {
+        const toBase64 = (file) => new Promise((res, rej) => {
+          const reader = new FileReader()
+          reader.onload = () => res(reader.result)
+          reader.onerror = rej
+          reader.readAsDataURL(file)
+        })
+        const encoded = await Promise.all(imageFiles.map(toBase64))
+        imageUrls = encoded.join(',')
+      }
+
+      await orderService.requestReturn({
+        orderId: order.orderId,
+        userId: userId || '',
+        productId: firstProductId,
+        reason,
+        description,
+        imageUrls,
+        preferredResolution: resolution,
+      })
+      toast.success('Return request submitted successfully!')
+      onSuccess()
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to submit return request')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+      style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', zIndex: 1060 }}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0, y: 30 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 30 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+        className="p-4 rounded-4 mx-3 w-100"
+        style={{
+          background: 'var(--bb-surface)',
+          border: '1px solid rgba(168,32,255,0.3)',
+          boxShadow: '0 0 60px rgba(168,32,255,0.12)',
+          maxWidth: 540,
+          maxHeight: '90vh',
+          overflowY: 'auto'
+        }}
+      >
+        {/* Header */}
+        <div className="d-flex align-items-center justify-content-between mb-4">
+          <div className="d-flex align-items-center gap-3">
+            <div className="d-flex align-items-center justify-content-center rounded-circle"
+              style={{ width: 44, height: 44, background: 'rgba(168,32,255,0.12)', border: '1px solid rgba(168,32,255,0.3)' }}>
+              <RotateCcw size={20} style={{ color: '#d161ff' }} />
+            </div>
+            <div>
+              <h5 className="fw-black text-theme-title mb-0">Request Return</h5>
+              <p className="text-theme-muted mb-0" style={{ fontSize: '0.78rem' }}>Order #{order?.orderId?.toString().slice(-8)}</p>
+            </div>
+          </div>
+          <button className="btn btn-sm p-1" onClick={onClose}
+            style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', borderRadius: 8, color: 'var(--bb-text)' }}>
+            <XCircle size={18} />
+          </button>
+        </div>
+
+        {/* Return Reason */}
+        <div className="mb-3">
+          <label className="form-label fw-bold text-theme-title" style={{ fontSize: '0.85rem' }}>Return Reason *</label>
+          <select
+            className="form-select"
+            value={reason}
+            onChange={e => setReason(e.target.value)}
+            style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-text)', border: '1px solid var(--bb-border)', borderRadius: 10 }}
+          >
+            <option value="">-- Select a reason --</option>
+            {RETURN_REASONS.map(r => <option key={r} value={r}>{r}</option>)}
+          </select>
+        </div>
+
+        {/* Description */}
+        <div className="mb-3">
+          <label className="form-label fw-bold text-theme-title" style={{ fontSize: '0.85rem' }}>Description *</label>
+          <textarea
+            className="form-control"
+            rows={4}
+            placeholder="Describe the issue in detail..."
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-text)', border: '1px solid var(--bb-border)', borderRadius: 10, resize: 'vertical' }}
+          />
+        </div>
+
+        {/* Image Upload */}
+        <div className="mb-3">
+          <label className="form-label fw-bold text-theme-title" style={{ fontSize: '0.85rem' }}>Upload Images <span className="text-theme-muted">(optional, max 3)</span></label>
+          <div className="p-3 rounded-3 text-center" style={{ background: 'var(--bb-surface-2)', border: '2px dashed var(--bb-border)', cursor: 'pointer' }}
+            onClick={() => document.getElementById('return-images').click()}>
+            <Upload size={24} className="mb-2" style={{ color: 'var(--bb-accent)', opacity: 0.7 }} />
+            <p className="text-theme-muted mb-0" style={{ fontSize: '0.82rem' }}>
+              {imageFiles.length > 0 ? `${imageFiles.length} file(s) selected` : 'Click to upload images'}
+            </p>
+          </div>
+          <input id="return-images" type="file" accept="image/*" multiple className="d-none" onChange={handleImageChange} />
+        </div>
+
+        {/* Preferred Resolution */}
+        <div className="mb-4">
+          <label className="form-label fw-bold text-theme-title" style={{ fontSize: '0.85rem' }}>Preferred Resolution</label>
+          <div className="d-flex gap-3">
+            {['Refund', 'Replacement'].map(opt => (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => setResolution(opt)}
+                className="btn fw-bold flex-grow-1"
+                style={{
+                  borderRadius: 10,
+                  border: `1px solid ${resolution === opt ? 'rgba(168,32,255,0.6)' : 'var(--bb-border)'}`,
+                  background: resolution === opt ? 'rgba(168,32,255,0.12)' : 'var(--bb-surface-2)',
+                  color: resolution === opt ? '#d161ff' : 'var(--bb-text)',
+                  transition: 'all 0.2s'
+                }}
+              >{opt}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="d-flex gap-2">
+          <button className="btn fw-bold flex-grow-1" onClick={onClose} disabled={submitting}
+            style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-text)', borderRadius: 10 }}>
+            Cancel
+          </button>
+          <button className="btn fw-bold flex-grow-1" onClick={handleSubmit} disabled={submitting}
+            style={{ background: 'rgba(168,32,255,0.2)', border: '1px solid rgba(168,32,255,0.5)', color: '#d161ff', borderRadius: 10 }}>
+            {submitting ? 'Submitting...' : 'Submit Return Request'}
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function OrderDetail() {
@@ -188,9 +376,13 @@ export default function OrderDetail() {
   const navigate = useNavigate()
   const order = useSelector(selectCurrentOrder)
   const detailStatus = useSelector(selectOrderDetailStatus)
+  const user = useSelector(selectUser)
 
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [isCancelling, setIsCancelling] = useState(false)
+  const [showReturnModal, setShowReturnModal] = useState(false)
+  const [existingReturn, setExistingReturn] = useState(null)
+  const [returnCheckDone, setReturnCheckDone] = useState(false)
 
   const handleCancelOrder = async () => {
     setIsCancelling(true);
@@ -209,6 +401,17 @@ export default function OrderDetail() {
     if (id) dispatch(fetchOrderById(id))
     return () => { dispatch(clearCurrentOrder()) }
   }, [id, dispatch])
+
+  // Check existing return when order loads and is Delivered
+  useEffect(() => {
+    if (!order) return
+    if (order.status !== 'Delivered') { setReturnCheckDone(true); return }
+    const orderId = order.orderId
+    if (!orderId) { setReturnCheckDone(true); return }
+    orderService.getReturnByOrderId(orderId)
+      .then(data => { setExistingReturn(data); setReturnCheckDone(true) })
+      .catch(() => setReturnCheckDone(true))
+  }, [order])
 
   const isLoading = detailStatus === 'loading' || detailStatus === 'idle'
   const isFailed = detailStatus === 'failed'
@@ -563,6 +766,48 @@ export default function OrderDetail() {
                       <XCircle size={15} /> Cancel Order
                     </button>
                   )}
+
+                  {/* Return Request Button / Status */}
+                  {(() => {
+                    if (!order || order.status !== 'Delivered') return null
+                    if (!returnCheckDone) return null
+                    // Check 10-day return window
+                    const deliveredDate = new Date(order.orderDate)
+                    const windowEnd = new Date(deliveredDate)
+                    windowEnd.setDate(windowEnd.getDate() + RETURN_WINDOW_DAYS + 5) // 5 day buffer for shipping
+                    const inWindow = new Date() <= windowEnd
+                    if (!inWindow) return (
+                      <div className="d-flex align-items-center gap-2 p-2 rounded-3" style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)', fontSize: '0.8rem' }}>
+                        <AlertCircle size={14} style={{ color: '#f59e0b', flexShrink: 0 }} />
+                        <span className="text-theme-muted">Return window expired (10 days)</span>
+                      </div>
+                    )
+                    if (existingReturn) return (
+                      <div className="d-flex align-items-center gap-2 p-2 rounded-3" style={{ background: 'rgba(168,32,255,0.08)', border: '1px solid rgba(168,32,255,0.25)', fontSize: '0.8rem' }}>
+                        <RotateCcw size={14} style={{ color: '#d161ff', flexShrink: 0 }} />
+                        <div>
+                          <span className="fw-bold" style={{ color: '#d161ff', fontSize: '0.82rem' }}>Return {existingReturn.status}</span>
+                          <p className="text-theme-muted mb-0" style={{ fontSize: '0.75rem' }}>Requested on {new Date(existingReturn.requestDate).toLocaleDateString('en-IN')}</p>
+                        </div>
+                      </div>
+                    )
+                    return (
+                      <button
+                        onClick={() => setShowReturnModal(true)}
+                        className="btn fw-bold d-flex align-items-center justify-content-center gap-2 py-2"
+                        id="request-return-btn"
+                        style={{
+                          background: 'rgba(168,32,255,0.1)',
+                          border: '1px solid rgba(168,32,255,0.35)',
+                          color: '#d161ff',
+                          borderRadius: 10,
+                          fontSize: '0.85rem',
+                        }}
+                      >
+                        <RotateCcw size={15} /> Request Return
+                      </button>
+                    )
+                  })()}
                   <button
                     onClick={() => orderService.downloadInvoice(order.orderId)}
                     className="btn fw-bold d-flex align-items-center justify-content-center gap-2 py-2"
@@ -594,6 +839,23 @@ export default function OrderDetail() {
 
       {/* ── Print-only invoice (hidden in browser, shown on Ctrl+P) ─────────── */}
       {order && <PrintInvoice order={order} />}
+
+      {/* Return Request Modal */}
+      <AnimatePresence>
+        {showReturnModal && order && (
+          <ReturnRequestModal
+            order={order}
+            onClose={() => setShowReturnModal(false)}
+            onSuccess={() => {
+              setShowReturnModal(false)
+              // Re-check return status
+              orderService.getReturnByOrderId(order.orderId)
+                .then(data => setExistingReturn(data))
+                .catch(() => {})
+            }}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Cancellation Modal */}
       <AnimatePresence>

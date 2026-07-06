@@ -64,10 +64,10 @@ export default function AppRouter() {
         toastOptions={{
           duration: 4000,
           style: {
-            background: '#0a0d14',
-            color: '#fff',
-            border: '1px solid rgba(0, 243, 255, 0.25)',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+            background: 'var(--bb-surface-2)',
+            color: 'var(--bb-text)',
+            border: '1px solid var(--bb-border)',
+            boxShadow: '0 10px 30px var(--bb-shadow)',
             borderRadius: '10px',
             fontSize: '0.95rem'
           }

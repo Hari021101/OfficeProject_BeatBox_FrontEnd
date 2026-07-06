@@ -750,7 +750,7 @@ export default function Header() {
                       onClick={() => setExpandedMobileCategory(expandedMobileCategory === idx ? null : idx)}
                     >
                       <div className="d-flex align-items-center gap-3">
-                        <div className="rounded-circle d-flex align-items-center justify-content-center bg-white" style={{ width: '45px', height: '45px', border: '1px solid var(--bb-border)', flexShrink: 0 }}>
+                        <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: '45px', height: '45px', border: '1px solid var(--bb-border)', backgroundColor: 'var(--bb-surface-2)', flexShrink: 0 }}>
                           <img src={getMegaMenuImage(col.items[0]?.name || '')} alt="" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
                         </div>
                         <span className="fw-bold text-uppercase" style={{ fontSize: '0.9rem', letterSpacing: '0.5px' }}>{col.title}</span>

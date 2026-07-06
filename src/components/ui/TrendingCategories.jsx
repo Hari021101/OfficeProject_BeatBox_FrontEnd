@@ -32,18 +32,18 @@ export default function TrendingCategories({ categories, products = [], loading 
 
   if (loading) {
     return (
-      <section className="py-5" style={{ backgroundColor: '#F8FAFC' }}>
+      <section className="py-5" style={{ backgroundColor: 'var(--bb-background)' }}>
         <div className="container px-lg-5">
           <div className="text-center mb-5">
-            <div className="skeleton-pulse mx-auto rounded" style={{ width: '240px', height: '36px', background: '#E2E8F0' }}></div>
-            <div className="skeleton-pulse mx-auto mt-2 rounded" style={{ width: '320px', height: '18px', background: '#E2E8F0' }}></div>
+            <div className="skeleton-pulse mx-auto rounded" style={{ width: '240px', height: '36px', background: 'var(--bb-surface-2)' }}></div>
+            <div className="skeleton-pulse mx-auto mt-2 rounded" style={{ width: '320px', height: '18px', background: 'var(--bb-surface-2)' }}></div>
           </div>
           <div className="row g-4 row-cols-2 row-cols-md-3 row-cols-lg-5 justify-content-center">
             {[...Array(5)].map((_, idx) => (
               <div key={idx} className="col">
-                <div className="rounded-4 p-4 d-flex flex-column align-items-center justify-content-center gap-3" style={{ height: '260px', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '18px' }}>
-                  <div className="skeleton-pulse rounded" style={{ width: '100px', height: '100px', background: '#E2E8F0' }}></div>
-                  <div className="skeleton-pulse rounded" style={{ width: '80px', height: '18px', background: '#E2E8F0' }}></div>
+                <div className="rounded-4 p-4 d-flex flex-column align-items-center justify-content-center gap-3" style={{ height: '260px', background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border-light)', borderRadius: '18px' }}>
+                  <div className="skeleton-pulse rounded" style={{ width: '100px', height: '100px', background: 'var(--bb-surface)' }}></div>
+                  <div className="skeleton-pulse rounded" style={{ width: '80px', height: '18px', background: 'var(--bb-surface)' }}></div>
                 </div>
               </div>
             ))}
@@ -56,10 +56,10 @@ export default function TrendingCategories({ categories, products = [], loading 
   if (trendingList.length === 0) return null
 
   return (
-    <section className="py-5" style={{ backgroundColor: '#F8FAFC', borderTop: '1px solid #E2E8F0', borderBottom: '1px solid #E2E8F0' }} id="trending-categories">
+    <section className="py-5" style={{ backgroundColor: 'var(--bb-background)', borderTop: '1px solid var(--bb-border-light)', borderBottom: '1px solid var(--bb-border-light)' }} id="trending-categories">
       <div className="container px-lg-5 position-relative">
         <div className="text-center mb-5">
-          <h3 className="fw-black text-dark mb-2">
+          <h3 className="fw-black text-theme-title mb-2">
             Trending <span style={{ color: 'var(--bb-primary, #7C3AED)' }}>Categories</span>
           </h3>
           <p className="text-muted small">Explore the hottest category gear buzzing right now.</p>
@@ -106,12 +106,12 @@ function TrendingCard({ category, index, navigate, shouldReduceMotion }) {
       className="p-3 d-flex flex-column align-items-center justify-content-between text-center"
       style={{
         height: '260px',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'var(--bb-surface-2)',
         borderRadius: '18px',
-        border: '1px solid #E2E8F0',
+        border: '1px solid var(--bb-border-light)',
         boxShadow: isHovered 
-          ? '0 12px 24px rgba(0, 0, 0, 0.08)' 
-          : '0 4px 12px rgba(0, 0, 0, 0.03)',
+          ? '0 12px 24px var(--bb-shadow)' 
+          : '0 4px 12px var(--bb-shadow)',
         transition: 'box-shadow 0.3s ease, border-color 0.3s ease',
         cursor: 'pointer',
         overflow: 'hidden'
@@ -138,7 +138,7 @@ function TrendingCard({ category, index, navigate, shouldReduceMotion }) {
       {/* Category Text Details */}
       <div className="pt-2">
         <h6 
-          className="fw-bold text-dark mb-1 text-capitalize"
+          className="fw-bold text-theme-title mb-1 text-capitalize"
           style={{ fontSize: '0.95rem' }}
         >
           {category.name}

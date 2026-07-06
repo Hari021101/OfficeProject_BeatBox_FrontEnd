@@ -6,13 +6,15 @@ export default function StatWidget({ title, value, trend, isPositive, icon: Icon
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5, boxShadow: '0 16px 40px var(--bb-shadow)' }}
       transition={{ delay }}
       className="card border-0 h-100"
       style={{
         background: 'var(--bb-surface)',
         borderRadius: '16px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
-        padding: 'clamp(12px, 2.5vw, 20px)'
+        boxShadow: '0 8px 30px var(--bb-shadow)',
+        padding: 'clamp(12px, 2.5vw, 20px)',
+        transition: 'background-color 0.3s ease, border-color 0.3s ease'
       }}
     >
       <div className="d-flex justify-content-between align-items-start mb-2 mb-md-3">
@@ -26,7 +28,7 @@ export default function StatWidget({ title, value, trend, isPositive, icon: Icon
         </div>
         <div
           className="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0 ms-2"
-          style={{ width: 'clamp(36px, 6vw, 48px)', height: 'clamp(36px, 6vw, 48px)', background: 'rgba(0, 243, 255, 0.1)', color: 'var(--bb-accent)' }}
+          style={{ width: 'clamp(36px, 6vw, 48px)', height: 'clamp(36px, 6vw, 48px)', background: 'var(--bb-accent-glow)', color: 'var(--bb-accent)' }}
         >
           <Icon size={20} />
         </div>

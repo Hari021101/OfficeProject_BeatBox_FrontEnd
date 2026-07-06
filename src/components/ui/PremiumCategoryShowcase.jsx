@@ -44,18 +44,18 @@ export default function PremiumCategoryShowcase({ categories, products = [], loa
 
   if (loading || !featuredCategory) {
     return (
-      <section className="py-5" style={{ backgroundColor: '#F8FAFC' }}>
+      <section className="py-5" style={{ backgroundColor: 'var(--bb-background)' }}>
         <div className="container px-lg-5">
           <div className="text-center mb-5">
-            <div className="skeleton-pulse mx-auto rounded" style={{ width: '220px', height: '36px', background: '#E2E8F0' }}></div>
+            <div className="skeleton-pulse mx-auto rounded" style={{ width: '220px', height: '36px', background: 'var(--bb-surface-2)' }}></div>
           </div>
           <div className="row g-4">
             <div className="col-12 col-lg-6">
-              <div className="skeleton-pulse rounded-4" style={{ height: '480px', background: '#FFFFFF', borderRadius: '18px', border: '1px solid #E2E8F0' }}></div>
+              <div className="skeleton-pulse rounded-4" style={{ height: '480px', background: 'var(--bb-surface-2)', borderRadius: '18px', border: '1px solid var(--bb-border-light)' }}></div>
             </div>
             <div className="col-12 col-lg-6 d-flex flex-column gap-4">
-              <div className="skeleton-pulse rounded-4" style={{ height: '228px', background: '#FFFFFF', borderRadius: '18px', border: '1px solid #E2E8F0' }}></div>
-              <div className="skeleton-pulse rounded-4" style={{ height: '228px', background: '#FFFFFF', borderRadius: '18px', border: '1px solid #E2E8F0' }}></div>
+              <div className="skeleton-pulse rounded-4" style={{ height: '228px', background: 'var(--bb-surface-2)', borderRadius: '18px', border: '1px solid var(--bb-border-light)' }}></div>
+              <div className="skeleton-pulse rounded-4" style={{ height: '228px', background: 'var(--bb-surface-2)', borderRadius: '18px', border: '1px solid var(--bb-border-light)' }}></div>
             </div>
           </div>
         </div>
@@ -64,10 +64,10 @@ export default function PremiumCategoryShowcase({ categories, products = [], loa
   }
 
   return (
-    <section className="py-5" style={{ backgroundColor: '#F8FAFC' }} id="category-showcase">
+    <section className="py-5" style={{ backgroundColor: 'var(--bb-background)' }} id="category-showcase">
       <div className="container px-lg-5">
         <div className="text-center mb-5">
-          <h3 className="fw-black text-dark mb-2">
+          <h3 className="fw-black text-theme-title mb-2">
             Shop By <span style={{ color: 'var(--bb-primary, #7C3AED)' }}>Category</span>
           </h3>
           <p className="text-muted small">Explore premium audio systems engineered for high fidelity sound.</p>
@@ -142,12 +142,12 @@ function ShowcaseCard({ category, type, navigate, shouldReduceMotion }) {
       style={{
         height: cardHeight,
         minHeight: type === 'medium' ? '228px' : 'auto',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'var(--bb-surface-2)',
         borderRadius: '18px',
-        border: '1px solid #E2E8F0',
+        border: '1px solid var(--bb-border-light)',
         boxShadow: isHovered 
-          ? '0 12px 24px rgba(0, 0, 0, 0.08)' 
-          : '0 4px 12px rgba(0, 0, 0, 0.03)',
+          ? '0 12px 24px var(--bb-shadow)' 
+          : '0 4px 12px var(--bb-shadow)',
         cursor: 'pointer',
         overflow: 'hidden',
         flexDirection: isMedium ? 'row' : 'column',
@@ -163,7 +163,7 @@ function ShowcaseCard({ category, type, navigate, shouldReduceMotion }) {
       >
         <div>
           <h4 
-            className="fw-bold text-dark text-capitalize mb-1" 
+            className="fw-bold text-theme-title text-capitalize mb-1" 
             style={{ fontSize: type === 'large' ? '1.75rem' : '1.25rem', letterSpacing: '-0.5px' }}
           >
             {category.name}
@@ -180,9 +180,9 @@ function ShowcaseCard({ category, type, navigate, shouldReduceMotion }) {
             style={{
               padding: '8px 16px',
               borderRadius: '50px',
-              border: '1px solid #E2E8F0',
-              backgroundColor: isHovered ? 'var(--bb-primary, #7C3AED)' : '#FFFFFF',
-              color: isHovered ? '#FFFFFF' : 'var(--bb-primary, #7C3AED)',
+              border: '1px solid var(--bb-border-light)',
+              backgroundColor: isHovered ? 'var(--bb-primary)' : 'var(--bb-surface-2)',
+              color: isHovered ? '#FFFFFF' : 'var(--bb-primary)',
               fontSize: '0.8rem',
               transition: 'all 0.2s ease',
               gap: '6px'

@@ -96,7 +96,7 @@ export default function Wishlist() {
                 className="col-12 col-sm-6 col-lg-4 col-xl-3"
               >
                 <div className="product-card h-100 d-flex flex-column overflow-hidden">
-                  <div className="position-relative bg-white" style={{ paddingTop: '100%', borderRadius: '24px 24px 0 0' }}>
+                  <div className="position-relative" style={{ paddingTop: '100%', borderRadius: '24px 24px 0 0', backgroundColor: 'var(--bb-surface-2)' }}>
                     <Link to={`/products/${item.productId}`}>
                       <img 
                         src={getImageUrl(item.productImage) || '/placeholder-product.png'} 
@@ -106,8 +106,8 @@ export default function Wishlist() {
                     </Link>
                     <button 
                       onClick={() => handleRemove(item.productId)}
-                      className="btn position-absolute top-0 end-0 m-3 p-2 rounded-circle bg-white shadow-sm border text-danger"
-                      style={{ zIndex: 2 }}
+                      className="btn position-absolute top-0 end-0 m-3 p-2 rounded-circle shadow-sm border text-danger"
+                      style={{ zIndex: 2, backgroundColor: 'var(--bb-surface)', borderColor: 'var(--bb-border)' }}
                     >
                       <Trash2 size={18} />
                     </button>

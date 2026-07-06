@@ -66,10 +66,11 @@ export default function Users() {
       return (
         <div className="d-flex align-items-center gap-3">
           <div 
-            className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" 
+            className="rounded-circle d-flex align-items-center justify-content-center fw-bold" 
             style={{ 
               width: '40px', height: '40px', 
               background: isAdmin ? 'linear-gradient(135deg, #a820ff, #00f3ff)' : 'var(--bb-surface-2)',
+              color: isAdmin ? '#ffffff' : 'var(--bb-text)',
               border: '1px solid var(--bb-border)'
             }}
           >
@@ -95,16 +96,7 @@ export default function Users() {
     { key: 'role', label: 'Role', sortable: true, render: (row) => {
       const isAdmin = row.role === 'Admin'
       return (
-        <span 
-          className="badge rounded-pill px-3 py-1"
-          style={{ 
-            background: isAdmin ? 'rgba(168,32,255,0.1)' : 'rgba(255,255,255,0.05)',
-            color: isAdmin ? '#a820ff' : 'var(--bb-text)',
-            border: `1px solid ${isAdmin ? 'rgba(168,32,255,0.2)' : 'var(--bb-border)'}`,
-            fontWeight: 'bold',
-            fontSize: '0.75rem'
-          }}
-        >
+        <span className={isAdmin ? 'bb-role-admin' : 'bb-role-customer'}>
           {row.role}
         </span>
       )
@@ -117,16 +109,7 @@ export default function Users() {
     { key: 'status', label: 'Status', sortable: true, render: (row) => {
       const isActive = row.status === 'Active'
       return (
-        <span 
-          className="d-inline-flex align-items-center gap-1 badge rounded-pill px-3 py-1"
-          style={{ 
-            background: isActive ? 'rgba(57,255,20,0.1)' : 'rgba(239,68,68,0.1)',
-            color: isActive ? '#39ff14' : '#ef4444',
-            border: `1px solid currentColor`,
-            fontWeight: 'bold',
-            fontSize: '0.75rem'
-          }}
-        >
+        <span className={isActive ? 'bb-badge-success' : 'bb-badge-danger'}>
           {!isActive && <ShieldAlert size={12} />} {row.status}
         </span>
       )

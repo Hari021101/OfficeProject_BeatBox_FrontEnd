@@ -6,9 +6,9 @@ import { selectAllProducts } from '../../redux/productSlice'
 import { ArrowRight } from 'lucide-react'
 
 // ─── Fallback assets (real product images, no placeholders) ──────────────────
-import heroHeadphones  from '../../assets/hero_headphones.png'
-import gamingHeadset   from '../../assets/gaming_headset.png'
-import smartTracker    from '../../assets/action_cam.png'
+import heroHeadphones  from '../../assets/tws_hero.png'
+import gamingCollection from '../../assets/gaming_keyboard.png'
+import proCollection from '../../assets/default11.jpg'
 
 // ─── Collection definitions ──────────────────────────────────────────────────
 // categoryMatchers: array of lowercase substrings — if a product's categoryName
@@ -34,7 +34,7 @@ const COLLECTIONS = [
     navCategory: 'gaming-collection',
     categoryMatchers: ['gaming', 'game', 'keyboard', 'mouse'],
     accentVar:   '--bb-accent',
-    fallbackImg: gamingHeadset,
+    fallbackImg: gamingCollection,
     tint: 'rgba(0,243,255,0.05)',
   },
   {
@@ -45,7 +45,7 @@ const COLLECTIONS = [
     navCategory: 'pro-collection',
     categoryMatchers: ['smart watch', 'watch', 'keyboard', 'mouse', 'gadget'],
     accentVar:   '--bb-primary',
-    fallbackImg: smartTracker,
+    fallbackImg: proCollection,
     tint: 'rgba(168,32,255,0.06)',
   },
 ]
@@ -151,7 +151,7 @@ function CollectionBanner({ collection, imageUrl, isReversed, shouldReduceMotion
   const [hovered, setHovered] = useState(false)
   const [btnHovered, setBtnHovered] = useState(false)
 
-  const imgSrc = imageUrl || collection.fallbackImg
+  const imgSrc = collection.fallbackImg
 
   // Reveal animation values
   const translateY = visible ? '0px' : '48px'

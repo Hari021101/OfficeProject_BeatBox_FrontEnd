@@ -26,17 +26,17 @@ export default function ChartCard({ title, data, type = 'line', dataKey = 'value
       case 'line':
         return (
           <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--bb-border-light)" vertical={false} />
             <XAxis dataKey="name" stroke="var(--bb-muted)" fontSize={12} tickLine={false} axisLine={false} />
             <YAxis stroke="var(--bb-muted)" fontSize={12} tickLine={false} axisLine={false} />
             <Tooltip content={<CustomTooltip />} />
-            <Line type="monotone" dataKey={dataKey} stroke={colors[0]} strokeWidth={3} dot={{ r: 4, fill: colors[0], strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
+            <Line type="monotone" dataKey={dataKey} stroke={colors[0]} strokeWidth={3} dot={{ r: 4, fill: colors[0], strokeWidth: 2, stroke: 'var(--bb-surface-2)' }} activeDot={{ r: 6 }} />
           </LineChart>
         );
       case 'bar':
         return (
           <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--bb-border-light)" vertical={false} />
             <XAxis dataKey="name" stroke="var(--bb-muted)" fontSize={12} tickLine={false} axisLine={false} />
             <YAxis stroke="var(--bb-muted)" fontSize={12} tickLine={false} axisLine={false} />
             <Tooltip content={<CustomTooltip />} />
@@ -82,7 +82,7 @@ export default function ChartCard({ title, data, type = 'line', dataKey = 'value
   return (
     <div
       className="card border-0 h-100 p-4"
-      style={{ background: 'var(--bb-surface)', borderRadius: '16px', boxShadow: '0 8px 30px rgba(0,0,0,0.1)' }}
+      style={{ background: 'var(--bb-surface)', borderRadius: '16px', boxShadow: '0 8px 30px var(--bb-shadow)' }}
     >
       <h5 className="fw-bold text-theme-title mb-4">{title}</h5>
       <div style={{ width: '100%', height }}>

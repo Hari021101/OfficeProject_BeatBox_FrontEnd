@@ -61,7 +61,7 @@ export default function Inventory() {
             <input 
               type="number" 
               className="form-control form-control-sm premium-search-input text-center fw-bold" 
-              style={{ width: '80px', color: isOut ? '#ef4444' : isLow ? '#f59e0b' : 'var(--bb-text)' }}
+              style={{ width: '80px', color: isOut ? 'var(--bb-danger)' : isLow ? 'var(--bb-warning)' : 'var(--bb-text)' }}
               value={stock}
               onChange={(e) => handleStockChange(row.id, e.target.value)}
             />
@@ -116,20 +116,13 @@ export default function Inventory() {
         ))}
       </div>
 
-      {isLoading ? (
-        <div className="text-center py-5">
-          <div className="spinner-border text-info" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      ) : (
-        <DataTable 
-          columns={columns}
-          data={products}
-          searchPlaceholder="Search by Product Name or ID..."
-          searchableFields={['name', 'id']}
-        />
-      )}
+      <DataTable 
+        columns={columns}
+        data={products}
+        searchPlaceholder="Search by Product Name or ID..."
+        searchableFields={['name', 'id']}
+        loading={isLoading}
+      />
     </div>
   )
 }

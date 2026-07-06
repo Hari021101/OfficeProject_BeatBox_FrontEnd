@@ -56,7 +56,7 @@ const currentOldPrice =
     selectedColor?.code
 }))
     toast.success(`🎸 ${product.name} added to cart!`, {
-      style: { background: '#060b19', color: '#fff', border: '1px solid rgba(0,243,255,0.3)', borderRadius: '10px' }
+      style: { background: 'var(--bb-surface-2)', color: 'var(--bb-text)', border: '1px solid rgba(0,243,255,0.3)', borderRadius: '10px' }
     })
     setTimeout(() => setAdding(false), 600)
   }
@@ -73,7 +73,7 @@ const currentOldPrice =
     try {
       await dispatch(toggleWishlistItem(product.id)).unwrap();
       toast.success(isWishlisted ? 'Removed from wishlist' : '❤️ Added to wishlist!', {
-        style: { background: '#060b19', color: '#fff', border: '1px solid rgba(168,32,255,0.3)', borderRadius: '10px' }
+        style: { background: 'var(--bb-surface-2)', color: 'var(--bb-text)', border: '1px solid rgba(168,32,255,0.3)', borderRadius: '10px' }
       });
     } catch (err) {
       toast.error('Failed to update wishlist');
@@ -86,7 +86,13 @@ const currentOldPrice =
     dispatch(addToCompare(product))
   }
 
-  const img = selectedColor?.imageUrl || product.imageUrl || IMAGE_MAP[product.imageKey] || IMAGE_MAP['heroHeadphones']
+  const [isHovered, setIsHovered] = useState(false)
+  const selectedVariantObj = product.variants?.find(v => v.color === (selectedColor?.name || selectedColor?.color))
+  
+  const primaryImg = selectedColor?.imageUrl || product.imageUrl || IMAGE_MAP[product.imageKey] || IMAGE_MAP['heroHeadphones']
+  const hoverImg = selectedVariantObj?.images?.find(i => !i.isPrimary)?.imageUrl || product.images?.find(i => !i.isPrimary)?.imageUrl || selectedVariantObj?.images?.[1]?.imageUrl || product.images?.[1]?.imageUrl || null
+  
+  const img = (isHovered && hoverImg) ? hoverImg : primaryImg
   const discountedSavings = product.oldPrice - product.price
 
   return (
@@ -141,7 +147,11 @@ const currentOldPrice =
           </div>
 
           {/* Product image frame */}
-          <div className="product-card-frame">
+          <div 
+            className="product-card-frame"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             {img && img.includes('video') ? (
               <video src={img} autoPlay loop muted className="product-card-img" style={{ objectFit: 'contain' }} />
             ) : (
@@ -161,66 +171,69 @@ const currentOldPrice =
             {/* Brand seal */}
             <div
               className="position-absolute bottom-0 start-0 m-2 d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
-              style={{ background: 'var(--bb-surface)', backdropFilter: 'blur(8px)', border: '1px solid var(--bb-border)', zIndex: 5 }}
+              style={{ background: 'var(--bb-surface-2)', backdropFilter: 'blur(8px)', border: '1px solid var(--bb-border)', zIndex: 5 }}
             >
               <img src={logo} alt="BeatBox" style={{ width: 10, height: 10, objectFit: 'contain' }} />
-              <span style={{ fontSize: '0.55rem', fontWeight: 800, color: '#fff', letterSpacing: '0.5px' }}>BEATBOX</span>
+              <span style={{ fontSize: '0.55rem', fontWeight: 800, color: 'var(--bb-text)', letterSpacing: '0.5px' }}>BEATBOX</span>
             </div>
           </div>
 
-          {/* Gold USP ribbon */}
-          <div
-            className="d-flex align-items-center justify-content-between px-3 py-1"
-            style={{ background: 'linear-gradient(90deg,#ffc700,#ffb800)', color: '#000', fontSize: '0.7rem', fontWeight: 700 }}
-          >
-            <span className="text-uppercase" style={{ letterSpacing: '0.3px' }}>{product.usp}</span>
-            <span className="d-flex align-items-center gap-1 bg-white px-2 rounded-pill" style={{ fontSize: '0.65rem', color: '#000', fontWeight: 800, padding: '2px 8px' }}>
-             <Star size={9} fill="#000" />
+        {/* Gold USP ribbon */}
+        <div
+          className="d-flex align-items-center justify-content-between px-3 py-1"
+          style={{ background: 'linear-gradient(90deg,#ffc700,#ffb800)', color: '#000', fontSize: '0.7rem', fontWeight: 700 }}
+        >
+          <span className="text-uppercase" style={{ letterSpacing: '0.3px' }}>{product.usp}</span>
+          <span className="d-flex align-items-center gap-1 bg-white px-2 rounded-pill" style={{ fontSize: '0.65rem', color: '#000', fontWeight: 800, padding: '2px 8px' }}>
+           <Star size={9} fill="#000" />
 {Number(product.averageRating || product.rating || 0).toFixed(1)}
-            </span>
+          </span>
+        </div>
+
+        {/* Card body */}
+        <div className="product-card-body">
+          {/* Color swatches */}
+          <div className="d-flex gap-2 mb-2">
+            {(product.colors || []).map((clr, i) => (
+              <button
+                key={i}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); console.log("Clicked:", clr); setSelectedColor(clr) }}
+                className="btn p-0 rounded-circle border-0"
+                style={{
+                  width: 16, height: 16,
+                  background: clr.code,
+                  outline: selectedColor?.name === clr.name ? `2px solid white` : 'none',
+                  outlineOffset: 2,
+                  boxShadow: selectedColor?.name === clr.name ? `0 0 6px ${clr.code}` : 'none',
+                  transition: 'all 0.2s'
+                }}
+                title={clr.name}
+                aria-label={`Select ${clr.name}`}
+              />
+            ))}
           </div>
 
-          {/* Card body */}
-          <div className="product-card-body">
-            {/* Color swatches */}
-            <div className="d-flex gap-2 mb-2">
-              {(product.colors || []).map((clr, i) => (
-                <button
-                  key={i}
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); console.log("Clicked:", clr); setSelectedColor(clr) }}
-                  className="btn p-0 rounded-circle border-0"
-                  style={{
-                    width: 16, height: 16,
-                    background: clr.code,
-                    outline: selectedColor?.name === clr.name ? `2px solid white` : 'none',
-                    outlineOffset: 2,
-                    boxShadow: selectedColor?.name === clr.name ? `0 0 6px ${clr.code}` : 'none',
-                    transition: 'all 0.2s'
-                  }}
-                  title={clr.name}
-                  aria-label={`Select ${clr.name}`}
-                />
-              ))}
+          {/* Name & reviews */}
+          <h5 className="product-card-name text-theme-title" style={{ color: 'var(--bb-heading)' }}>{product.name}</h5>
+          <span className="d-block mb-2" style={{ fontSize: '0.75rem' }}>
+            <span style={{ color: 'var(--bb-warning)', fontWeight: 'bold' }}>⭐ {Number(product.averageRating || product.rating || 0).toFixed(1)}</span>
+            <span className="mx-1" style={{ color: 'var(--bb-text-muted)' }}>·</span>
+            <span style={{ color: 'var(--bb-text-muted)' }}>{product.reviewCount?.toLocaleString('en-IN') || 0} reviews</span>
+          </span>
+
+          {/* Price row */}
+          <div className="d-flex align-items-baseline justify-content-between mb-3">
+            <div>
+              <span className="fw-black fs-5" style={{ color: 'var(--bb-text)' }}>
+                ₹{currentPrice.toLocaleString('en-IN')}
+              </span>
+
+              <span className="text-decoration-line-through small ms-2" style={{ color: 'var(--bb-text-muted)' }}>
+                ₹{currentOldPrice.toLocaleString('en-IN')}
+              </span>
             </div>
-
-            {/* Name & reviews */}
-            <h5 className="product-card-name text-theme-title">{product.name}</h5>
-            <span className="text-theme-muted d-block mb-2" style={{ fontSize: '0.75rem' }}>
-              ⭐ {Number(product.averageRating || product.rating || 0).toFixed(1)} · {product.reviewCount?.toLocaleString('en-IN') || 0} reviews
-            </span>
-
-            {/* Price row */}
-            <div className="d-flex align-items-baseline justify-content-between mb-3">
-              <div>
-                <span className="fw-black fs-5 text-theme-title">
-  ₹{currentPrice.toLocaleString('en-IN')}
-</span>
-
-<span className="text-decoration-line-through text-theme-muted small ms-2">
- ₹{currentOldPrice.toLocaleString('en-IN')}
-</span>              </div>
-              <span className="text-success small fw-bold">{Math.max(product.discount, 0)}% OFF</span>
-            </div>
+            <span className="small fw-bold" style={{ color: 'var(--bb-success)' }}>{Math.max(product.discount, 0)}% OFF</span>
+          </div>
 
             {/* Add to cart */}
             <button

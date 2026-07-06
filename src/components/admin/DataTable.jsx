@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Search, ChevronLeft, ChevronRight, ArrowUpDown, LayoutList, Table2 } from 'lucide-react'
+import { Search, ChevronLeft, ChevronRight, ArrowUpDown, LayoutList, Table2, Inbox, Info } from 'lucide-react'
 
 export default function DataTable({
   columns,
@@ -11,7 +11,8 @@ export default function DataTable({
   filterSlot,
   selectable = false,
   onSelectionChange,
-  bulkActions = []
+  bulkActions = [],
+  loading = false
 }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' })
@@ -85,7 +86,7 @@ export default function DataTable({
   const dataCols = columns.filter(c => c.key !== 'actions')
 
   return (
-    <div className="card border-0" style={{ background: 'var(--bb-surface)', borderRadius: '16px', boxShadow: '0 8px 30px rgba(0,0,0,0.12)', overflow: 'hidden' }}>
+    <div className="card border-0" style={{ background: 'var(--bb-surface)', borderRadius: '16px', boxShadow: '0 8px 30px var(--bb-shadow)', overflow: 'hidden' }}>
 
       {/* ── Toolbar ─────────────────────────────────────────── */}
       <div className="p-3 p-md-4" style={{ borderBottom: '1px solid var(--bb-border)' }}>
@@ -157,9 +158,9 @@ export default function DataTable({
 
       {/* ── Bulk Action Banner ─────────────────────────────── */}
       {selectable && selectedRows.size > 0 && bulkActions.length > 0 && (
-        <div className="d-flex flex-wrap align-items-center gap-2 gap-md-3 px-3 px-md-4 py-2"
-          style={{ background: 'rgba(0, 243, 255, 0.08)', borderBottom: '1px solid rgba(0, 243, 255, 0.2)' }}>
-          <span className="text-theme-title fw-bold" style={{ fontSize: '0.875rem' }}>{selectedRows.size} selected</span>
+        <div className="d-flex flex-wrap align-items-center gap-2 gap-md-3 px-3 px-md-4 py-2 animate__animated animate__fadeIn"
+          style={{ background: 'var(--bb-accent-glow)', borderBottom: '1px solid rgba(0, 243, 255, 0.2)' }}>
+          <span className="text-theme-title fw-bold" style={{ fontSize: '0.875rem' }}>{selectedRows.size} Selected</span>
           <div className="d-flex flex-wrap gap-2 ms-auto">
             {bulkActions.map((action, idx) => (
               <button
@@ -179,8 +180,27 @@ export default function DataTable({
       {/* ── CARD VIEW (xs default, toggle on sm+) ─────────── */}
       {(viewMode === 'card') && (
         <div className="p-3 d-flex flex-column gap-3">
-          {paginatedData.length === 0 ? (
-            <p className="text-center text-theme-muted py-5 mb-0">No data found.</p>
+          {loading ? (
+            [...Array(3)].map((_, rIdx) => (
+              <div key={rIdx} className="p-3 rounded-4" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
+                <div className="d-flex flex-column gap-2">
+                  {dataCols.slice(0, 3).map((_, cIdx) => (
+                    <div key={cIdx} className="d-flex align-items-center gap-2">
+                      <div className="skeleton-pulse rounded" style={{ width: '80px', height: '14px' }} />
+                      <div className="skeleton-pulse rounded" style={{ width: cIdx === 0 ? '140px' : '100px', height: '14px' }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))
+          ) : paginatedData.length === 0 ? (
+            <div className="text-center py-5">
+              <div className="d-flex flex-column align-items-center gap-2 py-4">
+                <Inbox size={48} className="text-theme-muted mb-2 opacity-50" />
+                <h6 className="fw-bold text-theme-title mb-0">No Records Found</h6>
+                <p className="text-theme-muted small mb-0">There are no records matches in this criteria.</p>
+              </div>
+            </div>
           ) : (
             paginatedData.map((row, rowIdx) => (
               <div
@@ -218,9 +238,9 @@ export default function DataTable({
 
       {/* ── TABLE VIEW ─────────────────────────────────────── */}
       {viewMode === 'table' && (
-        <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+        <div className="table-responsive" style={{ maxHeight: '550px', overflowX: 'auto', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
           <table className="table table-borderless align-middle mb-0 text-theme-text" style={{ minWidth: '540px' }}>
-            <thead style={{ borderBottom: '1px solid var(--bb-border)', background: 'var(--bb-surface-2)' }}>
+            <thead style={{ borderBottom: '1px solid var(--bb-border)', position: 'sticky', top: 0, zIndex: 10, background: 'var(--bb-surface-2)' }}>
               <tr>
                 {selectable && (
                   <th style={{ width: '44px', paddingLeft: '16px', paddingRight: '8px' }} className="py-3">
@@ -243,7 +263,7 @@ export default function DataTable({
                     <div className="d-flex align-items-center gap-1">
                       {col.label}
                       {col.sortable && (
-                        <ArrowUpDown size={12} style={{ opacity: sortConfig.key === col.key ? 1 : 0.3, flexShrink: 0 }} />
+                        <ArrowUpDown size={12} style={{ opacity: sortConfig.key === col.key ? 1 : 0.3, flexShrink: 0, transition: 'opacity 0.2s' }} />
                       )}
                     </div>
                   </th>
@@ -256,20 +276,41 @@ export default function DataTable({
               </tr>
             </thead>
             <tbody>
-              {paginatedData.length === 0 ? (
+              {loading ? (
+                [...Array(5)].map((_, rIdx) => (
+                  <tr key={rIdx} style={{ borderBottom: '1px solid var(--bb-border-light)' }}>
+                    {selectable && <td className="py-3" style={{ paddingLeft: '16px', paddingRight: '8px' }}><div className="skeleton-pulse rounded" style={{ width: '18px', height: '18px' }} /></td>}
+                    {dataCols.map((col, cIdx) => (
+                      <td key={cIdx} className="py-3">
+                        <div className="skeleton-pulse rounded" style={{ width: cIdx === 0 ? '120px' : '80px', height: '16px' }} />
+                      </td>
+                    ))}
+                    {actionCol && (
+                      <td className="py-3 pe-3" style={{ position: 'sticky', right: 0, background: 'var(--bb-surface)', zIndex: 1 }}>
+                        <div className="skeleton-pulse rounded" style={{ width: '60px', height: '16px', marginLeft: 'auto' }} />
+                      </td>
+                    )}
+                  </tr>
+                ))
+              ) : paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={selectable ? columns.length + 1 : columns.length} className="text-center py-5 text-theme-muted">
-                    No data found.
+                  <td colSpan={selectable ? dataCols.length + (actionCol ? 2 : 1) : dataCols.length + (actionCol ? 1 : 0)} className="text-center py-5">
+                    <div className="d-flex flex-column align-items-center gap-2 py-4">
+                      <Inbox size={48} className="text-theme-muted mb-2 opacity-50" />
+                      <h6 className="fw-bold text-theme-title mb-0">No Records Found</h6>
+                      <p className="text-theme-muted small mb-0">There are no records matches in this criteria.</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 paginatedData.map((row, rowIdx) => (
                   <tr
                     key={row.id || rowIdx}
+                    className="table-row-hover"
                     style={{
                       borderBottom: '1px solid rgba(255,255,255,0.04)',
                       background: selectedRows.has(row.id) ? 'rgba(0, 243, 255, 0.03)' : 'transparent',
-                      transition: 'background 0.15s'
+                      transition: 'background-color 0.25s'
                     }}
                   >
                     {selectable && (
@@ -309,11 +350,11 @@ export default function DataTable({
       )}
 
       {/* ── Pagination ─────────────────────────────────────── */}
-      {totalPages > 1 && (
+      {!loading && totalPages > 1 && (
         <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 px-3 px-md-4 py-3"
           style={{ borderTop: '1px solid var(--bb-border)' }}>
           <span className="text-theme-muted fw-bold" style={{ fontSize: '0.8rem' }}>
-            {((currentPage - 1) * itemsPerPage) + 1}–{Math.min(currentPage * itemsPerPage, sortedData.length)} of {sortedData.length}
+            Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, sortedData.length)} of {sortedData.length} entries
           </span>
           <div className="d-flex align-items-center gap-1">
             <button

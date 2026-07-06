@@ -157,3 +157,24 @@ const authSlice = createSlice({
 
 export const { resetState, logout, setOtpStep, clearOtpState, setAuthFromOtp } = authSlice.actions;
 export default authSlice.reducer;
+
+// ─── Selectors ────────────────────────────────────────────────────────────────
+export const selectUser = (state) => state.auth.user;
+export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
+
+/** Decodes the JWT stored in localStorage to extract the ASP.NET Identity userId (sub or nameidentifier claim). */
+export const selectUserId = () => {
+  const token = localStorage.getItem('bb_token');
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    // ASP.NET Core Identity stores userId in 'sub' or the nameidentifier claim
+    return payload['nameid'] ||
+      payload['sub'] ||
+      payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] ||
+      null;
+  } catch {
+    return null;
+  }
+};
+

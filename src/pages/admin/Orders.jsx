@@ -7,11 +7,11 @@ import { useSelector } from 'react-redux'
 import DataTable from '../../components/admin/DataTable'
 
 const STATUS_CONFIG = {
-  Pending:    { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', icon: Clock },
-  Processing: { color: '#a820ff', bg: 'rgba(168,32,255,0.1)', icon: Package },
-  Shipped:    { color: '#00f3ff', bg: 'rgba(0,243,255,0.1)',  icon: Truck },
-  Delivered:  { color: '#39ff14', bg: 'rgba(57,255,20,0.08)', icon: CheckCircle },
-  Cancelled:  { color: '#ef4444', bg: 'rgba(239,68,68,0.08)', icon: XCircle },
+  Pending:    { className: 'bb-badge-warning', icon: Clock },
+  Processing: { className: 'bb-badge-info', icon: Package },
+  Shipped:    { className: 'bb-badge-info', icon: Truck },
+  Delivered:  { className: 'bb-badge-success', icon: CheckCircle },
+  Cancelled:  { className: 'bb-badge-danger', icon: XCircle },
 }
 
 export default function Orders() {
@@ -48,12 +48,11 @@ export default function Orders() {
       setUpdatingId(orderId)
       await orderService.updateOrderStatus(orderId, newStatus)
       toast.success(`Order #${orderId.toString().substring(0, 8)} status updated to ${newStatus}`)
-      
-      setOrders(prev => prev.map(o => 
-        o.orderId === orderId ? { ...o, status: newStatus } : o
-      ))
+      toast.success('Order status updated successfully')
+      fetchOrders()
     } catch (err) {
-      toast.error('Failed to update status')
+      toast.error('Failed to update order status')
+      console.error(err)
     } finally {
       setUpdatingId(null)
     }
@@ -91,7 +90,7 @@ export default function Orders() {
   ]
 
   const columns = [
-    { key: 'orderId', label: 'Order ID', sortable: true, render: (row) => <span className="fw-bold text-theme-title">#{row.orderId.toString().substring(0, 8)}...</span> },
+    { key: 'orderId', label: 'Order ID', sortable: true, render: (row) => <span className="fw-bold text-theme-title" style={{ fontSize: '0.9rem' }}>#{row.orderId}</span> },
     { key: 'userId', label: 'Customer', sortable: true, render: (row) => <span className="d-inline-block text-truncate text-theme-muted" style={{ maxWidth: '120px', fontSize: '0.9rem' }}>{row.userId}</span> },
     { key: 'createdDate', label: 'Date', sortable: true, render: (row) => <span className="text-theme-muted" style={{ fontSize: '0.9rem' }}>{new Date(row.createdDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span> },
     { key: 'totalAmount', label: 'Amount', sortable: true, render: (row) => <span className="fw-black text-theme-title">₹{Number(row.totalAmount || 0).toLocaleString('en-IN')}</span> },
@@ -99,16 +98,7 @@ export default function Orders() {
       const config = STATUS_CONFIG[row.status] || STATUS_CONFIG.Pending
       const Icon = config.icon
       return (
-        <span 
-          className="badge rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2"
-          style={{ 
-            background: config.bg, 
-            color: config.color, 
-            border: `1px solid currentColor`,
-            fontWeight: 'bold',
-            fontSize: '0.75rem'
-          }}
-        >
+        <span className={config.className}>
           <Icon size={14} /> {row.status}
         </span>
       )
@@ -137,22 +127,15 @@ export default function Orders() {
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="text-center py-5">
-          <div className="spinner-border text-info" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      ) : (
-        <DataTable 
-          columns={columns}
-          data={orders}
-          searchPlaceholder="Search by Order ID, Customer, or Status..."
-          searchableFields={['orderId', 'userId', 'status']}
-          selectable={true}
-          bulkActions={bulkActions}
-        />
-      )}
+      <DataTable 
+        columns={columns}
+        data={orders}
+        searchPlaceholder="Search by Order ID, Customer, or Status..."
+        searchableFields={['orderId', 'userId', 'status']}
+        selectable={true}
+        bulkActions={bulkActions}
+        loading={isLoading}
+      />
     </div>
   )
 }

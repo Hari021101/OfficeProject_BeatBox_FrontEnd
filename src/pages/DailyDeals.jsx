@@ -1,16 +1,18 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  Zap, Clock, Sparkles, Star, ShoppingBag, Lock, 
+  Zap, Clock, Star, ShoppingBag, Lock, 
   Copy, Check, Percent, ArrowUpDown, ChevronDown, 
-  AlertCircle, ShieldCheck, RefreshCw, Flame, Award
+  ShieldCheck, RefreshCw, Flame, Filter, SlidersHorizontal
 } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectAllProducts, selectProductStatus, fetchProducts } from '../redux/productSlice'
 import { addToCart } from '../redux/cartSlice'
+import { productService } from '../services/productService'
 import { IMAGE_MAP } from '../data/products'
 import { toast } from 'react-hot-toast'
+import ProductCard from '../components/ui/ProductCard'
 import RecentlyViewed from '../components/ui/RecentlyViewed'
 import logo from '../assets/beatbox_logo.png'
 
@@ -20,6 +22,11 @@ export default function DailyDeals() {
   const allProducts = useSelector(selectAllProducts)
   const productStatus = useSelector(selectProductStatus)
 
+  // SEO Page Title
+  useEffect(() => {
+    document.title = '⚡ BeatBox Lightning Deals | Premium Audio & Gear'
+  }, [])
+
   // Fetch products if not already loaded
   useEffect(() => {
     if (productStatus === 'idle') {
@@ -27,19 +34,41 @@ export default function DailyDeals() {
     }
   }, [productStatus, dispatch])
 
-  // SEO Page Title
-  useEffect(() => {
-    document.title = '⚡ BeatBox Lightning Deals | Premium Audio & Gear'
-  }, [])
-
   // --- STATE VARIABLES ---
   const [activeCategory, setActiveCategory] = useState('all')
-  const [activeDiscountFilter, setActiveDiscountFilter] = useState('all') // 'all', '70+', '60-69', 'under-1499'
+  const [activeBrand, setActiveBrand] = useState('all')
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 25000 })
+  const [minDiscount, setMinDiscount] = useState(0)
+  const [onlyInStock, setOnlyInStock] = useState(false)
   const [activeSort, setActiveSort] = useState('discount_desc')
-  const [copiedCode, setCopiedCode] = useState(null)
   const [activeTab, setActiveTab] = useState('live') // 'live' or 'upcoming'
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
 
-  // Countdown timer state (counts down to midnight)
+  // Coupons state from database
+  const [coupons, setCoupons] = useState([])
+  const [loadingCoupons, setLoadingCoupons] = useState(true)
+  const [copiedCode, setCopiedCode] = useState(null)
+
+  // Hero selected color variant
+  const [heroSelectedColor, setHeroSelectedColor] = useState(null)
+
+  // Fetch active coupons
+  useEffect(() => {
+    const loadCoupons = async () => {
+      try {
+        const activeCoupons = await productService.getActiveCoupons()
+        setCoupons(activeCoupons || [])
+      } catch (err) {
+        console.error('Error fetching coupons from backend:', err)
+        setCoupons([])
+      } finally {
+        setLoadingCoupons(false)
+      }
+    }
+    loadCoupons()
+  }, [])
+
+  // Countdown timer state (expires at 11:59 PM today)
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 })
 
   useEffect(() => {
@@ -61,87 +90,198 @@ export default function DailyDeals() {
     return () => clearInterval(interval)
   }, [])
 
-  // --- FLASH DEALS SEED (SIMULATED CLAIMED PERCENTAGE) ---
-  // We'll generate persistent pseudo-random claimed percentages based on product ID
-  const getClaimedPercentage = (id) => {
-    const seededRandom = ((id * 9301 + 49297) % 233280) / 233280
-    return Math.floor(seededRandom * 40) + 50 // between 50% and 90%
-  }
+  // --- HERO DEAL CALCULATION ---
+  // Priority: IsFeatured -> Highest Discount -> Highest Rating -> Random stable fallback
+  const heroDeal = useMemo(() => {
+    if (!allProducts || allProducts.length === 0) return null
+    const sorted = [...allProducts].sort((a, b) => {
+      // 1. IsFeatured
+      const featA = a.isFeatured ? 1 : 0
+      const featB = b.isFeatured ? 1 : 0
+      if (featA !== featB) return featB - featA
 
-  // --- FILTER & SORT LOGIC ---
-  const dealProducts = useMemo(() => {
-    // We only showcase high-discount items on the Daily Deals page
-    let list = allProducts.filter(p => p.discount >= 45)
+      // 2. Highest Discount
+      const discA = a.discount || 0
+      const discB = b.discount || 0
+      if (discA !== discB) return discB - discA
+
+      // 3. Highest Rating
+      const ratA = a.averageRating || a.rating || 0
+      const ratB = b.averageRating || b.rating || 0
+      if (ratA !== ratB) return ratB - ratA
+
+      // 4. Fallback ID
+      return a.id - b.id
+    })
+    return sorted[0]
+  }, [allProducts])
+
+  // Set default color for hero when heroDeal loads
+  useEffect(() => {
+    if (heroDeal) {
+      if (heroDeal.colors && heroDeal.colors.length > 0) {
+        setHeroSelectedColor(heroDeal.colors[0])
+      } else {
+        setHeroSelectedColor(null)
+      }
+    }
+  }, [heroDeal])
+
+  // Resolve active variant details for Hero Deal
+  const heroDetails = useMemo(() => {
+    if (!heroDeal) return null
+
+    const colorObj = heroSelectedColor || heroDeal.colors?.[0] || null
+    const variants = heroDeal.variants || []
+    
+    // Find matching variant
+    const variant = variants.find(v => v.color === (colorObj?.name || colorObj?.color || '')) || variants[0] || null
+
+    // Image resolution: Variant Primary Image -> Fallback: First Variant Image -> Product Default Image -> Logo Placeholder
+    let imgUrl = null
+    if (variant && variant.images && variant.images.length > 0) {
+      const primaryImg = variant.images.find(img => img.isPrimary)
+      imgUrl = primaryImg ? primaryImg.imageUrl : variant.images[0].imageUrl
+    }
+
+    if (!imgUrl) {
+      imgUrl = colorObj?.imageUrl || heroDeal.imageUrl || IMAGE_MAP[heroDeal.imageKey] || logo
+    }
+
+    const originalPrice = variant ? variant.price : heroDeal.oldPrice
+    const salePrice = variant ? (variant.discountPrice ?? variant.price) : heroDeal.price
+    const stock = variant ? variant.stockQuantity : heroDeal.stockQuantity
+    const discount = originalPrice > salePrice ? Math.round(((originalPrice - salePrice) / originalPrice) * 100) : 0
+
+    return {
+      colorObj,
+      variant,
+      imgUrl,
+      originalPrice,
+      salePrice,
+      stock,
+      discount
+    }
+  }, [heroDeal, heroSelectedColor])
+
+  // --- TOP DEALS (6-10 products) ---
+  // Ordered by Highest Discount or Featured
+  const topDealsList = useMemo(() => {
+    if (!allProducts || allProducts.length === 0) return []
+    const sorted = [...allProducts].sort((a, b) => {
+      const featA = a.isFeatured ? 1 : 0
+      const featB = b.isFeatured ? 1 : 0
+      if (featA !== featB) return featB - featA
+      return (b.discount || 0) - (a.discount || 0)
+    })
+    return sorted.slice(0, 10)
+  }, [allProducts])
+
+  // --- UPCOMING LOCKED DROPS (FOMO) ---
+  const upcomingDeals = useMemo(() => {
+    // Select products with moderate discounts
+    return allProducts
+      .filter(p => p.discount > 0 && p.discount < 50)
+      .slice(4, 10)
+  }, [allProducts])
+
+  // --- DYNAMIC FILTER OPTIONS ---
+  const uniqueCategories = useMemo(() => {
+    const cats = allProducts.map(p => p.categoryName || p.category).filter(Boolean)
+    return ['all', ...new Set(cats)]
+  }, [allProducts])
+
+  const uniqueBrands = useMemo(() => {
+    const brands = allProducts.map(p => p.brand).filter(Boolean)
+    return ['all', ...new Set(brands)]
+  }, [allProducts])
+
+  const maxPriceLimit = useMemo(() => {
+    if (!allProducts || allProducts.length === 0) return 25000
+    return Math.max(...allProducts.map(p => p.price || 0), 25000)
+  }, [allProducts])
+
+  // Set the priceRange max limit once products load
+  useEffect(() => {
+    if (allProducts.length > 0) {
+      setPriceRange(prev => ({ ...prev, max: maxPriceLimit }))
+    }
+  }, [maxPriceLimit, allProducts.length])
+
+  // --- FILTER & SORT PIPELINE FOR GRID ---
+  const filteredLiveProducts = useMemo(() => {
+    let result = [...allProducts]
 
     // Category Filter
     if (activeCategory !== 'all') {
-      const targetCat = activeCategory.toLowerCase()
-      list = list.filter(p => p.category && p.category.toLowerCase().includes(targetCat))
+      result = result.filter(p => (p.categoryName || p.category || '').toLowerCase() === activeCategory.toLowerCase())
     }
 
-    // Discount / Price level Filter
-    if (activeDiscountFilter === '70+') {
-      list = list.filter(p => p.discount >= 70)
-    } else if (activeDiscountFilter === '60-69') {
-      list = list.filter(p => p.discount >= 60 && p.discount < 70)
-    } else if (activeDiscountFilter === 'under-1499') {
-      list = list.filter(p => p.price < 1499)
+    // Brand Filter
+    if (activeBrand !== 'all') {
+      result = result.filter(p => (p.brand || '').toLowerCase() === activeBrand.toLowerCase())
     }
 
-    // Sort
+    // Price Range Filter
+    result = result.filter(p => p.price >= priceRange.min && p.price <= priceRange.max)
+
+    // Discount Filter
+    if (minDiscount > 0) {
+      result = result.filter(p => p.discount >= minDiscount)
+    }
+
+    // Availability Filter
+    if (onlyInStock) {
+      result = result.filter(p => p.inStock)
+    }
+
+    // Sorting
     switch (activeSort) {
-      case 'price_asc':
-        list.sort((a, b) => a.price - b.price)
-        break
-      case 'price_desc':
-        list.sort((a, b) => b.price - a.price)
-        break
-      case 'rating_desc':
-        list.sort((a, b) => b.rating - a.rating)
+      case 'newest':
+        result.sort((a, b) => b.id - a.id)
         break
       case 'discount_desc':
+        result.sort((a, b) => (b.discount || 0) - (a.discount || 0))
+        break
+      case 'popularity':
+        result.sort((a, b) => (b.soldCount || 0) - (a.soldCount || 0))
+        break
+      case 'price_asc':
+        result.sort((a, b) => a.price - b.price)
+        break
+      case 'price_desc':
+        result.sort((a, b) => b.price - a.price)
+        break
+      case 'rating_desc':
+        result.sort((a, b) => (b.averageRating || b.rating || 0) - (a.averageRating || a.rating || 0))
+        break
       default:
-        list.sort((a, b) => b.discount - a.discount)
         break
     }
 
-    return list
-  }, [allProducts, activeCategory, activeDiscountFilter, activeSort])
-
-  // --- UPCOMING DEALS SEED (FOMO) ---
-  const upcomingDeals = useMemo(() => {
-    // Select some products to show as "upcoming" locked deals
-    return allProducts
-      .filter(p => p.discount > 40 && p.discount < 60)
-      .slice(5, 9)
-  }, [allProducts])
-
-  // --- HERO LIGHTNING DEAL ---
-  // Select the single biggest discount product as today's Mega Deal
-  const heroDeal = useMemo(() => {
-    if (allProducts.length === 0) return null
-    return [...allProducts].sort((a, b) => b.discount - a.discount)[0]
-  }, [allProducts])
+    return result
+  }, [allProducts, activeCategory, activeBrand, priceRange, minDiscount, onlyInStock, activeSort])
 
   // --- HANDLERS ---
-  const handleAddToCart = (product, e) => {
+  const handleHeroAddToCart = (e) => {
     if (e) {
       e.preventDefault()
       e.stopPropagation()
     }
-    
+    if (!heroDeal || !heroDetails) return
+
     dispatch(addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      imageKey: product.imageKey,
-      selectedColor: product.colors?.[0]?.name || 'Default',
-      selectedColorCode: product.colors?.[0]?.code || '#111111',
-      category: product.category,
-      imageUrl: product.imageUrl,
+      id: heroDeal.id,
+      variantId: heroDetails.variant?.id,
+      name: heroDeal.name,
+      price: heroDetails.salePrice,
+      imageUrl: heroDetails.imgUrl,
+      selectedColor: heroDetails.colorObj?.name || heroDetails.colorObj?.color || 'Default',
+      selectedColorCode: heroDetails.colorObj?.code || heroDetails.colorObj?.colorCode || '#111111',
+      category: heroDeal.category,
     }))
-    
-    toast.success(`⚡ claimed! ${product.name} added to cart!`, {
+
+    toast.success(`⚡ Claimed! ${heroDeal.name} (${heroDetails.colorObj?.name || 'Default'}) added to cart!`, {
       style: { 
         background: '#060b19', 
         color: '#fff', 
@@ -167,32 +307,34 @@ export default function DailyDeals() {
   }
 
   return (
-    <div className="w-100 min-vh-100 position-relative pb-5" style={{ backgroundColor: 'var(--bb-bg-navy)', overflowX: 'hidden' }}>
+    <div className="w-100 min-vh-100 position-relative pb-5" style={{ backgroundColor: 'var(--bb-bg-navy)', overflowX: 'hidden', paddingTop: '80px' }}>
       
       {/* Background neon glows */}
       <div className="bg-glow-orb" style={{ width: '500px', height: '500px', background: 'var(--bb-primary-glow)', top: '5%', left: '-15%', filter: 'blur(130px)', pointerEvents: 'none' }}></div>
       <div className="bg-glow-orb" style={{ width: '600px', height: '600px', background: 'var(--bb-accent-glow)', top: '40%', right: '-15%', filter: 'blur(150px)', pointerEvents: 'none' }}></div>
 
       {/* ── TOP ANNOUNCEMENT BAR ────────────────── */}
-      <div 
-        className="d-flex align-items-center justify-content-center text-center px-3"
-        style={{
-          background: 'linear-gradient(90deg, #ef4444, #f97316, #ef4444)',
-          backgroundSize: '200% 200%',
-          animation: 'gradientBG 4s linear infinite',
-          height: '38px',
-          fontSize: '0.85rem',
-          fontWeight: '800',
-          color: '#ffffff',
-          letterSpacing: '1px',
-          textTransform: 'uppercase',
-          zIndex: 100
-        }}
-      >
-        <span className="d-flex align-items-center gap-2">
-          🔥 Lightning Loot: Extra 10% Off with Code "DEAL10" at checkout! 🔥
-        </span>
-      </div>
+      {coupons.length > 0 && (
+        <div 
+          className="d-flex align-items-center justify-content-center text-center px-3"
+          style={{
+            background: 'linear-gradient(90deg, #ef4444, #f97316, #ef4444)',
+            backgroundSize: '200% 200%',
+            animation: 'gradientBG 4s linear infinite',
+            height: '38px',
+            fontSize: '0.85rem',
+            fontWeight: '800',
+            color: '#ffffff',
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+            zIndex: 100
+          }}
+        >
+          <span className="d-flex align-items-center gap-2">
+            🔥 Lightning Loot: Apply code "{coupons[0].code}" at checkout for extra savings! 🔥
+          </span>
+        </div>
+      )}
 
       <div className="container-fluid px-3 px-lg-5 pt-4">
         
@@ -221,7 +363,7 @@ export default function DailyDeals() {
         </div>
 
         {/* ── HERO BANNER: TODAY'S MEGA DEAL ──────────────── */}
-        {heroDeal && (
+        {heroDeal && heroDetails && (
           <section className="mb-5">
             <motion.div 
               initial={{ opacity: 0, scale: 0.98 }}
@@ -240,19 +382,24 @@ export default function DailyDeals() {
                 
                 {/* Left Side: Product Image with Floating effect */}
                 <div className="col-12 col-md-5 d-flex justify-content-center align-items-center position-relative">
-                  <div className="hero-deal-badge">
-                    <Flame size={16} fill="currentColor" /> {heroDeal.discount}% OFF
-                  </div>
+                  {heroDetails.discount > 0 && (
+                    <div className="hero-deal-badge">
+                      <Flame size={16} fill="currentColor" /> {heroDetails.discount}% OFF
+                    </div>
+                  )}
                   <img 
-                    src={IMAGE_MAP[heroDeal.imageKey] || heroDeal.image} 
+                    src={heroDetails.imgUrl} 
                     alt={heroDeal.name} 
                     className="img-fluid hero-float"
+                    onClick={() => navigate(`/products/${heroDeal.id}`)}
                     style={{ 
                       maxHeight: '340px', 
                       objectFit: 'contain',
-                      filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.6)) drop-shadow(0 0 25px rgba(239, 68, 68, 0.25))'
+                      cursor: 'pointer',
+                      filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.6)) drop-shadow(0 0 25px rgba(239, 68, 68, 0.25))',
+                      transition: 'all 0.3s ease'
                     }}
-                    onError={(e) => { e.target.src = IMAGE_MAP.heroHeadphones }}
+                    onError={(e) => { e.target.src = logo }}
                   />
                   {/* Cyber Grid Circles */}
                   <div className="position-absolute rounded-circle border border-danger border-opacity-10" style={{ width: '380px', height: '380px', zIndex: -1, animation: 'spin 40s linear infinite' }}></div>
@@ -268,19 +415,70 @@ export default function DailyDeals() {
                       ⚡ DEAL OF THE DAY
                     </span>
                     <span className="text-theme-muted small fw-bold d-flex align-items-center gap-1">
-                      <Star size={14} className="text-warning fill-warning" /> {heroDeal.rating} | {heroDeal.reviewCount} Reviews
+                      <Star size={14} className="text-warning fill-warning" /> {Number(heroDeal.averageRating || heroDeal.rating || 0).toFixed(1)} | {heroDeal.reviewCount} Reviews
                     </span>
                   </div>
 
-                  <h2 className="fw-black text-theme-title display-6 mb-2" style={{ letterSpacing: '-1.5px' }}>{heroDeal.name}</h2>
+                  <h2 
+                    className="fw-black text-theme-title display-6 mb-2 cursor-pointer hover-text-accent" 
+                    style={{ letterSpacing: '-1.5px', cursor: 'pointer' }}
+                    onClick={() => navigate(`/products/${heroDeal.id}`)}
+                  >
+                    {heroDeal.name}
+                  </h2>
                   <h5 className="text-danger fw-extrabold mb-4">{heroDeal.usp}</h5>
                   <p className="text-theme-muted small mb-4" style={{ lineHeight: 1.6, maxWidth: '580px' }}>
-                    {heroDeal.description || 'Elevate your gaming and acoustic experience with our industry-leading audio response technology. Designed with soft protein ear cushions, deep sub-woofers, and ultra-high-definition audio components.'}
+                    {heroDeal.description}
                   </p>
+
+                  {/* Quantity Claimed progress bar (Pseudo-live indicator based on ID) */}
+                  <div className="mb-4" style={{ maxWidth: '380px' }}>
+                    <div className="d-flex justify-content-between mb-1 small fw-bold">
+                      <span className="text-danger">🔥 Stock Availability</span>
+                      <span className={heroDetails.stock > 0 ? "text-success" : "text-danger"}>
+                        {heroDetails.stock > 0 ? `${heroDetails.stock} units left in stock` : 'Out of Stock'}
+                      </span>
+                    </div>
+                    <div className="progress" style={{ height: '8px', background: 'rgba(255,255,255,0.06)', borderRadius: '50px', overflow: 'hidden' }}>
+                      <div 
+                        className={`progress-bar progress-bar-striped progress-bar-animated ${heroDetails.stock > 10 ? 'bg-success' : 'bg-danger'}`}
+                        role="progressbar" 
+                        style={{ width: `${Math.min(100, (heroDetails.stock / 50) * 100)}%` }} 
+                        aria-valuenow={heroDetails.stock} 
+                        aria-valuemin="0" 
+                        aria-valuemax="50"
+                      ></div>
+                    </div>
+                  </div>
+
+                  {/* Variant Selection */}
+                  {heroDeal.colors && heroDeal.colors.length > 0 && (
+                    <div className="mb-4">
+                      <span className="small text-theme-muted d-block mb-2 fw-bold uppercase-label">Select Color Variant:</span>
+                      <div className="d-flex gap-2">
+                        {heroDeal.colors.map((clr, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setHeroSelectedColor(clr)}
+                            className="btn p-0 rounded-circle border-0 transition-all"
+                            style={{
+                              width: 28, height: 28,
+                              background: clr.code || clr.colorCode,
+                              outline: (heroDetails.colorObj?.name === clr.name || heroDetails.colorObj?.color === clr.color) ? `2px solid white` : 'none',
+                              outlineOffset: 2,
+                              boxShadow: (heroDetails.colorObj?.name === clr.name || heroDetails.colorObj?.color === clr.color) ? `0 0 10px ${clr.code || clr.colorCode}` : 'none'
+                            }}
+                            title={clr.name}
+                            aria-label={`Select ${clr.name}`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Countdown Ticker */}
                   <div className="mb-4">
-                    <span className="small text-theme-muted d-block mb-2 fw-bold uppercase-label">LIGHTNING DEAL ENDS IN:</span>
+                    <span className="small text-theme-muted d-block mb-2 fw-bold uppercase-label">⚡ Today's Deal | Expires at 11:59 PM:</span>
                     <div className="d-flex align-items-center gap-2">
                       <div className="timer-box">
                         <span className="d-block timer-number">{String(timeLeft.hours).padStart(2, '0')}</span>
@@ -299,40 +497,27 @@ export default function DailyDeals() {
                     </div>
                   </div>
 
-                  {/* Quantity Claimed progress bar */}
-                  <div className="mb-4" style={{ maxWidth: '380px' }}>
-                    <div className="d-flex justify-content-between mb-1 small fw-bold">
-                      <span className="text-danger">🔥 {getClaimedPercentage(heroDeal.id)}% Claimed</span>
-                      <span className="text-theme-muted">Only a few left in stock!</span>
-                    </div>
-                    <div className="progress" style={{ height: '8px', background: 'rgba(255,255,255,0.06)', borderRadius: '50px', overflow: 'hidden' }}>
-                      <div 
-                        className="progress-bar progress-bar-striped progress-bar-animated bg-danger" 
-                        role="progressbar" 
-                        style={{ width: `${getClaimedPercentage(heroDeal.id)}%` }} 
-                        aria-valuenow={getClaimedPercentage(heroDeal.id)} 
-                        aria-valuemin="0" 
-                        aria-valuemax="100"
-                      ></div>
-                    </div>
-                  </div>
-
                   {/* Pricing and Action */}
                   <div className="d-flex flex-wrap align-items-center gap-4 pt-2">
                     <div>
                       <div className="d-flex align-items-baseline gap-2">
-                        <span className="fs-2 fw-black text-theme-title">₹{heroDeal.price.toLocaleString('en-IN')}</span>
-                        <span className="text-decoration-line-through text-theme-muted fs-5">₹{heroDeal.oldPrice.toLocaleString('en-IN')}</span>
+                        <span className="fs-2 fw-black text-theme-title">₹{heroDetails.salePrice.toLocaleString('en-IN')}</span>
+                        <span className="text-decoration-line-through text-theme-muted fs-5">₹{heroDetails.originalPrice.toLocaleString('en-IN')}</span>
                       </div>
-                      <span className="text-success small fw-extrabold">Save ₹{(heroDeal.oldPrice - heroDeal.price).toLocaleString('en-IN')} (Free Delivery Included)</span>
+                      {heroDetails.originalPrice > heroDetails.salePrice && (
+                        <span className="text-success small fw-extrabold d-block">
+                          Save ₹{(heroDetails.originalPrice - heroDetails.salePrice).toLocaleString('en-IN')} (Free Delivery Included)
+                        </span>
+                      )}
                     </div>
 
                     <button 
-                      onClick={() => handleAddToCart(heroDeal)}
+                      onClick={handleHeroAddToCart}
+                      disabled={heroDetails.stock <= 0}
                       className="btn btn-danger-glow py-3 px-5 fw-bold d-flex align-items-center gap-2 hover-scale"
                       style={{ borderRadius: '12px', height: '55px' }}
                     >
-                      <ShoppingBag size={18} /> Claim Deal Now
+                      <ShoppingBag size={18} /> {heroDetails.stock > 0 ? 'Claim Deal Now' : 'Out Of Stock'}
                     </button>
                   </div>
 
@@ -344,50 +529,70 @@ export default function DailyDeals() {
         )}
 
         {/* ── DEALS COUPONS SECTION ────────────────── */}
-        <section className="mb-5">
-          <div className="text-center mb-4">
-            <h4 className="fw-black text-theme-title mb-1">Exclusive Coupon Codes</h4>
-            <p className="text-theme-muted small">Click any coupon below to copy and apply at checkout for extra savings!</p>
-          </div>
-          
-          <div className="row g-3 row-cols-1 row-cols-md-3">
-            {[
-              { code: 'DEAL10', value: 'EXTRA 10% OFF', desc: 'Valid on all Daily Deal products', badge: 'DEAL MAJESTIC' },
-              { code: 'BEATVIP', value: 'EXTRA 15% OFF', desc: 'Valid on orders above ₹3,000', badge: 'HIGH ROLLER' },
-              { code: 'FREESHIP', value: 'FREE EXPRESS SHIPPING', desc: 'No minimum order required today', badge: 'FAST & FREE' }
-            ].map((coupon, idx) => (
-              <div key={idx} className="col">
-                <div 
-                  className="coupon-card h-100 position-relative p-4 rounded-4"
-                  onClick={() => copyCouponCode(coupon.code)}
-                  style={{
-                    background: 'var(--bb-surface)',
-                    border: '1px dashed rgba(255, 255, 255, 0.15)',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  {/* Left-right notch punches for coupon effect */}
-                  <div className="coupon-notch-left"></div>
-                  <div className="coupon-notch-right"></div>
+        {!loadingCoupons && coupons.length > 0 && (
+          <section className="mb-5">
+            <div className="text-center mb-4">
+              <h4 className="fw-black text-theme-title mb-1">Active Store Promotions</h4>
+              <p className="text-theme-muted small">Click any coupon below to copy and apply at checkout for extra savings!</p>
+            </div>
+            
+            <div className="row g-3 row-cols-1 row-cols-md-3">
+              {coupons.map((coupon) => (
+                <div key={coupon.id} className="col">
+                  <div 
+                    className="coupon-card h-100 position-relative p-4 rounded-4"
+                    onClick={() => copyCouponCode(coupon.code)}
+                    style={{
+                      background: 'var(--bb-surface)',
+                      border: '1px dashed rgba(255, 255, 255, 0.15)',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    <div className="coupon-notch-left"></div>
+                    <div className="coupon-notch-right"></div>
 
-                  <div className="d-flex justify-content-between align-items-start mb-3">
-                    <span className="badge bg-secondary bg-opacity-25 text-theme-title small fw-bold px-2 py-1" style={{ fontSize: '0.65rem' }}>
-                      {coupon.badge}
-                    </span>
-                    <div className="text-theme-muted">
-                      {copiedCode === coupon.code ? <Check size={16} className="text-success" /> : <Copy size={16} />}
+                    <div className="d-flex justify-content-between align-items-start mb-3">
+                      <span className="badge bg-secondary bg-opacity-25 text-theme-title small fw-bold px-2 py-1" style={{ fontSize: '0.65rem' }}>
+                        ACTIVE OFFER
+                      </span>
+                      <div className="text-theme-muted">
+                        {copiedCode === coupon.code ? <Check size={16} className="text-success" /> : <Copy size={16} />}
+                      </div>
                     </div>
-                  </div>
 
-                  <h3 className="fw-black text-theme-title gradient-text mb-1">{coupon.value}</h3>
-                  <h6 className="fw-black text-accent mb-2 uppercase-label tracking-wide">{coupon.code}</h6>
-                  <p className="text-theme-muted small mb-0">{coupon.desc}</p>
+                    <h3 className="fw-black text-theme-title mb-1" style={{ color: 'var(--bb-primary)' }}>
+                      {coupon.discountPercentage ? `EXTRA ${coupon.discountPercentage}% OFF` : `EXTRA ₹${coupon.discountAmount} OFF`}
+                    </h3>
+                    <h6 className="fw-black text-accent mb-2 uppercase-label tracking-wide">{coupon.code}</h6>
+                    <p className="text-theme-muted small mb-0">Minimum Purchase: ₹{coupon.minimumOrderAmount.toLocaleString('en-IN')}</p>
+                    <p className="text-theme-muted small mb-0" style={{ fontSize: '0.7rem', opacity: 0.8 }}>Expires: {new Date(coupon.expiryDate).toLocaleDateString()}</p>
+                  </div>
                 </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ── TOP DEALS DECK (6-10 Products Slider/Grid) ── */}
+        {topDealsList.length > 0 && (
+          <section className="mb-5">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h3 className="fw-black text-theme-title mb-1">⚡ Mega Discount Drops</h3>
+                <p className="text-theme-muted small mb-0">Today's absolute highest discount values across the catalog</p>
               </div>
-            ))}
-          </div>
-        </section>
+            </div>
+
+            <div className="row g-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
+              {topDealsList.map((prod, idx) => (
+                <div key={`top-deal-${prod.id}`} className="col">
+                  <ProductCard product={prod} index={idx} />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* ── TAB SELECTOR (LIVE VS UPCOMING) ───────── */}
         <div className="d-flex justify-content-center gap-3 mb-4 border-bottom border-secondary border-opacity-25 pb-3">
@@ -395,7 +600,7 @@ export default function DailyDeals() {
             className={`btn px-4 py-2 border-0 rounded-pill fw-bold text-nowrap transition-all ${activeTab === 'live' ? 'active-deal-tab' : 'inactive-deal-tab'}`}
             onClick={() => setActiveTab('live')}
           >
-            ⚡ Live Deals ({dealProducts.length})
+            ⚡ Live Deals ({filteredLiveProducts.length})
           </button>
           <button 
             className={`btn px-4 py-2 border-0 rounded-pill fw-bold text-nowrap transition-all ${activeTab === 'upcoming' ? 'active-deal-tab-upcoming' : 'inactive-deal-tab'}`}
@@ -415,92 +620,129 @@ export default function DailyDeals() {
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.4 }}
             >
-              {/* ── FILTERS AND SORTING TOOLBAR ─────────── */}
-              <div className="d-flex flex-column flex-md-row align-items-stretch align-items-md-center justify-content-between gap-3 mb-5">
-                
-                {/* Category Selection Filter Pills */}
-                <div className="d-flex align-items-center gap-2 overflow-x-auto py-2 no-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
-                  {[
-                    { id: 'all', label: 'All Deals' },
-                    { id: 'tws', label: 'TWS Earbuds' },
-                    { id: 'headphones', label: 'Headphones' },
-                    { id: 'neckbands', label: 'Neckbands' },
-                    { id: 'smartwatches', label: 'Smart Watches' },
-                    { id: 'speakers', label: 'Speakers & Soundbars' }
-                  ].map((pill) => {
-                    const isActive = activeCategory === pill.id
-                    return (
-                      <button
-                        key={pill.id}
-                        onClick={() => setActiveCategory(pill.id)}
-                        className="btn px-4 py-2 border-0 rounded-pill fw-bold text-nowrap transition-all hover-scale"
-                        style={{
-                          fontSize: '0.8rem',
-                          background: isActive 
-                            ? 'linear-gradient(135deg, #ef4444, #f97316)' 
-                            : 'var(--bb-surface)',
-                          color: isActive ? '#ffffff' : 'var(--bb-title-color)',
-                          border: isActive ? 'none' : '1px solid var(--bb-border)',
-                          boxShadow: isActive ? '0 8px 20px rgba(239, 68, 68, 0.2)' : 'none'
-                        }}
+              {/* ── FILTER & SORT CONTROLS ── */}
+              <div className="glass-card p-3 rounded-4 mb-4 border border-secondary border-opacity-10 d-flex flex-column gap-3">
+                <div className="d-flex align-items-center justify-content-between">
+                  <span className="fw-bold text-white d-flex align-items-center gap-2">
+                    <Filter size={16} className="text-accent" /> Filter & Refine Deals
+                  </span>
+                  <button 
+                    className="btn btn-sm d-md-none border-0 text-accent font-semibold p-0"
+                    onClick={() => setShowMobileFilters(!showMobileFilters)}
+                  >
+                    <SlidersHorizontal size={16} /> Filters Menu
+                  </button>
+                </div>
+
+                <div className={`row g-3 ${showMobileFilters ? 'd-flex' : 'd-none d-md-flex'}`}>
+                  {/* Category Filter */}
+                  <div className="col-12 col-md-3 text-start">
+                    <label className="small text-theme-muted mb-1 fw-bold uppercase-label">Category</label>
+                    <div className="position-relative">
+                      <select 
+                        value={activeCategory} 
+                        onChange={e => setActiveCategory(e.target.value)}
+                        className="form-select form-select-sm"
+                        style={{ background: 'var(--bb-surface-2)', color: '#fff', border: '1px solid var(--bb-border)', borderRadius: '8px' }}
                       >
-                        {pill.label}
+                        <option value="all">All Categories</option>
+                        {uniqueCategories.filter(c => c !== 'all').map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Brand Filter */}
+                  <div className="col-12 col-md-3 text-start">
+                    <label className="small text-theme-muted mb-1 fw-bold uppercase-label">Brand</label>
+                    <div className="position-relative">
+                      <select 
+                        value={activeBrand} 
+                        onChange={e => setActiveBrand(e.target.value)}
+                        className="form-select form-select-sm"
+                        style={{ background: 'var(--bb-surface-2)', color: '#fff', border: '1px solid var(--bb-border)', borderRadius: '8px' }}
+                      >
+                        <option value="all">All Brands</option>
+                        {uniqueBrands.filter(b => b !== 'all').map(br => (
+                          <option key={br} value={br}>{br}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Price range selector */}
+                  <div className="col-12 col-md-3 text-start">
+                    <label className="small text-theme-muted mb-1 fw-bold uppercase-label d-flex justify-content-between">
+                      <span>Max Price</span>
+                      <span className="text-accent fw-black">₹{priceRange.max.toLocaleString('en-IN')}</span>
+                    </label>
+                    <input 
+                      type="range" 
+                      min="0" 
+                      max={maxPriceLimit} 
+                      value={priceRange.max} 
+                      onChange={e => setPriceRange(prev => ({ ...prev, max: parseInt(e.target.value) }))}
+                      className="form-range"
+                    />
+                  </div>
+
+                  {/* Sort Selection */}
+                  <div className="col-12 col-md-3 text-start">
+                    <label className="small text-theme-muted mb-1 fw-bold uppercase-label">Sort By</label>
+                    <div className="position-relative">
+                      <select 
+                        value={activeSort} 
+                        onChange={e => setActiveSort(e.target.value)}
+                        className="form-select form-select-sm"
+                        style={{ background: 'var(--bb-surface-2)', color: '#fff', border: '1px solid var(--bb-border)', borderRadius: '8px' }}
+                      >
+                        <option value="discount_desc">Highest Discount</option>
+                        <option value="popularity">Popularity (SoldCount)</option>
+                        <option value="price_asc">Price: Low to High</option>
+                        <option value="price_desc">Price: High to Low</option>
+                        <option value="rating_desc">Highest Rating</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`d-flex flex-wrap gap-3 align-items-center pt-2 border-top border-secondary border-opacity-10 ${showMobileFilters ? 'd-flex' : 'd-none d-md-flex'}`}>
+                  {/* Min Discount pills */}
+                  <div className="d-flex align-items-center gap-2">
+                    <span className="small text-theme-muted uppercase-label fw-bold">Min Discount:</span>
+                    {[0, 10, 30, 50].map((d) => (
+                      <button
+                        key={d}
+                        onClick={() => setMinDiscount(d)}
+                        className={`btn btn-sm py-1 px-3 rounded-pill border-0 fw-bold transition-all ${minDiscount === d ? 'btn-glow' : 'glass-card text-theme-muted'}`}
+                        style={{ fontSize: '0.75rem' }}
+                      >
+                        {d === 0 ? 'Any' : `${d}%+`}
                       </button>
-                    )
-                  })}
-                </div>
-
-                {/* Discount Filter / Sorting */}
-                <div className="d-flex align-items-center gap-3">
-                  
-                  {/* Discount Filters */}
-                  <div className="position-relative">
-                    <select
-                      value={activeDiscountFilter}
-                      onChange={e => setActiveDiscountFilter(e.target.value)}
-                      className="form-select fw-semibold"
-                      style={{
-                        background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)',
-                        borderRadius: 10, height: 42, paddingLeft: 16, paddingRight: 36, fontSize: '0.85rem',
-                        appearance: 'none', cursor: 'pointer', minWidth: 160
-                      }}
-                    >
-                      <option value="all">All Discounts</option>
-                      <option value="70+">70% Off & Above</option>
-                      <option value="60-69">60% - 69% Off</option>
-                      <option value="under-1499">Deals Under ₹1,499</option>
-                    </select>
-                    <ChevronDown size={14} className="position-absolute" style={{ right: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--bb-muted)', pointerEvents: 'none' }} />
+                    ))}
                   </div>
 
-                  {/* Sort selection */}
-                  <div className="position-relative">
-                    <select
-                      value={activeSort}
-                      onChange={e => setActiveSort(e.target.value)}
-                      className="form-select fw-semibold"
-                      style={{
-                        background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)',
-                        borderRadius: 10, height: 42, paddingLeft: 16, paddingRight: 36, fontSize: '0.85rem',
-                        appearance: 'none', cursor: 'pointer', minWidth: 190
-                      }}
-                    >
-                      <option value="discount_desc">Biggest Discount First</option>
-                      <option value="price_asc">Price: Low to High</option>
-                      <option value="price_desc">Price: High to Low</option>
-                      <option value="rating_desc">Highest Rated First</option>
-                    </select>
-                    <ArrowUpDown size={14} className="position-absolute" style={{ right: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--bb-muted)', pointerEvents: 'none' }} />
+                  {/* Only In Stock Toggle */}
+                  <div className="form-check form-switch ms-md-auto text-start">
+                    <input 
+                      className="form-check-input cursor-pointer" 
+                      type="checkbox" 
+                      id="inStockCheck" 
+                      checked={onlyInStock}
+                      onChange={e => setOnlyInStock(e.target.checked)}
+                    />
+                    <label className="form-check-label text-theme-title small fw-bold cursor-pointer" htmlFor="inStockCheck">
+                      In Stock Only
+                    </label>
                   </div>
-
                 </div>
-
               </div>
 
               {/* ── DEAL PRODUCTS GRID ───────────────────── */}
               {productStatus === 'loading' ? (
-                <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
-                  {[1, 2, 3, 4].map(i => (
+                <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
+                  {[1, 2, 3, 4, 5].map(i => (
                     <div key={i} className="col">
                       <div className="rounded-4 overflow-hidden" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', height: 380 }}>
                         <div className="skeleton-pulse w-100 h-100" />
@@ -508,13 +750,13 @@ export default function DailyDeals() {
                     </div>
                   ))}
                 </div>
-              ) : dealProducts.length === 0 ? (
+              ) : filteredLiveProducts.length === 0 ? (
                 <div className="text-center py-5 glass-card p-5" style={{ borderRadius: '16px', border: '1px solid var(--bb-border)' }}>
                   <div className="mb-3" style={{ fontSize: '3rem' }}>⚡</div>
                   <h4 className="text-theme-title fw-bold">No deals match your selection</h4>
-                  <p className="text-theme-muted small">Try selecting another category or resetting filters.</p>
+                  <p className="text-theme-muted small">Try adjusting your filters, price range, or categories.</p>
                   <button 
-                    onClick={() => { setActiveCategory('all'); setActiveDiscountFilter('all'); }} 
+                    onClick={() => { setActiveCategory('all'); setActiveBrand('all'); setPriceRange({ min: 0, max: maxPriceLimit }); setMinDiscount(0); setOnlyInStock(false); }} 
                     className="btn btn-glow mt-3 px-4 py-2 fw-bold" 
                     style={{ borderRadius: 10 }}
                   >
@@ -522,9 +764,9 @@ export default function DailyDeals() {
                   </button>
                 </div>
               ) : (
-                <motion.div layout className="row g-4 row-cols-1 row-cols-sm-2 row-cols-lg-4">
+                <motion.div layout className="row g-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
                   <AnimatePresence mode="popLayout">
-                    {dealProducts.map((prod, idx) => (
+                    {filteredLiveProducts.map((prod, idx) => (
                       <motion.div
                         key={prod.id}
                         layout
@@ -534,94 +776,7 @@ export default function DailyDeals() {
                         transition={{ duration: 0.3 }}
                         className="col"
                       >
-                        <div 
-                          className="card deal-product-card border-1 h-100 overflow-hidden text-start position-relative"
-                          onClick={() => navigate(`/products/${prod.id}`)}
-                          style={{ cursor: 'pointer', background: 'var(--bb-surface)', borderRadius: '20px', border: '1px solid var(--bb-border)', transition: 'all 0.3s ease' }}
-                        >
-                          {/* Lightning Tag */}
-                          <div className="position-absolute top-0 start-0 m-3 z-3">
-                            <span 
-                              className="badge text-white px-2 py-1 fw-bold text-uppercase d-flex align-items-center gap-1"
-                              style={{ background: 'linear-gradient(135deg, #ef4444, #f97316)', fontSize: '0.65rem' }}
-                            >
-                              <Zap size={10} fill="currentColor" /> {prod.discount}% OFF
-                            </span>
-                          </div>
-
-                          {/* Image Box */}
-                          <div className="product-frame w-100 position-relative p-4 d-flex align-items-center justify-content-center" style={{ height: '220px', background: 'var(--bb-surface-2)' }}>
-                            <img 
-                              src={IMAGE_MAP[prod.imageKey] || prod.image} 
-                              alt={prod.name} 
-                              className="product-img img-fluid"
-                              style={{ maxHeight: '100%', objectFit: 'contain', transition: 'all 0.3s' }}
-                              onError={(e) => { e.target.src = IMAGE_MAP.heroHeadphones }}
-                            />
-                            {/* Brand Tag Overlay */}
-                            <div className="position-absolute bottom-0 start-0 m-2 px-2 py-1 rounded-pill" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                              <span style={{ fontSize: '0.55rem', fontWeight: '800', color: '#fff', letterSpacing: '0.5px' }}>BEATBOX</span>
-                            </div>
-                          </div>
-
-                          {/* Info Ribbon */}
-                          <div 
-                            className="d-flex align-items-center justify-content-between px-3 py-1.5 fw-bold"
-                            style={{ background: 'linear-gradient(90deg, #ffc700, #ffb800)', color: '#000000', fontSize: '0.7rem' }}
-                          >
-                            <span className="text-uppercase tracking-wider text-truncate" style={{ maxWidth: '70%' }}>{prod.usp || 'BeatBox Signature Audio'}</span>
-                            <span className="d-flex align-items-center gap-0.5 bg-white px-2 py-0.5 rounded-pill" style={{ fontSize: '0.65rem', color: '#000' }}>
-                              <Star size={10} fill="#000" />
-                              {Number(prod.rating || 0).toFixed(1)}
-                            </span>
-                          </div>
-
-                          {/* Content Body */}
-                          <div className="card-body d-flex flex-column justify-content-between p-3">
-                            <div>
-                              {/* Title */}
-                              <h6 className="fw-black text-theme-title mb-1 text-truncate hover-text-accent transition-all" style={{ fontSize: '0.95rem' }}>
-                                {prod.name}
-                              </h6>
-                              
-                              {/* Claimed progress bar */}
-                              <div className="mb-3 mt-2">
-                                <div className="d-flex justify-content-between mb-1" style={{ fontSize: '0.65rem', fontWeight: 700 }}>
-                                  <span className="text-danger">🔥 {getClaimedPercentage(prod.id)}% Claimed</span>
-                                  <span className="text-theme-muted">Selling fast!</span>
-                                </div>
-                                <div className="progress" style={{ height: '5px', background: 'rgba(255,255,255,0.05)', borderRadius: '50px' }}>
-                                  <div 
-                                    className="progress-bar bg-danger progress-bar-striped" 
-                                    role="progressbar" 
-                                    style={{ width: `${getClaimedPercentage(prod.id)}%` }}
-                                  ></div>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Pricing & Add to Cart */}
-                            <div>
-                              <div className="d-flex justify-content-between align-items-baseline mb-3">
-                                <div>
-                                  <span className="fw-black fs-5 text-theme-title">₹{prod.price.toLocaleString('en-IN')}</span>
-                                  <span className="text-decoration-line-through text-theme-muted small ms-2" style={{ fontSize: '0.75rem' }}>₹{prod.oldPrice.toLocaleString('en-IN')}</span>
-                                </div>
-                              </div>
-
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleAddToCart(prod)
-                                }}
-                                className="btn btn-add-to-cart w-100 py-2 d-flex align-items-center justify-content-center gap-2 fw-bold"
-                                style={{ fontSize: '0.85rem' }}
-                              >
-                                <ShoppingBag size={14} /> Claim Deal
-                              </button>
-                            </div>
-                          </div>
-                        </div>
+                        <ProductCard product={prod} index={idx} />
                       </motion.div>
                     ))}
                   </AnimatePresence>
@@ -629,17 +784,17 @@ export default function DailyDeals() {
               )}
             </motion.div>
           ) : (
-            /* ── UPCOMING DROPS PORTAL ───────────────── */
+            /* ── UPCOMING DROPS PORTAL (FOMO LOCKS) ── */
             <motion.div 
               key="upcoming"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.4 }}
-              className="row g-4 row-cols-1 row-cols-sm-2 row-cols-lg-4"
+              className="row g-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4"
             >
               {upcomingDeals.map((prod, idx) => (
-                <div key={prod.id} className="col">
+                <div key={`upcoming-${prod.id}`} className="col">
                   <div 
                     className="card h-100 position-relative"
                     style={{ 
@@ -657,19 +812,19 @@ export default function DailyDeals() {
                       </span>
                     </div>
 
-                    {/* Image (Blurred to simulate upcoming drop) */}
-                    <div className="w-100 position-relative p-4 d-flex align-items-center justify-content-center" style={{ height: '220px', background: 'var(--bb-surface-2)', filter: 'blur(6px) grayscale(0.8)' }}>
+                    {/* Image (Blurred/Grayscale) */}
+                    <div className="w-100 position-relative p-4 d-flex align-items-center justify-content-center" style={{ height: '220px', background: 'var(--bb-surface-2)', filter: 'blur(4px) grayscale(0.8)' }}>
                       <img 
-                        src={IMAGE_MAP[prod.imageKey] || prod.image} 
+                        src={prod.imageUrl} 
                         alt="" 
                         className="img-fluid"
                         style={{ maxHeight: '100%', objectFit: 'contain' }}
-                        onError={(e) => { e.target.src = IMAGE_MAP.heroHeadphones }}
+                        onError={(e) => { e.target.src = logo }}
                       />
                     </div>
 
-                    {/* Locked center notification */}
-                    <div className="position-absolute d-flex flex-column align-items-center justify-content-center" style={{ top: '110px', left: 0, right: 0, zIndex: 10 }}>
+                    {/* Locked overlay */}
+                    <div className="position-absolute d-flex flex-column align-items-center justify-content-center" style={{ top: '100px', left: 0, right: 0, zIndex: 10 }}>
                       <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: '48px', height: '48px', background: 'rgba(0,0,0,0.85)', border: '1px solid rgba(255,255,255,0.1)' }}>
                         <Lock size={20} className="text-accent" />
                       </div>
@@ -681,7 +836,9 @@ export default function DailyDeals() {
                       <h6 className="fw-black text-theme-title mb-1 text-truncate">{prod.name}</h6>
                       <div className="d-flex align-items-baseline mb-3">
                         <span className="fw-black fs-5 text-theme-title">₹{prod.price.toLocaleString('en-IN')}</span>
-                        <span className="text-decoration-line-through text-theme-muted small ms-2">₹{prod.oldPrice.toLocaleString('en-IN')}</span>
+                        {prod.oldPrice > prod.price && (
+                          <span className="text-decoration-line-through text-theme-muted small ms-2">₹{prod.oldPrice.toLocaleString('en-IN')}</span>
+                        )}
                       </div>
                       <button className="btn btn-secondary w-100 py-2 fw-bold" style={{ fontSize: '0.85rem' }} disabled>
                         Unlocks Soon
@@ -694,7 +851,7 @@ export default function DailyDeals() {
           )}
         </AnimatePresence>
 
-        {/* ── LOOT ENGINE BENEFIT BADGES ──────────────── */}
+        {/* ── BENEFIT BADGES ──────────────── */}
         <section className="py-5 mt-5 bg-theme-surface border-top border-bottom rounded-4" style={{ background: 'var(--bb-surface)' }}>
           <div className="row g-4 row-cols-1 row-cols-md-3 text-center">
             <div className="col">
@@ -747,15 +904,9 @@ export default function DailyDeals() {
           animation: pulse 1.5s infinite;
         }
         @keyframes pulse {
-          0% {
-            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-          }
-          70% {
-            box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
-          }
-          100% {
-            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-          }
+          0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+          70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
         .gradient-text-red {
           background: linear-gradient(135deg, #ef4444 30%, #ec4899 90%);
@@ -861,14 +1012,6 @@ export default function DailyDeals() {
           color: var(--bb-text);
           background: rgba(255, 255, 255, 0.08);
         }
-        .deal-product-card:hover {
-          border-color: rgba(239, 68, 68, 0.3) !important;
-          box-shadow: 0 12px 30px rgba(239, 68, 68, 0.08);
-          transform: translateY(-4px);
-        }
-        .deal-product-card:hover .product-img {
-          transform: scale(1.05) translateY(-2px);
-        }
         .btn-danger-glow {
           background: linear-gradient(135deg, #ef4444, #f97316);
           color: white;
@@ -876,9 +1019,14 @@ export default function DailyDeals() {
           box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
           transition: all 0.3s ease;
         }
-        .btn-danger-glow:hover {
+        .btn-danger-glow:hover:not(:disabled) {
           box-shadow: 0 12px 35px rgba(239, 68, 68, 0.5);
           filter: brightness(1.1);
+        }
+        .btn-danger-glow:disabled {
+          background: #333 !important;
+          color: #777 !important;
+          box-shadow: none !important;
         }
         @keyframes spin {
           from { transform: rotate(0deg); }

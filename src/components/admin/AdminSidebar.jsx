@@ -60,9 +60,9 @@ export default function AdminSidebar({ isSidebarOpen, isMobile, activeNavItem, s
                     to={item.path}
                     className={`btn w-100 text-start d-flex align-items-center gap-3 px-3 py-3 rounded-4 fw-bold transition-all`}
                     style={{
-                      background: isActive ? 'linear-gradient(90deg, rgba(0, 243, 255, 0.1), transparent)' : 'transparent',
+                      background: isActive ? 'linear-gradient(90deg, var(--bb-accent-glow), transparent)' : 'transparent',
                       color: isActive ? 'var(--bb-accent)' : 'var(--bb-muted)',
-                      border: isActive ? '1px solid rgba(0, 243, 255, 0.2)' : '1px solid transparent',
+                      border: isActive ? '1px solid var(--bb-border)' : '1px solid transparent',
                       fontSize: '0.95rem'
                     }}
                   >
@@ -87,7 +87,7 @@ export default function AdminSidebar({ isSidebarOpen, isMobile, activeNavItem, s
             style={{
               position: 'fixed',
               inset: '70px 0 0 0',
-              background: 'rgba(0,0,0,0.5)',
+              background: 'var(--bb-overlay)',
               backdropFilter: 'blur(4px)',
               zIndex: 1020
             }}

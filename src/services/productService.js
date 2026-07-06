@@ -402,4 +402,8 @@ getProductById: async (id) => {
     const response = await api.put(`/images/${imageId}/primary`);
     return response.data;
   },
+  getActiveCoupons: async () => {
+    const response = await api.get('/coupon');
+    return response.data;
+  },
 };

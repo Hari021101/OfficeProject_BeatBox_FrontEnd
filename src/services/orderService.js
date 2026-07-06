@@ -43,26 +43,30 @@ export const orderService = {
   },
   
   downloadInvoice: async (orderId) => {
-  const response = await api.get(
-    `/order/${orderId}/invoice`,
-    {
-      responseType: 'blob'
-    }
-  )
+    const response = await api.get(
+      `/order/${orderId}/invoice`,
+      { responseType: 'blob' }
+    );
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Invoice-${orderId}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  },
 
-  const url = window.URL.createObjectURL(
-    new Blob([response.data])
-  )
+  // ── Return Requests ────────────────────────────────────────────────────────
 
-  const link = document.createElement('a')
+  /** Customer: check if a return request already exists for an order */
+  getReturnByOrderId: async (orderId) => {
+    const response = await api.get(`/Return/order/${orderId}`);
+    return response.data; // null if none exists
+  },
 
-  link.href = url
-  link.download = `Invoice-${orderId}.pdf`
-
-  document.body.appendChild(link)
-
-  link.click()
-
-  link.remove()
-}
+  /** Customer: submit a new return request */
+  requestReturn: async (dto) => {
+    const response = await api.post('/Return', dto);
+    return response.data;
+  },
 };
