@@ -61,7 +61,6 @@ export default function NotificationsPanel() {
     };
     
     loadNotifs();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, open]);
 
   // Setup SignalR Real-time Connection

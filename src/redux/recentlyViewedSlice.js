@@ -23,7 +23,7 @@ function loadFromStorage() {
 function saveToStorage(ids) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(ids))
-  } catch {}
+  } catch (e) { /* ignore storage errors */ }
 }
 
 const recentlyViewedSlice = createSlice({

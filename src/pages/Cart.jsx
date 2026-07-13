@@ -394,13 +394,13 @@ export default function Cart() {
                 <div className="mb-5 pb-4" style={{ borderBottom: '1px solid var(--bb-border)' }}>
                   <label className="text-theme-title fw-bold small mb-3 d-block text-uppercase" style={{ letterSpacing: '0.5px' }}>Promo Code</label>
                   {appliedPromo ? (
-                    <div className="d-flex align-items-center justify-content-between p-3 rounded-3" style={{ background: 'rgba(39,255,20,0.08)', border: '1px dashed rgba(39,255,20,0.3)' }}>
+                    <div className="d-flex align-items-center justify-content-between p-3 rounded-3" style={{ background: 'var(--bb-success-bg)', border: '1px dashed var(--bb-success-border)' }}>
                       <div className="d-flex align-items-center gap-3">
-                        <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: 32, height: 32, background: 'rgba(39,255,20,0.2)' }}>
-                          <Tag size={14} style={{ color: '#39ff14' }} />
+                        <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: 32, height: 32, background: 'var(--bb-success-bg)', border: '1px solid var(--bb-success-border)' }}>
+                          <Tag size={14} style={{ color: 'var(--bb-success-text)' }} />
                         </div>
                         <div>
-                          <span className="fw-black d-block" style={{ color: '#39ff14', fontSize: '0.9rem', letterSpacing: '1px' }}>{appliedPromo.code}</span>
+                          <span className="fw-black d-block" style={{ color: 'var(--bb-success-text)', fontSize: '0.9rem', letterSpacing: '1px' }}>{appliedPromo.code}</span>
                           <span className="text-theme-muted fw-medium" style={{ fontSize: '0.75rem' }}>{appliedPromo.message}</span>
                         </div>
                       </div>

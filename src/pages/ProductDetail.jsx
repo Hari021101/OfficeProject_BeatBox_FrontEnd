@@ -31,6 +31,22 @@ export default function ProductDetail() {
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [selectedVariant, setSelectedVariant] = useState(null)
+  const [selectedColor, setSelectedColor] = useState(null)
+  const [selectedCapacity, setSelectedCapacity] = useState(null)
+  const [quantity, setQuantity] = useState(1)
+  const [wishlisted, setWishlisted] = useState(false)
+  const [adding, setAdding] = useState(false)
+  const [openFaq, setOpenFaq] = useState(null)
+  const [activeTab, setActiveTab] = useState('specs')
+
+  // New feature states
+  const [pincode, setPincode] = useState('')
+  const [deliveryStatus, setDeliveryStatus] = useState(null)
+  const [activeImageIndex, setActiveImageIndex] = useState(0)
+  const [showStickyCart, setShowStickyCart] = useState(false)
+  const [showReviewForm, setShowReviewForm] = useState(false)
+  const [reviewRating, setReviewRating] = useState(5)
+  const [reviewText, setReviewText] = useState('')
   const myOrders = useSelector(selectAllOrders)
   const { user } = useSelector(state => state.auth)
 
@@ -150,23 +166,6 @@ export default function ProductDetail() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [id])
-
-  const [selectedColor, setSelectedColor] = useState(null)
-  const [selectedCapacity, setSelectedCapacity] = useState(null)
-  const [quantity, setQuantity] = useState(1)
-  const [wishlisted, setWishlisted] = useState(false)
-  const [adding, setAdding] = useState(false)
-  const [openFaq, setOpenFaq] = useState(null)
-  const [activeTab, setActiveTab] = useState('specs')
-
-  // New feature states
-  const [pincode, setPincode] = useState('')
-  const [deliveryStatus, setDeliveryStatus] = useState(null)
-  const [activeImageIndex, setActiveImageIndex] = useState(0)
-  const [showStickyCart, setShowStickyCart] = useState(false)
-  const [showReviewForm, setShowReviewForm] = useState(false)
-  const [reviewRating, setReviewRating] = useState(5)
-  const [reviewText, setReviewText] = useState('')
 
   // Sticky Cart Logic
   const { scrollY } = useScroll()
@@ -616,7 +615,11 @@ const handleWishlist = async () => {
                 <span className="fw-bold ms-1" style={{ color: '#ffc700' }}>{Number(product.averageRating || product.rating || 0).toFixed(1)}</span>
               </div>
               <span className="text-theme-muted small">({(product.reviewCount || 0).toLocaleString('en-IN')} reviews)</span>
-              <span className={`badge px-2 py-1 small fw-bold ${selectedVariant?.stockQuantity > 0 ? 'text-success' : 'text-danger'}`} style={{ background: selectedVariant?.stockQuantity > 0 ? 'rgba(39,255,20,0.08)' : 'rgba(220,53,69,0.08)', border: `1px solid ${selectedVariant?.stockQuantity > 0 ? 'rgba(39,255,20,0.2)' : 'rgba(220,53,69,0.2)'}` }}>
+              <span className={`badge px-2 py-1 small fw-bold`} style={{
+                background: selectedVariant?.stockQuantity > 0 ? 'var(--bb-success-bg)' : 'rgba(220,53,69,0.08)',
+                color: selectedVariant?.stockQuantity > 0 ? 'var(--bb-success-text)' : '#ef4444',
+                border: `1px solid ${selectedVariant?.stockQuantity > 0 ? 'var(--bb-success-border)' : 'rgba(220,53,69,0.2)'}`
+              }}>
                 {selectedVariant?.stockQuantity > 0 ? '✓ In Stock' : '✗ Out of Stock'}
               </span>
             </div>
@@ -651,10 +654,11 @@ const handleWishlist = async () => {
                 </span>
 
                 <span
-                  className="badge text-success fw-bold"
+                  className="badge fw-bold"
                   style={{
-                    background: 'rgba(39,255,20,0.1)',
-                    border: '1px solid rgba(39,255,20,0.2)',
+                    background: 'var(--bb-success-bg)',
+                    color: 'var(--bb-success-text)',
+                    border: '1px solid var(--bb-success-border)',
                     fontSize: '0.9rem'
                   }}
                 >
@@ -1000,7 +1004,12 @@ const handleWishlist = async () => {
                             </div>
                           </div>
                         </div>
-                        <span className="badge px-2 py-1" style={{ background: 'rgba(39,255,20,0.08)', color: '#39ff14', fontSize: '0.65rem', border: '1px solid rgba(39,255,20,0.15)' }}>✓ Verified Purchase</span>
+                        <span className="badge px-2 py-1" style={{
+                          background: 'var(--bb-success-bg)',
+                          color: 'var(--bb-success-text)',
+                          fontSize: '0.65rem',
+                          border: '1px solid var(--bb-success-border)'
+                        }}>✓ Verified Purchase</span>
                       </div>
                       <p className="text-theme-muted mb-0" style={{ lineHeight: 1.7, fontSize: '0.9rem' }}>{review.comment}</p>
                     </div>

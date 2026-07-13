@@ -35,7 +35,9 @@
   --bb-warning: #f59e0b;
   --bb-danger: #ef4444;
 
-  --bb-success-bg: rgba(16, 185, 129, 0.15);
+  --bb-success-bg: rgba(39, 255, 20, 0.1);
+  --bb-success-text: #39ff14;
+  --bb-success-border: rgba(39, 255, 20, 0.2);
   --bb-warning-bg: rgba(245, 158, 11, 0.15);
   --bb-danger-bg: rgba(239, 68, 68, 0.15);
   --bb-info: #00f3ff;
@@ -115,6 +117,10 @@
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   background-color: var(--bb-bg-navy);
   /* Electric grid background overlay */
@@ -123,15 +129,14 @@ body {
     linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
   background-size: 30px 30px;
   color: var(--bb-text);
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
 /* Glassmorphism Utilities - More Electric */
 .glass-card {
   background: rgba(6, 11, 25, 0.6);
-  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   border: 1px solid var(--bb-border);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.5),
@@ -339,7 +344,9 @@ body {
   --bb-warning: #d97706;
   --bb-danger: #dc2626;
 
-  --bb-success-bg: rgba(5, 150, 105, 0.1);
+  --bb-success-bg: #d1fae5;
+  --bb-success-text: #166534;
+  --bb-success-border: #86efac;
   --bb-warning-bg: rgba(217, 119, 6, 0.1);
   --bb-danger-bg: rgba(220, 38, 38, 0.1);
   --bb-info: #0099b8;
@@ -581,6 +588,7 @@ body {
 
 .bestseller-card .rating-pill {
   background: rgba(6, 11, 25, 0.75) !important;
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border: 1px solid var(--bb-border);
   border-radius: 8px;
@@ -1174,7 +1182,7 @@ body {
 
 /* Discount % label */
 .product-card-body span[style*="bb-success"] {
-  color: var(--bb-success) !important;
+  color: var(--bb-success-text) !important;
 }
 
 /* ── Checkout Form Inputs ─────────────────────────────────────────────────── */
@@ -1221,7 +1229,12 @@ body {
 /* ── Product listing filter sidebar ─────────────────────────────────────── */
 .no-scrollbar {
   -ms-overflow-style: none;
-  scrollbar-width: none;
+}
+
+@supports (scrollbar-width: none) {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -1467,8 +1480,8 @@ body {
     height: 100vh !important;
     max-height: none !important;
     background: var(--bb-surface) !important;
-    backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
     padding: 24px !important;
     border-radius: 0 !important;
     border-right: none;
@@ -1533,6 +1546,8 @@ body {
 /* ── Global Mobile Baseline ─────────────────────────────────────────────────── */
 html {
   -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 img,
@@ -1540,10 +1555,7 @@ video {
   max-width: 100%;
 }
 
-.storefront-wrapper,
-.min-vh-100 {
-  overflow-x: hidden;
-}
+/* .storefront-wrapper horizontal clipping handled by html rule above */
 
 /* ── Responsive Typography ──────────────────────────────────────────────────── */
 @media (max-width: 575.98px) {
@@ -1703,7 +1715,6 @@ video {
     overflow-x: auto;
     justify-content: flex-start !important;
     padding-bottom: 8px;
-    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -1778,7 +1789,6 @@ video {
 
   .overflow-x-auto,
   .no-scrollbar {
-    -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
   }
 }
@@ -1999,25 +2009,7 @@ video {
 
 /* ── Layout Main Offset — replaces hardcoded 104px paddingTop in Layout.jsx ── */
 /* Mobile-first: 86px covers 26px banner + ~60px navbar row                      */
-.layout-main-offset {
-  padding-top: 86px;
-}
 
-@media (min-width: 576px) {
-
-  /* Small tablets: 94px covers 30px banner + ~64px navbar                       */
-  .layout-main-offset {
-    padding-top: 94px;
-  }
-}
-
-@media (min-width: 1200px) {
-
-  /* Desktop XL: 108px covers 34px banner + ~74px full navbar                    */
-  .layout-main-offset {
-    padding-top: 108px;
-  }
-}
 
 /* ── Toaster container offset for mobile ────────────────────────────────────── */
 @media (max-width: 575.98px) {
@@ -2029,10 +2021,9 @@ video {
 }
 
 /* ── Prevent body horizontal scroll ────────────────────────────────────────── */
-body {
-  overflow-x: hidden;
-  max-width: 100vw;
-}
+/* overflow-x: hidden is set on html element above; removing it from body
+   prevents the CSS spec side-effect where overflow-x:hidden on body
+   forces overflow-y to compute as auto, creating a nested scroll container. */
 
 /* ── Fix: Product Listing - sidebar sticky top on desktop ───────────────────── */
 @media (min-width: 768px) {
@@ -2401,8 +2392,8 @@ select option {
    ========================================================================== */
 .bb-badge-success {
   background-color: var(--bb-success-bg) !important;
-  color: var(--bb-success) !important;
-  border: 1px solid var(--bb-success) !important;
+  color: var(--bb-success-text) !important;
+  border: 1px solid var(--bb-success-border) !important;
   padding: 4px 12px !important;
   border-radius: 50px !important;
   font-weight: 700 !important;

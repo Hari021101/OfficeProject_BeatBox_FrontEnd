@@ -95,7 +95,7 @@ export default function PromotionalBanners({ products = [] }) {
 
       if (categoryParam) {
         const activeLower = categoryParam.toLowerCase();
-        let matchedProducts = [];
+        let matchedProducts;
 
         if (activeLower === 'signature-series') {
           matchedProducts = products.filter(p => 

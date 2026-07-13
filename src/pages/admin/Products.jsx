@@ -16,19 +16,20 @@ export default function Products() {
   const [editingProduct, setEditingProduct] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState('All')
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setIsLoading(true)
-        const data = await productService.getAllProducts()
-        setProducts(data || [])
-      } catch (err) {
-        toast.error('Failed to load products')
-        console.error(err)
-      } finally {
-        setIsLoading(false)
-      }
+  const fetchProducts = async () => {
+    try {
+      setIsLoading(true)
+      const data = await productService.getAllProducts()
+      setProducts(data || [])
+    } catch (err) {
+      toast.error('Failed to load products')
+      console.error(err)
+    } finally {
+      setIsLoading(false)
     }
+  }
+
+  useEffect(() => {
     fetchProducts()
   }, [])
 

@@ -483,7 +483,7 @@ export default function Home() {
       style={{
         zIndex: 5,
         cursor: 'pointer',
-        minHeight: '500px'
+        height: '500px'
       }}
       onClick={() =>
         navigate(`/products/${currentSlideData.productId}`)
@@ -715,7 +715,7 @@ export default function Home() {
 
   return (
 
-    <div className="w-100 min-vh-100 overflow-hidden position-relative" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
+    <div className="w-100 min-vh-100 position-relative" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
       {productStatus === 'loading' && (
         <div className="text-center py-5">
           Loading products...
@@ -736,9 +736,12 @@ export default function Home() {
       <div className="storefront-wrapper" style={{ opacity: isZeroGravity ? 0 : 1, pointerEvents: isZeroGravity ? 'none' : 'auto', transition: 'opacity 0.4s ease' }}>
 
         {/* ==================== 1. HERO CAROUSEL SECTION ==================== */}
-        <section className="position-relative pt-3 pb-5 pt-lg-0 pb-lg-0 d-flex align-items-center" style={{ minHeight: 'calc(80vh - 104px)' }}>
+        <section className="position-relative pt-3 pb-5 pt-lg-0 pb-lg-0 d-flex align-items-center" style={{
+    paddingTop: '2rem',
+    paddingBottom: '2rem'
+}}>
           <div className="container-fluid px-lg-5">
-            <div className="position-relative overflow-hidden rounded-4 p-4 p-md-5 glass-card hero-carousel-card" style={{ border: '1px solid rgba(0, 243, 255, 0.15)' }}>
+            <div className="position-relative rounded-4 p-4 p-md-5 glass-card hero-carousel-card" style={{ border: '1px solid rgba(0, 243, 255, 0.15)', height: 'auto' }}>
 
               {/* Slide background glow ring */}
               <div className="position-absolute rounded-circle bg-glow-orb" style={{ width: '400px', height: '400px', background: currentSlideData.color || '#00f3ff', top: '20%', right: '20%', filter: 'blur(100px)', opacity: 0.3 }}></div>

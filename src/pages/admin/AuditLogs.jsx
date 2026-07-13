@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
-import { ShieldAlert, User, Edit, Trash2, PlusCircle, Search, Filter } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { ShieldAlert, User, Edit, Trash2, PlusCircle, Search } from 'lucide-react'
+import adminService from '../../services/adminService'
 
 const ICONS = {
   ShieldAlert, User, Edit, Trash2, PlusCircle,
   XCircle: ShieldAlert, LogIn: User, Shield: User,
-  PlusCircle, Trash2, Key: Edit, UserPlus: User,
+  Key: Edit, UserPlus: User,
   Upload: Edit, Star: Edit, Truck: Edit, ShoppingBag: Edit,
   Info: Edit
 }
@@ -21,14 +22,33 @@ export default function AuditLogs() {
   const [searchTerm, setSearchTerm] = useState('')
   const [logs, setLogs] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-  const [page, setPage] = useState(1)
-  const [hasMore, setHasMore] = useState(true)
 
-  const filteredLogs = MOCK_LOGS.filter(log =>
-    log.admin.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    log.target.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    log.action.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        setIsLoading(true)
+        const data = await adminService.getAuditLogs({ searchTerm })
+        const mapped = (data || []).map(x => ({
+          id: x.id,
+          admin: x.adminName,
+          role: x.role,
+          action: x.action,
+          target: x.target,
+          details: x.details,
+          timestamp: new Date(x.timestamp).toLocaleString(),
+          icon: x.icon
+        }))
+        setLogs(mapped)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchLogs()
+  }, [searchTerm])
+
+  const filteredLogs = logs
 
   return (
     <div className="py-2">
@@ -66,6 +86,7 @@ export default function AuditLogs() {
           <div className="d-flex flex-column gap-3">
             {filteredLogs.map((log, idx) => {
               const colors = ACTION_COLORS[log.action] || ACTION_COLORS.UPDATED
+              const IconComponent = ICONS[log.icon] || ICONS[log.action] || ShieldAlert
               return (
                 <div
                   key={log.id}
@@ -88,7 +109,7 @@ export default function AuditLogs() {
                         className="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
                         style={{ width: '32px', height: '32px', background: colors.bg, color: colors.text }}
                       >
-                        <log.icon size={15} />
+                        <IconComponent size={15} />
                       </div>
                       {/* Action badge */}
                       <span

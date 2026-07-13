@@ -6,8 +6,8 @@ export const validatePromoCode = async (code) => {
         return response.data;
     } catch (error) {
         if (error.response && error.response.data) {
-            throw new Error(error.response.data.message || 'Invalid promo code');
+            throw new Error(error.response.data.message || 'Invalid promo code', { cause: error });
         }
-        throw new Error('Failed to validate promo code');
+        throw new Error('Failed to validate promo code', { cause: error });
     }
 };

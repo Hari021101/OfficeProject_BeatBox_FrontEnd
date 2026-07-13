@@ -15,7 +15,7 @@ function loadFromStorage() {
 function saveToStorage(items) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
-  } catch {}
+  } catch (e) { /* ignore storage errors */ }
 }
 
 const compareSlice = createSlice({

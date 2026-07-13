@@ -141,7 +141,7 @@ const adminService = {
       return response.data;
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to create coupon';
-      throw new Error(message);
+      throw new Error(message, { cause: error });
     }
   },
 
@@ -151,7 +151,7 @@ const adminService = {
       return response.data;
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to update coupon';
-      throw new Error(message);
+      throw new Error(message, { cause: error });
     }
   },
 

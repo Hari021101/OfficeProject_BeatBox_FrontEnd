@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Save, AlertCircle, Plus, Trash2 } from 'lucide-react'
+import { X, Save, AlertCircle, Plus, Trash2, Upload } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { toast } from 'react-hot-toast'
 
@@ -20,6 +20,23 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
     faqs: []
   }
   const [formData, setFormData] = useState(defaultForm)
+
+  const loadCategories = async () => {
+    try {
+      const data = await productService.fetchCategories()
+      setCategories(data || [])
+      if (data && data.length > 0) {
+        if (!editingProduct && !formData.categoryId) {
+          setFormData(prev => ({ ...prev, categoryId: data[0].id }))
+        } else if (editingProduct && editingProduct.categoryName) {
+          const match = data.find(c => c.name.toLowerCase() === editingProduct.categoryName.toLowerCase());
+          if (match) setFormData(prev => ({ ...prev, categoryId: match.id }));
+        }
+      }
+    } catch (err) {
+      toast.error('Failed to load categories')
+    }
+  }
 
   useEffect(() => {
     if (isOpen) {
@@ -40,23 +57,6 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
       }
     }
   }, [isOpen, editingProduct])
-
-  const loadCategories = async () => {
-    try {
-      const data = await productService.fetchCategories()
-      setCategories(data || [])
-      if (data && data.length > 0) {
-        if (!editingProduct && !formData.categoryId) {
-          setFormData(prev => ({ ...prev, categoryId: data[0].id }))
-        } else if (editingProduct && editingProduct.categoryName) {
-          const match = data.find(c => c.name.toLowerCase() === editingProduct.categoryName.toLowerCase());
-          if (match) setFormData(prev => ({ ...prev, categoryId: match.id }));
-        }
-      }
-    } catch (err) {
-      toast.error('Failed to load categories')
-    }
-  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target

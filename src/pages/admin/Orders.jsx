@@ -22,14 +22,6 @@ export default function Orders() {
 
   const { user } = useSelector(state => state.auth)
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/login')
-      return;
-    }
-    fetchOrders()
-  }, [user, navigate])
-
   const fetchOrders = async () => {
     try {
       setIsLoading(true)
@@ -42,6 +34,14 @@ export default function Orders() {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login')
+      return;
+    }
+    fetchOrders()
+  }, [user, navigate])
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {

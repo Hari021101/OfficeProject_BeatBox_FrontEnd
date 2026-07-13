@@ -28,11 +28,6 @@ export default function EditProduct() {
   const [isVariantModalOpen, setIsVariantModalOpen] = useState(false)
   const [selectedVariant, setSelectedVariant] = useState(null)
 
-  useEffect(() => {
-    loadCategories()
-    loadProduct()
-  }, [id])
-
   const loadCategories = async () => {
     try {
       const data = await productService.fetchCategories()
@@ -69,6 +64,11 @@ export default function EditProduct() {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadCategories()
+    loadProduct()
+  }, [id])
 
   const handleProductChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -290,7 +290,12 @@ export default function EditProduct() {
                       </div>
 
                       <div className="d-flex align-items-center gap-1">
-                        <span className={`badge px-2 py-1 small fw-bold me-2 ${v.isActive !== false ? 'text-success' : 'text-danger'}`} style={{ background: v.isActive !== false ? 'rgba(39,255,20,0.08)' : 'rgba(220,53,69,0.08)', border: `1px solid ${v.isActive !== false ? 'rgba(39,255,20,0.2)' : 'rgba(220,53,69,0.2)'}`, fontSize: '0.7rem' }}>
+                        <span className={`badge px-2 py-1 small fw-bold me-2`} style={{
+                          background: v.isActive !== false ? 'var(--bb-success-bg)' : 'rgba(220,53,69,0.08)',
+                          color: v.isActive !== false ? 'var(--bb-success-text)' : '#ef4444',
+                          border: `1px solid ${v.isActive !== false ? 'var(--bb-success-border)' : 'rgba(220,53,69,0.2)'}`,
+                          fontSize: '0.7rem'
+                        }}>
                           {v.isActive !== false ? 'Active' : 'Inactive'}
                         </span>
 

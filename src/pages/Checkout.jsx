@@ -505,9 +505,9 @@ export default function Checkout() {
                       initial={{ scale: 0 }} animate={{ scale: 1 }}
                       transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
                       className="d-flex align-items-center justify-content-center rounded-circle mx-auto mb-4"
-                      style={{ width: 100, height: 100, background: 'linear-gradient(135deg,rgba(39,255,20,0.15),rgba(0,243,255,0.1))', border: '2px solid rgba(39,255,20,0.4)' }}
+                      style={{ width: 100, height: 100, background: 'linear-gradient(135deg, var(--bb-success-bg), rgba(0,243,255,0.1))', border: '2px solid var(--bb-success-border)' }}
                     >
-                      <CheckCircle size={48} style={{ color: '#39ff14' }} />
+                      <CheckCircle size={48} style={{ color: 'var(--bb-success-text)' }} />
                     </motion.div>
                     <h2 className="fw-black text-theme-title mb-2" style={{ letterSpacing: '-1px' }}>Order Placed! 🎉</h2>
                     <p className="text-theme-muted mb-1">Thank you for your purchase.</p>

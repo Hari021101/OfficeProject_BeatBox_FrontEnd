@@ -186,8 +186,12 @@ const currentOldPrice =
           style={{ background: 'linear-gradient(90deg,#ffc700,#ffb800)', color: '#000', fontSize: '0.7rem', fontWeight: 700 }}
         >
           <span className="text-uppercase" style={{ letterSpacing: '0.3px' }}>{product.usp}</span>
-          <span className="d-flex align-items-center gap-1 bg-white px-2 rounded-pill" style={{ fontSize: '0.65rem', color: '#000', fontWeight: 800, padding: '2px 8px' }}>
-           <Star size={9} fill="#000" />
+          <span className="d-flex align-items-center gap-1" style={{ background: 'rgba(255,255,255,0.96)',border: "1px solid rgba(0,0,0,.15)",boxShadow: "0 2px 8px rgba(0,0,0,.25)", fontSize: '0.73rem', color: '#000', fontWeight: 800, padding: '3px 10px' }}>
+           <Star
+    size={10}
+    fill="#FFC107"
+    color="#FFC107"
+/>
 {Number(product.averageRating || product.rating || 0).toFixed(1)}
           </span>
         </div>
