@@ -9,6 +9,7 @@ import { addToCompare } from '../../redux/compareSlice'
 import { IMAGE_MAP } from '../../data/products'
 import { toast } from 'react-hot-toast'
 import logo from '../../assets/beatbox_logo.png'
+import { getImageUrl } from '../../config/api'
 
 const ProductCard = React.memo(function ProductCard({ product, index = 0 }) {
   const dispatch = useDispatch()
@@ -90,7 +91,8 @@ const currentOldPrice =
   const selectedVariantObj = product.variants?.find(v => v.color === (selectedColor?.name || selectedColor?.color))
   
   const primaryImg = selectedColor?.imageUrl || product.imageUrl || IMAGE_MAP[product.imageKey] || IMAGE_MAP['heroHeadphones']
-  const hoverImg = selectedVariantObj?.images?.find(i => !i.isPrimary)?.imageUrl || product.images?.find(i => !i.isPrimary)?.imageUrl || selectedVariantObj?.images?.[1]?.imageUrl || product.images?.[1]?.imageUrl || null
+  const hoverImgRaw = selectedVariantObj?.images?.find(i => !i.isPrimary)?.imageUrl || product.images?.find(i => !i.isPrimary)?.imageUrl || selectedVariantObj?.images?.[1]?.imageUrl || product.images?.[1]?.imageUrl || null
+  const hoverImg = hoverImgRaw ? getImageUrl(hoverImgRaw) : null
   
   const img = (isHovered && hoverImg) ? hoverImg : primaryImg
   const discountedSavings = product.oldPrice - product.price
@@ -171,7 +173,7 @@ const currentOldPrice =
             {/* Brand seal */}
             <div
               className="position-absolute bottom-0 start-0 m-2 d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
-              style={{ background: 'var(--bb-surface-2)', backdropFilter: 'blur(8px)', border: '1px solid var(--bb-border)', zIndex: 5 }}
+              style={{ background: 'var(--bb-surface)', backdropFilter: 'blur(8px)', border: '1px solid var(--bb-border)', zIndex: 5 }}
             >
               <img src={logo} alt="BeatBox" style={{ width: 10, height: 10, objectFit: 'contain' }} />
               <span style={{ fontSize: '0.55rem', fontWeight: 800, color: 'var(--bb-text)', letterSpacing: '0.5px' }}>BEATBOX</span>
@@ -214,21 +216,21 @@ const currentOldPrice =
           </div>
 
           {/* Name & reviews */}
-          <h5 className="product-card-name text-theme-title" style={{ color: 'var(--bb-heading)' }}>{product.name}</h5>
-          <span className="d-block mb-2" style={{ fontSize: '0.75rem' }}>
+          <h5 className="product-card-name text-theme-title">{product.name}</h5>
+          <span className="text-theme-muted d-block mb-2" style={{ fontSize: '0.75rem' }}>
             <span style={{ color: 'var(--bb-warning)', fontWeight: 'bold' }}>⭐ {Number(product.averageRating || product.rating || 0).toFixed(1)}</span>
-            <span className="mx-1" style={{ color: 'var(--bb-text-muted)' }}>·</span>
-            <span style={{ color: 'var(--bb-text-muted)' }}>{product.reviewCount?.toLocaleString('en-IN') || 0} reviews</span>
+            <span className="mx-1">·</span>
+            <span>{product.reviewCount?.toLocaleString('en-IN') || 0} reviews</span>
           </span>
 
           {/* Price row */}
           <div className="d-flex align-items-baseline justify-content-between mb-3">
             <div>
-              <span className="fw-black fs-5" style={{ color: 'var(--bb-text)' }}>
+              <span className="fw-black fs-5 text-theme-title">
                 ₹{currentPrice.toLocaleString('en-IN')}
               </span>
 
-              <span className="text-decoration-line-through small ms-2" style={{ color: 'var(--bb-text-muted)' }}>
+              <span className="text-decoration-line-through text-theme-muted small ms-2">
                 ₹{currentOldPrice.toLocaleString('en-IN')}
               </span>
             </div>

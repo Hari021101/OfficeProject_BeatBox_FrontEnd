@@ -75,6 +75,21 @@
   color: var(--bb-title-color) !important;
 }
 
+.rating-badge {
+    background: #111827;
+    color: #fbbf24;
+}
+
+[data-theme="light"] .rating-badge {
+    background: #ffffff;
+    color: #111827;
+}
+
+[data-theme="dark"] .rating-badge {
+    background: #111827;
+    color: #fbbf24;
+}
+
 .text-theme-muted {
   color: var(--bb-muted) !important;
 }
@@ -1109,6 +1124,57 @@ body {
   background: linear-gradient(135deg, var(--bb-accent), #00d2ff) !important;
   box-shadow: 0 8px 25px var(--bb-accent-glow) !important;
   transform: translateY(-1px);
+}
+
+/* ── Product Card Text Color Fixes ───────────────────────────────────────────
+   Root cause: the card wraps in a React <Link> which renders as <a>.
+   Bootstrap's reboot sets `a { color: var(--bs-link-color) }` in dark mode.
+   Child spans inherit this Bootstrap link color (a blue) rather than the
+   intended theme colors. These rules apply higher-specificity overrides so
+   that every text element inside a product card resolves from BB theme vars.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Neutralise Bootstrap's link color on the card wrapper anchor */
+.product-card > a,
+.product-card a {
+  color: var(--bb-text) !important;
+}
+
+/* Product title: always heading color */
+.product-card .product-card-name {
+  color: var(--bb-heading) !important;
+}
+
+/* Review row wrapper: use theme muted */
+.product-card-body .text-theme-muted,
+.product-card .text-theme-muted {
+  color: var(--bb-text-muted) !important;
+}
+
+/* Rating number: always warning/gold */
+.product-card-body .text-theme-muted span[style],
+.product-card .product-card-body span[style*="bb-warning"] {
+  color: var(--bb-warning) !important;
+}
+
+/* All plain child spans in the review row inherit muted */
+.product-card-body .text-theme-muted span {
+  color: inherit;
+}
+
+/* Price: current price is bb-text, old price is bb-text-muted */
+.product-card-body .text-theme-title {
+  color: var(--bb-heading) !important;
+}
+
+.product-card-body .text-theme-muted.text-decoration-line-through,
+.product-card-body span.text-decoration-line-through {
+  color: var(--bb-text-muted) !important;
+}
+
+/* Discount % label */
+.product-card-body span[style*="bb-success"] {
+  color: var(--bb-success) !important;
 }
 
 /* ── Checkout Form Inputs ─────────────────────────────────────────────────── */
@@ -2466,4 +2532,39 @@ select option {
   background-color: rgba(245, 158, 11, 0.15) !important;
   color: #d97706 !important;
   border-color: #f59e0b !important;
-}
+}
+
+/* ==========================================================================
+   Shared Related Products Grid Layout
+   ========================================================================== */
+.related-products-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+@media (max-width: 1199.98px) {
+  .related-products-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 991.98px) {
+  .related-products-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 575.98px) {
+  .related-products-container {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.related-product-col {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
