@@ -11,7 +11,7 @@ import { toast } from 'react-hot-toast'
 import logo from '../../assets/beatbox_logo.png'
 import { getImageUrl } from '../../config/api'
 
-const ProductCard = React.memo(function ProductCard({ product, index = 0 }) {
+const ProductCard = React.memo(function ProductCard({ product, index = 0, hideProductTag = false, giftBadge = null }) {
   const dispatch = useDispatch()
   const { user } = useSelector(state => state.auth)
   const isWishlisted = useSelector(state => selectIsInWishlist(state, product.id))
@@ -126,8 +126,11 @@ const currentOldPrice =
           )}
 
           {/* Top row: badge + wishlist & compare */}
-          <div className="position-absolute top-0 start-0 end-0 d-flex justify-content-between p-3" style={{ zIndex: 10 }}>
-            {product.tag && <span className="product-card-badge">{product.tag}</span>}
+          <div className="position-absolute top-0 start-0 end-0 d-flex justify-content-between align-items-center p-3" style={{ zIndex: 10 }}>
+            {giftBadge
+              ? giftBadge
+              : (!hideProductTag && product.tag && <span className="product-card-badge">{product.tag}</span>)
+            }
             <div className="d-flex gap-2">
               <button
                 onClick={handleCompare}

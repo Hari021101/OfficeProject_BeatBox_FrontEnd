@@ -27,26 +27,15 @@ const avatar = (name, isAdmin) => (
 )
 
 const StatusBadge = ({ active }) => (
-  <span className="badge rounded-pill px-3 py-1 d-inline-flex align-items-center gap-1"
-    style={{
-      background: active ? 'rgba(57,255,20,0.1)' : 'rgba(239,68,68,0.1)',
-      color: active ? '#39ff14' : '#ef4444',
-      border: '1px solid currentColor', fontWeight: 700, fontSize: '0.7rem'
-    }}>
+  <span className={`admin-status-pill ${active ? 'status-active' : 'status-suspended'}`}>
     <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor', display: 'inline-block' }} />
     {active ? 'Active' : 'Suspended'}
   </span>
 )
 
 const RoleBadge = ({ role }) => (
-  <span className="badge rounded-pill px-3 py-1"
-    style={{
-      background: role === 'Admin' ? 'rgba(168,32,255,0.12)' : 'rgba(255,255,255,0.05)',
-      color: role === 'Admin' ? '#d161ff' : 'var(--bb-muted)',
-      border: `1px solid ${role === 'Admin' ? 'rgba(168,32,255,0.25)' : 'var(--bb-border)'}`,
-      fontWeight: 700, fontSize: '0.7rem'
-    }}>
-    {role === 'Admin' && <Crown size={10} className="me-1" />}{role}
+  <span className={`admin-role-pill ${role === 'Admin' ? 'role-admin' : 'role-customer'}`}>
+    {role === 'Admin' && <Crown size={10} />}{role}
   </span>
 )
 

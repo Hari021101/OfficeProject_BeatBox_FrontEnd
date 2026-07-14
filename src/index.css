@@ -92,6 +92,38 @@
     color: #fbbf24;
 }
 
+/* ── Status Pill — works in both dark and light mode ─────────────────────── */
+.status-pill {
+  background: var(--bb-success);
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1.4;
+}
+
+[data-theme="light"] .status-pill {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* ── Discount pill ───────────────────────────────────────────────────────── */
+.discount-pill {
+  background: #16a34a;
+  color: #ffffff;
+  font-weight: 800;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.88rem;
+  border: none;
+  display: inline-block;
+  line-height: 1.4;
+}
+
 .text-theme-muted {
   color: var(--bb-muted) !important;
 }
@@ -2494,11 +2526,70 @@ select option {
   letter-spacing: 0.5px !important;
 }
 
-/* Light Theme Contrast Overrides to prevent white text on pastel bg */
+/* ==========================================================================
+   Admin Role & Status Pills — theme-aware, WCAG-compliant
+   ========================================================================== */
+
+/* Shared base for role and status pills */
+.admin-role-pill,
+.admin-status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  border: 1px solid var(--bb-border);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+/* Role — Customer */
+.admin-role-pill.role-customer {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border-color: rgba(59, 130, 246, 0.35);
+}
+
+/* Role — Admin */
+.admin-role-pill.role-admin {
+  background: rgba(168, 85, 247, 0.18);
+  color: #c084fc;
+  border-color: rgba(168, 85, 247, 0.35);
+}
+
+/* Status — Active */
+.admin-status-pill.status-active {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+/* Status — Suspended */
+.admin-status-pill.status-suspended {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+/* Status — Pending */
+.admin-status-pill.status-pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+/* ── Light Mode Overrides (solid, high-contrast text) ─────────────────────── */
+
+/* Light Theme Contrast Overrides for bb-badge-* */
 [data-theme="light"] .bb-badge-success {
-  background-color: rgba(5, 150, 105, 0.15) !important;
+  background-color: rgba(5, 150, 105, 0.12) !important;
   color: #047857 !important;
-  border-color: #059669 !important;
+  border-color: rgba(5, 150, 105, 0.35) !important;
 }
 
 [data-theme="light"] .bb-badge-warning {

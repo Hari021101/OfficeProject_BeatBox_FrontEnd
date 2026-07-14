@@ -131,7 +131,7 @@ export default function AuditLogs() {
 
                   {/* Admin info */}
                   <div className="d-flex align-items-center gap-2 pt-2" style={{ borderTop: '1px solid var(--bb-border)' }}>
-                    <div className="bg-secondary bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: '22px', height: '22px' }}>
+                    <div className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: '22px', height: '22px', background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
                       <User size={11} className="text-theme-muted" />
                     </div>
                     <span className="text-theme-title fw-bold" style={{ fontSize: '0.8rem' }}>{log.admin}</span>

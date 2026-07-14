@@ -113,7 +113,16 @@ export default function Gifting() {
               >
                 <div className="position-absolute top-0 start-0 w-100 h-100" style={{ background: `radial-gradient(circle at top right, ${offer.color}20, transparent 70%)` }}></div>
                 <h3 className="fw-black mb-2" style={{ color: offer.color }}>Extra {offer.discount} Off</h3>
-                <p className="text-theme-muted mb-0 fw-semibold">Using Code: <span className="text-white px-2 py-1 rounded bg-theme-surface border border-secondary border-opacity-25 ms-1">{offer.code}</span></p>
+                <p className="text-theme-muted mb-0 fw-semibold">Using Code: <span
+    className="px-2 py-1 rounded ms-1 fw-bold"
+    style={{
+        background: "var(--bb-surface-2)",
+        color: "var(--bb-title-color)",
+        border: "1px solid var(--bb-border)"
+    }}
+>
+    {offer.code}
+</span></p>
               </motion.div>
             </div>
           ))}
@@ -183,16 +192,26 @@ export default function Gifting() {
           <div className="row g-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
             {displayedProducts.map((product, idx) => (
               <div className="col" key={`col-prod-${product.id}`}>
-                <div className="position-relative">
-                  {/* Decorative luxury gift tag wrapper */}
-                  <div 
-                    className="position-absolute top-0 start-0 m-3 z-3 bg-danger text-white px-2 py-1 rounded-pill fw-bold d-flex align-items-center gap-1 shadow-lg"
-                    style={{ fontSize: '0.6rem', background: 'linear-gradient(135deg, #ef4444, #e11d48)', zIndex: 3, textTransform: 'uppercase', letterSpacing: '0.5px' }}
-                  >
-                    <Gift size={10} /> GIFT READY
-                  </div>
-                  <ProductCard product={product} index={idx} />
-                </div>
+                <ProductCard
+                  product={product}
+                  index={idx}
+                  hideProductTag={true}
+                  giftBadge={
+                    <span
+                      className="d-flex align-items-center gap-1 fw-bold text-white rounded-pill px-2 py-1 shadow"
+                      style={{
+                        fontSize: '0.6rem',
+                        background: 'linear-gradient(135deg, #ef4444, #e11d48)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        whiteSpace: 'nowrap',
+                        lineHeight: 1,
+                      }}
+                    >
+                      <Gift size={10} /> GIFT READY
+                    </span>
+                  }
+                />
               </div>
             ))}
           </div>

@@ -108,7 +108,7 @@ export default function Products() {
         const count = variantList.length;
         return (
           <div>
-            <span className="badge bg-info text-dark fw-bold" style={{ fontSize: '0.75rem' }}>{count} {count === 1 ? 'Variant' : 'Variants'}</span>
+            <span className="bb-badge-info" style={{ fontSize: '0.7rem' }}>{count} {count === 1 ? 'Variant' : 'Variants'}</span>
             {count > 0 && (
               <p className="mb-0 text-theme-muted mt-1" style={{ fontSize: '0.7rem', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={variantList.join(', ')}>
                 {variantList.join(', ')}

@@ -615,13 +615,20 @@ const handleWishlist = async () => {
                 <span className="fw-bold ms-1" style={{ color: '#ffc700' }}>{Number(product.averageRating || product.rating || 0).toFixed(1)}</span>
               </div>
               <span className="text-theme-muted small">({(product.reviewCount || 0).toLocaleString('en-IN')} reviews)</span>
-              <span className={`badge px-2 py-1 small fw-bold`} style={{
-                background: selectedVariant?.stockQuantity > 0 ? 'var(--bb-success-bg)' : 'rgba(220,53,69,0.08)',
-                color: selectedVariant?.stockQuantity > 0 ? 'var(--bb-success-text)' : '#ef4444',
-                border: `1px solid ${selectedVariant?.stockQuantity > 0 ? 'var(--bb-success-border)' : 'rgba(220,53,69,0.2)'}`
-              }}>
-                {selectedVariant?.stockQuantity > 0 ? '✓ In Stock' : '✗ Out of Stock'}
-              </span>
+              {selectedVariant?.stockQuantity > 0 ? (
+                <span className="status-pill">
+                  ✓ In Stock
+                </span>
+              ) : (
+                <span className="badge px-2 py-1 small fw-bold" style={{
+                  background: 'rgba(220,53,69,0.12)',
+                  color: '#ef4444',
+                  border: '1px solid rgba(220,53,69,0.25)',
+                  borderRadius: '999px'
+                }}>
+                  ✗ Out of Stock
+                </span>
+              )}
             </div>
 
             {/* USP pill */}
@@ -653,21 +660,13 @@ const handleWishlist = async () => {
                   ₹{originalPrice.toLocaleString('en-IN')}
                 </span>
 
-                <span
-                  className="badge fw-bold"
-                  style={{
-                    background: 'var(--bb-success-bg)',
-                    color: 'var(--bb-success-text)',
-                    border: '1px solid var(--bb-success-border)',
-                    fontSize: '0.9rem'
-                  }}
-                >
+                <span className="discount-pill">
                   {discount}% OFF
                 </span>
 
               </div>
 
-              <p className="text-success small fw-semibold mb-0">
+              <p className="small fw-semibold mb-0" style={{ color: 'var(--bb-success)' }}>
                 You save ₹{savings.toLocaleString('en-IN')} 🎉
               </p>
             </div>

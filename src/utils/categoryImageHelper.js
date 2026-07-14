@@ -4,6 +4,7 @@ import speakersImg from '../assets/category-images/bluetooth_speaker.png';
 import soundbarsImg from '../assets/category-covers/soundbars.png';
 import mobileAccImg from '../assets/category-images/wired_headphones.png';
 import computerAccImg from '../assets/category-images/gaming_keyboard.png';
+import gamingHeadsetImg from '../assets/category-images/gaming_headphone.png';
 import carAccImg from '../assets/category-covers/car_accessories.png';
 import smartGadgetsImg from '../assets/category-images/smartwatch.png';
 import { getImageUrl } from '../config/api';
@@ -13,6 +14,7 @@ import { getImageUrl } from '../config/api';
 const COVER_MAP = {
   'tws': twsImg,
   'wireless headphones': headphonesImg,
+  'gaming headsets': gamingHeadsetImg,
   'portable speakers': speakersImg,
   'mobile accessories': mobileAccImg,
   'computer accessories': computerAccImg,
@@ -41,6 +43,9 @@ export const getCategoryCover = (categoryName = '', dbImageUrl = '') => {
   // Exact-match partial fallbacks (in case of subtle naming variants)
   if (normalized.includes('earbud') || normalized.includes('tws') || normalized.includes('airpod')) {
     return twsImg;
+  }
+  if (normalized.includes('gaming')) {
+    return gamingHeadsetImg;
   }
   if (normalized.includes('headphone') || normalized.includes('headset') || normalized.includes('neckband')) {
     return headphonesImg;

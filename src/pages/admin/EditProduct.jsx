@@ -286,16 +286,11 @@ export default function EditProduct() {
                       <div className="d-flex align-items-center gap-2">
                         <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: v.colorCode, border: '1px solid var(--bb-border)' }} />
                         <span className="fw-black text-theme-title">{v.color}</span>
-                        {v.capacity && <span className="badge bg-secondary" style={{ fontSize: '0.75rem' }}>{v.capacity}</span>}
+                        {v.capacity && <span className="bb-badge-info" style={{ fontSize: '0.72rem' }}>{v.capacity}</span>}
                       </div>
 
                       <div className="d-flex align-items-center gap-1">
-                        <span className={`badge px-2 py-1 small fw-bold me-2`} style={{
-                          background: v.isActive !== false ? 'var(--bb-success-bg)' : 'rgba(220,53,69,0.08)',
-                          color: v.isActive !== false ? 'var(--bb-success-text)' : '#ef4444',
-                          border: `1px solid ${v.isActive !== false ? 'var(--bb-success-border)' : 'rgba(220,53,69,0.2)'}`,
-                          fontSize: '0.7rem'
-                        }}>
+                        <span className={`admin-status-pill ${v.isActive !== false ? 'status-active' : 'status-suspended'}`} style={{ fontSize: '0.68rem' }}>
                           {v.isActive !== false ? 'Active' : 'Inactive'}
                         </span>
 
