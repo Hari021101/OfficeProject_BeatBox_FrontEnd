@@ -75,6 +75,12 @@ export default function ProductListing() {
         label: 'All Products',
         emoji: '🛍️',
         slug: 'all'
+      },
+      {
+        id: 'bestsellers',
+        label: 'Best Sellers',
+        emoji: '🔥',
+        slug: 'bestsellers'
       }
     ]
 
@@ -142,7 +148,10 @@ export default function ProductListing() {
       const activeLower = activeCategory.toLowerCase();
 
       // Collection / Group mappings (dynamic keyword matches)
-      if (activeLower === 'signature-series') {
+      if (activeLower === 'bestsellers') {
+        // Best sellers doesn't filter out products by category, it just shows them all.
+        // The default 'popular' sort will put the best sellers at the top.
+      } else if (activeLower === 'signature-series') {
         list = list.filter(p => 
           /earbud|tws|headphone|earphone|neckband/i.test(p.categoryName)
         );
