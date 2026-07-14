@@ -459,7 +459,11 @@ export default function Dashboard() {
           <h2 className="fw-black text-theme-title mb-1" style={{ fontSize: 'clamp(1.2rem, 4vw, 1.7rem)' }}>Dashboard Overview</h2>
           <p className="text-theme-muted mb-0" style={{ fontSize: '0.875rem' }}>Welcome back, Admin. Here's what's happening today.</p>
         </div>
-        <button className="btn btn-glow d-flex align-items-center gap-2 px-4 py-2 fw-bold" style={{ borderRadius: '10px' }}>
+        <button
+          className="btn btn-glow d-flex align-items-center gap-2 px-4 py-2 fw-bold"
+          style={{ borderRadius: '10px' }}
+          onClick={() => setIsReportModalOpen(true)}
+        >
           <Activity size={18} /> Generate Report
         </button>
       </div>
@@ -515,6 +519,178 @@ export default function Dashboard() {
           />
         </div>
       </div>
+
+      {/* ── Report Generator Modal ───────────────────────────────────────── */}
+      {isReportModalOpen && (
+        <div
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+          style={{ background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(6px)', zIndex: 1055 }}
+          onClick={(e) => { if (e.target === e.currentTarget) setIsReportModalOpen(false) }}
+        >
+          <div
+            className="rounded-4 p-4"
+            style={{
+              background: 'var(--bb-surface)',
+              border: '1px solid var(--bb-border)',
+              boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
+              width: '100%',
+              maxWidth: '520px',
+              maxHeight: '90vh',
+              overflowY: 'auto'
+            }}
+          >
+            {/* Modal Header */}
+            <div className="d-flex align-items-center justify-content-between mb-4">
+              <div className="d-flex align-items-center gap-2">
+                <div className="d-flex align-items-center justify-content-center rounded-3" style={{ width: 36, height: 36, background: 'linear-gradient(135deg,var(--bb-primary),var(--bb-accent))', color: '#000' }}>
+                  <FileText size={18} />
+                </div>
+                <div>
+                  <h5 className="fw-black text-theme-title mb-0">Generate Report</h5>
+                  <p className="text-theme-muted mb-0" style={{ fontSize: '0.78rem' }}>Export business data in your preferred format</p>
+                </div>
+              </div>
+              <button
+                className="btn btn-sm p-1 border-0"
+                style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-muted)', borderRadius: 8 }}
+                onClick={() => setIsReportModalOpen(false)}
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleDownloadReport}>
+              {/* Report Type */}
+              <div className="mb-3">
+                <label className="form-label fw-bold text-theme-title" style={{ fontSize: '0.82rem' }}>Report Type</label>
+                <div className="d-flex flex-wrap gap-2">
+                  {['Sales', 'Orders', 'Revenue', 'Inventory', 'Customer', 'Product Performance', 'Returns', 'Coupon Usage', 'Audit Log'].map(t => (
+                    <button
+                      key={t}
+                      type="button"
+                      className="btn btn-sm px-3 py-1 fw-bold"
+                      style={{
+                        borderRadius: 999,
+                        fontSize: '0.75rem',
+                        background: reportType === t ? 'linear-gradient(135deg,var(--bb-primary),var(--bb-accent))' : 'var(--bb-surface-2)',
+                        color: reportType === t ? '#000' : 'var(--bb-muted)',
+                        border: reportType === t ? 'none' : '1px solid var(--bb-border)',
+                        transition: 'all 0.2s'
+                      }}
+                      onClick={() => setReportType(t)}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Date Range */}
+              <div className="mb-3">
+                <label className="form-label fw-bold text-theme-title" style={{ fontSize: '0.82rem' }}>Date Range</label>
+                <div className="d-flex flex-wrap gap-2">
+                  {['Today', 'This Week', 'This Month', 'Last Month', 'This Year', 'Custom Range'].map(r => (
+                    <button
+                      key={r}
+                      type="button"
+                      className="btn btn-sm px-3 py-1 fw-bold"
+                      style={{
+                        borderRadius: 999,
+                        fontSize: '0.75rem',
+                        background: dateRange === r ? 'var(--bb-surface-2)' : 'transparent',
+                        color: dateRange === r ? 'var(--bb-accent)' : 'var(--bb-muted)',
+                        border: dateRange === r ? '1px solid var(--bb-accent)' : '1px solid var(--bb-border)',
+                        transition: 'all 0.2s'
+                      }}
+                      onClick={() => setDateRange(r)}
+                    >
+                      <Calendar size={10} className="me-1" />{r}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom Date Inputs */}
+              {dateRange === 'Custom Range' && (
+                <div className="row g-3 mb-3">
+                  <div className="col-6">
+                    <label className="form-label fw-bold text-theme-title" style={{ fontSize: '0.78rem' }}>Start Date</label>
+                    <input
+                      type="date"
+                      className="bb-input form-control w-100"
+                      value={customStartDate}
+                      onChange={e => setCustomStartDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-6">
+                    <label className="form-label fw-bold text-theme-title" style={{ fontSize: '0.78rem' }}>End Date</label>
+                    <input
+                      type="date"
+                      className="bb-input form-control w-100"
+                      value={customEndDate}
+                      onChange={e => setCustomEndDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Export Format */}
+              <div className="mb-4">
+                <label className="form-label fw-bold text-theme-title" style={{ fontSize: '0.82rem' }}>Export Format</label>
+                <div className="d-flex gap-3">
+                  {[
+                    { fmt: 'CSV',   icon: '📊', desc: 'Spreadsheet compatible' },
+                    { fmt: 'Excel', icon: '📈', desc: 'Microsoft Excel (.xls)' },
+                    { fmt: 'PDF',   icon: '📄', desc: 'Print-ready document' }
+                  ].map(({ fmt, icon, desc }) => (
+                    <button
+                      key={fmt}
+                      type="button"
+                      className="flex-fill p-3 rounded-3 text-start"
+                      style={{
+                        background: exportFormat === fmt ? 'rgba(168,32,255,0.12)' : 'var(--bb-surface-2)',
+                        border: exportFormat === fmt ? '1px solid var(--bb-primary)' : '1px solid var(--bb-border)',
+                        transition: 'all 0.2s',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => setExportFormat(fmt)}
+                    >
+                      <div style={{ fontSize: '1.4rem' }}>{icon}</div>
+                      <div className="fw-bold text-theme-title" style={{ fontSize: '0.8rem' }}>{fmt}</div>
+                      <div className="text-theme-muted" style={{ fontSize: '0.7rem' }}>{desc}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="d-flex gap-3">
+                <button
+                  type="button"
+                  className="btn flex-fill py-2 fw-bold"
+                  style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-muted)', border: '1px solid var(--bb-border)', borderRadius: 10 }}
+                  onClick={() => setIsReportModalOpen(false)}
+                  disabled={generating}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-glow flex-fill py-2 fw-black d-flex align-items-center justify-content-center gap-2"
+                  style={{ borderRadius: 10 }}
+                  disabled={generating}
+                >
+                  {generating ? (
+                    <><span className="spinner-border spinner-border-sm" role="status" /> Generating...</>
+                  ) : (
+                    <><Download size={16} /> Generate {exportFormat}</>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   )

@@ -500,13 +500,7 @@ export default function Promotions() {
           <h2 className="fw-black text-theme-title mb-1">Promotions Engine</h2>
           <p className="text-theme-muted mb-0">Create and manage marketing campaigns and discounts.</p>
         </div>
-        <button
-          className="btn btn-glow fw-bold d-flex align-items-center gap-2"
-          style={{ borderRadius: 12 }}
-          onClick={() => { setEditCoupon(null); setShowModal(true) }}
-        >
-          <Plus size={18} /> Create Coupon
-        </button>
+       
       </div>
 
       {/* KPI Cards */}
