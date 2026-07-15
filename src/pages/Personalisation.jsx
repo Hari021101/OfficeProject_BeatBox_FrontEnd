@@ -8,7 +8,7 @@ import { addToCart } from '../redux/cartSlice'
 import { toast } from 'react-hot-toast'
 import { IMAGE_MAP } from '../data/products'
 import heroEarbuds from '../assets/hero_earbuds.png'
-import engravingBanner from '../assets/banner/Encarving_banner.png'
+import engravingBanner from '../assets/banner/Encraving_banner.png'
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5089'
 
@@ -56,7 +56,7 @@ export default function Personalisation() {
   const dispatch = useDispatch()
   const allProducts = useSelector(selectAllProducts)
   const productStatus = useSelector(selectProductStatus)
-  const [engravingName, setEngravingName] = useState('YOUR NAME')
+  const [engravingName, setEngravingName] = useState('')
   const [engravingDate, setEngravingDate] = useState('')
   const [engravingMessage, setEngravingMessage] = useState('')
   const [activeExample, setActiveExample] = useState(0)
@@ -255,7 +255,7 @@ export default function Personalisation() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="col-12 col-lg-7 col-xl-7"
             >
-              <div 
+              <div
                 className="position-relative w-100 overflow-hidden shadow-lg border border-secondary border-opacity-10"
                 style={{
                   containerType: 'inline-size',
@@ -275,45 +275,27 @@ export default function Personalisation() {
                   }}
                 />
 
-                {/* Cover Mask to seamlessly cover the hardcoded background "YOUR NAME" text on the image */}
-                <div 
-                  className="position-absolute"
-                  style={{
-                    left: '69.3%',
-                    top: '56.3%',
-                    width: '23%',
-                    height: '11.5%',
-                    background: 'radial-gradient(circle, #10061d 60%, #150a29 95%, #180e30 100%)',
-                    borderRadius: '4px',
-                    transform: 'translate(-50%, -50%)',
-                    opacity: 0.98,
-                    mixBlendMode: 'normal',
-                    filter: 'blur(1px)'
-                  }}
-                />
-
-                {/* Dynamic Engraving Text Overlay */}
-                <motion.div
-                  key={`${engravingName}-${engravingDate}-${engravingMessage}`}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3 }}
-                  className="position-absolute d-flex flex-column align-items-center justify-content-center text-center pointer-events-none"
-                  style={{
-                    left: '69.3%',
-                    top: '56.3%',
-                    width: '23%',
-                    height: '11.5%',
-                    transform: 'translate(-50%, -50%)',
-                    zIndex: 10,
-                    lineHeight: '1.2'
-                  }}
-                >
-                  {/* Name */}
-                  {engravingName && (
+                {/* Dynamic Engraving Text Overlays (Positioned independently relative to image) */}
+                {/* 1. Name: Centered exactly over the metallic horizontal strip */}
+                {engravingName && (
+                  <motion.div
+                    key={`name-${engravingName}`}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="position-absolute d-flex align-items-center justify-content-center text-center pointer-events-none"
+                    style={{
+                      left: '59.3%',
+                      top: '53.3%',
+                      width: '23%',
+                      height: '4.5%',
+                      transform: 'translate(-50%, -50%)',
+                      zIndex: 10,
+                    }}
+                  >
                     <span
                       style={{
-                        fontSize: engravingName.length > 8 ? '2.3cqw' : '2.7cqw',
+                        fontSize: engravingName.length > 8 ? '2.0cqw' : '2.4cqw',
                         fontWeight: 900,
                         letterSpacing: '1.5px',
                         color: '#d4d8db',
@@ -321,15 +303,31 @@ export default function Personalisation() {
                         opacity: 0.9,
                         whiteSpace: 'nowrap',
                         textTransform: 'uppercase',
-                        transition: 'font-size 0.2s'
+                        lineHeight: 1,
                       }}
                     >
                       {engravingName}
                     </span>
-                  )}
+                  </motion.div>
+                )}
 
-                  {/* Date */}
-                  {engravingDate && (
+                {/* 2. Date: Centered below the metallic strip */}
+                {engravingDate && (
+                  <motion.div
+                    key={`date-${engravingDate}`}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="position-absolute d-flex align-items-center justify-content-center text-center pointer-events-none"
+                    style={{
+                      left: '59.3%',
+                      top: '56.5%',
+                      width: '23%',
+                      height: '3.5%',
+                      transform: 'translate(-50%, -50%)',
+                      zIndex: 10,
+                    }}
+                  >
                     <span
                       style={{
                         fontSize: '1.7cqw',
@@ -338,16 +336,32 @@ export default function Personalisation() {
                         color: '#b0b5b9',
                         textShadow: '0 0 5px rgba(0, 243, 255, 0.3)',
                         opacity: 0.8,
-                        marginTop: '0.4cqw',
-                        whiteSpace: 'nowrap'
+                        whiteSpace: 'nowrap',
+                        lineHeight: 1,
                       }}
                     >
                       {engravingDate}
                     </span>
-                  )}
+                  </motion.div>
+                )}
 
-                  {/* Message */}
-                  {engravingMessage && (
+                {/* 3. Message: Centered below the Date */}
+                {engravingMessage && (
+                  <motion.div
+                    key={`msg-${engravingMessage}`}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="position-absolute d-flex align-items-center justify-content-center text-center pointer-events-none"
+                    style={{
+                      left: '59.3%',
+                      top: '59.5%',
+                      width: '23%',
+                      height: '6.5%',
+                      transform: 'translate(-50%, -50%)',
+                      zIndex: 10,
+                    }}
+                  >
                     <span
                       style={{
                         fontSize: engravingMessage.length > 20 ? '1.3cqw' : '1.5cqw',
@@ -356,19 +370,19 @@ export default function Personalisation() {
                         color: '#a0a5a9',
                         textShadow: '0 0 5px rgba(0, 243, 255, 0.25)',
                         opacity: 0.75,
-                        marginTop: '0.4cqw',
-                        maxWidth: '90%',
+                        maxWidth: '100%',
                         wordWrap: 'break-word',
                         display: '-webkit-box',
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden'
+                        overflow: 'hidden',
+                        lineHeight: '1.2',
                       }}
                     >
                       {engravingMessage}
                     </span>
-                  )}
-                </motion.div>
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           </div>
