@@ -271,10 +271,11 @@ function CategoryItem({ cat, index, onNavigate, shouldReduceMotion }) {
           style={{
             position: 'relative',
             zIndex: 1,
-            width: '88px',
-            height: '88px',
+            width: '100px',
+            height: '100px',
             objectFit: 'contain',
-            filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.15))',
+            objectPosition: 'center',
+            filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.18))',
             transition: 'transform 0.4s cubic-bezier(0.22,1,0.36,1)',
           }}
         />

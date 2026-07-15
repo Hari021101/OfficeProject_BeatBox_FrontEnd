@@ -1,82 +1,143 @@
-import twsImg from '../assets/category-images/airpods.png';
-import headphonesImg from '../assets/category-images/headphones.png';
-import speakersImg from '../assets/category-images/bluetooth_speaker.png';
-import soundbarsImg from '../assets/category-covers/soundbars.png';
-import mobileAccImg from '../assets/category-images/wired_headphones.png';
-import computerAccImg from '../assets/category-images/gaming_keyboard.png';
+import twsImg          from '../assets/category-images/airpods.png';
+import headphonesImg    from '../assets/category-images/headphones.png';
+import speakerImg       from '../assets/category-images/bluetooth_speaker.png';
+import wiredImg         from '../assets/category-images/wired_headphones.png';
 import gamingHeadsetImg from '../assets/category-images/gaming_headphone.png';
-import carAccImg from '../assets/category-covers/car_accessories.png';
-import smartGadgetsImg from '../assets/category-images/smartwatch.png';
-import { getImageUrl } from '../config/api';
+import keyboardImg      from '../assets/category-images/gaming_keyboard.png';
+import smartwatchImg    from '../assets/category-images/smartwatch.png';
+import partySpeakerImg  from '../assets/category-images/party_speaker.png';
+import soundbarImg      from '../assets/category-images/soundbar.png';
+import wirelessMouseImg from '../assets/category-images/wirelessmouse.png';
+import projectorImg     from '../assets/category-images/projector.png';
+import powerBankImg     from '../assets/category-images/power_bank.png';
+import { getImageUrl }  from '../config/api';
 
-
-// Map normalized category names to pre-generated cover assets
+/**
+ * Exact-name COVER_MAP — keyed by normalised (trimmed, lowercased) category name.
+ * These entries take priority over keyword fuzzy-matching below.
+ */
 const COVER_MAP = {
-  'tws': twsImg,
-  'wireless headphones': headphonesImg,
-  'gaming headsets': gamingHeadsetImg,
-  'portable speakers': speakersImg,
-  'mobile accessories': mobileAccImg,
-  'computer accessories': computerAccImg,
-  'car accessories': carAccImg,
-  'smart gadgets': smartGadgetsImg,
-  'keyboards': computerAccImg
+  // Audio gear
+  'tws earbuds':           twsImg,
+  'tws':                   twsImg,
+  'true wireless earbuds': twsImg,
+  'earbuds':               twsImg,
+
+  'wireless headphones':   headphonesImg,
+  'headphones':            headphonesImg,
+
+  'gaming headsets':       gamingHeadsetImg,
+  'gaming headset':        gamingHeadsetImg,
+
+  'wired earphones':       wiredImg,
+  'wired headphones':      wiredImg,
+
+  // Speakers
+  'bluetooth speakers':    speakerImg,
+  'portable speakers':     speakerImg,
+  'speakers':              speakerImg,
+
+  'party speakers':        partySpeakerImg,
+  'party speaker':         partySpeakerImg,
+
+  'soundbars':             soundbarImg,
+  'soundbar':              soundbarImg,
+
+  // Peripherals
+  'keyboards':             keyboardImg,
+  'gaming keyboards':      keyboardImg,
+  'computer accessories':  keyboardImg,
+
+  'wireless mouse':        wirelessMouseImg,
+  'wireless mice':         wirelessMouseImg,
+
+  // Smart / gadgets
+  'smart watches':         smartwatchImg,
+  'smartwatches':          smartwatchImg,
+  'smart gadgets':         smartwatchImg,
+
+  // Visual / AV
+  'projectors':            projectorImg,
+  'projector':             projectorImg,
+
+  // Power
+  'power banks':           powerBankImg,
+  'power bank':            powerBankImg,
 };
 
 /**
  * Resolves the cover image for a category.
- * Prioritizes DB image URL, falls back to pre-generated cover image,
- * and falls back to a dynamically generated neon SVG if both are missing.
+ *
+ * Priority order:
+ *  1. Database imageUrl (if the backend supplies one)
+ *  2. Exact COVER_MAP lookup
+ *  3. Keyword fuzzy-fallback using the new category-images assets
+ *  4. Neon-SVG placeholder for anything not yet covered
  */
 export const getCategoryCover = (categoryName = '', dbImageUrl = '') => {
-  // 1. Return database image if available
+  // 1. Backend-supplied image wins
   if (dbImageUrl) {
     return getImageUrl(dbImageUrl);
   }
 
-  // 2. Return pre-generated assets from COVER_MAP
   const normalized = categoryName.trim().toLowerCase();
+
+  // 2. Exact-name lookup
   if (COVER_MAP[normalized]) {
     return COVER_MAP[normalized];
   }
 
-  // Exact-match partial fallbacks (in case of subtle naming variants)
+  // 3. Keyword fuzzy-matching (handles slight naming variations from the DB)
   if (normalized.includes('earbud') || normalized.includes('tws') || normalized.includes('airpod')) {
     return twsImg;
+  }
+  if (normalized.includes('gaming') && normalized.includes('headset')) {
+    return gamingHeadsetImg;
+  }
+  if (normalized.includes('gaming') && (normalized.includes('keyboard') || normalized.includes('key'))) {
+    return keyboardImg;
   }
   if (normalized.includes('gaming')) {
     return gamingHeadsetImg;
   }
-  if (normalized.includes('headphone') || normalized.includes('headset') || normalized.includes('neckband')) {
+  if (normalized.includes('wired') && (normalized.includes('earphone') || normalized.includes('headphone'))) {
+    return wiredImg;
+  }
+  if (normalized.includes('headphone') || normalized.includes('headset')) {
     return headphonesImg;
   }
-  if (normalized.includes('speaker') || normalized.includes('party')) {
-    return speakersImg;
+  if (normalized.includes('party')) {
+    return partySpeakerImg;
   }
   if (normalized.includes('soundbar') || normalized.includes('cinema')) {
-    return soundbarsImg;
+    return soundbarImg;
   }
-  if (normalized.includes('mobile') || normalized.includes('phone') || normalized.includes('cable')) {
-    return mobileAccImg;
+  if (normalized.includes('speaker') || normalized.includes('bluetooth speaker')) {
+    return speakerImg;
   }
-  if (normalized.includes('computer') || normalized.includes('keyboard') || normalized.includes('mouse') || normalized.includes('laptop')) {
-    return computerAccImg;
+  if (normalized.includes('keyboard') || normalized.includes('computer')) {
+    return keyboardImg;
   }
-  if (normalized.includes('car') || normalized.includes('bike') || normalized.includes('charger')) {
-    return carAccImg;
+  if (normalized.includes('mouse') || normalized.includes('mice')) {
+    return wirelessMouseImg;
   }
-  if (normalized.includes('gadget') || normalized.includes('smart') || normalized.includes('tracker')) {
-    return smartGadgetsImg;
+  if (normalized.includes('projector') || normalized.includes('presenter')) {
+    return projectorImg;
+  }
+  if (normalized.includes('power bank') || normalized.includes('powerbank') || normalized.includes('battery')) {
+    return powerBankImg;
+  }
+  if (normalized.includes('watch') || normalized.includes('gadget') || normalized.includes('smart') || normalized.includes('tracker')) {
+    return smartwatchImg;
   }
 
-  // 3. Dynamic custom SVG generator fallback for other/new categories (visual fallback)
+  // 4. Neon SVG placeholder for any unmapped category
   const colors = [
-    { primary: '#00f3ff', glow: 'rgba(0, 243, 255, 0.4)' }, // Cyan
-    { primary: '#a820ff', glow: 'rgba(168, 32, 255, 0.4)' } // Purple
+    { primary: '#00f3ff', glow: 'rgba(0, 243, 255, 0.4)' },
+    { primary: '#a820ff', glow: 'rgba(168, 32, 255, 0.4)' },
   ];
   const choice = colors[normalized.length % colors.length];
 
-  // Return a beautiful dynamic dark SVG containing a premium glowing neon wave design
   return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
     <rect width="100%" height="100%" fill="%23060b19" />
     <circle cx="200" cy="150" r="100" fill="none" stroke="${encodeURIComponent(choice.primary)}" stroke-width="2" opacity="0.3" />

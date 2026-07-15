@@ -13,60 +13,13 @@ import {
   LogOut,
   Sparkles,
   Headphones,
-  Speaker,
-  Gamepad2,
-  Clock,
   Package,
-  Watch,
   Link2,
-  BatteryCharging,
-  Scissors,
   Scale,
-  Tag,
-  Zap,
-  Star,
-  CreditCard,
-  MapPin,
-  Gift,
-  Bell
+  MapPin
 } from 'lucide-react'
 import logo from '../../assets/beatbox_logo.png'
-import heroEarbuds from '../../assets/hero_earbuds.png'
-import smartEarbuds from '../../assets/smart_earbuds.png'
-import heroHeadphones from '../../assets/hero_headphones.png'
-import wirelessNeckband from '../../assets/wireless_neckband.png'
-import gamingHeadset from '../../assets/gaming_headset.png'
-import heroWired from '../../assets/hero_wired.png'
-import heroSmartwatch from '../../assets/hero_smartwatch.png'
-import heroSpeaker from '../../assets/hero_speaker.png'
-import powerBank from '../../assets/power_bank.png'
-import soundbar from '../../assets/soundbar.png'
-import dashCam from '../../assets/dash_cam.png'
-import projector from '../../assets/projector.png'
-import actionCam from '../../assets/action_cam.png'
-import gamingMouse from '../../assets/gaming_mouse.png'
-import trimmer from '../../assets/trimmer.png'
-import keyboardMouse from '../../assets/keyboard_mouse.png'
-import carCharger from '../../assets/car_charger.png'
-import portableFan from '../../assets/portable_fan.png'
-import premiumCables from '../../assets/cables.png'
-import wirelessCharger from '../../assets/wireless_charger.png'
-import mobileHolder from '../../assets/mobile_holder.png'
-import laptopStand from '../../assets/laptop_stand.png'
-import usbHub from '../../assets/usb_hub.png'
-import laptopBag from '../../assets/laptop_bag.png'
-import tyreInflator from '../../assets/tyre_inflator.png'
-import vacuumCleaner from '../../assets/vacuum_cleaner.png'
-import hairDryer from '../../assets/hair_dryer.png'
-import electricKettle from '../../assets/electric_kettle.png'
-import smartTracker from '../../assets/smart_tracker.png'
-import phoneWallet from '../../assets/phone_wallet.png'
-import wiredEarphones from '../../assets/wired_earphones.png'
-import gamingKeyboard from '../../assets/gaming_keyboard.png'
-import newProductsIcon from '../../assets/new_products_icon.png'
-import usbGamingSpeakersImage from '../../assets/usb_gaming_speakers.png'
-import partySpeakerImage from '../../assets/party_speaker.png'
-import wirelessMicImage from '../../assets/wireless_mic.png'
+import { getCategoryCover } from '../../utils/categoryImageHelper'
 import { logout } from '../../redux/authSlice'
 import { selectCartCount } from '../../redux/cartSlice'
 import { selectWishlistCount } from '../../redux/wishlistSlice'
@@ -169,26 +122,6 @@ export default function Header() {
         </Link>
       </li>
       <li className="mb-1">
-        <Link to="/coupons" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
-          <Tag size={16} className="me-3 text-theme-muted" /> Coupons
-        </Link>
-      </li>
-      <li className="mb-1">
-        <Link to="/rewards" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
-          <Zap size={16} className="me-3 text-theme-muted" /> BeatBox Coins
-        </Link>
-      </li>
-      <li className="mb-1">
-        <Link to="/vip" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
-          <Star size={16} className="me-3 text-theme-muted" /> VIP Zone
-        </Link>
-      </li>
-      <li className="mb-1">
-        <Link to="/wallet" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
-          <CreditCard size={16} className="me-3 text-theme-muted" /> Saved Cards & Wallet
-        </Link>
-      </li>
-      <li className="mb-1">
         <Link to="/addresses" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
           <MapPin size={16} className="me-3 text-theme-muted" /> Saved Addresses
         </Link>
@@ -198,17 +131,7 @@ export default function Header() {
           <Heart size={16} className="me-3 text-theme-muted" /> Wishlist
         </Link>
       </li>
-      <li className="mb-1">
-        <Link to="/giftcards" className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3">
-          <Gift size={16} className="me-3 text-theme-muted" /> Gift Cards
-        </Link>
-      </li>
-      <li className="mb-1 border-bottom border-secondary border-opacity-25 pb-1">
-        <button className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3 w-100 bg-transparent border-0" onClick={() => {}}>
-          <Bell size={16} className="me-3 text-theme-muted" /> Notifications
-        </button>
-      </li>
-      <li className="mt-1">
+      <li className="mt-1 border-top border-secondary border-opacity-25 pt-1">
         <button className="dropdown-item d-flex align-items-center premium-dropdown-item py-2 px-3 text-danger fw-semibold w-100 bg-transparent border-0" onClick={handleLogout}>
           <LogOut size={16} className="me-3" /> Logout
         </button>
@@ -231,55 +154,8 @@ export default function Header() {
     }
   }
 
-  const getMegaMenuImage = (name) => {
-    const n = name.toLowerCase();
-    
-    // Audio
-    if (n.includes('soundbar') || n.includes('tv')) return soundbar;
-    if (n.includes('party')) return partySpeakerImage;
-    if (n.includes('usb speaker')) return usbGamingSpeakersImage;
-    if (n.includes('tws') || n.includes('earbud')) return smartEarbuds;
-    if (n.includes('wired')) return wiredEarphones;
-    if (n.includes('headphone') || n.includes('earphone')) return heroHeadphones;
-    if (n.includes('neckband')) return wirelessNeckband;
-    if (n.includes('mic')) return wirelessMicImage;
-    if (n.includes('speaker')) return heroSpeaker;
-    
-    // Mobile Accessories
-    if (n.includes('power bank') || n.includes('battery')) return powerBank;
-    if (n.includes('cable') || n.includes('wire') || n.includes('organiser')) return premiumCables;
-    if (n.includes('wireless charger')) return wirelessCharger;
-    if (n.includes('charger') || n.includes('adapter')) return carCharger;
-    if (n.includes('holder') || n.includes('stand')) return mobileHolder;
-    if (n.includes('wallet')) return phoneWallet;
-    if (n.includes('cleaner')) return trimmer; // fallback for cleaner
-
-    // Computer Accessories
-    if (n.includes('keyboard')) return gamingKeyboard;
-    if (n.includes('mouse') || n.includes('pad')) return gamingMouse;
-    if (n.includes('laptop bag')) return laptopBag;
-    if (n.includes('laptop') || n.includes('board') || n.includes('table')) return laptopStand;
-    if (n.includes('hub')) return usbHub;
-    if (n.includes('projector') || n.includes('presenter')) return projector;
-
-    // Car Accessories
-    if (n.includes('car charger')) return carCharger;
-    if (n.includes('tyre') || n.includes('pressure')) return tyreInflator;
-    if (n.includes('vacuum')) return vacuumCleaner;
-    if (n.includes('car') || n.includes('bike')) return dashCam;
-
-    // Smart Gadgets
-    if (n.includes('watch') || n.includes('band') || n.includes('timer')) return heroSmartwatch;
-    if (n.includes('tracker') || n.includes('tag')) return smartTracker;
-    if (n.includes('hair') || n.includes('dryer')) return hairDryer;
-    if (n.includes('kettle')) return electricKettle;
-    if (n.includes('trimmer') || n.includes('shaver') || n.includes('ear') || n.includes('tool')) return trimmer;
-    if (n.includes('fan') || n.includes('blower') || n.includes('humidifier')) return portableFan;
-    if (n.includes('sealer') || n.includes('massager')) return powerBank;
-    if (n.includes('stick') || n.includes('flashlight') || n.includes('stylus')) return actionCam;
-    
-    return heroEarbuds; // Ultimate fallback
-  }
+  // Category images are resolved via the shared getCategoryCover helper
+  // (same source used by ShopByCategories & ShopByCategorySlider)
 
   const [categoriesList, setCategoriesList] = useState([]);
 
@@ -298,14 +174,18 @@ export default function Header() {
   const megaMenuCategories = useMemo(() => {
     if (!categoriesList.length) return [];
 
-    const audioGear = categoriesList.filter(c => 
-      /earbud|tws|headphone|earphone|neckband|headset/i.test(c.name)
+    // Exclude unimplemented/removed categories from the mega menu
+    const excluded = /neckband|home.?audio/i;
+    const filtered = categoriesList.filter(c => !excluded.test(c.name));
+
+    const audioGear = filtered.filter(c =>
+      /earbud|tws|headphone|earphone|headset/i.test(c.name)
     );
-    const speakers = categoriesList.filter(c => 
-      /speaker|soundbar|audio/i.test(c.name)
+    const speakers = filtered.filter(c =>
+      /speaker|soundbar/i.test(c.name)
     );
-    const accessories = categoriesList.filter(c => 
-      !/earbud|tws|headphone|earphone|neckband|headset|speaker|soundbar|audio/i.test(c.name)
+    const accessories = filtered.filter(c =>
+      !/earbud|tws|headphone|earphone|headset|speaker|soundbar/i.test(c.name)
     );
 
     return [
@@ -602,12 +482,13 @@ export default function Header() {
         }}
     >
         <img
-            src={getMegaMenuImage(item.name)}
+            src={getCategoryCover(item.name, item.imageUrl)}
             alt={item.name}
             style={{
-                width: '24px',
-                height: '24px',
-                objectFit: 'contain'
+                width: '32px',
+                height: '32px',
+                objectFit: 'contain',
+                objectPosition: 'center'
             }}
         />
     </div>
@@ -751,7 +632,7 @@ export default function Header() {
                     >
                       <div className="d-flex align-items-center gap-3">
                         <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: '45px', height: '45px', border: '1px solid var(--bb-border)', backgroundColor: 'var(--bb-surface-2)', flexShrink: 0 }}>
-                          <img src={getMegaMenuImage(col.items[0]?.name || '')} alt="" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                          <img src={getCategoryCover(col.items[0]?.name || '', col.items[0]?.imageUrl || '')} alt="" style={{ width: '32px', height: '32px', objectFit: 'contain', objectPosition: 'center' }} />
                         </div>
                         <span className="fw-bold text-uppercase" style={{ fontSize: '0.9rem', letterSpacing: '0.5px' }}>{col.title}</span>
                       </div>

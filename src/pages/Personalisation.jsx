@@ -7,8 +7,8 @@ import { selectAllProducts, selectProductStatus, fetchProducts } from '../redux/
 import { addToCart } from '../redux/cartSlice'
 import { toast } from 'react-hot-toast'
 import { IMAGE_MAP } from '../data/products'
-
 import heroEarbuds from '../assets/hero_earbuds.png'
+import engravingBanner from '../assets/banner/Encarving_banner.png'
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5089'
 
@@ -47,16 +47,18 @@ const FEATURES = [
 const ENGRAVE_CATEGORIES = ['tws', 'earbud', 'neckband', 'headphone']
 
 const ENGRAVING_EXAMPLES = [
-  { label: 'Your Name', text: 'ARYAN', color: '#00f3ff' },
-  { label: 'A Date', text: '14·02·24', color: '#a820ff' },
-  { label: 'A Message', text: '♡ LOVE', color: '#ff2a6d' },
+  { label: 'Your Name', name: 'ARYAN', date: '', message: '', color: '#00f3ff' },
+  { label: 'A Date', name: '', date: '14.02.2026', message: '', color: '#a820ff' },
+  { label: 'A Message', name: '', date: '', message: 'FOREVER TOGETHER ❤️', color: '#ff2a6d' },
 ]
 
 export default function Personalisation() {
   const dispatch = useDispatch()
   const allProducts = useSelector(selectAllProducts)
   const productStatus = useSelector(selectProductStatus)
-  const [engravingText, setEngravingText] = useState('YOUR NAME')
+  const [engravingName, setEngravingName] = useState('YOUR NAME')
+  const [engravingDate, setEngravingDate] = useState('')
+  const [engravingMessage, setEngravingMessage] = useState('')
   const [activeExample, setActiveExample] = useState(0)
 
   useEffect(() => {
@@ -83,6 +85,13 @@ export default function Personalisation() {
       : null
     const rawImg = product.images?.[0]?.imageUrl || product.variants?.[0]?.images?.[0]?.imageUrl || product.imageUrl
     const img = rawImg?.startsWith('/images/') ? `${API_BASE}${rawImg}` : rawImg?.startsWith('http') ? rawImg : IMAGE_MAP[product.imageKey] || rawImg
+
+    const personalizationText = [
+      engravingName ? `Name: ${engravingName}` : '',
+      engravingDate ? `Date: ${engravingDate}` : '',
+      engravingMessage ? `Msg: ${engravingMessage}` : ''
+    ].filter(Boolean).join(' | ')
+
     dispatch(addToCart({
       id: product.id,
       name: product.name,
@@ -93,6 +102,7 @@ export default function Personalisation() {
       selectedColorCode: best?.colorCode || '#111111',
       category: product.categoryName,
       imageUrl: img,
+      personalization: personalizationText,
     }))
     toast.success(`✨ ${product.name} added! Request engraving at checkout.`, {
       style: { background: '#060b19', color: '#fff', border: '1px solid var(--bb-accent)', borderRadius: '10px' }
@@ -116,135 +126,248 @@ export default function Personalisation() {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="col-12 col-lg-6"
+              className="col-12 col-lg-5 col-xl-5"
             >
               <span className="badge rounded-pill px-3 py-2 mb-4 d-inline-block fw-bold" style={{ background: 'rgba(0,243,255,0.1)', color: '#00f3ff', border: '1px solid rgba(0,243,255,0.25)', fontSize: '0.75rem', letterSpacing: '1px' }}>
                 ✦ CUSTOM ENGRAVING
               </span>
-              <h1 className="fw-medium mb-2" style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', letterSpacing: '-1px', color: '#e0e0e0' }}>
+              <h1 className="fw-medium mb-2" style={{ fontSize: 'clamp(2.2rem, 4.5vw, 3.5rem)', letterSpacing: '-1px', color: '#e0e0e0', lineHeight: '1.1' }}>
                 IT'S MORE THAN A GIFT,
               </h1>
-              <h2 className="fw-black mb-4" style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', letterSpacing: '-1px' }}>
+              <h2 className="fw-black mb-4" style={{ fontSize: 'clamp(2.2rem, 4.5vw, 3.5rem)', letterSpacing: '-1px', lineHeight: '1.1' }}>
                 It's An <span className="gradient-text">Experience</span>
               </h2>
-              <p className="fs-5 mb-5" style={{ color: '#aaa', fontWeight: 500, maxWidth: '500px' }}>
+              <p className="fs-6 mb-4" style={{ color: '#aaa', fontWeight: 500, maxWidth: '500px', lineHeight: '1.6' }}>
                 Add a personal touch with custom engraving — make every BeatBox product truly one of a kind.
               </p>
 
-              {/* Live Engraving Preview */}
-              <div className="mb-5">
-                <p className="text-secondary small mb-3 fw-semibold">Preview your engraving:</p>
-                <div className="d-flex flex-wrap gap-2 mb-3">
+              {/* Live Engraving Inputs */}
+              <div className="mb-4 p-4 rounded-4" style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)' }}>
+                <p className="text-secondary small mb-3 fw-bold tracking-wider text-uppercase">Presets & Examples:</p>
+                <div className="d-flex flex-wrap gap-2 mb-4">
                   {ENGRAVING_EXAMPLES.map((ex, i) => (
                     <button
                       key={i}
-                      className="btn btn-sm rounded-pill px-3 fw-semibold"
+                      className="btn btn-sm rounded-pill px-3 fw-semibold transition-all"
                       style={{
                         background: activeExample === i ? ex.color : 'transparent',
                         color: activeExample === i ? '#000' : ex.color,
                         border: `1px solid ${ex.color}40`,
-                        fontSize: '0.78rem',
-                        transition: 'all 0.3s'
+                        fontSize: '0.75rem',
                       }}
-                      onClick={() => { setActiveExample(i); setEngravingText(ex.text) }}
+                      onClick={() => {
+                        setActiveExample(i)
+                        setEngravingName(ex.name)
+                        setEngravingDate(ex.date)
+                        setEngravingMessage(ex.message)
+                      }}
                     >
                       {ex.label}
                     </button>
                   ))}
                 </div>
-                <input
-                  maxLength={12}
-                  value={engravingText}
-                  onChange={e => setEngravingText(e.target.value.toUpperCase())}
-                  className="bb-input"
-                  placeholder="Type your text..."
-                  style={{ paddingLeft: '16px !important', maxWidth: '300px', letterSpacing: '3px', fontWeight: 700, background: 'rgba(255,255,255,0.05) !important', border: '1px solid rgba(255,255,255,0.15) !important', color: '#fff !important', borderRadius: '10px !important' }}
-                />
+
+                {/* Form fields */}
+                <div className="d-flex flex-column gap-3">
+                  <div>
+                    <label className="text-secondary small mb-1 fw-bold tracking-wider">YOUR NAME (MAX 12 CHARS)</label>
+                    <input
+                      type="text"
+                      maxLength={12}
+                      value={engravingName}
+                      onChange={e => setEngravingName(e.target.value.toUpperCase())}
+                      className="bb-input w-100"
+                      placeholder="ENGRAVE NAME"
+                      style={{
+                        letterSpacing: '2px',
+                        fontWeight: 600,
+                        borderRadius: '12px',
+                        background: 'rgba(255,255,255,0.03)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        padding: '12px 16px',
+                        color: '#fff'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-secondary small mb-1 fw-bold tracking-wider">IMPORTANT DATE (E.G. DD.MM.YYYY)</label>
+                    <input
+                      type="text"
+                      maxLength={10}
+                      value={engravingDate}
+                      onChange={e => setEngravingDate(e.target.value)}
+                      className="bb-input w-100"
+                      placeholder="E.G. 14.02.2026"
+                      style={{
+                        fontWeight: 600,
+                        borderRadius: '12px',
+                        background: 'rgba(255,255,255,0.03)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        padding: '12px 16px',
+                        color: '#fff'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-secondary small mb-1 fw-bold tracking-wider">SPECIAL MESSAGE (MAX 2 LINES)</label>
+                    <textarea
+                      maxLength={40}
+                      value={engravingMessage}
+                      onChange={e => setEngravingMessage(e.target.value.toUpperCase())}
+                      className="bb-input w-100"
+                      placeholder="E.G. FOREVER TOGETHER"
+                      rows={2}
+                      style={{
+                        fontWeight: 600,
+                        borderRadius: '12px',
+                        background: 'rgba(255,255,255,0.03)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        padding: '12px 16px',
+                        color: '#fff',
+                        resize: 'none'
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
 
               <Link
                 to="/products"
-                className="btn rounded-pill px-5 py-3 fw-bold d-inline-flex align-items-center gap-2"
+                className="btn btn-glow rounded-pill px-5 py-3 fw-bold d-inline-flex align-items-center gap-2 transition-all w-100 justify-content-center w-sm-auto mb-4"
                 style={{
-                  background: 'rgba(255,255,255,0.12)',
+                  background: 'linear-gradient(135deg, var(--bb-primary, #7C3AED), var(--bb-accent, #00f3ff))',
                   color: '#fff',
-                  border: '2px solid rgba(255,255,255,0.35)',
-                  fontSize: '1.1rem',
-                  backdropFilter: 'blur(10px)',
-                  transition: 'all 0.3s ease'
+                  border: 'none',
+                  fontSize: '1.05rem',
+                  boxShadow: '0 8px 25px rgba(0, 243, 255, 0.25)',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#000' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.color = '#fff' }}
               >
                 Explore Personalisable Products <ArrowRight size={20} />
               </Link>
             </motion.div>
 
-            {/* Right — Product Visual */}
+            {/* Right — Product custom engraving preview wrapper */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="col-12 col-lg-6 position-relative"
+              className="col-12 col-lg-7 col-xl-7"
             >
-              <div className="position-relative d-flex justify-content-center align-items-center" style={{ minHeight: '500px' }}>
-                {/* Stand effect */}
-                <div className="position-absolute bottom-0" style={{ width: '80%', height: '20px', background: 'radial-gradient(ellipse, rgba(255,255,255,0.2) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(5px)' }} />
-                <div className="position-absolute bottom-0 mb-3" style={{ width: '60%', height: '4px', background: '#222', borderRadius: '50%', borderTop: '1px solid #444' }} />
+              <div 
+                className="position-relative w-100 overflow-hidden shadow-lg border border-secondary border-opacity-10"
+                style={{
+                  containerType: 'inline-size',
+                  borderRadius: '24px',
+                  boxShadow: '0 20px 50px rgba(0,0,0,0.65)',
+                  background: '#050508'
+                }}
+              >
+                {/* Banner Image */}
+                <img
+                  src={engravingBanner}
+                  alt="Custom Engraved Product Banner"
+                  className="img-fluid w-100 h-auto d-block"
+                  style={{
+                    borderRadius: '24px',
+                    objectFit: 'cover',
+                  }}
+                />
 
-                {/* Product */}
-                <div className="position-relative" style={{ zIndex: 2 }}>
-                  <img
-                    src={heroEarbuds}
-                    alt="Custom Engraved Earbuds"
-                    className="img-fluid"
-                    style={{ filter: 'drop-shadow(0 30px 40px rgba(0,0,0,0.85)) grayscale(15%)', transform: 'scale(1.2)' }}
-                  />
+                {/* Cover Mask to seamlessly cover the hardcoded background "YOUR NAME" text on the image */}
+                <div 
+                  className="position-absolute"
+                  style={{
+                    left: '69.3%',
+                    top: '56.3%',
+                    width: '23%',
+                    height: '11.5%',
+                    background: 'radial-gradient(circle, #10061d 60%, #150a29 95%, #180e30 100%)',
+                    borderRadius: '4px',
+                    transform: 'translate(-50%, -50%)',
+                    opacity: 0.98,
+                    mixBlendMode: 'normal',
+                    filter: 'blur(1px)'
+                  }}
+                />
 
-                  {/* Dynamic Engraving Overlay */}
-                  <motion.div
-                    key={engravingText}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4 }}
-                    className="position-absolute w-100 text-center"
-                    style={{ top: '65%', left: '0', transform: 'translateY(-50%)' }}
-                  >
+                {/* Dynamic Engraving Text Overlay */}
+                <motion.div
+                  key={`${engravingName}-${engravingDate}-${engravingMessage}`}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="position-absolute d-flex flex-column align-items-center justify-content-center text-center pointer-events-none"
+                  style={{
+                    left: '69.3%',
+                    top: '56.3%',
+                    width: '23%',
+                    height: '11.5%',
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: 10,
+                    lineHeight: '1.2'
+                  }}
+                >
+                  {/* Name */}
+                  {engravingName && (
                     <span
-                      className="fw-black text-uppercase"
                       style={{
-                        fontSize: '1.3rem',
-                        letterSpacing: '4px',
-                        color: ENGRAVING_EXAMPLES[activeExample]?.color || '#00f3ff',
-                        textShadow: `0 0 20px ${ENGRAVING_EXAMPLES[activeExample]?.color || '#00f3ff'}80`,
+                        fontSize: engravingName.length > 8 ? '2.3cqw' : '2.7cqw',
+                        fontWeight: 900,
+                        letterSpacing: '1.5px',
+                        color: '#d4d8db',
+                        textShadow: '0 0 10px rgba(0, 243, 255, 0.45), 0 0 2px rgba(255,255,255,0.7)',
+                        opacity: 0.9,
+                        whiteSpace: 'nowrap',
+                        textTransform: 'uppercase',
+                        transition: 'font-size 0.2s'
                       }}
                     >
-                      {engravingText || 'YOUR NAME'}
+                      {engravingName}
                     </span>
-                  </motion.div>
+                  )}
 
-                  {/* Laser tool */}
-                  <motion.div
-                    initial={{ x: 50, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.5, duration: 0.8 }}
-                    className="position-absolute d-flex align-items-center"
-                    style={{ right: '-10%', top: '65%', transform: 'translateY(-50%)' }}
-                  >
-                    <div style={{ width: '60px', height: '2px', background: `linear-gradient(90deg, ${ENGRAVING_EXAMPLES[activeExample]?.color || '#ff0000'}, transparent)`, filter: 'blur(1px)' }} />
-                    <Edit3 size={24} color="#555" style={{ transform: 'rotate(-45deg)' }} />
-                  </motion.div>
-                </div>
+                  {/* Date */}
+                  {engravingDate && (
+                    <span
+                      style={{
+                        fontSize: '1.7cqw',
+                        fontWeight: 700,
+                        letterSpacing: '1px',
+                        color: '#b0b5b9',
+                        textShadow: '0 0 5px rgba(0, 243, 255, 0.3)',
+                        opacity: 0.8,
+                        marginTop: '0.4cqw',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      {engravingDate}
+                    </span>
+                  )}
 
-                {/* Floating labels */}
-                <motion.div
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                  className="position-absolute d-flex align-items-center gap-2 px-3 py-2 rounded-3"
-                  style={{ top: '10%', right: '0', background: 'rgba(0,243,255,0.1)', border: '1px solid rgba(0,243,255,0.25)', backdropFilter: 'blur(10px)' }}
-                >
-                  <Sparkles size={16} color="#00f3ff" />
-                  <span className="small fw-bold" style={{ color: '#00f3ff' }}>Laser Precision</span>
+                  {/* Message */}
+                  {engravingMessage && (
+                    <span
+                      style={{
+                        fontSize: engravingMessage.length > 20 ? '1.3cqw' : '1.5cqw',
+                        fontWeight: 600,
+                        letterSpacing: '0.5px',
+                        color: '#a0a5a9',
+                        textShadow: '0 0 5px rgba(0, 243, 255, 0.25)',
+                        opacity: 0.75,
+                        marginTop: '0.4cqw',
+                        maxWidth: '90%',
+                        wordWrap: 'break-word',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      {engravingMessage}
+                    </span>
+                  )}
                 </motion.div>
               </div>
             </motion.div>

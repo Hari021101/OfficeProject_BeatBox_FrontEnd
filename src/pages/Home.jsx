@@ -52,10 +52,8 @@ import heroHeadphones from '../assets/hero_headphones.png'
 import heroEarbuds from '../assets/hero_earbuds.png'
 import heroSpeaker from '../assets/hero_speaker.png'
 import gamingHeadset from '../assets/gaming_headset.png'
-import wirelessNeckband from '../assets/wireless_neckband.png'
 import smartEarbuds from '../assets/smart_earbuds.png'
 import heroSmartwatch from '../assets/hero_smartwatch.png'
-import heroWired from '../assets/hero_wired.png'
 import powerBank from '../assets/power_bank.png'
 import trimmer from '../assets/trimmer.png'
 import soundbar from '../assets/soundbar.png'
@@ -510,7 +508,6 @@ export default function Home() {
       {[
         { id: 'earbuds', name: 'AirPods & Earbuds', shortName: 'AirPods', image: heroEarbuds, badge: 'HOT' },
         { id: 'earbuds', name: 'TWS Earbuds', shortName: 'TWS', image: smartEarbuds, badge: 'PRO' },
-        { id: 'neckbands', name: 'Neckbands', shortName: 'Neckbands', image: wirelessNeckband, badge: 'DAILY' },
         { id: 'gaming', name: 'Gaming Headsets', shortName: 'Gaming', image: gamingHeadset, badge: 'CYBER' },
         { id: 'wired earphones', name: 'Wired Headphones', shortName: 'Wired', image: wiredEarphones, badge: 'PURE' },
         { id: 'speakers', name: 'Speakers', shortName: 'Speakers', image: heroSpeaker, badge: 'LOUD' },
