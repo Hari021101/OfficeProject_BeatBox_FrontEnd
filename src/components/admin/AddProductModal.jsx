@@ -17,6 +17,8 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
     batteryLife: '',
     connectivity: '',
     isFeatured: false,
+    isEngravingAvailable: false,
+    engravingPrice: 99,
     faqs: []
   }
   const [formData, setFormData] = useState(defaultForm)
@@ -50,6 +52,8 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
           batteryLife: editingProduct.batteryLife || '',
           connectivity: editingProduct.connectivity || '',
           isFeatured: editingProduct.isFeatured || false,
+          isEngravingAvailable: editingProduct.isEngravingAvailable || false,
+          engravingPrice: editingProduct.engravingPrice !== undefined ? editingProduct.engravingPrice : 99,
           faqs: editingProduct.faqs || []
         })
       } else {
@@ -106,6 +110,8 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
         batteryLife: formData.batteryLife,
         connectivity: formData.connectivity,
         isFeatured: formData.isFeatured,
+        isEngravingAvailable: formData.isEngravingAvailable,
+        engravingPrice: Number(formData.engravingPrice),
         faqs: formData.faqs
       }
 
@@ -283,7 +289,21 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
                 )}
               </div>
 
-              <div className="col-12 mt-4">
+              <div className="col-12 mt-3">
+                <div className="form-check form-switch d-flex align-items-center gap-2">
+                  <input className="form-check-input" type="checkbox" role="switch" id="isEngravingAvailable" name="isEngravingAvailable" checked={formData.isEngravingAvailable} onChange={handleChange} style={{ width: '40px', height: '20px' }} />
+                  <label className="form-check-label text-theme-title fw-bold" htmlFor="isEngravingAvailable">Enable Custom Engraving</label>
+                </div>
+                <small className="text-theme-muted d-block">Allows users to personalize this product with custom laser engraving (Name, Date, Message).</small>
+                {formData.isEngravingAvailable && (
+                  <div className="mt-2" style={{ maxWidth: '240px' }}>
+                    <label className="form-label text-theme-muted small fw-bold">Engraving Price (₹)</label>
+                    <input type="number" className="form-control" name="engravingPrice" value={formData.engravingPrice} onChange={handleChange} min="0" required style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
+                  </div>
+                )}
+              </div>
+
+              <div className="col-12 mt-3">
                 <div className="form-check form-switch d-flex align-items-center gap-2">
                   <input className="form-check-input" type="checkbox" role="switch" id="isFeatured" name="isFeatured" checked={formData.isFeatured} onChange={handleChange} style={{ width: '40px', height: '20px' }} />
                   <label className="form-check-label text-theme-title fw-bold" htmlFor="isFeatured">Featured Product</label>

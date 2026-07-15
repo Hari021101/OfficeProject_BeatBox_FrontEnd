@@ -78,42 +78,22 @@ export const selectCartItems = createSelector(
         productsItems?.find(
           p => p.id === cartItem.productId
         );
-console.log(cartItem);
       return {
         cartKey: cartItem.cartItemId,
-
         id: cartItem.productId,
-
-        name:
-          cartItem.productName ||
-          product?.name ||
-          'Unknown Product',
-
+        name: cartItem.productName || product?.name || 'Unknown Product',
         price: cartItem.unitPrice,
-
         quantity: cartItem.quantity,
-
-        imageKey:
-          product?.imageKey ||
-          'heroHeadphones',
-
-        imageUrl:
-          cartItem.productImage ||
-          cartItem.productImageUrl ||
-          product?.imageUrl,
-
-        selectedColor:
-          cartItem.color,
-
-        selectedColorCode:
-  cartItem.colorCode ||
-  product?.colors?.find(
-    c => c.name === cartItem.color
-  )?.code ||
-  "#111111",
-
-        variantId:
-          cartItem.variantId
+        imageKey: product?.imageKey || 'heroHeadphones',
+        imageUrl: cartItem.productImage || cartItem.productImageUrl || product?.imageUrl,
+        selectedColor: cartItem.color,
+        selectedColorCode: cartItem.colorCode || product?.colors?.find(c => c.name === cartItem.color)?.code || "#111111",
+        variantId: cartItem.variantId,
+        isPersonalised: cartItem.isPersonalised || false,
+        engravingName: cartItem.engravingName,
+        engravingDate: cartItem.engravingDate,
+        engravingMessage: cartItem.engravingMessage,
+        engravingPrice: cartItem.engravingPrice || 0
       };
     });
   }
@@ -123,7 +103,7 @@ export const selectCartCount = (state) =>
   state.cart.items.reduce((sum, item) => sum + item.quantity, 0);
 
 export const selectCartSubtotal = (state) =>
-  state.cart.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+  state.cart.items.reduce((sum, item) => sum + (item.unitPrice + (item.isPersonalised ? (item.engravingPrice || 0) : 0)) * item.quantity, 0);
 
 export const selectCartStatus = (state) => state.cart.status;
 

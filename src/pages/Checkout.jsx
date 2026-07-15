@@ -559,8 +559,13 @@ export default function Checkout() {
                       <div className="flex-grow-1 min-width-0">
                         <p className="text-theme-title fw-semibold mb-0 text-truncate" style={{ fontSize: '0.8rem' }}>{item.name}</p>
                         <p className="text-theme-muted mb-0" style={{ fontSize: '0.7rem' }}>Qty: {item.quantity}</p>
+                        {item.isPersonalised && (
+                          <p className="text-info mb-0" style={{ fontSize: '0.68rem', fontWeight: 600 }}>
+                            ✨ Engraving: {item.engravingName}
+                          </p>
+                        )}
                       </div>
-                      <span className="text-theme-title fw-bold" style={{ fontSize: '0.85rem', flexShrink: 0 }}>₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
+                      <span className="text-theme-title fw-bold" style={{ fontSize: '0.85rem', flexShrink: 0 }}>₹{((item.price + (item.isPersonalised ? (item.engravingPrice || 0) : 0)) * item.quantity).toLocaleString('en-IN')}</span>
                     </div>
                   ))}
                 </div>

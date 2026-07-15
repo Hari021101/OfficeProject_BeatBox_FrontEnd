@@ -65,8 +65,11 @@ export default function Personalisation() {
     if (productStatus === 'idle') dispatch(fetchProducts())
   }, [productStatus, dispatch])
 
-  // Show products suitable for personalisation — TWS and neckbands primarily
+  // Show products suitable for personalisation — prioritizing IsEngravingAvailable
   const personalisableProducts = useMemo(() => {
+    const fromDb = allProducts.filter(p => p.isEngravingAvailable)
+    if (fromDb.length > 0) return fromDb.slice(0, 8)
+
     return allProducts
       .filter(p => {
         const cat = p.categoryName?.toLowerCase() || p.category?.toLowerCase() || ''
@@ -233,9 +236,9 @@ export default function Personalisation() {
                 </div>
               </div>
 
-              <Link
-                to="/products"
-                className="btn btn-glow rounded-pill px-5 py-3 fw-bold d-inline-flex align-items-center gap-2 transition-all w-100 justify-content-center w-sm-auto mb-4"
+              <a
+                href="#personalisable-catalog"
+                className="btn btn-glow rounded-pill px-5 py-3 fw-bold d-inline-flex align-items-center gap-2 transition-all w-100 justify-content-center w-sm-auto mb-4 text-decoration-none"
                 style={{
                   background: 'linear-gradient(135deg, var(--bb-primary, #7C3AED), var(--bb-accent, #00f3ff))',
                   color: '#fff',
@@ -245,7 +248,7 @@ export default function Personalisation() {
                 }}
               >
                 Explore Personalisable Products <ArrowRight size={20} />
-              </Link>
+              </a>
             </motion.div>
 
             {/* Right — Product custom engraving preview wrapper */}
@@ -408,7 +411,7 @@ export default function Personalisation() {
       </div>
 
       {/* ── LIVE PRODUCT GRID ── */}
-      <div className="py-5" style={{ background: 'var(--bb-bg-navy)' }}>
+      <div id="personalisable-catalog" className="py-5" style={{ background: 'var(--bb-bg-navy)' }}>
         <div className="container">
           <div className="text-center mb-5">
             <h2 className="fw-black text-theme-title" style={{ fontSize: '2rem' }}>
@@ -470,14 +473,61 @@ export default function Personalisation() {
                       </Link>
 
                       <div className="card-body p-3 d-flex flex-column flex-grow-1">
-                        <div className="d-flex justify-content-between align-items-start mb-1">
-                          <Link to={`/products/${product.id}`} className="text-decoration-none flex-grow-1 me-2">
+                       
+
+                         <div className="mb-2"
+                         style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',minWidth: '100%' }}>
+  <div
+    className="d-flex justify-content-between align-items-center w-100 px-3 py-1"
+    style={{
+      background: "linear-gradient(90deg,#FFC400,#FFB300)",
+      borderRadius: 0,
+      minHeight: 3,
+    }}
+  >
+    <span
+      className="text-uppercase"
+      style={{
+        fontSize: "0.72rem",
+        fontWeight: 800,
+        color: "#000",
+        letterSpacing: ".4px"
+      }}
+    >
+      {product.usp}
+    </span>
+
+    <div
+      className="d-flex align-items-center gap-1 px-2 py-1"
+      style={{
+        background: "#fff",
+        border: "1px solid rgba(0,0,0,.15)",
+        boxShadow: "0 2px 8px rgba(0,0,0,.18)"
+      }}
+    >
+      <Star
+        size={11}
+        fill="#FFC107"
+        color="#FFC107"
+      />
+
+      <span
+        style={{
+          fontSize: ".72rem",
+          fontWeight: 800,
+          color: "#000"
+        }}
+      >
+        {Number(product.averageRating || product.rating || 0).toFixed(1)}
+      </span>
+    </div>
+  </div>
+</div>
+                         
+                        
+                        <Link to={`/products/${product.id}`} className="text-decoration-none flex-grow-1 me-2">
                             <h6 className="card-title text-theme-title fw-bold mb-0 text-truncate">{product.name}</h6>
-                          </Link>
-                          <div className="rating-pill flex-shrink-0">
-                            <Star size={11} fill="currentColor" className="text-warning" /> {Number(product.rating || 0).toFixed(1)}
-                          </div>
-                        </div>
+                          </Link> 
 
                         <p className="text-theme-muted small mb-3 flex-grow-1" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                           {product.description}
@@ -494,13 +544,13 @@ export default function Personalisation() {
                           )}
                         </div>
 
-                        <button
-                          onClick={e => handleAddToCart(product, e)}
-                          className="btn btn-add-to-cart w-100 d-flex align-items-center justify-content-center gap-2"
+                        <Link
+                          to={`/products/${product.id}`}
+                          className="btn btn-glow w-100 d-flex align-items-center justify-content-center gap-2 text-decoration-none"
                           style={{ fontSize: '0.85rem' }}
                         >
-                          <ShoppingCart size={15} /> Add to Cart
-                        </button>
+                          <Sparkles size={15} /> Personalise
+                        </Link>
                       </div>
                     </div>
                   </motion.div>

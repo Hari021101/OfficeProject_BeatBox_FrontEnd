@@ -99,7 +99,7 @@ function SectionCard({ title, icon: Icon, children, id, accent = false }) {
 function PrintInvoice({ order }) {
   if (!order) return null
   const items = order.items || []
-  const subtotal = items.reduce((s, i) => s + i.unitPrice * i.quantity, 0)
+  const subtotal = items.reduce((s, i) => s + (i.unitPrice + (i.isPersonalised ? (i.engravingPrice || 0) : 0)) * i.quantity, 0)
   const gst = Math.round(subtotal * 0.18)
   const shipping = subtotal >= 999 ? 0 : 79
   const total = subtotal + gst + shipping
@@ -148,10 +148,17 @@ function PrintInvoice({ order }) {
           {items.map((item, i) => (
             <tr key={i} style={{ borderBottom: '1px solid #eee' }}>
               <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: '0.85rem', color: '#555' }}>{i + 1}</td>
-              <td style={{ padding: '10px 12px', fontSize: '0.85rem', color: '#222', fontWeight: 600 }}>{item.productName}</td>
+              <td style={{ padding: '10px 12px', fontSize: '0.85rem', color: '#222', fontWeight: 600 }}>
+                {item.productName}
+                {item.isPersonalised && (
+                  <div style={{ fontSize: '0.72rem', color: '#666', marginTop: 4, fontWeight: 500 }}>
+                    ✨ Laser Engraving: {item.engravingName} {item.engravingDate ? `(${item.engravingDate})` : ''} {item.engravingMessage ? ` - ${item.engravingMessage}` : ''} (+ ₹{item.engravingPrice})
+                  </div>
+                )}
+              </td>
               <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: '0.85rem', color: '#555' }}>{item.quantity}</td>
-              <td style={{ padding: '10px 12px', textAlign: 'right', fontSize: '0.85rem', color: '#555' }}>₹{fmt(item.unitPrice)}</td>
-              <td style={{ padding: '10px 12px', textAlign: 'right', fontSize: '0.85rem', fontWeight: 700, color: '#222' }}>₹{fmt(item.unitPrice * item.quantity)}</td>
+              <td style={{ padding: '10px 12px', textAlign: 'right', fontSize: '0.85rem', color: '#555' }}>₹{fmt(item.unitPrice + (item.isPersonalised ? (item.engravingPrice || 0) : 0))}</td>
+              <td style={{ padding: '10px 12px', textAlign: 'right', fontSize: '0.85rem', fontWeight: 700, color: '#222' }}>₹{fmt((item.unitPrice + (item.isPersonalised ? (item.engravingPrice || 0) : 0)) * item.quantity)}</td>
             </tr>
           ))}
         </tbody>
@@ -418,7 +425,7 @@ export default function OrderDetail() {
 
   // Derived financials
   const items = order?.items || []
-  const subtotal = items.reduce((s, i) => s + (i.unitPrice * i.quantity), 0)
+  const subtotal = items.reduce((s, i) => s + (i.unitPrice + (i.isPersonalised ? (i.engravingPrice || 0) : 0)) * i.quantity, 0)
   const gst = Math.round(subtotal * 0.18)
   const shipping = subtotal >= 999 ? 0 : 79
   const total = subtotal + gst + shipping
@@ -611,8 +618,41 @@ export default function OrderDetail() {
                             {item.productName}
                           </p>
                           <p className="text-theme-muted mb-0" style={{ fontSize: '0.75rem' }}>
-                            Qty: {item.quantity} × ₹{fmt(item.unitPrice)}
+                            Qty: {item.quantity} × ₹{fmt(item.unitPrice + (item.isPersonalised ? (item.engravingPrice || 0) : 0))}
                           </p>
+                          {item.isPersonalised && (
+                            <div 
+                              className="mt-2 p-2 px-3 rounded-3" 
+                              style={{ 
+                                background: 'rgba(0, 243, 255, 0.04)', 
+                                border: '1px dashed rgba(0, 243, 255, 0.25)',
+                                maxWidth: '300px'
+                              }}
+                            >
+                              <div className="d-flex align-items-center gap-2 mb-1 text-info fw-bold" style={{ fontSize: '0.72rem' }}>
+                                <span>✨ Laser Engraving</span>
+                                <span className="ms-auto font-mono">₹{item.engravingPrice || 99}</span>
+                              </div>
+                              <div className="row g-1 small" style={{ fontSize: '0.75rem' }}>
+                                <div className="col-6">
+                                  <span className="text-theme-muted d-block" style={{ fontSize: '0.65rem' }}>NAME:</span>
+                                  <span className="fw-bold text-white text-uppercase">{item.engravingName}</span>
+                                </div>
+                                {item.engravingDate && (
+                                  <div className="col-6">
+                                    <span className="text-theme-muted d-block" style={{ fontSize: '0.65rem' }}>DATE:</span>
+                                    <span className="fw-bold text-white">{item.engravingDate}</span>
+                                  </div>
+                                )}
+                                {item.engravingMessage && (
+                                  <div className="col-12">
+                                    <span className="text-theme-muted d-block" style={{ fontSize: '0.65rem' }}>MESSAGE:</span>
+                                    <span className="fw-bold text-white text-uppercase">{item.engravingMessage}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
                         </div>
                        {item.color && (
   <div className="d-flex align-items-center gap-2 mt-1">
@@ -632,7 +672,7 @@ export default function OrderDetail() {
                         {/* Line total */}
                         <div className="text-end flex-shrink-0">
                           <p className="fw-black text-theme-title mb-0" style={{ fontSize: '0.95rem' }}>
-                            ₹{fmt(item.unitPrice * item.quantity)}
+                            ₹{fmt((item.unitPrice + (item.isPersonalised ? (item.engravingPrice || 0) : 0)) * item.quantity)}
                           </p>
                         </div>
                       </motion.div>

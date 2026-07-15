@@ -21,6 +21,8 @@ export default function EditProduct() {
     batteryLife: '',
     connectivity: '',
     isFeatured: false,
+    isEngravingAvailable: false,
+    engravingPrice: 99,
     faqs: []
   })
 
@@ -51,6 +53,8 @@ export default function EditProduct() {
           batteryLife: data.batteryLife || '',
           connectivity: data.connectivity || '',
           isFeatured: data.isFeatured || false,
+          isEngravingAvailable: data.isEngravingAvailable || false,
+          engravingPrice: data.engravingPrice !== undefined ? data.engravingPrice : 99,
           faqs: data.faqs || []
         })
       } else {
@@ -245,7 +249,21 @@ export default function EditProduct() {
                 )}
               </div>
 
-              <div className="col-12 mt-4">
+              <div className="col-12 mt-3">
+                <div className="form-check form-switch d-flex align-items-center gap-2">
+                  <input className="form-check-input" type="checkbox" role="switch" id="isEngravingAvailableEdit" name="isEngravingAvailable" checked={formData.isEngravingAvailable} onChange={handleProductChange} style={{ width: '40px', height: '20px' }} />
+                  <label className="form-check-label text-theme-title fw-bold" htmlFor="isEngravingAvailableEdit">Enable Custom Engraving</label>
+                </div>
+                <small className="text-theme-muted d-block">Allows users to personalize this product with custom laser engraving (Name, Date, Message).</small>
+                {formData.isEngravingAvailable && (
+                  <div className="mt-2" style={{ maxWidth: '240px' }}>
+                    <label className="form-label text-theme-muted small fw-bold">Engraving Price (₹)</label>
+                    <input type="number" className="form-control" name="engravingPrice" value={formData.engravingPrice} onChange={handleProductChange} min="0" required style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }} />
+                  </div>
+                )}
+              </div>
+
+              <div className="col-12 mt-3">
                 <div className="form-check form-switch d-flex align-items-center gap-2">
                   <input className="form-check-input" type="checkbox" role="switch" id="isFeaturedEdit" name="isFeatured" checked={formData.isFeatured} onChange={handleProductChange} style={{ width: '40px', height: '20px' }} />
                   <label className="form-check-label text-theme-title fw-bold" htmlFor="isFeaturedEdit">Featured Product</label>

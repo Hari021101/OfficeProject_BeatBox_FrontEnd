@@ -150,6 +150,9 @@ inStock: totalStock > 0,
 
     isFeatured: bp.isFeatured ?? false,
 
+    isEngravingAvailable: bp.isEngravingAvailable ?? false,
+engravingPrice: bp.engravingPrice ?? 99,
+
     soldCount: bp.soldCount ?? 0,
 
     deliveryDays: bp.deliveryDays ?? 5,

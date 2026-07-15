@@ -263,6 +263,38 @@ export default function Cart() {
 </span>
                                   </div>
                                 )}
+                                {item.isPersonalised && (
+                                  <div 
+                                    className="d-flex flex-column gap-1 p-2 px-3 mt-2 rounded-3 w-100"
+                                    style={{ 
+                                      background: 'rgba(0, 243, 255, 0.04)', 
+                                      border: '1px dashed rgba(0, 243, 255, 0.25)' 
+                                    }}
+                                  >
+                                    <div className="d-flex align-items-center gap-2 fw-bold text-info" style={{ fontSize: '0.75rem' }}>
+                                      <span>✨ Custom Engraving</span>
+                                      <span className="ms-auto font-mono">₹{item.engravingPrice || 99}</span>
+                                    </div>
+                                    <div className="row g-2 small" style={{ fontSize: '0.8rem' }}>
+                                      <div className="col-6">
+                                        <span className="text-theme-muted d-block" style={{ fontSize: '0.7rem' }}>NAME</span>
+                                        <span className="fw-bold text-white text-uppercase">{item.engravingName}</span>
+                                      </div>
+                                      {item.engravingDate && (
+                                        <div className="col-6">
+                                          <span className="text-theme-muted d-block" style={{ fontSize: '0.7rem' }}>DATE</span>
+                                          <span className="fw-bold text-white">{item.engravingDate}</span>
+                                        </div>
+                                      )}
+                                      {item.engravingMessage && (
+                                        <div className="col-12">
+                                          <span className="text-theme-muted d-block" style={{ fontSize: '0.7rem' }}>MESSAGE</span>
+                                          <span className="fw-bold text-white text-uppercase">{item.engravingMessage}</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
                                 <span className="d-flex align-items-center gap-1 text-success fw-bold" style={{ fontSize: '0.75rem' }}>
                                   <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#39ff14', boxShadow: '0 0 5px #39ff14' }} /> In Stock
                                 </span>
@@ -302,11 +334,11 @@ export default function Cart() {
                               <div className="text-start text-sm-end mt-2 mt-sm-0">
                                 <span className="d-block text-theme-muted mb-1 fw-semibold text-uppercase d-none d-sm-block" style={{ fontSize: '0.7rem', letterSpacing: '0.5px' }}>Price</span>
                                 <span className="fw-black text-theme-title" style={{ fontSize: '1.3rem', letterSpacing: '-0.5px' }}>
-                                  ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                                  ₹{((item.price + (item.isPersonalised ? (item.engravingPrice || 0) : 0)) * item.quantity).toLocaleString('en-IN')}
                                 </span>
-                                {item.quantity > 1 && (
+                                {(item.quantity > 1 || item.isPersonalised) && (
                                   <span className="d-block text-theme-muted" style={{ fontSize: '0.75rem', marginTop: '-2px' }}>
-                                    ₹{item.price.toLocaleString('en-IN')} / ea
+                                    ₹{(item.price + (item.isPersonalised ? (item.engravingPrice || 0) : 0)).toLocaleString('en-IN')} / ea
                                   </span>
                                 )}
                               </div>

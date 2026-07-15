@@ -28,7 +28,7 @@ export const cartService = {
       return {
         cartId: apiCart.cartId || localCart.cartId || 'merged',
         items: mergedItems,
-        totalAmount: mergedItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
+        totalAmount: mergedItems.reduce((sum, item) => sum + (item.unitPrice + (item.isPersonalised ? item.engravingPrice : 0)) * item.quantity, 0)
       };
     } catch (err) {
       return getLocalCart();
@@ -37,11 +37,15 @@ export const cartService = {
 
   addToCart: async (productId, quantity, fullProductDetails = null) => {
     try {
-     const response = await api.post('/cart/add', {
-    productId,
-    quantity,
-    variantId: fullProductDetails?.variantId
-  });
+      const response = await api.post('/cart/add', {
+        productId,
+        quantity,
+        variantId: fullProductDetails?.variantId,
+        isPersonalised: fullProductDetails?.isPersonalised || false,
+        engravingName: fullProductDetails?.engravingName,
+        engravingDate: fullProductDetails?.engravingDate,
+        engravingMessage: fullProductDetails?.engravingMessage
+      });
       return response.data;
     } catch (err) {
       const cart = getLocalCart();
@@ -49,21 +53,24 @@ export const cartService = {
       if (existing) {
         existing.quantity += quantity;
       } else {
-       cart.items.push({
-  cartItemId: Date.now() + Math.floor(Math.random() * 1000),
-  productId,
-  variantId: fullProductDetails?.variantId,
-  quantity,
-
-  unitPrice: fullProductDetails?.price || 999,
-  productName: fullProductDetails?.name || 'Unknown',
-
-  color: fullProductDetails?.selectedColor,
-  colorCode: fullProductDetails?.selectedColorCode,
-  productImage: fullProductDetails?.imageUrl
-});
+        cart.items.push({
+          cartItemId: Date.now() + Math.floor(Math.random() * 1000),
+          productId,
+          variantId: fullProductDetails?.variantId,
+          quantity,
+          unitPrice: fullProductDetails?.price || 999,
+          productName: fullProductDetails?.name || 'Unknown',
+          color: fullProductDetails?.selectedColor,
+          colorCode: fullProductDetails?.selectedColorCode,
+          productImage: fullProductDetails?.imageUrl,
+          isPersonalised: fullProductDetails?.isPersonalised || false,
+          engravingName: fullProductDetails?.engravingName,
+          engravingDate: fullProductDetails?.engravingDate,
+          engravingMessage: fullProductDetails?.engravingMessage,
+          engravingPrice: fullProductDetails?.isPersonalised ? (fullProductDetails.engravingPrice || 99) : 0
+        });
       }
-      cart.totalAmount = cart.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+      cart.totalAmount = cart.items.reduce((sum, item) => sum + (item.unitPrice + (item.isPersonalised ? item.engravingPrice : 0)) * item.quantity, 0);
       saveLocalCart(cart);
       return { Message: "Added locally" };
     }
@@ -78,7 +85,7 @@ export const cartService = {
       const existing = cart.items.find(i => i.cartItemId === cartItemId);
       if (existing) {
         existing.quantity = quantity;
-        cart.totalAmount = cart.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+        cart.totalAmount = cart.items.reduce((sum, item) => sum + (item.unitPrice + (item.isPersonalised ? item.engravingPrice : 0)) * item.quantity, 0);
         saveLocalCart(cart);
       }
       return { Message: "Updated locally" };
@@ -92,7 +99,7 @@ export const cartService = {
     } catch (err) {
       const cart = getLocalCart();
       cart.items = cart.items.filter(i => i.cartItemId !== cartItemId);
-      cart.totalAmount = cart.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+      cart.totalAmount = cart.items.reduce((sum, item) => sum + (item.unitPrice + (item.isPersonalised ? item.engravingPrice : 0)) * item.quantity, 0);
       saveLocalCart(cart);
       return { Message: "Removed locally" };
     }

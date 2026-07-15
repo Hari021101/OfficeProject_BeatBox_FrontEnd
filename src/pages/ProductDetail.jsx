@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { addToCart } from '../redux/cartSlice'
 import { addToCompare } from '../redux/compareSlice'
+import EngravingModal from '../components/ui/EngravingModal'
 import ProductCard from '../components/ui/ProductCard'
 import RecentlyViewed from '../components/ui/RecentlyViewed'
 import { toast } from 'react-hot-toast'
@@ -18,7 +19,7 @@ import { fetchMyOrders, selectAllOrders } from '../redux/orderSlice'
 import { addRecentlyViewed, selectRecentlyViewedIds } from '../redux/recentlyViewedSlice'
 import { toggleWishlistItem } from '../redux/wishlistSlice'
 import { selectAllProducts, selectProductStatus, fetchProducts } from '../redux/productSlice'
-
+import { Sparkles } from "lucide-react"
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -36,6 +37,7 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1)
   const [wishlisted, setWishlisted] = useState(false)
   const [adding, setAdding] = useState(false)
+  const [isEngravingModalOpen, setIsEngravingModalOpen] = useState(false)
   const [openFaq, setOpenFaq] = useState(null)
   const [activeTab, setActiveTab] = useState('specs')
 
@@ -54,7 +56,7 @@ export default function ProductDetail() {
     if (!product || !allProducts || allProducts.length === 0) return []
 
     // 1. Same category products, excluding currently viewed product
-    const sameCategory = allProducts.filter(p => 
+    const sameCategory = allProducts.filter(p =>
       p.category === product.category && p.id.toString() !== product.id.toString()
     )
 
@@ -79,9 +81,9 @@ export default function ProductDetail() {
 
     // Fallback: if category contains fewer than 4 products, supplement with featured products
     if (candidates.length < 4) {
-      const otherFeatured = allProducts.filter(p => 
-        p.id.toString() !== product.id.toString() && 
-        p.category !== product.category && 
+      const otherFeatured = allProducts.filter(p =>
+        p.id.toString() !== product.id.toString() &&
+        p.category !== product.category &&
         (p.isFeatured || p.tag === 'Featured')
       )
       const sortedOtherFeatured = sortProducts(otherFeatured)
@@ -95,9 +97,9 @@ export default function ProductDetail() {
 
     // If still under 4, supplement with highest-rated products
     if (candidates.length < 4) {
-      const otherProducts = allProducts.filter(p => 
-        p.id.toString() !== product.id.toString() && 
-        p.category !== product.category && 
+      const otherProducts = allProducts.filter(p =>
+        p.id.toString() !== product.id.toString() &&
+        p.category !== product.category &&
         !candidates.some(c => c.id.toString() === p.id.toString())
       )
       const sortedOther = sortProducts(otherProducts)
@@ -157,10 +159,10 @@ export default function ProductDetail() {
   }, [product])
 
   useEffect(() => {
-  if (selectedVariant) {
-    setActiveImageIndex(0)
-  }
-}, [selectedVariant])
+    if (selectedVariant) {
+      setActiveImageIndex(0)
+    }
+  }, [selectedVariant])
 
   // Scroll to top when product page loads or id changes
   useEffect(() => {
@@ -183,18 +185,18 @@ export default function ProductDetail() {
   }
 
   // Initialize selectedColor once product is loaded
-useEffect(() => {
-  if (product?.variants?.length > 0) {
-    const firstVariant = product.variants[0]
+  useEffect(() => {
+    if (product?.variants?.length > 0) {
+      const firstVariant = product.variants[0]
 
-    setSelectedVariant(firstVariant)
+      setSelectedVariant(firstVariant)
 
-    setSelectedColor({
-      name: firstVariant.color,
-      code: firstVariant.colorCode
-    })
-  }
-}, [product])
+      setSelectedColor({
+        name: firstVariant.color,
+        code: firstVariant.colorCode
+      })
+    }
+  }, [product])
 
   if (loading) {
     return (
@@ -235,9 +237,9 @@ useEffect(() => {
                 <div className="skeleton-pulse rounded-pill" style={{ width: 80, height: 22 }} />
                 <div className="skeleton-pulse rounded" style={{ width: 60, height: 16 }} />
               </div>
-              
+
               <div className="skeleton-pulse rounded" style={{ width: '80%', height: 40 }} />
-              
+
               <div className="d-flex gap-2">
                 <div className="skeleton-pulse rounded" style={{ width: 120, height: 20 }} />
                 <div className="skeleton-pulse rounded" style={{ width: 80, height: 20 }} />
@@ -302,39 +304,39 @@ useEffect(() => {
   }
 
   // Three-level fallback: variant URL → backend URL → local bundled asset
-const variantImages =
-  selectedVariant?.images?.length
-    ? [...selectedVariant.images].sort(
+  const variantImages =
+    selectedVariant?.images?.length
+      ? [...selectedVariant.images].sort(
         (a, b) => a.displayOrder - b.displayOrder
       )
-    : []
+      : []
 
-const img =
-  variantImages[activeImageIndex]?.imageUrl ||
-  variantImages[0]?.imageUrl ||
-  null
+  const img =
+    variantImages[activeImageIndex]?.imageUrl ||
+    variantImages[0]?.imageUrl ||
+    null
 
 
-const salePrice =
-  selectedVariant?.discountPrice ??
-  selectedVariant?.price ??
-  0
+  const salePrice =
+    selectedVariant?.discountPrice ??
+    selectedVariant?.price ??
+    0
 
-const originalPrice =
-  selectedVariant?.price ??
-  0
-const savings =
-  originalPrice - salePrice
+  const originalPrice =
+    selectedVariant?.price ??
+    0
+  const savings =
+    originalPrice - salePrice
 
-  
+
   const handleAddToCart = () => {
 
     console.log("Selected Variant:", selectedVariant);
-console.log("Variant Id:", selectedVariant?.id);
-console.log("Color:", selectedVariant?.color);
+    console.log("Variant Id:", selectedVariant?.id);
+    console.log("Color:", selectedVariant?.color);
     if (selectedVariant?.stockQuantity <= 0) return
     setAdding(true)
-    
+
     dispatch(addToCart({
       id: product.id, name: product.name, price: salePrice,
       variantId: selectedVariant?.id,
@@ -344,14 +346,14 @@ console.log("Color:", selectedVariant?.color);
       selectedCapacity: selectedCapacity || product?.capacities?.[0],
       category: product.category,
       imageUrl:
-  selectedVariant?.images?.find(x => x.isPrimary)?.imageUrl ||
-  selectedVariant?.images?.[0]?.imageUrl,
+        selectedVariant?.images?.find(x => x.isPrimary)?.imageUrl ||
+        selectedVariant?.images?.[0]?.imageUrl,
     }))
     toast.success(`🎸 ${product.name} added to cart!`, {
       style: { background: '#060b19', color: '#fff', border: '1px solid rgba(0,243,255,0.3)', borderRadius: '10px' }
     })
     setTimeout(() => setAdding(false), 600)
-    
+
   }
 
   const handleBuyNow = () => {
@@ -363,20 +365,20 @@ console.log("Color:", selectedVariant?.color);
       selectedCapacity: selectedCapacity || product?.capacities?.[0],
       category: product.category,
       imageUrl:
-  selectedVariant?.images?.find(x => x.isPrimary)?.imageUrl ||
-  selectedVariant?.images?.[0]?.imageUrl,
+        selectedVariant?.images?.find(x => x.isPrimary)?.imageUrl ||
+        selectedVariant?.images?.[0]?.imageUrl,
       variantId: selectedVariant?.id,
     }))
     navigate('/checkout')
   }
 
-const discount =
-  originalPrice > salePrice
-    ? Math.round(
+  const discount =
+    originalPrice > salePrice
+      ? Math.round(
         ((originalPrice - salePrice) /
           originalPrice) * 100
       )
-    : 0
+      : 0
 
   const handleShare = async () => {
     try {
@@ -389,7 +391,7 @@ const discount =
     }
   }
 
-  
+
 
   const handleCheckDelivery = async () => {
     if (pincode.length !== 6 || isNaN(pincode)) {
@@ -397,10 +399,10 @@ const discount =
       return
     }
     setDeliveryStatus({ error: false, message: 'Checking Shiprocket...' })
-    
+
     try {
       const response = await productService.checkDelivery(pincode, product.id)
-      
+
       if (response && response.status === 1) { // Assuming 1 means serviceable
         const dateStr = response.data?.available_courier_companies?.[0]?.etd || new Date(Date.now() + 86400000 * 3).toISOString()
         const formattedDate = new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
@@ -422,48 +424,48 @@ const discount =
     }
   }
 
-const handleSubmitReview = async (e) => {
-  e.preventDefault()
+  const handleSubmitReview = async (e) => {
+    e.preventDefault()
 
-  if (!reviewText.trim()) return
+    if (!reviewText.trim()) return
 
-  try {
-    await productService.addReview(product.id, {
-      rating: Number(reviewRating),
-      comment: reviewText
-    })
+    try {
+      await productService.addReview(product.id, {
+        rating: Number(reviewRating),
+        comment: reviewText
+      })
 
-    toast.success('Review Added Successfully')
+      toast.success('Review Added Successfully')
 
-    const updated =
-      await productService.getProductById(id)
+      const updated =
+        await productService.getProductById(id)
 
-    setProduct(updated)
+      setProduct(updated)
 
-    setShowReviewForm(false)
-    setReviewText('')
-    setReviewRating(5)
+      setShowReviewForm(false)
+      setReviewText('')
+      setReviewRating(5)
 
-  } catch (error) {
-    console.error(error)
-    toast.error('Failed to add review')
+    } catch (error) {
+      console.error(error)
+      toast.error('Failed to add review')
+    }
   }
-}
-const handleWishlist = async () => {
-  try {
-    await dispatch(toggleWishlistItem(product.id)).unwrap()
+  const handleWishlist = async () => {
+    try {
+      await dispatch(toggleWishlistItem(product.id)).unwrap()
 
-    setWishlisted(prev => !prev)
+      setWishlisted(prev => !prev)
 
-    toast.success(
-      wishlisted
-        ? 'Removed from wishlist'
-        : '❤️ Added to wishlist'
-    )
-  } catch (err) {
-    toast.error('Wishlist update failed')
+      toast.success(
+        wishlisted
+          ? 'Removed from wishlist'
+          : '❤️ Added to wishlist'
+      )
+    } catch (err) {
+      toast.error('Wishlist update failed')
+    }
   }
-}
 
   return (
     <div className="min-vh-100 pb-5" style={{ backgroundColor: 'var(--bb-bg-navy)' }}>
@@ -492,30 +494,30 @@ const handleWishlist = async () => {
         {/* ── MAIN PRODUCT SECTION ─── */}
         <div className="row g-5 mb-5">
           {/* Left: Image Gallery */}
-         <motion.div
-  className="col-12 col-lg-5"
-  initial={{ opacity: 0, x: -30 }}
-  animate={{ opacity: 1, x: 0 }}
-  transition={{ duration: 0.5 }}
->
-  <div
-    className="position-relative rounded-4 d-flex align-items-center justify-content-center"
-    style={{
-      background: 'var(--bb-surface)',
-      border: '1px solid var(--bb-border)',
-      height: '500px',
-      overflow: 'hidden'
-    }}
-  >
+          <motion.div
+            className="col-12 col-lg-5"
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div
+              className="position-relative rounded-4 d-flex align-items-center justify-content-center"
+              style={{
+                background: 'var(--bb-surface)',
+                border: '1px solid var(--bb-border)',
+                height: '500px',
+                overflow: 'hidden'
+              }}
+            >
               {/* Out of stock badge */}
               {selectedVariant?.stockQuantity <= 0 && (
-                <div className="position-absolute top-0 end-0 m-3 z-10"  style={{ zIndex: 100 }}>
+                <div className="position-absolute top-0 end-0 m-3 z-10" style={{ zIndex: 100 }}>
                   <span className="badge px-3 py-2 fw-black" style={{ background: 'rgba(220,53,69,0.9)', letterSpacing: 1, fontSize: '0.75rem' }}>OUT OF STOCK</span>
                 </div>
               )}
 
               {/* Discount badge */}
-              <div className="position-absolute top-0 start-0 m-3 z-10"  style={{ zIndex: 100 }}>
+              <div className="position-absolute top-0 start-0 m-3 z-10" style={{ zIndex: 100 }}>
                 <span className="badge px-3 py-2 fw-black text-white" style={{ background: 'linear-gradient(135deg,var(--bb-primary),var(--bb-accent))', borderRadius: 50, fontSize: '0.75rem' }}>
                   <Zap size={11} className="me-1" />{discount}% OFF
                 </span>
@@ -547,50 +549,50 @@ const handleWishlist = async () => {
                   transition={{ duration: 0.4 }}
                   className="img-fluid hero-float"
                   style={{
-  width: '100%',
-  height: '100%',
-  objectFit: 'contain',
-  padding: '30px',
-  position: 'relative',
-  zIndex: 1,
-  filter: `drop-shadow(0 20px 40px rgba(0,0,0,0.5))`,
-}}
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    padding: '30px',
+                    position: 'relative',
+                    zIndex: 1,
+                    filter: `drop-shadow(0 20px 40px rgba(0,0,0,0.5))`,
+                  }}
                 />
               )}
             </div>
 
- {/* Thumbnail row */}
-<div className="d-flex gap-2 mt-3 justify-content-center">
-  {variantImages?.map((image, i) => (
-    <div
-      key={image.id}
-      onClick={() => setActiveImageIndex(i)}
-      className="rounded-3 d-flex align-items-center justify-content-center"
-      style={{
-        width: 70,
-        height: 70,
-        background: 'var(--bb-surface)',
-        border:
-          i === activeImageIndex
-            ? '2px solid #00f3ff'
-            : '1px solid var(--bb-border)',
-        cursor: 'pointer',
-        overflow: 'hidden'
-      }}
-    >
-     <img
-  src={image.imageUrl}
-  alt=""
-  style={{
-    width: '100%',
-    height: '100%',
-    objectFit: 'contain',
-    padding: '4px'
-  }}
-/>
-    </div>
-  ))}
-</div>
+            {/* Thumbnail row */}
+            <div className="d-flex gap-2 mt-3 justify-content-center">
+              {variantImages?.map((image, i) => (
+                <div
+                  key={image.id}
+                  onClick={() => setActiveImageIndex(i)}
+                  className="rounded-3 d-flex align-items-center justify-content-center"
+                  style={{
+                    width: 70,
+                    height: 70,
+                    background: 'var(--bb-surface)',
+                    border:
+                      i === activeImageIndex
+                        ? '2px solid #00f3ff'
+                        : '1px solid var(--bb-border)',
+                    cursor: 'pointer',
+                    overflow: 'hidden'
+                  }}
+                >
+                  <img
+                    src={image.imageUrl}
+                    alt=""
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
+                      padding: '4px'
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
 
           </motion.div>
 
@@ -680,34 +682,79 @@ const handleWishlist = async () => {
                 </span>
               </p>
 
-<div className="d-flex gap-3">
-  {product.variants?.map(v => (
-    <button
-      key={v.id}
-      type="button"
-      onClick={() => {
-        setSelectedVariant(v)
+              <div className="d-flex gap-3">
+                {product.variants?.map(v => (
+                  <button
+                    key={v.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedVariant(v)
 
-        setSelectedColor({
-          name: v.color,
-          code: v.colorCode
-        })
-      }}
-      style={{
-        width: "40px",
-        height: "40px",
-        borderRadius: "50%",
-        backgroundColor: v.colorCode,
-        border:
-          selectedVariant?.id === v.id
-            ? "3px solid #00f3ff"
-            : "2px solid #ccc",
-        cursor: "pointer"
-      }}
-    />
-  ))}
-</div>
+                      setSelectedColor({
+                        name: v.color,
+                        code: v.colorCode
+                      })
+                    }}
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                      backgroundColor: v.colorCode,
+                      border:
+                        selectedVariant?.id === v.id
+                          ? "3px solid #00f3ff"
+                          : "2px solid #ccc",
+                      cursor: "pointer"
+                    }}
+                  />
+                ))}
+              </div>
             </div>
+
+            {/* Personalisation Option Card */}
+            {product.isEngravingAvailable && (
+              <div
+                className="p-4 rounded-4 mb-4"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(0, 243, 255, 0.05), rgba(168, 32, 255, 0.05))',
+                  border: '1px solid rgba(0, 243, 255, 0.18)',
+                  boxShadow: '0 8px 32px rgba(0, 243, 255, 0.04)'
+                }}
+              >
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <div>
+                    <h5 className="fw-black mb-1 text-white d-flex align-items-center gap-2">
+                      <Sparkles className="text-info animate-pulse" size={18} /> ✨ Personalise Your Product
+                    </h5>
+                    <p className="text-theme-muted small mb-0">Make it uniquely yours with high-precision custom laser engraving.</p>
+                  </div>
+                  <span className="badge bg-info text-dark fw-bold px-3 py-2" style={{ borderRadius: '8px', fontSize: '0.85rem' }}>
+                    + ₹{product.engravingPrice || 99}
+                  </span>
+                </div>
+
+                <div className="row g-2 mb-3 text-secondary small">
+                  <div className="col-6 col-sm-4 d-flex align-items-center gap-2">
+                    <span className="text-info">✓</span> Custom Name
+                  </div>
+                  <div className="col-6 col-sm-4 d-flex align-items-center gap-2">
+                    <span className="text-info">✓</span> Special Date
+                  </div>
+                  <div className="col-12 col-sm-4 d-flex align-items-center gap-2">
+                    <span className="text-info">✓</span> Short Message
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsEngravingModalOpen(true)}
+                  className="btn btn-glow w-100 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
+                  style={{ borderRadius: 12, height: 50, fontSize: '0.95rem' }}
+                >
+                  Personalise Now
+                </button>
+              </div>
+            )}
 
             {/* Quantity */}
             <div className="d-flex align-items-center gap-4 mb-4">
@@ -721,15 +768,32 @@ const handleWishlist = async () => {
 
             {/* CTAs */}
             <div className="d-flex gap-3 mb-4 flex-wrap">
-              <button
-                onClick={handleAddToCart}
-                disabled={selectedVariant?.stockQuantity <= 0 || adding}
-                className="btn btn-glow flex-grow-1 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
-                style={{ borderRadius: 12, minWidth: 200, height: 56 }}
-              >
-                {adding ? <><span className="spinner-border spinner-border-sm" /> Adding...</> : <><ShoppingBag size={18} /> Add to Cart</>}
-              </button>
               
+              {!product.isEngravingAvailable && (
+                <button
+                  onClick={handleAddToCart}
+                  disabled={selectedVariant?.stockQuantity <= 0 || adding}
+                  className="btn btn-glow flex-grow-1 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
+                  style={{
+                    borderRadius: 12,
+                    minWidth: 200,
+                    height: 56
+                  }}
+                >
+                  {adding ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm" />
+                      Adding...
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag size={18} />
+                      Add to Cart
+                    </>
+                  )}
+                </button>
+              )}
+
               <button
                 onClick={handleBuyNow}
                 disabled={selectedVariant?.stockQuantity <= 0}
@@ -915,11 +979,11 @@ const handleWishlist = async () => {
                     <h4 className="text-theme-title fw-bold m-0">Customer Reviews</h4>
                     {(() => {
                       const hasDeliveredOrder = myOrders?.some(order =>
-  order.status === "Delivered" &&
-  order.items?.some(item =>
-    item.productId === product.id
-  )
-)
+                        order.status === "Delivered" &&
+                        order.items?.some(item =>
+                          item.productId === product.id
+                        )
+                      )
                       if (!hasDeliveredOrder) {
                         return <span className="badge bg-secondary opacity-75">Verified Buyers Only</span>
                       }
@@ -973,7 +1037,7 @@ const handleWishlist = async () => {
                         const count = product.reviews?.filter(r => r.rating === star).length || 0;
                         const total = product.reviews?.length || 1;
                         const percent = Math.round((count / total) * 100) || (star === 5 ? 75 : star === 4 ? 15 : 0); // fallback mock data
-                        
+
                         return (
                           <div key={star} className="d-flex align-items-center gap-3 mb-2">
                             <span className="text-theme-muted small fw-bold" style={{ width: '45px' }}>{star} star</span>
@@ -1082,6 +1146,19 @@ const handleWishlist = async () => {
         </div>
 
       </div>
+
+      {/* Engraving Modal */}
+      {product && (
+        <EngravingModal
+          isOpen={isEngravingModalOpen}
+          onClose={() => setIsEngravingModalOpen(false)}
+          product={product}
+          selectedVariant={selectedVariant}
+          selectedColor={selectedColor}
+          selectedCapacity={selectedCapacity || product?.capacities?.[0]}
+          quantity={quantity}
+        />
+      )}
 
     </div>
   )
