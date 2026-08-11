@@ -20,6 +20,7 @@ import OrderTimeline from '../components/ui/OrderTimeline'
 import logo from '../assets/beatbox_logo.png'
 import { orderService } from '../services/orderService'
 import { getImageUrl } from '../config/api'
+import { getPaymentMethodLabel } from '../utils/paymentUtils'
 
 
 // ─── Status config ────────────────────────────────────────────────────────────
@@ -426,9 +427,11 @@ export default function OrderDetail() {
   // Derived financials
   const items = order?.items || []
   const subtotal = items.reduce((s, i) => s + (i.unitPrice + (i.isPersonalised ? (i.engravingPrice || 0) : 0)) * i.quantity, 0)
+  const promoCode = order?.promoCode || null
+  const promoDiscount = order?.discountAmount ? Number(order.discountAmount) : 0
   const gst = Math.round(subtotal * 0.18)
+  const total = order?.totalAmount != null ? Number(order.totalAmount) : Math.max(0, subtotal + gst - promoDiscount)
   const shipping = subtotal >= 999 ? 0 : 79
-  const total = subtotal + gst + shipping
 
   const cfg = order ? (STATUS_CONFIG[order.status] || STATUS_CONFIG.Pending) : null
 
@@ -688,14 +691,17 @@ export default function OrderDetail() {
                 {/* Order Summary / Pricing */}
                 <SectionCard title="Price Breakdown" icon={Receipt} id="order-summary-section">
                   <div className="d-flex flex-column gap-2">
-                    {[
-                      ['Subtotal', `₹${fmt(subtotal)}`],
-                      ['GST (18%)', `₹${fmt(gst)}`],
-                    ].map(([label, val]) => (
-                      <div key={label} className="d-flex justify-content-between text-theme-muted" style={{ fontSize: '0.88rem' }}>
-                        <span>{label}</span><span>{val}</span>
+                    <div className="d-flex justify-content-between text-theme-muted" style={{ fontSize: '0.88rem' }}>
+                      <span>Subtotal</span><span>₹{fmt(subtotal)}</span>
+                    </div>
+                    {promoCode && promoDiscount > 0 && (
+                      <div className="d-flex justify-content-between fw-bold" style={{ color: '#10b981', fontSize: '0.88rem' }}>
+                        <span>Promo ({promoCode})</span><span>-₹{fmt(promoDiscount)}</span>
                       </div>
-                    ))}
+                    )}
+                    <div className="d-flex justify-content-between text-theme-muted" style={{ fontSize: '0.88rem' }}>
+                      <span>GST (18%)</span><span>₹{fmt(gst)}</span>
+                    </div>
                     <div className="d-flex justify-content-between" style={{ fontSize: '0.88rem' }}>
                       <span className="text-theme-muted">Shipping</span>
                       <span style={{ color: shipping === 0 ? '#39ff14' : 'var(--bb-muted)', fontWeight: 600 }}>
@@ -760,13 +766,13 @@ export default function OrderDetail() {
 
     <div>
       <p className="fw-bold text-theme-title mb-0">
-        {order.paymentMethod}
+        {getPaymentMethodLabel(order.paymentMethod)}
       </p>
 
       <p className="text-theme-muted mb-0">
         {order.paymentStatus === "Success"
           ? `Paid · ₹${fmt(total)}`
-          : `Pending · ₹${fmt(total)}`}
+          : `Amount: ₹${fmt(total)} · Pending`}
       </p>
     </div>
 

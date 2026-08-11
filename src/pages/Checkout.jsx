@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { MapPin, CreditCard, CheckCircle, ArrowRight, ArrowLeft, Lock, Truck, Package } from 'lucide-react'
-import { clearCart, selectCartItems, selectCartSubtotal, selectCartCount, selectAppliedPromo } from '../redux/cartSlice'
+import { clearCart, removePromo, selectCartItems, selectCartSubtotal, selectCartCount, selectAppliedPromo } from '../redux/cartSlice'
 import { orderService } from '../services/orderService'
 import { toast } from 'react-hot-toast'
 import { fetchAddresses } from '../redux/profileSlice'
@@ -46,7 +46,7 @@ export default function Checkout() {
   const [addressData, setAddressData] = useState(null)
   const [selectedAddressId, setSelectedAddressId] = useState(null)
   const [showNewAddressForm, setShowNewAddressForm] = useState(false)
-  const [paymentMethod, setPaymentMethod] = useState('upi')
+  const [paymentMethod, setPaymentMethod] = useState('netbanking')
   const [ordered, setOrdered] = useState(false)
   const [orderId] = useState(`BB${Date.now().toString().slice(-8)}`)
   const [createdOrderId, setCreatedOrderId] = useState(null)
@@ -220,7 +220,7 @@ export default function Checkout() {
 
             discountAmount: couponDiscount || 0,
 
-            paymentMethod: paymentMethod,
+            paymentMethod: paymentMethod.toUpperCase(),
 
             paymentDetails: {
               razorpayOrderId: response.razorpay_order_id,
@@ -260,6 +260,8 @@ export default function Checkout() {
           setOrdered(true)
 
           dispatch(clearCart())
+          dispatch(removePromo())
+          try { localStorage.removeItem('appliedPromo'); sessionStorage.removeItem('appliedPromo'); } catch { }
 
           toast.success("Payment Successful!")
         },
@@ -464,9 +466,8 @@ export default function Checkout() {
                     {/* Payment options */}
                     <div className="d-flex flex-column gap-3">
                       {[
-                        { id: 'card', label: 'Credit / Debit Card', emoji: '--', desc: 'Visa, Mastercard, RuPay' },
-                        { id: 'netbanking', label: 'Net Banking', emoji: '--', desc: 'All major Indian banks' },
-                        { id: 'cod', label: 'Cash on Delivery', emoji: '--', desc: 'Pay when you receive' },
+                        { id: 'netbanking', label: 'Net Banking', desc: 'All major Indian banks' },
+                        { id: 'cod', label: 'Cash on Delivery', desc: 'Pay when you receive' },
                       ].map(method => (
                         <label
                           key={method.id}
@@ -474,7 +475,6 @@ export default function Checkout() {
                           style={{ cursor: 'pointer', border: `1px solid ${paymentMethod === method.id ? 'var(--bb-accent)' : 'var(--bb-border)'}`, background: paymentMethod === method.id ? 'rgba(0,243,255,0.05)' : 'var(--bb-surface-2)', transition: 'all 0.2s' }}
                         >
                           <input type="radio" name="payment" value={method.id} checked={paymentMethod === method.id} onChange={() => setPaymentMethod(method.id)} style={{ accentColor: 'var(--bb-accent)' }} />
-                          <span style={{ fontSize: '1.4rem' }}>{method.emoji}</span>
                           <div>
                             <p className="fw-bold text-theme-title mb-0 small">{method.label}</p>
                             <p className="text-theme-muted mb-0" style={{ fontSize: '0.75rem' }}>{method.desc}</p>

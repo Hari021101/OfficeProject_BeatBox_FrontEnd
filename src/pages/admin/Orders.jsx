@@ -5,6 +5,7 @@ import { orderService } from '../../services/orderService'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import DataTable from '../../components/admin/DataTable'
+import { getPaymentMethodLabel } from '../../utils/paymentUtils'
 
 const STATUS_CONFIG = {
   Pending:    { className: 'bb-badge-warning', icon: Clock },
@@ -196,7 +197,7 @@ function OrderDetailModal({ order, onClose }) {
           </div>
           <div className="col-sm-6">
             <span className="text-theme-muted d-block uppercase fw-bold">Payment Method:</span>
-            <span>{order.paymentMethod}</span>
+            <span>{getPaymentMethodLabel(order.paymentMethod)}</span>
           </div>
           <div className="col-sm-6">
             <span className="text-theme-muted d-block uppercase fw-bold">Payment Status:</span>

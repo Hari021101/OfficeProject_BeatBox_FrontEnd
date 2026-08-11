@@ -59,6 +59,11 @@ const cartSlice = createSlice({
         state.cartId = action.payload?.cartId;
         state.totalAmount = action.payload?.totalAmount || 0;
       })
+      .addCase(clearCart.fulfilled, (state) => {
+        state.items = [];
+        state.totalAmount = 0;
+        state.appliedPromo = null;
+      })
       .addCase(addToCart.fulfilled, (state, action) => {
         // UI feedback already handled by components, or we could toast here
       });

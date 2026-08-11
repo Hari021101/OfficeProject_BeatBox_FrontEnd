@@ -258,13 +258,10 @@ export default function Footer() {
             </div>
 
             <div className="d-flex flex-column align-items-center align-items-md-end gap-2">
-              <span className="small text-theme-muted" style={{ fontSize: '0.75rem' }}>Secure Payment Partners</span>
+              <span className="small text-theme-muted" style={{ fontSize: '0.75rem' }}>Secure Payment Options</span>
               <div className="d-flex gap-2 flex-wrap justify-content-center">
-                <span className="px-2 py-1 rounded small border border-secondary border-opacity-25 text-theme-muted" style={{ background: 'var(--bb-surface-2)', fontSize: '0.65rem' }}>VISA</span>
-                <span className="px-2 py-1 rounded small border border-secondary border-opacity-25 text-theme-muted" style={{ background: 'var(--bb-surface-2)', fontSize: '0.65rem' }}>MASTERCARD</span>
-                <span className="px-2 py-1 rounded small border border-secondary border-opacity-25 text-theme-muted" style={{ background: 'var(--bb-surface-2)', fontSize: '0.65rem' }}>UPI</span>
-                <span className="px-2 py-1 rounded small border border-secondary border-opacity-25 text-theme-muted" style={{ background: 'var(--bb-surface-2)', fontSize: '0.65rem' }}>APPLE PAY</span>
-                <span className="px-2 py-1 rounded small border border-secondary border-opacity-25 text-theme-muted" style={{ background: 'var(--bb-surface-2)', fontSize: '0.65rem' }}>PAYPAL</span>
+                <span className="px-2 py-1 rounded small border border-secondary border-opacity-25 text-theme-muted" style={{ background: 'var(--bb-surface-2)', fontSize: '0.65rem' }}>NET BANKING</span>
+                <span className="px-2 py-1 rounded small border border-secondary border-opacity-25 text-theme-muted" style={{ background: 'var(--bb-surface-2)', fontSize: '0.65rem' }}>CASH ON DELIVERY</span>
               </div>
             </div>
 
