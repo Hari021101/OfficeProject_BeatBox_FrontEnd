@@ -235,20 +235,6 @@ export default function Personalisation() {
                   </div>
                 </div>
               </div>
-
-              <a
-                href="#personalisable-catalog"
-                className="btn btn-glow rounded-pill px-5 py-3 fw-bold d-inline-flex align-items-center gap-2 transition-all w-100 justify-content-center w-sm-auto mb-4 text-decoration-none"
-                style={{
-                  background: 'linear-gradient(135deg, var(--bb-primary, #7C3AED), var(--bb-accent, #00f3ff))',
-                  color: '#fff',
-                  border: 'none',
-                  fontSize: '1.05rem',
-                  boxShadow: '0 8px 25px rgba(0, 243, 255, 0.25)',
-                }}
-              >
-                Explore Personalisable Products <ArrowRight size={20} />
-              </a>
             </motion.div>
 
             {/* Right — Product custom engraving preview wrapper */}
@@ -473,61 +459,61 @@ export default function Personalisation() {
                       </Link>
 
                       <div className="card-body p-3 d-flex flex-column flex-grow-1">
-                       
 
-                         <div className="mb-2"
-                         style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',minWidth: '100%' }}>
-  <div
-    className="d-flex justify-content-between align-items-center w-100 px-3 py-1"
-    style={{
-      background: "linear-gradient(90deg,#FFC400,#FFB300)",
-      borderRadius: 0,
-      minHeight: 3,
-    }}
-  >
-    <span
-      className="text-uppercase"
-      style={{
-        fontSize: "0.72rem",
-        fontWeight: 800,
-        color: "#000",
-        letterSpacing: ".4px"
-      }}
-    >
-      {product.usp}
-    </span>
 
-    <div
-      className="d-flex align-items-center gap-1 px-2 py-1"
-      style={{
-        background: "#fff",
-        border: "1px solid rgba(0,0,0,.15)",
-        boxShadow: "0 2px 8px rgba(0,0,0,.18)"
-      }}
-    >
-      <Star
-        size={11}
-        fill="#FFC107"
-        color="#FFC107"
-      />
+                        <div className="mb-2"
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minWidth: '100%' }}>
+                          <div
+                            className="d-flex justify-content-between align-items-center w-100 px-3 py-1"
+                            style={{
+                              background: "linear-gradient(90deg,#FFC400,#FFB300)",
+                              borderRadius: 0,
+                              minHeight: 3,
+                            }}
+                          >
+                            <span
+                              className="text-uppercase"
+                              style={{
+                                fontSize: "0.72rem",
+                                fontWeight: 800,
+                                color: "#000",
+                                letterSpacing: ".4px"
+                              }}
+                            >
+                              {product.usp}
+                            </span>
 
-      <span
-        style={{
-          fontSize: ".72rem",
-          fontWeight: 800,
-          color: "#000"
-        }}
-      >
-        {Number(product.averageRating || product.rating || 0).toFixed(1)}
-      </span>
-    </div>
-  </div>
-</div>
-                         
-                        
+                            <div
+                              className="d-flex align-items-center gap-1 px-2 py-1"
+                              style={{
+                                background: "#fff",
+                                border: "1px solid rgba(0,0,0,.15)",
+                                boxShadow: "0 2px 8px rgba(0,0,0,.18)"
+                              }}
+                            >
+                              <Star
+                                size={11}
+                                fill="#FFC107"
+                                color="#FFC107"
+                              />
+
+                              <span
+                                style={{
+                                  fontSize: ".72rem",
+                                  fontWeight: 800,
+                                  color: "#000"
+                                }}
+                              >
+                                {Number(product.averageRating || product.rating || 0).toFixed(1)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+
                         <Link to={`/products/${product.id}`} className="text-decoration-none flex-grow-1 me-2">
-                            <h6 className="card-title text-theme-title fw-bold mb-0 text-truncate">{product.name}</h6>
-                          </Link> 
+                          <h6 className="card-title text-theme-title fw-bold mb-0 text-truncate">{product.name}</h6>
+                        </Link>
 
                         <p className="text-theme-muted small mb-3 flex-grow-1" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                           {product.description}

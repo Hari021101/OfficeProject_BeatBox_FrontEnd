@@ -53,8 +53,8 @@ export default function Checkout() {
 
   const shipping = appliedPromo?.isFreeShipping ? 0 : (subtotal >= 999 ? 0 : 79)
   const gst = Math.round(subtotal * 0.18)
-  const couponDiscount = appliedPromo?.discountPercentage ? Math.round(subtotal * (appliedPromo.discountPercentage / 100)) : 0
-  const total = subtotal + shipping + gst - couponDiscount
+  const couponDiscount = appliedPromo?.discountAmount != null ? Number(appliedPromo.discountAmount) : (appliedPromo?.discountPercentage ? Math.round(subtotal * (appliedPromo.discountPercentage / 100)) : 0)
+  const total = Math.max(0, subtotal + shipping + gst - couponDiscount)
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(checkoutSchema)

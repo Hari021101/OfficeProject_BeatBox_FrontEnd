@@ -117,7 +117,7 @@ const adminService = {
   // --- Coupon Admin CRUD ---
   getAllCoupons: async () => {
     try {
-      const response = await api.get('/Coupon/all');
+      const response = await api.get('/Promo/all');
       return response.data;
     } catch (error) {
       console.error('Error fetching coupons:', error);
@@ -127,7 +127,7 @@ const adminService = {
 
   getCouponStats: async () => {
     try {
-      const response = await api.get('/Coupon/stats');
+      const response = await api.get('/Promo/stats');
       return response.data;
     } catch (error) {
       console.error('Error fetching coupon stats:', error);
@@ -137,27 +137,27 @@ const adminService = {
 
   createCoupon: async (dto) => {
     try {
-      const response = await api.post('/Coupon', dto);
+      const response = await api.post('/Promo', dto);
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Failed to create coupon';
+      const message = error.response?.data?.message || error.response?.data?.Message || 'Failed to create coupon';
       throw new Error(message, { cause: error });
     }
   },
 
   updateCoupon: async (id, dto) => {
     try {
-      const response = await api.put(`/Coupon/${id}`, dto);
+      const response = await api.put(`/Promo/${id}`, dto);
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Failed to update coupon';
+      const message = error.response?.data?.message || error.response?.data?.Message || 'Failed to update coupon';
       throw new Error(message, { cause: error });
     }
   },
 
   deleteCoupon: async (id) => {
     try {
-      await api.delete(`/Coupon/${id}`);
+      await api.delete(`/Promo/${id}`);
     } catch (error) {
       console.error('Error deleting coupon:', error);
       throw error;
@@ -166,7 +166,7 @@ const adminService = {
 
   toggleCoupon: async (id) => {
     try {
-      const response = await api.patch(`/Coupon/${id}/toggle`);
+      const response = await api.patch(`/Promo/${id}/toggle`);
       return response.data;
     } catch (error) {
       console.error('Error toggling coupon:', error);

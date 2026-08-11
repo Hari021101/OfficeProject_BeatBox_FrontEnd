@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Sparkles, ShoppingCart } from 'lucide-react'
 import { useDispatch } from 'react-redux'
@@ -12,6 +13,35 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
   const [date, setDate] = useState('')
   const [message, setMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    const originalOverflow = document.body.style.overflow
+
+    // Prevent the background page from scrolling
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = originalOverflow
+    }
+  }, [isOpen])
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    document.addEventListener('keydown', handleEscape)
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isOpen, onClose])
 
   if (!isOpen) return null
 
@@ -37,7 +67,7 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
 
     try {
       setIsSubmitting(true)
-      
+
       const payload = {
         id: product.id,
         name: product.name,
@@ -58,7 +88,7 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
       }
 
       await dispatch(addToCart(payload)).unwrap()
-      
+
       toast.success(`🎸 Personalised ${product.name} added to cart!`, {
         style: { background: '#060b19', color: '#fff', border: '1px solid rgba(0,243,255,0.3)', borderRadius: '10px' }
       })
@@ -74,16 +104,23 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
   return (
     <AnimatePresence>
       <div
-        className="modal-backdrop"
+        className="engraving-modal-backdrop"
         style={{
-          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+          position: 'fixed',
+          inset: 0,
+          width: '100vw',
+          height: '100dvh',
           backgroundColor: 'rgba(3, 5, 12, 0.85)',
-          zIndex: 1050,
+          zIndex: 99999,
           backdropFilter: 'blur(10px)',
+
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '16px'
+
+          padding: '16px',
+          overflow: 'hidden',
+          boxSizing: 'border-box'
         }}
       >
         <motion.div
@@ -93,28 +130,101 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
           transition={{ duration: 0.3, ease: 'easeOut' }}
           className="container-fluid p-0"
           style={{
-            background: 'linear-gradient(135deg, rgba(10, 15, 30, 0.95), rgba(5, 7, 15, 0.98))',
+            background: 'linear-gradient(135deg, rgba(10, 15, 30, 0.98), rgba(5, 7, 15, 0.99))',
             border: '1px solid rgba(0, 243, 255, 0.18)',
             borderRadius: '24px',
+
+            width: '100%',
             maxWidth: '1050px',
-            maxHeight: '92vh',
+
+            height: 'calc(100dvh - 32px)',
+            maxHeight: 'calc(100dvh - 32px)',
+
+            display: 'flex',
+            flexDirection: 'column',
+
             overflow: 'hidden',
+
             boxShadow: '0 24px 60px rgba(0, 243, 255, 0.12), 0 0 2px rgba(255, 255, 255, 0.3)'
           }}
         >
           {/* Header */}
-          <div className="d-flex justify-content-between align-items-center p-3 px-md-4 border-bottom" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
-            <h5 className="mb-0 fw-black text-white d-flex align-items-center gap-2" style={{ letterSpacing: '0.5px' }}>
-              <Sparkles className="text-info animate-pulse" size={20} /> Personalise Your Product
-            </h5>
-            <button onClick={onClose} className="btn border-0 p-1 text-secondary hover-scale" style={{ background: 'transparent' }}>
-              <X size={22} className="text-muted hover:text-white" />
+          <div
+            className="d-flex align-items-center justify-content-between p-3 px-md-4 border-bottom"
+            style={{
+              borderColor: 'rgba(255,255,255,0.08)',
+              flexShrink: 0
+            }}
+          >
+            {/* Back + Title */}
+            <div className="d-flex align-items-center gap-3">
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="btn d-flex align-items-center gap-2"
+                style={{
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  color: '#fff',
+                  borderRadius: '10px',
+                  padding: '7px 12px',
+                  fontSize: '0.8rem',
+                  fontWeight: 700
+                }}
+              >
+                <span style={{ fontSize: '18px', lineHeight: 1 }}>←</span>
+                Back
+              </button>
+
+              <h5
+                className="mb-0 fw-black text-white d-flex align-items-center gap-2"
+                style={{
+                  letterSpacing: '0.5px'
+                }}
+              >
+                <Sparkles
+                  className="text-info animate-pulse"
+                  size={20}
+                />
+
+                Personalise Your Product
+              </h5>
+
+            </div>
+
+            {/* X button */}
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn border-0 p-2"
+              style={{
+                background: 'transparent',
+                color: '#aaa'
+              }}
+              aria-label="Close personalisation"
+            >
+              <X size={22} />
             </button>
           </div>
 
-          <div className="row g-0 overflow-auto" style={{ maxHeight: 'calc(92vh - 70px)' }}>
+          <div
+            className="row g-0"
+            style={{
+              flex: 1,
+              minHeight: 0,
+              overflowY: 'auto',
+              overflowX: 'hidden'
+            }}
+          >
             {/* Left: Input Panel */}
-            <div className="col-12 col-md-6 p-3 p-md-4 d-flex flex-column justify-content-between" style={{ borderRight: '1px solid rgba(255,255,255,0.08)' }}>
+            <div
+              className="col-12 col-md-6 p-3 p-md-4 d-flex flex-column"
+              style={{
+                borderRight: '1px solid rgba(255,255,255,0.08)',
+                minHeight: '100%'
+              }}
+            >
               <div>
                 <p className="text-secondary small mb-4">Make it uniquely yours. Enter your name, date, or a custom message to be custom laser engraved.</p>
 
@@ -197,25 +307,45 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
               </div>
 
               {/* Action Button */}
-              <button
-                type="button"
-                onClick={handleAddPersonalised}
-                disabled={isSubmitting || !name.trim()}
-                className="btn btn-glow w-100 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
-                style={{ borderRadius: '12px', height: '54px' }}
+              <div
+                className="mt-4"
+                style={{
+                  position: 'sticky',
+                  bottom: 0,
+                  paddingTop: '12px',
+                  paddingBottom: '4px',
+                  background: 'linear-gradient(to top, rgba(5,7,15,1) 70%, rgba(5,7,15,0))'
+                }}
               >
-                {isSubmitting ? (
-                  <span className="spinner-border spinner-border-sm" />
-                ) : (
-                  <>
-                    <ShoppingCart size={18} /> Add Personalised Product
-                  </>
-                )}
-              </button>
+                <button
+                  type="button"
+                  onClick={handleAddPersonalised}
+                  disabled={isSubmitting || !name.trim()}
+                  className="btn btn-glow w-100 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
+                  style={{
+                    borderRadius: '12px',
+                    height: '54px'
+                  }}
+                >
+                  {isSubmitting ? (
+                    <span className="spinner-border spinner-border-sm" />
+                  ) : (
+                    <>
+                      <ShoppingCart size={18} />
+                      Add Personalised Product
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* Right: Immersive Live Preview */}
-            <div className="col-12 col-md-6 p-3 p-md-4 d-flex align-items-center justify-content-center bg-black position-relative" style={{ minHeight: '340px' }}>
+            <div
+              className="col-12 col-md-6 p-3 p-md-4 d-flex align-items-center justify-content-center bg-black position-relative"
+              style={{
+                minHeight: '340px'
+              }}
+            >
               <div
                 className="position-relative w-100 h-100 d-flex align-items-center justify-content-center overflow-hidden"
                 style={{
