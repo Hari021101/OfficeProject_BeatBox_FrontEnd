@@ -77,13 +77,13 @@ export default function Dashboard() {
       const analytics = await adminService.getDashboardAnalytics()
       setStats({
         totalRevenue: analytics.totalRevenue || 0,
-        revenueTrend: analytics.revenueGrowthPercentage || 0,
+        revenueTrend: analytics.revenueChangePercentage ?? analytics.revenueGrowthPercentage ?? 0,
         totalOrders: analytics.totalOrders || 0,
-        ordersTrend: analytics.ordersGrowthPercentage || 0,
-        activeUsers: analytics.totalCustomers || 0,
-        usersTrend: analytics.customerGrowthPercentage || 0,
+        ordersTrend: analytics.ordersChangePercentage ?? analytics.ordersGrowthPercentage ?? 0,
+        activeUsers: analytics.activeUsers ?? analytics.totalCustomers ?? 0,
+        usersTrend: analytics.activeUsersChangePercentage ?? analytics.customerGrowthPercentage ?? 0,
         conversionRate: analytics.conversionRate || 0,
-        conversionTrend: null,
+        conversionTrend: analytics.conversionRateChangePercentage ?? 0,
         totalProducts: analytics.totalProducts || 0,
         totalCategories: analytics.totalCategories || 0,
         totalInventoryItems: analytics.totalInventoryItems || 0,
@@ -99,7 +99,7 @@ export default function Dashboard() {
       const revenue = await adminService.getRevenueChart()
       setRevenueData(
         revenue.map(r => ({
-          name: new Date(2026, r.month - 1).toLocaleString('default', { month: 'short' }),
+          name: new Date(r.year || 2026, (r.month || 1) - 1).toLocaleString('default', { month: 'short' }),
           value: r.revenue
         }))
       )
@@ -157,9 +157,14 @@ export default function Dashboard() {
   useSignalR('DashboardUpdated', (analytics) => {
     setStats(prev => ({
       ...prev,
-      totalRevenue: analytics.totalRevenue || prev.totalRevenue,
-      totalOrders: analytics.totalOrders || prev.totalOrders,
-      activeUsers: analytics.totalCustomers || prev.activeUsers
+      totalRevenue: analytics.totalRevenue ?? prev.totalRevenue,
+      revenueTrend: analytics.revenueChangePercentage ?? analytics.revenueGrowthPercentage ?? prev.revenueTrend,
+      totalOrders: analytics.totalOrders ?? prev.totalOrders,
+      ordersTrend: analytics.ordersChangePercentage ?? analytics.ordersGrowthPercentage ?? prev.ordersTrend,
+      activeUsers: analytics.activeUsers ?? analytics.totalCustomers ?? prev.activeUsers,
+      usersTrend: analytics.activeUsersChangePercentage ?? analytics.customerGrowthPercentage ?? prev.usersTrend,
+      conversionRate: analytics.conversionRate ?? prev.conversionRate,
+      conversionTrend: analytics.conversionRateChangePercentage ?? prev.conversionTrend
     }))
     toast.success('Dashboard metrics updated in real-time! 🚀', {
       id: 'dashboard-live-update',
@@ -451,6 +456,14 @@ export default function Dashboard() {
     }
   ]
 
+  const formatChange = (value) => {
+    const number = Number(value)
+    if (!Number.isFinite(number)) {
+      return '0%'
+    }
+    return `${number >= 0 ? '+' : ''}${number.toFixed(1)}%`
+  }
+
   return (
     <div className="py-2">
       {/* Header */}
@@ -471,16 +484,16 @@ export default function Dashboard() {
       {/* Metrics Row */}
       <div className="row g-4 mb-4">
         <div className="col-12 col-md-6 col-xl-3">
-          <StatWidget title="Total Revenue" value={`₹${stats.totalRevenue.toLocaleString('en-IN')}`} trend={`${stats.revenueTrend >= 0 ? '+' : ''}${stats.revenueTrend}%`} isPositive={stats.revenueTrend >= 0} icon={IndianRupee} delay={0.1} />
+          <StatWidget title="Total Revenue" value={`₹${stats.totalRevenue.toLocaleString('en-IN')}`} trend={formatChange(stats.revenueTrend)} isPositive={Number(stats.revenueTrend) >= 0} icon={IndianRupee} delay={0.1} />
         </div>
         <div className="col-12 col-md-6 col-xl-3">
-          <StatWidget title="Total Orders" value={stats.totalOrders.toLocaleString('en-IN')} trend={`${stats.ordersTrend >= 0 ? '+' : ''}${stats.ordersTrend}%`} isPositive={stats.ordersTrend >= 0} icon={ShoppingCart} delay={0.2} />
+          <StatWidget title="Total Orders" value={stats.totalOrders.toLocaleString('en-IN')} trend={formatChange(stats.ordersTrend)} isPositive={Number(stats.ordersTrend) >= 0} icon={ShoppingCart} delay={0.2} />
         </div>
         <div className="col-12 col-md-6 col-xl-3">
-          <StatWidget title="Active Users" value={stats.activeUsers.toLocaleString('en-IN')} trend={`${stats.usersTrend >= 0 ? '+' : ''}${stats.usersTrend}%`} isPositive={stats.usersTrend >= 0} icon={Users} delay={0.3} />
+          <StatWidget title="Active Users" value={stats.activeUsers.toLocaleString('en-IN')} trend={formatChange(stats.usersTrend)} isPositive={Number(stats.usersTrend) >= 0} icon={Users} delay={0.3} />
         </div>
         <div className="col-12 col-md-6 col-xl-3">
-          <StatWidget title="Conversion Rate" value={`${stats.conversionRate}%`} trend={`${stats.conversionTrend >= 0 ? '+' : ''}${stats.conversionTrend}%`} isPositive={stats.conversionTrend >= 0} icon={TrendingUp} delay={0.4} />
+          <StatWidget title="Conversion Rate" value={`${stats.conversionRate}%`} trend={formatChange(stats.conversionTrend)} isPositive={Number(stats.conversionTrend) >= 0} icon={TrendingUp} delay={0.4} />
         </div>
       </div>
 
