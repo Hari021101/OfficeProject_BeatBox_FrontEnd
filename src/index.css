@@ -2650,3 +2650,41 @@ select option {
   display: flex;
   flex-direction: column;
 }
+
+/* ==========================================================================
+   Corporate Gifting Hero Text & Badge Visibility (Light and Dark Mode)
+   ========================================================================== */
+.corporate-hero-badge {
+  background-color: rgba(168, 32, 255, 0.12) !important;
+  color: #820df2 !important;
+  border: 1px solid rgba(168, 32, 255, 0.25) !important;
+}
+
+.corporate-hero-eyebrow,
+.corporate-hero-title {
+  color: #111827 !important;
+  opacity: 1 !important;
+}
+
+.corporate-hero-subtitle {
+  color: #475569 !important;
+  opacity: 1 !important;
+}
+
+[data-theme="dark"] .corporate-hero-badge {
+  background-color: rgba(168, 32, 255, 0.12) !important;
+  color: #820df2 !important;
+  border: 1px solid rgba(168, 32, 255, 0.25) !important;
+}
+
+[data-theme="dark"] .corporate-hero-eyebrow,
+[data-theme="dark"] .corporate-hero-title {
+  color: #111827 !important;
+  opacity: 1 !important;
+}
+
+[data-theme="dark"] .corporate-hero-subtitle {
+  color: #475569 !important;
+  opacity: 1 !important;
+}
+

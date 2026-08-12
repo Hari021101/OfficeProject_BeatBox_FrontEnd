@@ -140,12 +140,12 @@ export default function CorporateOrders() {
               transition={{ duration: 0.8 }}
               className="col-12 col-lg-5"
             >
-              <span className="badge rounded-pill px-3 py-2 mb-4 d-inline-block fw-bold" style={{ background: 'rgba(168,32,255,0.12)', color: '#820df2', border: '1px solid rgba(168,32,255,0.25)', fontSize: '0.75rem', letterSpacing: '1px' }}>
+              <span className="badge rounded-pill px-3 py-2 mb-4 d-inline-block fw-bold corporate-hero-badge" style={{ fontSize: '0.75rem', letterSpacing: '1px' }}>
                 🏢 CORPORATE GIFTING
               </span>
-              <h1 className="fw-light mb-2 text-dark" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}>Don't Wait!</h1>
-              <h2 className="fw-black mb-2 text-dark" style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', lineHeight: 1.1 }}>Pick a Gift</h2>
-              <h3 className="fw-light mb-5 text-secondary" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}>Before they Start Complaining.</h3>
+              <h1 className="fw-light mb-2 corporate-hero-eyebrow" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}>Don't Wait!</h1>
+              <h2 className="fw-black mb-2 corporate-hero-title" style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', lineHeight: 1.1 }}>Pick a Gift</h2>
+              <h3 className="fw-light mb-5 corporate-hero-subtitle" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}>Before they Start Complaining.</h3>
 
               <div className="d-flex flex-wrap gap-3">
                 <button
