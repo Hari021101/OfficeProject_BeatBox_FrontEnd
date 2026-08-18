@@ -16,10 +16,12 @@ class SignalRService {
         this.isConnecting = true;
 
         try {
+            const token = localStorage.getItem('bb_token');
             this.connection = new signalR.HubConnectionBuilder()
                 .withUrl(getSignalRUrl('/hubs/notifications'), {
                     skipNegotiation: true,
-                    transport: signalR.HttpTransportType.WebSockets
+                    transport: signalR.HttpTransportType.WebSockets,
+                    accessTokenFactory: () => token || ''
                 })
                 .withAutomaticReconnect()
                 .configureLogging(signalR.LogLevel.Warning)
