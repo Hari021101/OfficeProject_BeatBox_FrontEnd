@@ -1846,6 +1846,12 @@ video {
    THEME CORRECTIONS — Light Mode
    ========================================================================== */
 
+[data-theme="light"] {
+  --bb-success-bg: rgba(5, 150, 105, 0.12);
+  --bb-success-text: #047857;
+  --bb-success-border: rgba(5, 150, 105, 0.35);
+}
+
 /* Bestseller card */
 [data-theme="light"] .bestseller-card {
   background: #ffffff !important;

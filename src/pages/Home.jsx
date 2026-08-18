@@ -452,7 +452,7 @@ export default function Home() {
             <span className="fs-1 fw-black text-theme-title">{currentSlideData.price}</span>
             <span className="text-decoration-line-through text-theme-muted fs-5">{currentSlideData.oldPrice}</span>
           </div>
-          <span className="badge bg-success bg-opacity-25 text-success border border-success border-opacity-20 px-2 py-1 small fw-bold">
+          <span className="badge bb-badge-success px-2 py-1 small fw-bold">
             {currentSlideData.discount}
           </span>
         </div>
@@ -642,7 +642,7 @@ export default function Home() {
 
           <div
             style={{
-              color: '#16a34a',
+              color: 'var(--bb-success-text)',
               fontWeight: 'bold'
             }}
           >
@@ -1099,7 +1099,7 @@ export default function Home() {
                     <div
                       className="fw-bold"
                       style={{
-                        color: '#16a34a',
+                        color: 'var(--bb-success-text)',
                         fontSize: '1.1rem'
                       }}
                     >

@@ -1,6 +1,7 @@
 import api from './authService';
 import { IMAGE_MAP } from '../data/products';
 import { getImageUrl } from '../config/api';
+import { isInvalidValue } from '../utils/productFeatureHelper';
 
 // Convert relative image paths to absolute URLs
 const buildImageUrl = getImageUrl;
@@ -142,8 +143,8 @@ inStock: totalStock > 0,
 
     tag: bp.isFeatured ? 'Featured' : 'Popular',
 
-    usp: bp.batteryLife
-      ? `${bp.batteryLife} Battery`
+    usp: (bp.batteryLife && !isInvalidValue(bp.batteryLife))
+      ? (String(bp.batteryLife).toLowerCase().includes('battery') ? bp.batteryLife : `${bp.batteryLife} Battery`)
       : 'Signature Sound',
 
     badge: 'Original',

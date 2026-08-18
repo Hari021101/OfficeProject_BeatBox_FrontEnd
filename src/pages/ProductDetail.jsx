@@ -1067,11 +1067,8 @@ export default function ProductDetail() {
                             </div>
                           </div>
                         </div>
-                        <span className="badge px-2 py-1" style={{
-                          background: 'var(--bb-success-bg)',
-                          color: 'var(--bb-success-text)',
-                          fontSize: '0.65rem',
-                          border: '1px solid var(--bb-success-border)'
+                        <span className="badge bb-badge-success px-2 py-1" style={{
+                          fontSize: '0.65rem'
                         }}>✓ Verified Purchase</span>
                       </div>
                       <p className="text-theme-muted mb-0" style={{ lineHeight: 1.7, fontSize: '0.9rem' }}>{review.comment}</p>
