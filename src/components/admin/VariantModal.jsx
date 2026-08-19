@@ -3,8 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Upload, Save, ArrowLeft, ArrowRight, Star, Trash2 } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { toast } from 'react-hot-toast'
+import { useDispatch } from 'react-redux'
+import { fetchProducts } from '../../redux/productSlice'
 
 export default function VariantModal({ isOpen, onClose, productId, variant, onSaved }) {
+  const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(false)
   const [color, setColor] = useState('')
   const [colorCode, setColorCode] = useState('#000000')
@@ -230,6 +233,7 @@ export default function VariantModal({ isOpen, onClose, productId, variant, onSa
       }
 
       toast.success('Variant saved successfully!')
+      dispatch(fetchProducts())
       onSaved()
       onClose()
     } catch (error) {

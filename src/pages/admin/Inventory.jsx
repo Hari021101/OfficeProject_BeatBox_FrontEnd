@@ -46,10 +46,14 @@ export default function Inventory() {
       return
     }
     try {
-      await adminService.updateStock(id, targetStock, 'restock', 'Admin manual update')
-      toast.success(`Inventory updated for Product ID: ${id.toString().substring(0, 8)}...`)
-      const freshData = await productService.getAllProducts()
-      setProducts(freshData || [])
+      const response = await adminService.updateStock(id, targetStock, 'restock', 'Admin manual update')
+      const updatedStock = response?.data?.availableStock ?? response?.data?.AvailableStock ?? targetStock
+
+      // Instantly update local state with committed stock from API response
+      setProducts(prev => prev.map(p => p.id === id ? { ...p, stockQuantity: updatedStock } : p))
+      toast.success(`Inventory updated to ${updatedStock} units.`)
+      
+      // Dispatch background Redux sync
       dispatch(fetchProducts())
     } catch (error) {
       const msg = error.response?.data?.message || error.response?.data?.Message || error.message || 'Failed to update stock'

@@ -2751,3 +2751,28 @@ select option {
   border: 1px solid var(--badge-border, var(--audit-info-border)) !important;
 }
 
+/* Product Details Out of Stock Badge Theme Rules */
+.out-of-stock-badge {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+[data-theme="light"] .out-of-stock-badge,
+[data-theme="light"] span.out-of-stock-badge {
+  background-color: #fee2e2 !important;
+  color: #b91c1c !important;
+  border: 1px solid #fca5a5 !important;
+}
+
+[data-theme="dark"] .out-of-stock-badge,
+:root:not([data-theme="light"]) .out-of-stock-badge {
+  background-color: rgba(239, 68, 68, 0.10) !important;
+  color: #ff6b6b !important;
+  border: 1px solid rgba(239, 68, 68, 0.45) !important;
+}
+

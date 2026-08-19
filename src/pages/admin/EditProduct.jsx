@@ -3,11 +3,14 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { ArrowLeft, Save, Plus, Edit2, Trash2, HelpCircle, LayoutGrid, Check, X, Star } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { toast } from 'react-hot-toast'
+import { useDispatch } from 'react-redux'
+import { fetchProducts } from '../../redux/productSlice'
 import VariantModal from '../../components/admin/VariantModal'
 
 export default function EditProduct() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(true)
   const [categories, setCategories] = useState([])
   const [product, setProduct] = useState(null)
@@ -113,6 +116,7 @@ export default function EditProduct() {
       setIsLoading(true)
       await productService.updateProduct(id, formData)
       toast.success('Product information updated successfully!')
+      dispatch(fetchProducts())
       loadProduct()
     } catch (err) {
       toast.error('Failed to update product details.')
@@ -137,6 +141,7 @@ export default function EditProduct() {
         setIsLoading(true)
         await productService.deleteVariant(variantId)
         toast.success('Variant deleted successfully!')
+        dispatch(fetchProducts())
         loadProduct()
       } catch (err) {
         toast.error('Failed to delete variant.')

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   Star, ShoppingBag, ArrowLeft, Heart, Share2, Zap,
   CheckCircle, Shield, Truck, RotateCcw, ChevronRight, Minus, Plus,
-  Battery, Smartphone, Mic, Gamepad2, ChevronDown, ChevronUp, Scale
+  Battery, Smartphone, Mic, Gamepad2, ChevronDown, ChevronUp, Scale, Bell, Check
 } from 'lucide-react'
 import { addToCart } from '../redux/cartSlice'
 import { addToCompare } from '../redux/compareSlice'
@@ -15,6 +15,7 @@ import RecentlyViewed from '../components/ui/RecentlyViewed'
 import { toast } from 'react-hot-toast'
 import logo from '../assets/beatbox_logo.png'
 import { productService } from '../services/productService'
+import stockNotificationService from '../services/stockNotificationService'
 import { fetchMyOrders, selectAllOrders } from '../redux/orderSlice'
 import { addRecentlyViewed, selectRecentlyViewedIds } from '../redux/recentlyViewedSlice'
 import { toggleWishlistItem } from '../redux/wishlistSlice'
@@ -143,6 +144,57 @@ export default function ProductDetail() {
     }
   }, [id, dispatch, user])
 
+  // Reconcile Product and Variant attributes (stock, price, discountPrice, color, images) whenever allProducts store updates
+  useEffect(() => {
+    if (product && allProducts?.length > 0) {
+      const updatedInStore = allProducts.find(p => p.id.toString() === id.toString() || p.id === id)
+      if (updatedInStore) {
+        setProduct(prev => {
+          if (!prev) return updatedInStore
+          const newStock = updatedInStore.stockQuantity ?? 0
+          return {
+            ...prev,
+            stockQuantity: newStock,
+            inStock: newStock > 0,
+            price: updatedInStore.price ?? prev.price,
+            oldPrice: updatedInStore.oldPrice ?? prev.oldPrice,
+            discountPrice: updatedInStore.discountPrice ?? prev.discountPrice,
+            variants: prev.variants?.map(v => {
+              const updatedVar = updatedInStore.variants?.find(uv => uv.id === v.id)
+              return updatedVar ? {
+                ...v,
+                price: updatedVar.price ?? v.price,
+                discountPrice: updatedVar.discountPrice ?? v.discountPrice,
+                stockQuantity: updatedVar.stockQuantity ?? newStock,
+                color: updatedVar.color || v.color,
+                colorCode: updatedVar.colorCode || v.colorCode,
+                sku: updatedVar.sku || v.sku,
+                capacity: updatedVar.capacity || v.capacity,
+                images: updatedVar.images && updatedVar.images.length > 0 ? updatedVar.images : v.images
+              } : v
+            }) || prev.variants
+          }
+        })
+      }
+    }
+  }, [allProducts, id])
+
+  useEffect(() => {
+    if (selectedVariant && product?.variants?.length > 0) {
+      const freshVariant = product.variants.find(v => v.id === selectedVariant.id)
+      if (freshVariant) {
+        setSelectedVariant(freshVariant)
+      }
+    } else if (selectedVariant && product) {
+      setSelectedVariant(prev => prev ? {
+        ...prev,
+        stockQuantity: product.stockQuantity,
+        price: product.price,
+        discountPrice: product.discountPrice
+      } : prev)
+    }
+  }, [product])
+
   // Track recently viewed when product is loaded
   useEffect(() => {
     if (product) {
@@ -197,6 +249,47 @@ export default function ProductDetail() {
       })
     }
   }, [product])
+
+  // Stock Notification States
+  const [isSubscribed, setIsSubscribed] = useState(false)
+  const [subscribing, setSubscribing] = useState(false)
+
+  useEffect(() => {
+    const checkSubStatus = async () => {
+      if (selectedVariant && selectedVariant.stockQuantity <= 0 && user) {
+        try {
+          const res = await stockNotificationService.getStatus(selectedVariant.id)
+          setIsSubscribed(!!res?.isSubscribed)
+        } catch {
+          setIsSubscribed(false)
+        }
+      } else {
+        setIsSubscribed(false)
+      }
+    }
+    checkSubStatus()
+  }, [selectedVariant, user])
+
+  const handleNotifyMe = async () => {
+    if (!user) {
+      toast.error('Please log in to receive stock notifications.')
+      navigate('/login')
+      return
+    }
+    if (!selectedVariant) return
+
+    setSubscribing(true)
+    try {
+      await stockNotificationService.subscribe(product.id, selectedVariant.id)
+      toast.success("You'll be notified when this variant is back in stock.")
+      setIsSubscribed(true)
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Failed to subscribe to stock notification.'
+      toast.error(msg)
+    } finally {
+      setSubscribing(false)
+    }
+  }
 
   useEffect(() => {
     const availableStock = Math.max(0, selectedVariant?.stockQuantity || 0)
@@ -631,12 +724,7 @@ export default function ProductDetail() {
                   ✓ In Stock ({selectedVariant.stockQuantity} available)
                 </span>
               ) : (
-                <span className="badge px-2 py-1 small fw-bold" style={{
-                  background: 'rgba(220,53,69,0.12)',
-                  color: '#ef4444',
-                  border: '1px solid rgba(220,53,69,0.25)',
-                  borderRadius: '999px'
-                }}>
+                <span className="out-of-stock-badge">
                   ✗ Out of Stock
                 </span>
               )}
@@ -797,39 +885,76 @@ export default function ProductDetail() {
             {/* CTAs */}
             <div className="d-flex gap-3 mb-4 flex-wrap">
               
-              {!product.isEngravingAvailable && (
+              {(selectedVariant?.stockQuantity || 0) <= 0 ? (
                 <button
-                  onClick={handleAddToCart}
-                  disabled={selectedVariant?.stockQuantity <= 0 || adding}
+                  onClick={handleNotifyMe}
+                  disabled={isSubscribed || subscribing}
                   className="btn btn-glow flex-grow-1 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
                   style={{
                     borderRadius: 12,
-                    minWidth: 200,
-                    height: 56
+                    minWidth: 220,
+                    height: 56,
+                    background: isSubscribed
+                      ? 'var(--bb-surface-2)'
+                      : 'linear-gradient(135deg, var(--bb-primary), var(--bb-accent))',
+                    color: isSubscribed ? 'var(--bb-success)' : '#fff',
+                    border: isSubscribed ? '1px solid var(--bb-success)' : 'none'
                   }}
                 >
-                  {adding ? (
+                  {subscribing ? (
                     <>
                       <span className="spinner-border spinner-border-sm" />
-                      Adding...
+                      Subscribing...
+                    </>
+                  ) : isSubscribed ? (
+                    <>
+                      <Check size={18} />
+                      We'll Notify You
                     </>
                   ) : (
                     <>
-                      <ShoppingBag size={18} />
-                      Add to Cart
+                      <Bell size={18} />
+                      Notify Me When Available
                     </>
                   )}
                 </button>
-              )}
+              ) : (
+                <>
+                  {!product.isEngravingAvailable && (
+                    <button
+                      onClick={handleAddToCart}
+                      disabled={selectedVariant?.stockQuantity <= 0 || adding}
+                      className="btn btn-glow flex-grow-1 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
+                      style={{
+                        borderRadius: 12,
+                        minWidth: 200,
+                        height: 56
+                      }}
+                    >
+                      {adding ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm" />
+                          Adding...
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingBag size={18} />
+                          Add to Cart
+                        </>
+                      )}
+                    </button>
+                  )}
 
-              <button
-                onClick={handleBuyNow}
-                disabled={selectedVariant?.stockQuantity <= 0}
-                className="btn flex-grow-1 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
-                style={{ borderRadius: 12, minWidth: 180, height: 56, background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }}
-              >
-                Buy Now <ChevronRight size={16} />
-              </button>
+                  <button
+                    onClick={handleBuyNow}
+                    disabled={selectedVariant?.stockQuantity <= 0}
+                    className="btn flex-grow-1 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
+                    style={{ borderRadius: 12, minWidth: 180, height: 56, background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }}
+                  >
+                    Buy Now <ChevronRight size={16} />
+                  </button>
+                </>
+              )}
               <button
                 onClick={() => { handleWishlist() }}
                 className="btn d-flex align-items-center justify-content-center"
