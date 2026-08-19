@@ -231,29 +231,26 @@ export default function ProductListing() {
       <div className="bg-glow-orb" style={{ width: 400, height: 400, background: 'var(--bb-primary-glow)', top: '5%', left: '-8%', filter: 'blur(120px)' }} />
       <div className="bg-glow-orb" style={{ width: 400, height: 400, background: 'var(--bb-accent-glow)', bottom: '10%', right: '-8%', filter: 'blur(120px)', animationDelay: '3s' }} />
 
-      <div className="container-fluid px-3 px-lg-5 py-4">
+      <div className="container-fluid px-3 px-lg-5 py-2">
         {/* ── PAGE HEADER ─────────────────────────── */}
-        <div className="mb-5 text-center">
+        <section className="category-header text-center">
           <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <span
-              className="badge px-4 py-2 mb-3 text-white fw-bold"
-              style={{ background: 'linear-gradient(135deg,var(--bb-primary),var(--bb-accent))', borderRadius: 50, fontSize: '0.8rem', letterSpacing: 1 }}
-            >
+            <span className="category-header-badge mb-3">
               🎧 COMPLETE COLLECTION
             </span>
-            <h1 className="display-5 fw-black text-theme-title mb-2" style={{ letterSpacing: '-2px' }}>
+            <h1 className="display-5 fw-black text-theme-title mb-2" style={{ letterSpacing: '-1.5px' }}>
               Shop <span className="gradient-text">Premium Audio</span>
             </h1>
-            <p className="text-theme-muted">
+            <p className="text-theme-muted mb-0">
               {allProducts.length} products · Free shipping above ₹999 · 1-Year warranty on all gear
             </p>
           </motion.div>
-        </div>
+        </section>
 
-        {/* ── SEARCH + SORT BAR ────────────────────── */}
-        <div className="d-flex flex-column flex-md-row align-items-stretch align-items-md-center gap-3 mb-4">
-          {/* Search */}
-          <div className="position-relative flex-grow-1" style={{ maxWidth: 480 }}>
+        {/* ── SEARCH + SORT TOOLBAR ────────────────────── */}
+        <div className="listing-toolbar d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center justify-content-between gap-3 mb-4">
+          {/* Search (Shortened Width) */}
+          <div className="position-relative w-100" style={{ maxWidth: 380 }}>
             <Search size={16} className="position-absolute" style={{ left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--bb-muted)', zIndex: 2 }} />
             <input
               type="text"
@@ -263,7 +260,7 @@ export default function ProductListing() {
               onChange={e => setDisplaySearchQuery(e.target.value)}
               style={{
                 background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', color: 'var(--bb-text)',
-                borderRadius: 50, paddingLeft: 44, paddingRight: displaySearchQuery ? 40 : 20, height: 46,
+                borderRadius: 50, paddingLeft: 44, paddingRight: displaySearchQuery ? 40 : 20, height: 44,
                 fontSize: '0.9rem', outline: 'none'
               }}
               onFocus={e => { e.target.style.borderColor = 'var(--bb-accent)'; e.target.style.boxShadow = '0 0 20px var(--bb-accent-glow)' }}
@@ -276,39 +273,40 @@ export default function ProductListing() {
             )}
           </div>
 
-          {/* Spacer */}
-          <div className="flex-grow-1 d-none d-md-block" />
-
-          {/* Filters toggle (mobile) */}
-          <button
-            onClick={() => setShowFilters(true)}
-            className="btn d-md-none d-flex align-items-center gap-2 fw-bold"
-            style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)', borderRadius: 10, height: 46, padding: '0 18px' }}
-          >
-            <SlidersHorizontal size={16} /> Filters {activeFilterCount > 0 && <span className="badge rounded-pill px-2" style={{ background: 'var(--bb-primary)', fontSize: '0.65rem' }}>{activeFilterCount}</span>}
-          </button>
-
-          {/* Sort dropdown */}
-          <div className="position-relative">
-            <select
-              value={activeSort}
-              onChange={e => setActiveSort(e.target.value)}
-              className="form-select fw-semibold"
-              style={{
-                background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)',
-                borderRadius: 10, height: 46, paddingLeft: 16, paddingRight: 36, fontSize: '0.9rem',
-                appearance: 'none', cursor: 'pointer', minWidth: 200
-              }}
+          {/* Right Controls Container (Filters Toggle Mobile + Sort Dropdown) */}
+          <div className="d-flex align-items-center gap-2">
+            {/* Filters toggle (mobile & tablet < 992px) */}
+            <button
+              onClick={() => setShowFilters(true)}
+              className="btn d-lg-none d-flex align-items-center gap-2 fw-bold"
+              style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)', borderRadius: 10, height: 44, padding: '0 18px' }}
             >
-              {SORT_OPTIONS.map(o => <option key={o.id} value={o.id} style={{ background: 'var(--bb-surface)' }}>{o.label}</option>)}
-            </select>
-            <ArrowUpDown size={14} className="position-absolute" style={{ right: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--bb-muted)', pointerEvents: 'none' }} />
+              <SlidersHorizontal size={16} /> Filters {activeFilterCount > 0 && <span className="badge rounded-pill px-2" style={{ background: 'var(--bb-primary)', fontSize: '0.65rem' }}>{activeFilterCount}</span>}
+            </button>
+
+            {/* Sort dropdown */}
+            <div className="position-relative">
+              <select
+                value={activeSort}
+                onChange={e => setActiveSort(e.target.value)}
+                className="form-select fw-semibold"
+                style={{
+                  background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)',
+                  borderRadius: 10, height: 44, paddingLeft: 16, paddingRight: 36, fontSize: '0.9rem',
+                  appearance: 'none', cursor: 'pointer', minWidth: 190
+                }}
+              >
+                {SORT_OPTIONS.map(o => <option key={o.id} value={o.id} style={{ background: 'var(--bb-surface)' }}>{o.label}</option>)}
+              </select>
+              <ArrowUpDown size={14} className="position-absolute" style={{ right: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--bb-muted)', pointerEvents: 'none' }} />
+            </div>
           </div>
         </div>
 
-        <div className="row g-4">
-          {/* ── SIDEBAR FILTERS (desktop) ─────────── */}
-          <div className="col-12 col-md-3 d-none d-md-block">
+        {/* ── TWO-PANEL PRODUCT LISTING LAYOUT ──────────────────────── */}
+        <div className="product-listing-layout">
+          {/* ── LEFT FILTER PANEL (desktop independent scroll) ─────────── */}
+          <aside className="product-filters-panel">
             <FilterPanel
               categories={categories}
               activeCategory={activeCategory}
@@ -320,11 +318,10 @@ export default function ProductListing() {
               inStockOnly={inStockOnly}
               setInStockOnly={setInStockOnly}
               activeFilterCount={activeFilterCount}
-              clearAll={clearAll}
             />
-          </div>
+          </aside>
 
-          {/* ── MOBILE FILTER DRAWER ───────────────── */}
+          {/* ── MOBILE FILTER DRAWER (modal for <992px) ───────────────── */}
           <AnimatePresence>
             {showFilters && (
               <>
@@ -352,15 +349,14 @@ export default function ProductListing() {
                     inStockOnly={inStockOnly}
                     setInStockOnly={setInStockOnly}
                     activeFilterCount={activeFilterCount}
-                    clearAll={clearAll}
                   />
                 </motion.div>
               </>
             )}
           </AnimatePresence>
 
-          {/* ── PRODUCT GRID ──────────────────────── */}
-          <div className="col-12 col-md-9">
+          {/* ── RIGHT PRODUCT RESULTS PANEL (desktop independent scroll) ─── */}
+          <main className="product-results-panel">
             {/* Active filter pills */}
             {activeFilterCount > 0 && (
               <div className="d-flex flex-wrap gap-2 mb-4 align-items-center">
@@ -454,7 +450,7 @@ export default function ProductListing() {
                 )}
               </>
             )}
-          </div>
+          </main>
         </div>
       </div>
     </div>
@@ -472,23 +468,24 @@ function FilterPanel({
   setMinRating,
   inStockOnly,
   setInStockOnly,
-  activeFilterCount,
-  clearAll
+  activeFilterCount
 }) {
   const [showAllCategories, setShowAllCategories] = useState(false);
   const visibleCategories = showAllCategories ? categories : categories.slice(0, 12);
 
   return (
-    <div className="d-flex flex-column gap-4" style={{ position: 'sticky', top: 120 }}>
+    <div className="d-flex flex-column gap-4">
       {/* Header */}
       <div className="d-flex align-items-center justify-content-between">
-        <span className="fw-black text-theme-title" style={{ fontSize: '1rem', letterSpacing: '-0.3px' }}>
-          <SlidersHorizontal size={16} className="me-2" style={{ color: 'var(--bb-accent)' }} />
+        <span className="fw-black text-theme-title d-flex align-items-center gap-2" style={{ fontSize: '1rem', letterSpacing: '-0.3px' }}>
+          <SlidersHorizontal size={16} style={{ color: 'var(--bb-accent)' }} />
           Filters
+          {activeFilterCount > 0 && (
+            <span className="badge rounded-pill px-2" style={{ background: 'var(--bb-primary-glow)', color: 'var(--bb-accent)', fontSize: '0.7rem' }}>
+              {activeFilterCount}
+            </span>
+          )}
         </span>
-        {activeFilterCount > 0 && (
-          <button onClick={clearAll} className="btn border-0 small" style={{ color: 'var(--bb-primary-light)', background: 'transparent', padding: '2px 8px', fontSize: '0.8rem' }}>Clear all</button>
-        )}
       </div>
 
       {/* Categories */}

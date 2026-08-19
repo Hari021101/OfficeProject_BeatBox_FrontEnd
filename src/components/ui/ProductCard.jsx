@@ -203,24 +203,35 @@ const currentOldPrice =
         {/* Card body */}
         <div className="product-card-body">
           {/* Color swatches */}
-          <div className="d-flex gap-2 mb-2">
-            {(product.colors || []).map((clr, i) => (
-              <button
-                key={i}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); console.log("Clicked:", clr); setSelectedColor(clr) }}
-                className="btn p-0 rounded-circle border-0"
-                style={{
-                  width: 16, height: 16,
-                  background: clr.code,
-                  outline: selectedColor?.name === clr.name ? `2px solid white` : 'none',
-                  outlineOffset: 2,
-                  boxShadow: selectedColor?.name === clr.name ? `0 0 6px ${clr.code}` : 'none',
-                  transition: 'all 0.2s'
-                }}
-                title={clr.name}
-                aria-label={`Select ${clr.name}`}
-              />
-            ))}
+          <div className="d-flex gap-2 mb-2 align-items-center">
+            {(product.colors || []).map((clr, i) => {
+              const colorCode = clr.code || clr.colorCode || clr.hex || clr.color || '#888';
+              const colorName = clr.name || clr.color || clr.label || 'Variant';
+              const isSelected = selectedColor && (
+                selectedColor === clr ||
+                (selectedColor.name && clr.name && selectedColor.name === clr.name) ||
+                (selectedColor.color && clr.color && selectedColor.color === clr.color) ||
+                (selectedColor.code && clr.code && selectedColor.code === clr.code) ||
+                (selectedColor.colorCode && clr.colorCode && selectedColor.colorCode === clr.colorCode)
+              );
+
+              return (
+                <button
+                  key={clr.id || clr.name || clr.color || i}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSelectedColor(clr);
+                  }}
+                  className={`btn p-0 product-color-swatch ${isSelected ? 'selected' : ''}`}
+                  style={{
+                    backgroundColor: colorCode
+                  }}
+                  title={colorName}
+                  aria-label={`Select ${colorName}`}
+                />
+              );
+            })}
           </div>
 
           {/* Name & reviews */}

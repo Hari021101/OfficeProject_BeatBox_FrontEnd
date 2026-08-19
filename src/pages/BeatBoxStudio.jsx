@@ -64,7 +64,7 @@ export default function BeatBoxStudio() {
       setAudioFile(url);
       setFileName(file.name);
       setIsPlaying(false);
-      
+
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.src = url;
@@ -79,7 +79,7 @@ export default function BeatBoxStudio() {
       toast.error("Please upload a track first.");
       return;
     }
-    
+
     if (!audioContextRef.current) {
       initAudio();
     }
@@ -101,14 +101,14 @@ export default function BeatBoxStudio() {
   const toggleEq = () => {
     const newState = !isBeatBoxEqEnabled;
     setIsBeatBoxEqEnabled(newState);
-    
+
     if (bassFilterRef.current && trebleFilterRef.current) {
       // Transition values smoothly
       const now = audioContextRef.current.currentTime;
       bassFilterRef.current.gain.setTargetAtTime(newState ? 12 : 0, now, 0.5); // +12dB Bass Boost
       trebleFilterRef.current.gain.setTargetAtTime(newState ? 6 : 0, now, 0.5);  // +6dB Treble Clarity
     }
-    
+
     toast(newState ? "🔥 BeatBox Signature Bass Enabled!" : "🎵 Standard Audio Mode", {
       icon: newState ? '🚀' : '🎧',
       style: {
@@ -122,12 +122,12 @@ export default function BeatBoxStudio() {
   // Canvas Drawing Loop
   const drawVisualizer = () => {
     if (!canvasRef.current || !analyzerRef.current) return;
-    
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     const width = canvas.width;
     const height = canvas.height;
-    
+
     const bufferLength = analyzerRef.current.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
@@ -157,7 +157,7 @@ export default function BeatBoxStudio() {
         }
 
         ctx.fillStyle = gradient;
-        
+
         // Draw bars originating from the vertical center
         const y = height - barHeight;
         ctx.beginPath();
@@ -180,8 +180,8 @@ export default function BeatBoxStudio() {
   }, []);
 
   return (
-    <div className="min-vh-100 py-5 position-relative overflow-hidden" style={{ background: 'var(--bb-bg-navy)' }}>
-      
+    <div className="min-vh-100 py-5 position-relative overflow-hidden" style={{ background: 'var(--bb-bg-navy)', color: 'var(--bb-text)' }}>
+
       {/* Background Ambience */}
       <div className="position-absolute top-0 start-0 w-100 h-100 pointer-events-none" style={{ zIndex: 0, opacity: 0.6 }}>
         <div className="bg-glow-orb" style={{ width: 600, height: 600, background: 'var(--bb-primary-glow)', top: '-10%', left: '-10%', filter: 'blur(150px)' }} />
@@ -189,17 +189,17 @@ export default function BeatBoxStudio() {
       </div>
 
       <div className="container position-relative" style={{ zIndex: 5, marginTop: '40px' }}>
-        
+
         {/* Header Section */}
         <div className="text-center mb-5">
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <span className="badge px-3 py-2 mb-3 rounded-pill fw-bold" style={{ background: 'rgba(0, 243, 255, 0.1)', color: 'var(--bb-accent)', border: '1px solid rgba(0, 243, 255, 0.2)' }}>
+            <span className="badge rounded-pill px-3 py-2 mb-4 d-inline-block fw-bold corporate-hero-badge" style={{ fontSize: '0.75rem', letterSpacing: '1px' }}>
               <Activity size={14} className="me-2" /> Interactive Experience
             </span>
-            <h1 className="display-4 fw-black text-white mb-3" style={{ letterSpacing: '-2px' }}>
+            <h1 className="display-4 fw-black text-theme-title mb-3" style={{ letterSpacing: '-2px' }}>
               BeatBox <span className="gradient-text">Studio</span>
             </h1>
-            <p className="lead mx-auto" style={{ color: 'var(--bb-text-muted)', maxWidth: '600px' }}>
+            <p className="lead mx-auto text-theme-muted" style={{ maxWidth: '600px' }}>
               Upload your favorite track and experience the difference. Toggle our signature EQ to hear the thunderous bass and crystal-clear highs we're famous for.
             </p>
           </motion.div>
@@ -208,57 +208,63 @@ export default function BeatBoxStudio() {
         {/* Studio Console Layout */}
         <div className="row justify-content-center">
           <div className="col-12 col-xl-10">
-            <div className="card glass-card border-0 p-1" style={{ borderRadius: '24px', background: 'rgba(10, 13, 20, 0.6)' }}>
+            <div className="card glass-card border-0 p-1" style={{ borderRadius: '24px', background: 'var(--bb-studio-surface)', border: '1px solid var(--bb-studio-border)' }}>
               <div className="card-body p-4 p-md-5">
-                
+
                 {/* Visualizer Canvas Area */}
-                <div 
+                <div
                   className="w-100 rounded-4 overflow-hidden mb-4 position-relative d-flex align-items-center justify-content-center"
-                  style={{ 
-                    height: '350px', 
-                    background: '#040712', 
-                    border: `1px solid ${isBeatBoxEqEnabled ? 'rgba(0,243,255,0.3)' : 'rgba(255,255,255,0.05)'}`,
-                    boxShadow: isBeatBoxEqEnabled ? '0 0 40px rgba(0,243,255,0.1) inset' : 'none',
+                  style={{
+                    height: '350px',
+                    background: '#040712',
+                    border: `1px solid ${isBeatBoxEqEnabled ? 'var(--bb-accent)' : 'var(--bb-studio-border)'}`,
+                    boxShadow: isBeatBoxEqEnabled ? '0 0 40px rgba(0,243,255,0.15) inset' : 'none',
                     transition: 'all 0.5s ease'
                   }}
                 >
-                  <canvas 
-                    ref={canvasRef} 
-                    width={900} 
-                    height={350} 
+                  <canvas
+                    ref={canvasRef}
+                    width={900}
+                    height={350}
                     className="w-100 h-100"
                     style={{ filter: isBeatBoxEqEnabled ? 'drop-shadow(0 0 10px rgba(168,32,255,0.5))' : 'none' }}
                   />
-                  
+
                   {/* Empty State Overlay */}
                   {!audioFile && (
-                    <div className="position-absolute text-center" style={{ color: 'var(--bb-muted)' }}>
-                      <Activity size={48} className="mb-3 opacity-50" />
-                      <h5>Awaiting Audio Signal...</h5>
-                      <p className="small">Upload a track to begin visualization</p>
+                    <div className="position-absolute text-center" style={{ zIndex: 10 }}>
+                      <Activity size={48} className="mb-3 opacity-75" style={{ color: 'var(--bb-accent)' }} />
+                      <h5 className="fw-bold mb-1 studio-empty-title" style={{ color: '#ffffff', textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>Awaiting Audio Signal...</h5>
+                      <p className="small mb-0 studio-empty-description" style={{ color: '#cbd5e1' }}>Upload a track to begin visualization</p>
                     </div>
                   )}
                 </div>
 
                 {/* Control Deck */}
-                <div className="row g-4 align-items-center bg-dark bg-opacity-25 p-4 rounded-4" style={{ border: '1px solid rgba(255,255,255,0.05)' }}>
-                  
+                <div className="row g-4 align-items-center p-4 rounded-4" style={{ background: 'var(--bb-studio-surface-secondary)', border: '1px solid var(--bb-studio-border)' }}>
+
                   {/* Left: Upload & Track Info */}
                   <div className="col-12 col-md-4">
                     <div className="d-flex align-items-center gap-3">
-                      <label 
-                        className="btn btn-outline-light rounded-circle p-3 d-flex align-items-center justify-content-center hover-scale"
-                        style={{ width: '54px', height: '54px', cursor: 'pointer', borderStyle: 'dashed' }}
+                      <label
+                        className="btn rounded-circle p-3 d-flex align-items-center justify-content-center hover-scale"
+                        style={{
+                          width: '54px', height: '54px',
+                          cursor: 'pointer',
+                          border: '1px dashed var(--bb-studio-border)',
+                          background: 'var(--bb-surface)',
+                          color: 'var(--bb-text)'
+                        }}
                         title="Upload Audio File"
                       >
                         <input type="file" accept="audio/*" className="d-none" onChange={handleFileUpload} />
                         <Upload size={20} />
                       </label>
                       <div className="overflow-hidden">
-                        <h6 className="fw-bold text-white mb-1 text-truncate">
+                        <h6 className="fw-bold text-theme-title mb-1 text-truncate">
                           {fileName || "No track loaded"}
                         </h6>
-                        <span className="badge bg-secondary bg-opacity-25 text-light small fw-normal">
+                        <span className="badge rounded-pill small fw-semibold" style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-muted)', border: '1px solid var(--bb-border)' }}>
                           {audioFile ? 'Ready to play' : 'MP3, WAV supported'}
                         </span>
                       </div>
@@ -272,8 +278,8 @@ export default function BeatBoxStudio() {
                       whileTap={{ scale: 0.95 }}
                       onClick={togglePlay}
                       className="btn btn-glow rounded-circle d-flex align-items-center justify-content-center"
-                      style={{ 
-                        width: '72px', height: '72px', 
+                      style={{
+                        width: '72px', height: '72px',
                         background: isPlaying ? 'linear-gradient(135deg, #ff416c, #ff4b2b)' : 'linear-gradient(135deg, var(--bb-primary), var(--bb-accent))',
                         boxShadow: isPlaying ? '0 10px 20px rgba(255, 65, 108, 0.3)' : '0 10px 20px var(--bb-accent-glow)'
                       }}
@@ -284,24 +290,28 @@ export default function BeatBoxStudio() {
 
                   {/* Right: Signature EQ Toggle */}
                   <div className="col-12 col-md-4 d-flex justify-content-md-end justify-content-center">
-                    <div 
-                      className={`p-3 rounded-4 transition-all d-flex align-items-center gap-3 cursor-pointer hover-scale ${isBeatBoxEqEnabled ? 'bg-primary bg-opacity-10' : ''}`}
-                      style={{ border: `1px solid ${isBeatBoxEqEnabled ? 'rgba(0,243,255,0.4)' : 'rgba(255,255,255,0.1)'}`, cursor: 'pointer' }}
+                    <div
+                      className="p-3 rounded-4 transition-all d-flex align-items-center gap-3 cursor-pointer hover-scale"
+                      style={{
+                        background: isBeatBoxEqEnabled ? 'var(--bb-info-bg)' : 'var(--bb-surface)',
+                        border: `1px solid ${isBeatBoxEqEnabled ? 'var(--bb-accent)' : 'var(--bb-border)'}`,
+                        cursor: 'pointer'
+                      }}
                       onClick={toggleEq}
                     >
-                      <div className="p-2 rounded-circle" style={{ background: isBeatBoxEqEnabled ? 'var(--bb-accent)' : 'rgba(255,255,255,0.1)', color: isBeatBoxEqEnabled ? '#000' : '#fff' }}>
+                      <div className="p-2 rounded-circle" style={{ background: isBeatBoxEqEnabled ? 'var(--bb-accent)' : 'var(--bb-surface-2)', color: isBeatBoxEqEnabled ? '#000' : 'var(--bb-text)' }}>
                         {isBeatBoxEqEnabled ? <Sparkles size={20} /> : <Sliders size={20} />}
                       </div>
                       <div>
-                        <h6 className="fw-bold mb-0 text-white" style={{ fontSize: '0.9rem' }}>BeatBox EQ</h6>
+                        <h6 className="fw-bold mb-0 text-theme-title" style={{ fontSize: '0.9rem' }}>BeatBox EQ</h6>
                         <span style={{ fontSize: '0.75rem', color: isBeatBoxEqEnabled ? 'var(--bb-accent)' : 'var(--bb-muted)' }}>
                           {isBeatBoxEqEnabled ? 'Bass Boost Active' : 'Flat Studio Profile'}
                         </span>
                       </div>
-                      
+
                       {/* Custom Toggle Switch UI */}
-                      <div className="ms-2 position-relative rounded-pill" style={{ width: '40px', height: '22px', background: isBeatBoxEqEnabled ? 'var(--bb-primary)' : 'rgba(255,255,255,0.2)' }}>
-                        <motion.div 
+                      <div className="ms-2 position-relative rounded-pill" style={{ width: '40px', height: '22px', background: isBeatBoxEqEnabled ? 'var(--bb-primary)' : 'var(--bb-border)' }}>
+                        <motion.div
                           className="position-absolute bg-white rounded-circle shadow-sm"
                           initial={false}
                           animate={{ x: isBeatBoxEqEnabled ? 18 : 2 }}
@@ -317,28 +327,28 @@ export default function BeatBoxStudio() {
             </div>
           </div>
         </div>
-        
+
         {/* Information Grid Below */}
         <div className="row g-4 mt-5 justify-content-center text-center">
           <div className="col-md-4">
-            <div className="p-4 rounded-4 glass-card h-100">
-              <Headphones size={32} className="mb-3 text-accent" style={{ color: 'var(--bb-accent)' }} />
-              <h5 className="fw-bold text-white">Dynamic Drivers</h5>
-              <p className="text-muted small mb-0">Our 40mm and 50mm drivers push air efficiently to recreate the club experience.</p>
+            <div className="p-4 rounded-4 glass-card h-100" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
+              <Headphones size={32} className="mb-3" style={{ color: 'var(--bb-accent)' }} />
+              <h5 className="fw-bold text-theme-title">Dynamic Drivers</h5>
+              <p className="text-theme-muted small mb-0">Our 40mm and 50mm drivers push air efficiently to recreate the club experience.</p>
             </div>
           </div>
           <div className="col-md-4">
-            <div className="p-4 rounded-4 glass-card h-100">
-              <Sliders size={32} className="mb-3 text-primary" style={{ color: 'var(--bb-primary-light)' }} />
-              <h5 className="fw-bold text-white">V-Shaped Tuning</h5>
-              <p className="text-muted small mb-0">Engineered with boosted lows and soaring highs for energetic, punchy audio.</p>
+            <div className="p-4 rounded-4 glass-card h-100" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
+              <Sliders size={32} className="mb-3" style={{ color: 'var(--bb-primary-light)' }} />
+              <h5 className="fw-bold text-theme-title">V-Shaped Tuning</h5>
+              <p className="text-theme-muted small mb-0">Engineered with boosted lows and soaring highs for energetic, punchy audio.</p>
             </div>
           </div>
           <div className="col-md-4">
-            <div className="p-4 rounded-4 glass-card h-100">
-              <Activity size={32} className="mb-3 text-info" />
-              <h5 className="fw-bold text-white">High-Fidelity DACs</h5>
-              <p className="text-muted small mb-0">Premium digital-to-analog converters ensure zero distortion at peak volumes.</p>
+            <div className="p-4 rounded-4 glass-card h-100" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
+              <Activity size={32} className="mb-3" style={{ color: 'var(--bb-accent)' }} />
+              <h5 className="fw-bold text-theme-title">High-Fidelity DACs</h5>
+              <p className="text-theme-muted small mb-0">Premium digital-to-analog converters ensure zero distortion at peak volumes.</p>
             </div>
           </div>
         </div>
@@ -346,8 +356,8 @@ export default function BeatBoxStudio() {
       </div>
 
       {/* Hidden Audio Element */}
-      <audio 
-        ref={audioRef} 
+      <audio
+        ref={audioRef}
         onEnded={() => { setIsPlaying(false); if (requestRef.current) cancelAnimationFrame(requestRef.current); }}
       />
     </div>

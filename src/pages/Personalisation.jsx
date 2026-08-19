@@ -113,13 +113,13 @@ export default function Personalisation() {
   }
 
   return (
-    <div className="min-vh-100" style={{ backgroundColor: '#000', color: '#fff', overflow: 'hidden' }}>
+    <div className="min-vh-100" style={{ backgroundColor: 'var(--bb-bg-navy)', color: 'var(--bb-text)', overflow: 'hidden' }}>
 
       {/* ── HERO ── */}
       <div className="position-relative min-vh-100 d-flex align-items-center" style={{ paddingTop: '80px', overflow: 'hidden' }}>
         {/* Background glows */}
-        <div className="position-absolute" style={{ top: '15%', right: '8%', width: '450px', height: '450px', background: 'radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%)', filter: 'blur(50px)', zIndex: 0 }} />
-        <div className="position-absolute" style={{ bottom: '10%', left: '5%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(0,243,255,0.08) 0%, transparent 70%)', filter: 'blur(50px)', zIndex: 0 }} />
+        <div className="position-absolute" style={{ top: '15%', right: '8%', width: '450px', height: '450px', background: 'radial-gradient(circle, var(--bb-accent-glow) 0%, transparent 70%)', filter: 'blur(50px)', zIndex: 0 }} />
+        <div className="position-absolute" style={{ bottom: '10%', left: '5%', width: '300px', height: '300px', background: 'radial-gradient(circle, var(--bb-primary-glow) 0%, transparent 70%)', filter: 'blur(50px)', zIndex: 0 }} />
 
         <div className="container position-relative z-1 py-5">
           <div className="row align-items-center g-5">
@@ -131,104 +131,87 @@ export default function Personalisation() {
               transition={{ duration: 0.8 }}
               className="col-12 col-lg-5 col-xl-5"
             >
-              <span className="badge rounded-pill px-3 py-2 mb-4 d-inline-block fw-bold" style={{ background: 'rgba(0,243,255,0.1)', color: '#00f3ff', border: '1px solid rgba(0,243,255,0.25)', fontSize: '0.75rem', letterSpacing: '1px' }}>
+              <span className="badge rounded-pill px-3 py-2 mb-4 d-inline-block fw-bold corporate-hero-badge" style={{ fontSize: '0.75rem', letterSpacing: '1px' }}>
                 ✦ CUSTOM ENGRAVING
               </span>
-              <h1 className="fw-medium mb-2" style={{ fontSize: 'clamp(2.2rem, 4.5vw, 3.5rem)', letterSpacing: '-1px', color: '#e0e0e0', lineHeight: '1.1' }}>
+              <h1 className="fw-medium mb-2 text-theme-title" style={{ fontSize: 'clamp(2.2rem, 4.5vw, 3.5rem)', letterSpacing: '-1px', lineHeight: '1.1' }}>
                 IT'S MORE THAN A GIFT,
               </h1>
-              <h2 className="fw-black mb-4" style={{ fontSize: 'clamp(2.2rem, 4.5vw, 3.5rem)', letterSpacing: '-1px', lineHeight: '1.1' }}>
+              <h2 className="fw-black mb-4 text-theme-title" style={{ fontSize: 'clamp(2.2rem, 4.5vw, 3.5rem)', letterSpacing: '-1px', lineHeight: '1.1' }}>
                 It's An <span className="gradient-text">Experience</span>
               </h2>
-              <p className="fs-6 mb-4" style={{ color: '#aaa', fontWeight: 500, maxWidth: '500px', lineHeight: '1.6' }}>
+              <p className="fs-6 mb-4 text-theme-muted" style={{ fontWeight: 500, maxWidth: '500px', lineHeight: '1.6' }}>
                 Add a personal touch with custom engraving — make every BeatBox product truly one of a kind.
               </p>
 
               {/* Live Engraving Inputs */}
-              <div className="mb-4 p-4 rounded-4" style={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)' }}>
-                <p className="text-secondary small mb-3 fw-bold tracking-wider text-uppercase">Presets & Examples:</p>
+              <div className="mb-4 p-4 rounded-4 glass-card" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', backdropFilter: 'blur(10px)' }}>
+                <p className="text-theme-muted small mb-3 fw-bold tracking-wider text-uppercase">Presets & Examples:</p>
                 <div className="d-flex flex-wrap gap-2 mb-4">
-                  {ENGRAVING_EXAMPLES.map((ex, i) => (
-                    <button
-                      key={i}
-                      className="btn btn-sm rounded-pill px-3 fw-semibold transition-all"
-                      style={{
-                        background: activeExample === i ? ex.color : 'transparent',
-                        color: activeExample === i ? '#000' : ex.color,
-                        border: `1px solid ${ex.color}40`,
-                        fontSize: '0.75rem',
-                      }}
-                      onClick={() => {
-                        setActiveExample(i)
-                        setEngravingName(ex.name)
-                        setEngravingDate(ex.date)
-                        setEngravingMessage(ex.message)
-                      }}
-                    >
-                      {ex.label}
-                    </button>
-                  ))}
+                  {ENGRAVING_EXAMPLES.map((ex, i) => {
+                    const isSelected = activeExample === i
+                    return (
+                      <button
+                        key={i}
+                        className="btn btn-sm rounded-pill px-3 fw-semibold transition-all"
+                        style={{
+                          background: isSelected ? ex.color : 'transparent',
+                          color: isSelected ? (i === 0 ? '#000' : '#fff') : 'var(--bb-text)',
+                          border: `1px solid ${ex.color}`,
+                          fontSize: '0.75rem',
+                        }}
+                        onClick={() => {
+                          setActiveExample(i)
+                          setEngravingName(ex.name)
+                          setEngravingDate(ex.date)
+                          setEngravingMessage(ex.message)
+                        }}
+                      >
+                        {ex.label}
+                      </button>
+                    )
+                  })}
                 </div>
 
                 {/* Form fields */}
                 <div className="d-flex flex-column gap-3">
                   <div>
-                    <label className="text-secondary small mb-1 fw-bold tracking-wider">YOUR NAME (MAX 12 CHARS)</label>
+                    <label className="text-theme-muted small mb-1 fw-bold tracking-wider d-block">YOUR NAME (MAX 12 CHARS)</label>
                     <input
                       type="text"
                       maxLength={12}
                       value={engravingName}
                       onChange={e => setEngravingName(e.target.value.toUpperCase())}
-                      className="bb-input w-100"
+                      className="bb-input w-100 personalisation-input"
                       placeholder="ENGRAVE NAME"
                       style={{
                         letterSpacing: '2px',
-                        fontWeight: 600,
-                        borderRadius: '12px',
-                        background: 'rgba(255,255,255,0.03)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        padding: '12px 16px',
-                        color: '#fff'
                       }}
                     />
                   </div>
 
                   <div>
-                    <label className="text-secondary small mb-1 fw-bold tracking-wider">IMPORTANT DATE (E.G. DD.MM.YYYY)</label>
+                    <label className="text-theme-muted small mb-1 fw-bold tracking-wider d-block">IMPORTANT DATE (E.G. DD.MM.YYYY)</label>
                     <input
                       type="text"
                       maxLength={10}
                       value={engravingDate}
                       onChange={e => setEngravingDate(e.target.value)}
-                      className="bb-input w-100"
+                      className="bb-input w-100 personalisation-input"
                       placeholder="E.G. 14.02.2026"
-                      style={{
-                        fontWeight: 600,
-                        borderRadius: '12px',
-                        background: 'rgba(255,255,255,0.03)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        padding: '12px 16px',
-                        color: '#fff'
-                      }}
                     />
                   </div>
 
                   <div>
-                    <label className="text-secondary small mb-1 fw-bold tracking-wider">SPECIAL MESSAGE (MAX 2 LINES)</label>
+                    <label className="text-theme-muted small mb-1 fw-bold tracking-wider d-block">SPECIAL MESSAGE (MAX 2 LINES)</label>
                     <textarea
                       maxLength={40}
                       value={engravingMessage}
                       onChange={e => setEngravingMessage(e.target.value.toUpperCase())}
-                      className="bb-input w-100"
+                      className="bb-input w-100 personalisation-input"
                       placeholder="E.G. FOREVER TOGETHER"
                       rows={2}
                       style={{
-                        fontWeight: 600,
-                        borderRadius: '12px',
-                        background: 'rgba(255,255,255,0.03)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        padding: '12px 16px',
-                        color: '#fff',
                         resize: 'none'
                       }}
                     />
@@ -377,7 +360,7 @@ export default function Personalisation() {
           </div>
 
           {/* Feature Strip */}
-          <div className="row g-4 mt-4 pt-4 border-top" style={{ borderColor: 'rgba(255,255,255,0.08) !important' }}>
+          <div className="row g-4 mt-4 pt-4 border-top" style={{ borderColor: 'var(--bb-border)' }}>
             {FEATURES.map((f, i) => (
               <motion.div key={i} className="col-md-4 text-center"
                 initial={{ opacity: 0, y: 20 }}
@@ -386,10 +369,10 @@ export default function Personalisation() {
                 transition={{ delay: i * 0.1 }}
               >
                 <div className="d-inline-flex p-3 rounded-circle mb-3" style={{ background: f.bg }}>
-                  <span style={{ color: f.color }}>{f.icon}</span>
+                  <span style={{ color: f.color === '#00f3ff' ? 'var(--bb-accent)' : f.color === '#a820ff' ? 'var(--bb-primary)' : f.color }}>{f.icon}</span>
                 </div>
-                <h5 className="fw-bold mb-2">{f.title}</h5>
-                <p className="text-secondary small">{f.desc}</p>
+                <h5 className="fw-bold mb-2 text-theme-title">{f.title}</h5>
+                <p className="text-theme-muted small">{f.desc}</p>
               </motion.div>
             ))}
           </div>

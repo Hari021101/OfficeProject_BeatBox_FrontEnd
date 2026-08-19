@@ -70,6 +70,36 @@
   --bb-checkbox-border: rgba(0, 243, 255, 0.4);
   --bb-link-color: var(--bb-primary-light);
   --bb-muted: var(--bb-text-muted);
+
+  /* Swatch contrast variables */
+  --bb-swatch-border: #cbd5e1;
+  --bb-swatch-outline: rgba(0, 0, 0, 0.4);
+
+  /* Personalisation Theme Variables */
+  --bb-personal-text: #ffffff;
+  --bb-personal-muted: #8496ae;
+  --bb-personal-border: rgba(0, 243, 255, 0.2);
+  --bb-personal-input-bg: rgba(20, 25, 40, 0.6);
+  --bb-personal-input-text: #ffffff;
+  --bb-personal-placeholder: #8496ae;
+
+  /* Studio Theme Variables */
+  --bb-studio-text: #ffffff;
+  --bb-studio-heading: #ffffff;
+  --bb-studio-muted: #8496ae;
+  --bb-studio-subtle: #64748b;
+  --bb-studio-border: rgba(0, 243, 255, 0.15);
+  --bb-studio-surface: #060b19;
+  --bb-studio-surface-secondary: #0d1527;
+  --bb-studio-control-bg: #0d1527;
+  --bb-studio-control-text: #ffffff;
+
+  /* Support Theme Variables */
+  --bb-support-heading: #ffffff;
+  --bb-support-text: #ffffff;
+  --bb-support-muted: #8496ae;
+  --bb-support-subtle: #64748b;
+  --bb-support-border: rgba(0, 243, 255, 0.15);
 }
 
 /* Dynamic theme helper classes */
@@ -411,6 +441,172 @@ body {
   --bb-checkbox-border: #820df2;
   --bb-link-color: #820df2;
   --bb-muted: var(--bb-text-muted);
+
+  /* Swatch contrast variables */
+  --bb-swatch-border: #64748b;
+  --bb-swatch-outline: rgba(15, 23, 42, 0.12);
+
+  /* Personalisation Theme Variables */
+  --bb-personal-text: #0b0f19;
+  --bb-personal-muted: #5e6b7e;
+  --bb-personal-border: rgba(0, 0, 0, 0.12);
+  --bb-personal-input-bg: #ffffff;
+  --bb-personal-input-text: #0b0f19;
+  --bb-personal-placeholder: #64748b;
+
+  /* Studio Theme Variables */
+  --bb-studio-text: #0b0f19;
+  --bb-studio-heading: #060b19;
+  --bb-studio-muted: #5e6b7e;
+  --bb-studio-subtle: #64748b;
+  --bb-studio-border: rgba(0, 0, 0, 0.12);
+  --bb-studio-surface: #ffffff;
+  --bb-studio-surface-secondary: #f5f7fb;
+  --bb-studio-control-bg: #ffffff;
+  --bb-studio-control-text: #0b0f19;
+
+  /* Support Theme Variables */
+  --bb-support-heading: #060b19;
+  --bb-support-text: #0b0f19;
+  --bb-support-muted: #5e6b7e;
+  --bb-support-subtle: #64748b;
+  --bb-support-border: rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] {
+  --bb-swatch-border: #cbd5e1;
+  --bb-swatch-outline: rgba(0, 0, 0, 0.4);
+
+  /* Personalisation Theme Variables */
+  --bb-personal-text: #ffffff;
+  --bb-personal-muted: #8496ae;
+  --bb-personal-border: rgba(0, 243, 255, 0.2);
+  --bb-personal-input-bg: rgba(20, 25, 40, 0.6);
+  --bb-personal-input-text: #ffffff;
+  --bb-personal-placeholder: #8496ae;
+
+  /* Studio Theme Variables */
+  --bb-studio-text: #ffffff;
+  --bb-studio-heading: #ffffff;
+  --bb-studio-muted: #8496ae;
+  --bb-studio-subtle: #64748b;
+  --bb-studio-border: rgba(0, 243, 255, 0.15);
+  --bb-studio-surface: #060b19;
+  --bb-studio-surface-secondary: #0d1527;
+  --bb-studio-control-bg: #0d1527;
+  --bb-studio-control-text: #ffffff;
+
+  /* Support Theme Variables */
+  --bb-support-heading: #ffffff;
+  --bb-support-text: #ffffff;
+  --bb-support-muted: #8496ae;
+  --bb-support-subtle: #64748b;
+  --bb-support-border: rgba(0, 243, 255, 0.15);
+}
+
+/* Support Theme Utility Classes */
+.bb-support-heading {
+  color: var(--bb-support-heading) !important;
+}
+
+.bb-support-text {
+  color: var(--bb-support-text) !important;
+}
+
+.bb-support-muted {
+  color: var(--bb-support-muted) !important;
+}
+
+.bb-support-subtle {
+  color: var(--bb-support-subtle) !important;
+}
+
+/* Studio Theme Utility Classes */
+.bb-studio-text {
+  color: var(--bb-studio-text) !important;
+}
+
+.bb-studio-heading {
+  color: var(--bb-studio-heading) !important;
+}
+
+.bb-studio-muted {
+  color: var(--bb-studio-muted) !important;
+}
+
+.bb-studio-subtle {
+  color: var(--bb-studio-subtle) !important;
+}
+
+.bb-studio-surface {
+  background-color: var(--bb-studio-surface) !important;
+  border: 1px solid var(--bb-studio-border) !important;
+}
+
+.bb-studio-control {
+  background-color: var(--bb-studio-control-bg) !important;
+  color: var(--bb-studio-control-text) !important;
+  border: 1px solid var(--bb-studio-border) !important;
+}
+
+/* Personalisation Input Theme Styling */
+.personalisation-input {
+  background: var(--bb-personal-input-bg) !important;
+  color: var(--bb-personal-input-text) !important;
+  border: 1px solid var(--bb-personal-border) !important;
+  border-radius: 12px !important;
+  padding: 12px 16px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.personalisation-input::placeholder {
+  color: var(--bb-personal-placeholder) !important;
+  opacity: 0.8 !important;
+}
+
+.personalisation-input:hover {
+  border-color: var(--bb-accent) !important;
+}
+
+.personalisation-input:focus {
+  background: var(--bb-personal-input-bg) !important;
+  border-color: var(--bb-accent) !important;
+  color: var(--bb-personal-input-text) !important;
+  box-shadow: 0 0 0 3px var(--bb-accent-glow) !important;
+  outline: none !important;
+}
+
+/* Product Color Swatch Contrast & Theme Styling */
+.product-color-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid var(--bb-swatch-border);
+  box-shadow: 0 0 0 1px var(--bb-swatch-outline);
+  flex-shrink: 0;
+  transition: transform 0.2s ease, outline 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  padding: 0;
+}
+
+.product-color-swatch:hover {
+  transform: scale(1.2);
+}
+
+.product-color-swatch:focus {
+  outline: none;
+}
+
+.product-color-swatch.selected {
+  outline: 2px solid var(--bb-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 8px var(--bb-accent-glow);
+}
+
+.product-color-swatch.selected:focus {
+  outline: 2px solid var(--bb-accent);
+  outline-offset: 2px;
 }
 
 [data-theme="light"] body {
@@ -2073,13 +2269,108 @@ video {
 
 /* ── Layout Main Offset to clear fixed Header ──────────────────────────────── */
 .layout-main-offset {
-  padding-top: 104px;
+  padding-top: 124px;
 }
 
 @media (max-width: 1199px) {
   .layout-main-offset {
-    padding-top: 86px;
+    padding-top: 100px;
   }
+}
+
+/* Category / Product Listing Header Spacing & Layout */
+.category-header {
+  margin-top: 12px;
+  margin-bottom: 32px;
+}
+
+.category-header-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--bb-primary), var(--bb-accent));
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px var(--bb-primary-glow);
+}
+
+@media (max-width: 768px) {
+  .category-header {
+    margin-top: 8px;
+    margin-bottom: 24px;
+  }
+}
+
+/* ── Two-Panel Product Listing Layout (Desktop Independent Scroll) ───────────── */
+@media (min-width: 992px) {
+  .product-listing-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  .product-filters-panel {
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    padding-right: 8px;
+    background: var(--bb-surface);
+    border: 1px solid var(--bb-border);
+    border-radius: 20px;
+    padding: 24px 18px;
+    position: sticky;
+    top: 120px;
+  }
+
+  .product-results-panel {
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+}
+
+/* Mobile & Tablet Fallback */
+@media (max-width: 991.98px) {
+  .product-listing-layout {
+    display: block;
+  }
+
+  .product-filters-panel {
+    display: none;
+  }
+
+  .product-results-panel {
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
+/* Panel Scrollbar Styling */
+.product-filters-panel::-webkit-scrollbar,
+.product-results-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.product-filters-panel::-webkit-scrollbar-track,
+.product-results-panel::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.product-filters-panel::-webkit-scrollbar-thumb,
+.product-results-panel::-webkit-scrollbar-thumb {
+  background: var(--bb-border);
+  border-radius: 10px;
+}
+
+.product-filters-panel::-webkit-scrollbar-thumb:hover,
+.product-results-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--bb-accent);
 }
 
 /* ── Fix: Mobile CTA buttons in Product Detail ──────────────────────────────── */
