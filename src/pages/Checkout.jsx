@@ -281,8 +281,14 @@ export default function Checkout() {
       razorpay.open()
 
     } catch (err) {
-      console.log(err)
-      toast.error("Payment failed")
+      console.error(err)
+      const msg = err.response?.data?.message || err.response?.data?.Message || err.message || "Checkout failed. Please check stock availability."
+      toast.error(msg, { duration: 5000 })
+      try {
+        await dispatch(fetchProducts()).unwrap()
+      } catch (e) {
+        console.error("Failed to refresh products after stock error", e)
+      }
     }
   }
   return (

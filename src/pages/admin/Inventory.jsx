@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import { AlertTriangle, CheckCircle2, TrendingDown } from 'lucide-react'
 import { productService } from '../../services/productService'
 import adminService from '../../services/adminService'
 import { toast } from 'react-hot-toast'
 import DataTable from '../../components/admin/DataTable'
 import StockBadge from '../../components/admin/StockBadge'
+import { fetchProducts } from '../../redux/productSlice'
 
 export default function Inventory() {
+  const dispatch = useDispatch()
   const [products, setProducts] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchInventory = async () => {
       try {
         setIsLoading(true)
         const data = await productService.getAllProducts()
@@ -22,7 +25,7 @@ export default function Inventory() {
         setIsLoading(false)
       }
     }
-    fetchProducts()
+    fetchInventory()
   }, [])
 
   // Quick stats
@@ -31,16 +34,26 @@ export default function Inventory() {
   const healthyStockCount = products.length - outOfStockCount - lowStockCount
 
   const handleStockChange = (id, newStock) => {
-    setProducts(products.map(p => p.id === id ? { ...p, stockQuantity: parseInt(newStock) || 0 } : p))
+    const parsed = newStock === '' ? 0 : Math.max(0, parseInt(newStock) || 0)
+    setProducts(products.map(p => p.id === id ? { ...p, stockQuantity: parsed } : p))
   }
 
   const handleUpdate = async (id) => {
     const product = products.find(p => p.id === id)
+    const targetStock = product.stockQuantity ?? 0
+    if (targetStock < 0) {
+      toast.error('Stock quantity cannot be negative.')
+      return
+    }
     try {
-      await adminService.updateStock(id, product.stockQuantity, 'restock', 'Admin manual update')
+      await adminService.updateStock(id, targetStock, 'restock', 'Admin manual update')
       toast.success(`Inventory updated for Product ID: ${id.toString().substring(0, 8)}...`)
+      const freshData = await productService.getAllProducts()
+      setProducts(freshData || [])
+      dispatch(fetchProducts())
     } catch (error) {
-      toast.error('Failed to update stock')
+      const msg = error.response?.data?.message || error.response?.data?.Message || error.message || 'Failed to update stock'
+      toast.error(msg)
     }
   }
 

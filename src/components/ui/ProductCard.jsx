@@ -112,7 +112,7 @@ const currentOldPrice =
       >
         <div className="product-card h-100">
           {/* Out of Stock Overlay */}
-          {!product.inStock && (
+          {(product.inStock === false || (product.stockQuantity !== undefined && product.stockQuantity <= 0)) && (
             <div
               className="position-absolute inset-0 d-flex align-items-center justify-content-center rounded-4"
               style={{ background: 'rgba(0,0,0,0.55)', zIndex: 20, inset: 0, borderRadius: 24 }}
@@ -248,7 +248,7 @@ const currentOldPrice =
             {/* Add to cart */}
             <button
               onClick={handleAddToCart}
-              disabled={!product.inStock || adding}
+              disabled={!product.inStock || (product.stockQuantity !== undefined && product.stockQuantity <= 0) || adding}
               className="btn product-card-cta w-100 d-flex align-items-center justify-content-center gap-2 fw-bold"
             >
               {adding ? (

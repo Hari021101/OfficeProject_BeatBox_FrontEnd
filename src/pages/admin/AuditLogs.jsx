@@ -11,11 +11,21 @@ const ICONS = {
 }
 
 const ACTION_COLORS = {
-  UPDATED: { bg: 'rgba(0,243,255,0.1)', text: '#00f3ff', border: 'rgba(0,243,255,0.3)' },
-  DELETED: { bg: 'rgba(239,68,68,0.1)', text: '#ef4444', border: 'rgba(239,68,68,0.3)' },
-  ALERT:   { bg: 'rgba(245,158,11,0.1)', text: '#f59e0b', border: 'rgba(245,158,11,0.3)' },
-  CREATED: { bg: 'rgba(57,255,20,0.1)',  text: '#39ff14', border: 'rgba(57,255,20,0.3)' },
-  REFUNDED:{ bg: 'rgba(168,32,255,0.1)', text: '#a820ff', border: 'rgba(168,32,255,0.3)' },
+  STOCK_INCREASED:  { bg: 'var(--audit-success-bg)', text: 'var(--audit-success-text)', border: 'var(--audit-success-border)' },
+  'STOCK INCREASED': { bg: 'var(--audit-success-bg)', text: 'var(--audit-success-text)', border: 'var(--audit-success-border)' },
+  CREATED:          { bg: 'var(--audit-success-bg)', text: 'var(--audit-success-text)', border: 'var(--audit-success-border)' },
+
+  STOCK_REDUCED:    { bg: 'var(--audit-danger-bg)', text: 'var(--audit-danger-text)', border: 'var(--audit-danger-border)' },
+  'STOCK REDUCED':   { bg: 'var(--audit-danger-bg)', text: 'var(--audit-danger-text)', border: 'var(--audit-danger-border)' },
+  DELETED:          { bg: 'var(--audit-danger-bg)', text: 'var(--audit-danger-text)', border: 'var(--audit-danger-border)' },
+
+  ALERT:            { bg: 'var(--audit-warning-bg)', text: 'var(--audit-warning-text)', border: 'var(--audit-warning-border)' },
+
+  STOCK_UPDATED:    { bg: 'var(--audit-info-bg)', text: 'var(--audit-info-text)', border: 'var(--audit-info-border)' },
+  'STOCK UPDATED':   { bg: 'var(--audit-info-bg)', text: 'var(--audit-info-text)', border: 'var(--audit-info-border)' },
+  UPDATED:          { bg: 'var(--audit-info-bg)', text: 'var(--audit-info-text)', border: 'var(--audit-info-border)' },
+
+  REFUNDED:         { bg: 'var(--audit-purple-bg)', text: 'var(--audit-purple-text)', border: 'var(--audit-purple-border)' },
 }
 
 export default function AuditLogs() {
@@ -85,7 +95,8 @@ export default function AuditLogs() {
         ) : (
           <div className="d-flex flex-column gap-3">
             {filteredLogs.map((log, idx) => {
-              const colors = ACTION_COLORS[log.action] || ACTION_COLORS.UPDATED
+              const actionKey = (log.action || '').toUpperCase().trim()
+              const colors = ACTION_COLORS[actionKey] || ACTION_COLORS[actionKey.replace(/_/g, ' ')] || ACTION_COLORS.UPDATED
               const IconComponent = ICONS[log.icon] || ICONS[log.action] || ShieldAlert
               return (
                 <div
@@ -113,8 +124,17 @@ export default function AuditLogs() {
                       </div>
                       {/* Action badge */}
                       <span
-                        className="badge fw-bold"
-                        style={{ background: colors.bg, color: colors.text, border: `1px solid ${colors.border}`, fontSize: '0.7rem', letterSpacing: '0.5px' }}
+                        className="badge audit-log-badge fw-bold"
+                        style={{
+                          background: colors.bg,
+                          color: colors.text,
+                          border: `1px solid ${colors.border}`,
+                          fontSize: '0.7rem',
+                          letterSpacing: '0.5px',
+                          '--badge-bg': colors.bg,
+                          '--badge-color': colors.text,
+                          '--badge-border': colors.border
+                        }}
                       >
                         {log.action}
                       </span>

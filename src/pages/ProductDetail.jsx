@@ -184,7 +184,7 @@ export default function ProductDetail() {
     Gamepad2
   }
 
-  // Initialize selectedColor once product is loaded
+  // Initialize selectedColor once product is loaded & auto-clamp quantity to variant stock
   useEffect(() => {
     if (product?.variants?.length > 0) {
       const firstVariant = product.variants[0]
@@ -197,6 +197,15 @@ export default function ProductDetail() {
       })
     }
   }, [product])
+
+  useEffect(() => {
+    const availableStock = Math.max(0, selectedVariant?.stockQuantity || 0)
+    if (availableStock > 0) {
+      setQuantity(prev => Math.min(Math.max(1, prev), availableStock))
+    } else {
+      setQuantity(1)
+    }
+  }, [selectedVariant])
 
   if (loading) {
     return (
@@ -619,7 +628,7 @@ export default function ProductDetail() {
               <span className="text-theme-muted small">({(product.reviewCount || 0).toLocaleString('en-IN')} reviews)</span>
               {selectedVariant?.stockQuantity > 0 ? (
                 <span className="status-pill">
-                  ✓ In Stock
+                  ✓ In Stock ({selectedVariant.stockQuantity} available)
                 </span>
               ) : (
                 <span className="badge px-2 py-1 small fw-bold" style={{
@@ -678,7 +687,7 @@ export default function ProductDetail() {
               <p className="text-theme-muted small fw-semibold mb-3">
                 COLOR —
                 <span className="text-theme-title ms-2">
-                  {selectedVariant?.color}
+                  {selectedVariant?.color} ({selectedVariant?.stockQuantity > 0 ? `${selectedVariant.stockQuantity} left` : 'Out of Stock'})
                 </span>
               </p>
 
@@ -747,6 +756,7 @@ export default function ProductDetail() {
 
                 <button
                   type="button"
+                  disabled={selectedVariant?.stockQuantity <= 0}
                   onClick={() => setIsEngravingModalOpen(true)}
                   className="btn btn-glow w-100 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
                   style={{ borderRadius: 12, height: 50, fontSize: '0.95rem' }}
@@ -760,9 +770,27 @@ export default function ProductDetail() {
             <div className="d-flex align-items-center gap-4 mb-4">
               <span className="text-theme-muted small fw-semibold">QUANTITY</span>
               <div className="d-flex align-items-center rounded-3" style={{ border: '1px solid var(--bb-border)', background: 'var(--bb-surface)' }}>
-                <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))} className="btn border-0 px-3 py-2" style={{ color: 'var(--bb-muted)', background: 'transparent' }}><Minus size={16} /></button>
-                <span className="fw-black text-theme-title px-4" style={{ fontSize: '1.1rem', minWidth: 50, textAlign: 'center' }}>{quantity}</span>
-                <button type="button" onClick={() => setQuantity(q => q + 1)} className="btn border-0 px-3 py-2" style={{ color: 'var(--bb-accent)', background: 'transparent' }}><Plus size={16} /></button>
+                <button
+                  type="button"
+                  disabled={quantity <= 1 || (selectedVariant?.stockQuantity || 0) <= 0}
+                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                  className="btn border-0 px-3 py-2"
+                  style={{ color: 'var(--bb-muted)', background: 'transparent' }}
+                >
+                  <Minus size={16} />
+                </button>
+                <span className="fw-black text-theme-title px-4" style={{ fontSize: '1.1rem', minWidth: 50, textAlign: 'center' }}>
+                  {(selectedVariant?.stockQuantity || 0) <= 0 ? 0 : quantity}
+                </span>
+                <button
+                  type="button"
+                  disabled={quantity >= (selectedVariant?.stockQuantity || 0) || (selectedVariant?.stockQuantity || 0) <= 0}
+                  onClick={() => setQuantity(q => Math.min((selectedVariant?.stockQuantity || 0), q + 1))}
+                  className="btn border-0 px-3 py-2"
+                  style={{ color: 'var(--bb-accent)', background: 'transparent' }}
+                >
+                  <Plus size={16} />
+                </button>
               </div>
             </div>
 

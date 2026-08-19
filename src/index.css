@@ -2694,3 +2694,60 @@ select option {
   opacity: 1 !important;
 }
 
+/* ==========================================================================
+   Audit Log Event Badges (Light and Dark Mode High-Contrast Rules)
+   ========================================================================== */
+:root, [data-theme="dark"] {
+  --audit-success-bg: rgba(57, 255, 20, 0.12);
+  --audit-success-text: #39ff14;
+  --audit-success-border: rgba(57, 255, 20, 0.3);
+
+  --audit-danger-bg: rgba(239, 68, 68, 0.12);
+  --audit-danger-text: #ef4444;
+  --audit-danger-border: rgba(239, 68, 68, 0.3);
+
+  --audit-warning-bg: rgba(245, 158, 11, 0.12);
+  --audit-warning-text: #f59e0b;
+  --audit-warning-border: rgba(245, 158, 11, 0.3);
+
+  --audit-info-bg: rgba(0, 243, 255, 0.12);
+  --audit-info-text: #00f3ff;
+  --audit-info-border: rgba(0, 243, 255, 0.3);
+
+  --audit-purple-bg: rgba(168, 32, 255, 0.12);
+  --audit-purple-text: #a820ff;
+  --audit-purple-border: rgba(168, 32, 255, 0.3);
+}
+
+[data-theme="light"] {
+  --audit-success-bg: #dcfce7;
+  --audit-success-text: #166534;
+  --audit-success-border: #86efac;
+
+  --audit-danger-bg: #fee2e2;
+  --audit-danger-text: #991b1b;
+  --audit-danger-border: #fca5a5;
+
+  --audit-warning-bg: #fef3c7;
+  --audit-warning-text: #92400e;
+  --audit-warning-border: #fcd34d;
+
+  --audit-info-bg: #e0f2fe;
+  --audit-info-text: #075985;
+  --audit-info-border: #7dd3fc;
+
+  --audit-purple-bg: #f3e8ff;
+  --audit-purple-text: #6b21a8;
+  --audit-purple-border: #d8b4fe;
+}
+
+/* Explicit Light-Mode Cascade Overrides for Audit Badges */
+[data-theme="light"] .audit-log-badge,
+[data-theme="light"] span.badge.audit-log-badge {
+  color: var(--badge-color, var(--audit-info-text)) !important;
+  background-color: var(--badge-bg, var(--audit-info-bg)) !important;
+  background: var(--badge-bg, var(--audit-info-bg)) !important;
+  border-color: var(--badge-border, var(--audit-info-border)) !important;
+  border: 1px solid var(--badge-border, var(--audit-info-border)) !important;
+}
+
