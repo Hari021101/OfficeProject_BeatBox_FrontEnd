@@ -330,9 +330,10 @@ export default function Header() {
             <div className="w-100 d-xl-none mt-3 mb-1 position-relative">
               <form onSubmit={handleSearchSubmit} className="position-relative">
                 <input
-                  type="text"
+                  type="search"
                   className="form-control premium-search-input w-100"
                   placeholder="Search drops, headsets..."
+                  aria-label="Search products mobile"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setSearchFocused(true)}
@@ -342,6 +343,7 @@ export default function Header() {
                   type="submit"
                   className="btn position-absolute top-50 translate-middle-y end-0 border-0 text-theme-muted p-2 pe-3"
                   style={{ background: 'transparent' }}
+                  aria-label="Submit search mobile"
                 >
                   <Search size={18} />
                 </button>
@@ -667,7 +669,7 @@ export default function Header() {
               <ul className="list-unstyled d-flex flex-column gap-3 border-top border-secondary border-opacity-25 pt-4 ps-2">
                 <li><Link to="/products?category=new" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>New Arrivals</Link></li>
                 <li><Link to="/gifting" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Corporate Gifting</Link></li>
-                <li><Link to="/support" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Warranty Registration</Link></li>
+                <li><Link to="/warranty" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Warranty Registration</Link></li>
                 <li><Link to="/support" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Support</Link></li>
                 {!user && <li><Link to="/login" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Login</Link></li>}
                 <li><Link to="/orders" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Track your order</Link></li>
@@ -678,12 +680,12 @@ export default function Header() {
             <div className="d-flex flex-column flex-xl-row align-items-stretch align-items-xl-center gap-3">
 
               {/* Search Pill */}
-              {/* Search Pill */}
               <form onSubmit={handleSearchSubmit} className="position-relative d-none d-xl-block">
                 <input
-                  type="text"
+                  type="search"
                   className="form-control premium-search-input"
                   placeholder="Search drops, headsets..."
+                  aria-label="Search products"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setSearchFocused(true)}
@@ -693,6 +695,7 @@ export default function Header() {
                   type="submit"
                   className="btn position-absolute top-50 translate-middle-y end-0 border-0 text-theme-muted p-2 pe-3"
                   style={{ background: 'transparent' }}
+                  aria-label="Submit search"
                 >
                   <Search size={18} />
                 </button>
@@ -765,6 +768,7 @@ export default function Header() {
                   className="btn border-0 p-2 position-relative text-theme-muted hover-scale d-none d-xl-block"
                   style={{ background: 'transparent', transition: 'all 0.2s' }}
                   title="Compare Products"
+                  aria-label="Compare products"
                 >
                   <Scale size={20} />
                   {compareCount > 0 && (

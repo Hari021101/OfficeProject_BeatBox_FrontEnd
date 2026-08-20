@@ -579,15 +579,27 @@ body {
 
 /* Product Color Swatch Contrast & Theme Styling */
 .product-color-swatch {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 1px solid var(--bb-swatch-border);
-  box-shadow: 0 0 0 1px var(--bb-swatch-outline);
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  border-radius: 50% !important;
+  border: 1px solid var(--bb-border, rgba(255, 255, 255, 0.3)) !important;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
   flex-shrink: 0;
   transition: transform 0.2s ease, outline 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
-  padding: 0;
+  padding: 0 !important;
+}
+
+[data-theme="light"] .product-color-swatch {
+  border: 1px solid rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="dark"] .product-color-swatch {
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
 }
 
 .product-color-swatch:hover {
@@ -3066,4 +3078,22 @@ select option {
   color: #ff6b6b !important;
   border: 1px solid rgba(239, 68, 68, 0.45) !important;
 }
+
+/* Table Action Dropdown Stacking Context Fix */
+.table-responsive {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}
+
+.table-responsive .dropdown-menu {
+  z-index: 1060 !important;
+}
+
+.table-responsive tr:hover .action-cell,
+.table-responsive td.action-cell:focus-within,
+.table-responsive td.action-cell:has(.show) {
+  z-index: 100 !important;
+}
+
+
 

@@ -144,6 +144,47 @@ export default function ProductDetail() {
     }
   }, [id, dispatch, user])
 
+  // Inject JSON-LD Product Structured Data for SEO
+  useEffect(() => {
+    if (!product) return
+    const jsonLd = {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": product.name,
+      "image": product.imageUrl ? [product.imageUrl] : [],
+      "description": product.description || `Buy ${product.name} at BeatBox`,
+      "sku": `BB-${product.id}`,
+      "brand": {
+        "@type": "Brand",
+        "name": "BeatBox"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": window.location.href,
+        "priceCurrency": "INR",
+        "price": product.discountPrice || product.price || 0,
+        "itemCondition": "https://schema.org/NewCondition",
+        "availability": (product.inStock !== false && (product.stockQuantity === undefined || product.stockQuantity > 0))
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock"
+      }
+    }
+
+    let scriptTag = document.getElementById('jsonld-product-schema')
+    if (!scriptTag) {
+      scriptTag = document.createElement('script')
+      scriptTag.id = 'jsonld-product-schema'
+      scriptTag.type = 'application/ld+json'
+      document.head.appendChild(scriptTag)
+    }
+    scriptTag.text = JSON.stringify(jsonLd)
+
+    return () => {
+      const existing = document.getElementById('jsonld-product-schema')
+      if (existing) existing.remove()
+    }
+  }, [product])
+
   // Reconcile Product and Variant attributes (stock, price, discountPrice, color, images) whenever allProducts store updates
   useEffect(() => {
     if (product && allProducts?.length > 0) {

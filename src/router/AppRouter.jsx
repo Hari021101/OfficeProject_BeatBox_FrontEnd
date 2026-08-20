@@ -26,6 +26,15 @@ const SoundMatch = React.lazy(() => import('../pages/SoundMatch'))
 const BeatBoxStudio = React.lazy(() => import('../pages/BeatBoxStudio'))
 const Compare = React.lazy(() => import('../pages/Compare'))
 const DailyDeals = React.lazy(() => import('../pages/DailyDeals'))
+const Addresses = React.lazy(() => import('../pages/Addresses'))
+const About = React.lazy(() => import('../pages/About'))
+const FAQ = React.lazy(() => import('../pages/FAQ'))
+const Returns = React.lazy(() => import('../pages/Returns'))
+const Warranty = React.lazy(() => import('../pages/Warranty'))
+const PrivacyPolicy = React.lazy(() => import('../pages/PrivacyPolicy'))
+const TermsOfService = React.lazy(() => import('../pages/TermsOfService'))
+const Sitemap = React.lazy(() => import('../pages/Sitemap'))
+const Careers = React.lazy(() => import('../pages/Careers'))
 
 // Lazy Load Admin Pages
 const AdminDashboard = React.lazy(() => import('../pages/admin/Dashboard'))
@@ -146,6 +155,15 @@ export default function AppRouter() {
           <Route path="/compare" element={<Layout><Compare /></Layout>} />
           <Route path="/daily-deals" element={<Layout><DailyDeals /></Layout>} />
           <Route path="/deals" element={<Layout><DailyDeals /></Layout>} />
+          <Route path="/addresses" element={<ProtectedRoute><Layout><Addresses /></Layout></ProtectedRoute>} />
+          <Route path="/about" element={<Layout><About /></Layout>} />
+          <Route path="/faq" element={<Layout><FAQ /></Layout>} />
+          <Route path="/returns" element={<Layout><Returns /></Layout>} />
+          <Route path="/warranty" element={<Layout><Warranty /></Layout>} />
+          <Route path="/privacy-policy" element={<Layout><PrivacyPolicy /></Layout>} />
+          <Route path="/terms-of-service" element={<Layout><TermsOfService /></Layout>} />
+          <Route path="/sitemap" element={<Layout><Sitemap /></Layout>} />
+          <Route path="/careers" element={<Layout><Careers /></Layout>} />
           
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>

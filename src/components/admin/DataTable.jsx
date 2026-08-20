@@ -86,7 +86,7 @@ export default function DataTable({
   const dataCols = columns.filter(c => c.key !== 'actions')
 
   return (
-    <div className="card border-0" style={{ background: 'var(--bb-surface)', borderRadius: '16px', boxShadow: '0 8px 30px var(--bb-shadow)', overflow: 'hidden' }}>
+    <div className="card border-0" style={{ background: 'var(--bb-surface)', borderRadius: '16px', boxShadow: '0 8px 30px var(--bb-shadow)', overflow: 'visible' }}>
 
       {/* ── Toolbar ─────────────────────────────────────────── */}
       <div className="p-3 p-md-4" style={{ borderBottom: '1px solid var(--bb-border)' }}>
@@ -238,7 +238,7 @@ export default function DataTable({
 
       {/* ── TABLE VIEW ─────────────────────────────────────── */}
       {viewMode === 'table' && (
-        <div className="table-responsive" style={{ maxHeight: '550px', overflowX: 'auto', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
+        <div className="table-responsive" style={{ minHeight: '320px', overflowX: 'auto', overflowY: 'visible', WebkitOverflowScrolling: 'touch' }}>
           <table className="table table-borderless align-middle mb-0 text-theme-text" style={{ minWidth: '540px' }}>
             <thead style={{ borderBottom: '1px solid var(--bb-border)', position: 'sticky', top: 0, zIndex: 10, background: 'var(--bb-surface-2)' }}>
               <tr>
@@ -286,7 +286,7 @@ export default function DataTable({
                       </td>
                     ))}
                     {actionCol && (
-                      <td className="py-3 pe-3" style={{ position: 'sticky', right: 0, background: 'var(--bb-surface)', zIndex: 1 }}>
+                      <td className="py-3 pe-3 action-cell" style={{ position: 'sticky', right: 0, background: 'var(--bb-surface)', zIndex: 1 }}>
                         <div className="skeleton-pulse rounded" style={{ width: '60px', height: '16px', marginLeft: 'auto' }} />
                       </td>
                     )}
@@ -329,12 +329,12 @@ export default function DataTable({
                     ))}
                     {actionCol && (
                       <td
-                        className="py-3 pe-3"
+                        className="py-3 pe-3 action-cell"
                         style={{
                           position: 'sticky',
                           right: 0,
                           background: selectedRows.has(row.id) ? 'rgba(0,243,255,0.03)' : 'var(--bb-surface)',
-                          zIndex: 1,
+                          zIndex: 5,
                           boxShadow: '-6px 0 16px rgba(0,0,0,0.15)'
                         }}
                       >
