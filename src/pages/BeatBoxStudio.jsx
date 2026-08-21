@@ -135,8 +135,9 @@ export default function BeatBoxStudio() {
       requestRef.current = requestAnimationFrame(renderFrame);
       analyzerRef.current.getByteFrequencyData(dataArray);
 
-      // Clear canvas with deep navy background
-      ctx.fillStyle = 'rgba(4, 7, 18, 0.8)';
+      // Clear canvas with theme-aware background
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      ctx.fillStyle = isLight ? 'rgba(248, 250, 252, 0.85)' : 'rgba(4, 7, 18, 0.8)';
       ctx.fillRect(0, 0, width, height);
 
       const barWidth = (width / bufferLength) * 2.5;
@@ -152,8 +153,8 @@ export default function BeatBoxStudio() {
           gradient.addColorStop(0, '#a820ff'); // Primary
           gradient.addColorStop(1, '#00f3ff'); // Accent
         } else {
-          gradient.addColorStop(0, '#4b5563'); // Muted Grey
-          gradient.addColorStop(1, '#9ca3af');
+          gradient.addColorStop(0, isLight ? '#64748b' : '#4b5563'); // Muted Grey
+          gradient.addColorStop(1, isLight ? '#334155' : '#9ca3af');
         }
 
         ctx.fillStyle = gradient;
@@ -180,7 +181,7 @@ export default function BeatBoxStudio() {
   }, []);
 
   return (
-    <div className="min-vh-100 py-5 position-relative overflow-hidden" style={{ background: 'var(--bb-bg-navy)', color: 'var(--bb-text)' }}>
+    <div className="min-vh-100 py-5 position-relative overflow-hidden studio-page-wrapper" style={{ background: 'var(--bb-bg-navy)', color: 'var(--bb-text)' }}>
 
       {/* Background Ambience */}
       <div className="position-absolute top-0 start-0 w-100 h-100 pointer-events-none" style={{ zIndex: 0, opacity: 0.6 }}>
@@ -208,15 +209,14 @@ export default function BeatBoxStudio() {
         {/* Studio Console Layout */}
         <div className="row justify-content-center">
           <div className="col-12 col-xl-10">
-            <div className="card glass-card border-0 p-1" style={{ borderRadius: '24px', background: 'var(--bb-studio-surface)', border: '1px solid var(--bb-studio-border)' }}>
+            <div className="card glass-card border-0 p-1 studio-main-console" style={{ borderRadius: '24px', background: 'var(--bb-studio-surface)', border: '1px solid var(--bb-studio-border)' }}>
               <div className="card-body p-4 p-md-5">
 
                 {/* Visualizer Canvas Area */}
                 <div
-                  className="w-100 rounded-4 overflow-hidden mb-4 position-relative d-flex align-items-center justify-content-center"
+                  className="w-100 rounded-4 overflow-hidden mb-4 position-relative d-flex align-items-center justify-content-center studio-visualizer-container"
                   style={{
                     height: '350px',
-                    background: '#040712',
                     border: `1px solid ${isBeatBoxEqEnabled ? 'var(--bb-accent)' : 'var(--bb-studio-border)'}`,
                     boxShadow: isBeatBoxEqEnabled ? '0 0 40px rgba(0,243,255,0.15) inset' : 'none',
                     transition: 'all 0.5s ease'
@@ -234,20 +234,20 @@ export default function BeatBoxStudio() {
                   {!audioFile && (
                     <div className="position-absolute text-center" style={{ zIndex: 10 }}>
                       <Activity size={48} className="mb-3 opacity-75" style={{ color: 'var(--bb-accent)' }} />
-                      <h5 className="fw-bold mb-1 studio-empty-title" style={{ color: '#ffffff', textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>Awaiting Audio Signal...</h5>
-                      <p className="small mb-0 studio-empty-description" style={{ color: '#cbd5e1' }}>Upload a track to begin visualization</p>
+                      <h5 className="fw-bold mb-1 studio-empty-title">Awaiting Audio Signal...</h5>
+                      <p className="small mb-0 studio-empty-description">Upload a track to begin visualization</p>
                     </div>
                   )}
                 </div>
 
                 {/* Control Deck */}
-                <div className="row g-4 align-items-center p-4 rounded-4" style={{ background: 'var(--bb-studio-surface-secondary)', border: '1px solid var(--bb-studio-border)' }}>
+                <div className="row g-4 align-items-center p-4 rounded-4 studio-control-deck" style={{ background: 'var(--bb-studio-surface-secondary)', border: '1px solid var(--bb-studio-border)' }}>
 
                   {/* Left: Upload & Track Info */}
                   <div className="col-12 col-md-4">
                     <div className="d-flex align-items-center gap-3">
                       <label
-                        className="btn rounded-circle p-3 d-flex align-items-center justify-content-center hover-scale"
+                        className="btn rounded-circle p-3 d-flex align-items-center justify-content-center hover-scale studio-upload-btn"
                         style={{
                           width: '54px', height: '54px',
                           cursor: 'pointer',
@@ -261,10 +261,10 @@ export default function BeatBoxStudio() {
                         <Upload size={20} />
                       </label>
                       <div className="overflow-hidden">
-                        <h6 className="fw-bold text-theme-title mb-1 text-truncate">
+                        <h6 className="fw-bold text-theme-title mb-1 text-truncate studio-track-title">
                           {fileName || "No track loaded"}
                         </h6>
-                        <span className="badge rounded-pill small fw-semibold" style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-muted)', border: '1px solid var(--bb-border)' }}>
+                        <span className="badge rounded-pill small fw-semibold studio-supported-badge" style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-muted)', border: '1px solid var(--bb-border)' }}>
                           {audioFile ? 'Ready to play' : 'MP3, WAV supported'}
                         </span>
                       </div>
@@ -277,7 +277,7 @@ export default function BeatBoxStudio() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={togglePlay}
-                      className="btn btn-glow rounded-circle d-flex align-items-center justify-content-center"
+                      className="btn btn-glow rounded-circle d-flex align-items-center justify-content-center studio-play-btn"
                       style={{
                         width: '72px', height: '72px',
                         background: isPlaying ? 'linear-gradient(135deg, #ff416c, #ff4b2b)' : 'linear-gradient(135deg, var(--bb-primary), var(--bb-accent))',
@@ -291,7 +291,7 @@ export default function BeatBoxStudio() {
                   {/* Right: Signature EQ Toggle */}
                   <div className="col-12 col-md-4 d-flex justify-content-md-end justify-content-center">
                     <div
-                      className="p-3 rounded-4 transition-all d-flex align-items-center gap-3 cursor-pointer hover-scale"
+                      className={`p-3 rounded-4 transition-all d-flex align-items-center gap-3 cursor-pointer hover-scale studio-eq-card ${isBeatBoxEqEnabled ? 'eq-active' : 'eq-inactive'}`}
                       style={{
                         background: isBeatBoxEqEnabled ? 'var(--bb-info-bg)' : 'var(--bb-surface)',
                         border: `1px solid ${isBeatBoxEqEnabled ? 'var(--bb-accent)' : 'var(--bb-border)'}`,
@@ -299,20 +299,20 @@ export default function BeatBoxStudio() {
                       }}
                       onClick={toggleEq}
                     >
-                      <div className="p-2 rounded-circle" style={{ background: isBeatBoxEqEnabled ? 'var(--bb-accent)' : 'var(--bb-surface-2)', color: isBeatBoxEqEnabled ? '#000' : 'var(--bb-text)' }}>
+                      <div className={`p-2 rounded-circle studio-eq-icon-wrap ${isBeatBoxEqEnabled ? 'active' : ''}`} style={{ background: isBeatBoxEqEnabled ? 'var(--bb-accent)' : 'var(--bb-surface-2)', color: isBeatBoxEqEnabled ? '#000' : 'var(--bb-text)' }}>
                         {isBeatBoxEqEnabled ? <Sparkles size={20} /> : <Sliders size={20} />}
                       </div>
                       <div>
-                        <h6 className="fw-bold mb-0 text-theme-title" style={{ fontSize: '0.9rem' }}>BeatBox EQ</h6>
-                        <span style={{ fontSize: '0.75rem', color: isBeatBoxEqEnabled ? 'var(--bb-accent)' : 'var(--bb-muted)' }}>
+                        <h6 className="fw-bold mb-0 studio-eq-title" style={{ fontSize: '0.9rem' }}>BeatBox EQ</h6>
+                        <span className={`studio-eq-status ${isBeatBoxEqEnabled ? 'active' : ''}`} style={{ fontSize: '0.75rem', color: isBeatBoxEqEnabled ? 'var(--bb-accent)' : 'var(--bb-muted)' }}>
                           {isBeatBoxEqEnabled ? 'Bass Boost Active' : 'Flat Studio Profile'}
                         </span>
                       </div>
 
                       {/* Custom Toggle Switch UI */}
-                      <div className="ms-2 position-relative rounded-pill" style={{ width: '40px', height: '22px', background: isBeatBoxEqEnabled ? 'var(--bb-primary)' : 'var(--bb-border)' }}>
+                      <div className={`ms-2 position-relative rounded-pill studio-toggle-track ${isBeatBoxEqEnabled ? 'active' : ''}`} style={{ width: '40px', height: '22px', background: isBeatBoxEqEnabled ? 'var(--bb-primary)' : 'var(--bb-border)' }}>
                         <motion.div
-                          className="position-absolute bg-white rounded-circle shadow-sm"
+                          className="position-absolute bg-white rounded-circle shadow-sm studio-toggle-thumb"
                           initial={false}
                           animate={{ x: isBeatBoxEqEnabled ? 18 : 2 }}
                           style={{ width: '18px', height: '18px', top: '2px' }}
@@ -331,24 +331,24 @@ export default function BeatBoxStudio() {
         {/* Information Grid Below */}
         <div className="row g-4 mt-5 justify-content-center text-center">
           <div className="col-md-4">
-            <div className="p-4 rounded-4 glass-card h-100" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
-              <Headphones size={32} className="mb-3" style={{ color: 'var(--bb-accent)' }} />
-              <h5 className="fw-bold text-theme-title">Dynamic Drivers</h5>
-              <p className="text-theme-muted small mb-0">Our 40mm and 50mm drivers push air efficiently to recreate the club experience.</p>
+            <div className="p-4 rounded-4 glass-card h-100 studio-feature-card" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
+              <Headphones size={32} className="mb-3 studio-feature-icon" style={{ color: 'var(--bb-accent)' }} />
+              <h5 className="fw-bold text-theme-title studio-feature-title">Dynamic Drivers</h5>
+              <p className="text-theme-muted small mb-0 studio-feature-desc">Our 40mm and 50mm drivers push air efficiently to recreate the club experience.</p>
             </div>
           </div>
           <div className="col-md-4">
-            <div className="p-4 rounded-4 glass-card h-100" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
-              <Sliders size={32} className="mb-3" style={{ color: 'var(--bb-primary-light)' }} />
-              <h5 className="fw-bold text-theme-title">V-Shaped Tuning</h5>
-              <p className="text-theme-muted small mb-0">Engineered with boosted lows and soaring highs for energetic, punchy audio.</p>
+            <div className="p-4 rounded-4 glass-card h-100 studio-feature-card" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
+              <Sliders size={32} className="mb-3 studio-feature-icon" style={{ color: 'var(--bb-primary-light)' }} />
+              <h5 className="fw-bold text-theme-title studio-feature-title">V-Shaped Tuning</h5>
+              <p className="text-theme-muted small mb-0 studio-feature-desc">Engineered with boosted lows and soaring highs for energetic, punchy audio.</p>
             </div>
           </div>
           <div className="col-md-4">
-            <div className="p-4 rounded-4 glass-card h-100" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
-              <Activity size={32} className="mb-3" style={{ color: 'var(--bb-accent)' }} />
-              <h5 className="fw-bold text-theme-title">High-Fidelity DACs</h5>
-              <p className="text-theme-muted small mb-0">Premium digital-to-analog converters ensure zero distortion at peak volumes.</p>
+            <div className="p-4 rounded-4 glass-card h-100 studio-feature-card" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
+              <Activity size={32} className="mb-3 studio-feature-icon" style={{ color: 'var(--bb-accent)' }} />
+              <h5 className="fw-bold text-theme-title studio-feature-title">High-Fidelity DACs</h5>
+              <p className="text-theme-muted small mb-0 studio-feature-desc">Premium digital-to-analog converters ensure zero distortion at peak volumes.</p>
             </div>
           </div>
         </div>

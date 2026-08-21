@@ -17,6 +17,7 @@ import {
 } from '../redux/orderSlice'
 import { selectUserId, selectUser } from '../redux/authSlice'
 import OrderTimeline from '../components/ui/OrderTimeline'
+import Select from '../components/ui/Select'
 import logo from '../assets/beatbox_logo.png'
 import { orderService } from '../services/orderService'
 import { getImageUrl } from '../config/api'
@@ -301,15 +302,13 @@ function ReturnRequestModal({ order, onClose, onSuccess }) {
         {/* Return Reason */}
         <div className="mb-3">
           <label className="form-label fw-bold text-theme-title" style={{ fontSize: '0.85rem' }}>Return Reason *</label>
-          <select
-            className="form-select"
+          <Select
             value={reason}
             onChange={e => setReason(e.target.value)}
-            style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-text)', border: '1px solid var(--bb-border)', borderRadius: 10 }}
-          >
-            <option value="">-- Select a reason --</option>
-            {RETURN_REASONS.map(r => <option key={r} value={r}>{r}</option>)}
-          </select>
+            placeholder="-- Select a reason --"
+            options={RETURN_REASONS.map(r => ({ value: r, label: r }))}
+            aria-label="Return Reason"
+          />
         </div>
 
         {/* Description */}
@@ -520,23 +519,7 @@ export default function OrderDetail() {
                     <cfg.Icon size={14} /> {cfg.label}
                   </div>
                 )}
-                {/* Print Invoice */}
-                <button
-                  onClick={() => window.print()}
-                  className="btn d-flex align-items-center gap-2 fw-bold"
-                  style={{
-                    background: 'rgba(168,32,255,0.1)',
-                    border: '1px solid rgba(168,32,255,0.3)',
-                    color: '#d161ff',
-                    borderRadius: 10,
-                    fontSize: '0.82rem',
-                    padding: '8px 16px',
-                    transition: 'all 0.25s ease',
-                  }}
-                  id="print-invoice-btn"
-                >
-                  <Printer size={14} /> Print Invoice
-                </button>
+
               </div>
             </motion.div>
 
@@ -604,15 +587,15 @@ export default function OrderDetail() {
                             border: '1px solid var(--bb-border)',
                           }}
                         >
-<img
-  src={getImageUrl(item.productImageUrl)}
-  alt={item.productName}
-  style={{
-    width: 50,
-    height: 50,
-    objectFit: 'contain'
-  }}
-/>
+                          <img
+                            src={getImageUrl(item.productImageUrl)}
+                            alt={item.productName}
+                            style={{
+                              width: 50,
+                              height: 50,
+                              objectFit: 'contain'
+                            }}
+                          />
                         </div>
 
                         {/* Name & meta */}
@@ -624,10 +607,10 @@ export default function OrderDetail() {
                             Qty: {item.quantity} × ₹{fmt(item.unitPrice + (item.isPersonalised ? (item.engravingPrice || 0) : 0))}
                           </p>
                           {item.isPersonalised && (
-                            <div 
-                              className="mt-2 p-2 px-3 rounded-3" 
-                              style={{ 
-                                background: 'rgba(0, 243, 255, 0.04)', 
+                            <div
+                              className="mt-2 p-2 px-3 rounded-3"
+                              style={{
+                                background: 'rgba(0, 243, 255, 0.04)',
                                 border: '1px dashed rgba(0, 243, 255, 0.25)',
                                 maxWidth: '300px'
                               }}
@@ -657,20 +640,20 @@ export default function OrderDetail() {
                             </div>
                           )}
                         </div>
-                       {item.color && (
-  <div className="d-flex align-items-center gap-2 mt-1">
-    <span
-      style={{
-        width: 14,
-        height: 14,
-        borderRadius: '50%',
-        background: item.colorCode,
-        border: '1px solid #ccc'
-      }}
-    />
-    <small>{item.color}</small>
-  </div>
-)}
+                        {item.color && (
+                          <div className="d-flex align-items-center gap-2 mt-1">
+                            <span
+                              style={{
+                                width: 14,
+                                height: 14,
+                                borderRadius: '50%',
+                                background: item.colorCode,
+                                border: '1px solid #ccc'
+                              }}
+                            />
+                            <small>{item.color}</small>
+                          </div>
+                        )}
 
                         {/* Line total */}
                         <div className="text-end flex-shrink-0">
@@ -744,56 +727,56 @@ export default function OrderDetail() {
                 </SectionCard>
 
                 {/* Payment Info */}
-               <SectionCard title="Payment" icon={CreditCard}>
-  <div
-    className="d-flex align-items-center gap-3 p-3 rounded-3"
-    style={{
-      background: 'var(--bb-surface-2)',
-      border: '1px solid var(--bb-border)'
-    }}
-  >
-    <div
-      className="d-flex align-items-center justify-content-center rounded-2"
-      style={{
-        width: 40,
-        height: 40,
-        background: 'rgba(0,243,255,0.1)',
-        border: '1px solid rgba(0,243,255,0.2)'
-      }}
-    >
-      <CreditCard size={18} style={{ color: 'var(--bb-accent)' }} />
-    </div>
+                <SectionCard title="Payment" icon={CreditCard}>
+                  <div
+                    className="d-flex align-items-center gap-3 p-3 rounded-3"
+                    style={{
+                      background: 'var(--bb-surface-2)',
+                      border: '1px solid var(--bb-border)'
+                    }}
+                  >
+                    <div
+                      className="d-flex align-items-center justify-content-center rounded-2"
+                      style={{
+                        width: 40,
+                        height: 40,
+                        background: 'rgba(0,243,255,0.1)',
+                        border: '1px solid rgba(0,243,255,0.2)'
+                      }}
+                    >
+                      <CreditCard size={18} style={{ color: 'var(--bb-accent)' }} />
+                    </div>
 
-    <div>
-      <p className="fw-bold text-theme-title mb-0">
-        {getPaymentMethodLabel(order.paymentMethod)}
-      </p>
+                    <div>
+                      <p className="fw-bold text-theme-title mb-0">
+                        {getPaymentMethodLabel(order.paymentMethod)}
+                      </p>
 
-      <p className="text-theme-muted mb-0">
-        {order.paymentStatus === "Success"
-          ? `Paid · ₹${fmt(total)}`
-          : `Amount: ₹${fmt(total)} · Pending`}
-      </p>
-    </div>
+                      <p className="text-theme-muted mb-0">
+                        {order.paymentStatus === "Success"
+                          ? `Paid · ₹${fmt(total)}`
+                          : `Amount: ₹${fmt(total)} · Pending`}
+                      </p>
+                    </div>
 
-    <span
-      className="ms-auto rounded-pill px-2 py-1 fw-bold"
-      style={{
-        background:
-          order.paymentStatus === "Success"
-            ? "rgba(57,255,20,0.1)"
-            : "rgba(245,158,11,0.1)",
-        color:
-          order.paymentStatus === "Success"
-            ? "#39ff14"
-            : "#f59e0b",
-        fontSize: '0.65rem'
-      }}
-    >
-      {order.paymentStatus}
-    </span>
-  </div>
-</SectionCard>
+                    <span
+                      className="ms-auto rounded-pill px-2 py-1 fw-bold"
+                      style={{
+                        background:
+                          order.paymentStatus === "Success"
+                            ? "rgba(57,255,20,0.1)"
+                            : "rgba(245,158,11,0.1)",
+                        color:
+                          order.paymentStatus === "Success"
+                            ? "#39ff14"
+                            : "#f59e0b",
+                        fontSize: '0.65rem'
+                      }}
+                    >
+                      {order.paymentStatus}
+                    </span>
+                  </div>
+                </SectionCard>
 
                 {/* Actions */}
                 <div className="d-flex flex-column gap-2">
@@ -897,7 +880,7 @@ export default function OrderDetail() {
               // Re-check return status
               orderService.getReturnByOrderId(order.orderId)
                 .then(data => setExistingReturn(data))
-                .catch(() => {})
+                .catch(() => { })
             }}
           />
         )}

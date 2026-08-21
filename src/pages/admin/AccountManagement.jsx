@@ -8,6 +8,7 @@ import {
 import { toast } from 'react-hot-toast'
 import adminService from '../../services/adminService'
 import StatWidget from '../../components/admin/StatWidget'
+import Select from '../../components/ui/Select'
 import api from '../../services/authService'
 
 // ─── helpers ──────────────────────────────────────────────
@@ -327,30 +328,30 @@ export default function AccountManagement() {
 
           {/* Role filter */}
           <div className="col-6 col-md-3">
-            <select
-              className="bb-input w-100"
+            <Select
               value={filterRole}
               onChange={e => setFilterRole(e.target.value)}
-              style={{ paddingLeft: '14px !important', cursor: 'pointer' }}
-            >
-              <option value="All">All Roles</option>
-              <option value="Admin">Admin</option>
-              <option value="Customer">Customer</option>
-            </select>
+              options={[
+                { value: 'All', label: 'All Roles' },
+                { value: 'Admin', label: 'Admin' },
+                { value: 'Customer', label: 'Customer' }
+              ]}
+              aria-label="Filter by role"
+            />
           </div>
 
           {/* Status filter */}
           <div className="col-6 col-md-3">
-            <select
-              className="bb-input w-100"
+            <Select
               value={filterStatus}
               onChange={e => setFilterStatus(e.target.value)}
-              style={{ paddingLeft: '14px !important', cursor: 'pointer' }}
-            >
-              <option value="All">All Statuses</option>
-              <option value="Active">Active</option>
-              <option value="Suspended">Suspended</option>
-            </select>
+              options={[
+                { value: 'All', label: 'All Statuses' },
+                { value: 'Active', label: 'Active' },
+                { value: 'Suspended', label: 'Suspended' }
+              ]}
+              aria-label="Filter by status"
+            />
           </div>
 
           {/* Count */}

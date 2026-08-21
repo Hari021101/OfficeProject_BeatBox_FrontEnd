@@ -14,6 +14,7 @@ import { useEffect } from 'react'
 import { IMAGE_MAP } from '../data/products'
 import logo from '../assets/beatbox_logo.png'
 import { paymentService } from '../services/paymentService'
+import Select from '../components/ui/Select'
 
 const checkoutSchema = z.object({
   fullName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -56,7 +57,7 @@ export default function Checkout() {
   const couponDiscount = appliedPromo?.discountAmount != null ? Number(appliedPromo.discountAmount) : (appliedPromo?.discountPercentage ? Math.round(subtotal * (appliedPromo.discountPercentage / 100)) : 0)
   const total = Math.max(0, subtotal + shipping + gst - couponDiscount)
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
     resolver: zodResolver(checkoutSchema)
   })
 
@@ -426,13 +427,16 @@ export default function Checkout() {
                           </div>
                           <div className="col-12 col-sm-4">
                             <label className="form-label text-theme-muted small fw-semibold">State *</label>
-                            <select {...register('state')} className="form-select checkout-input" style={{ color: 'var(--bb-text)' }}>
-                              <option value="">Select State</option>
-                              {['Maharashtra', 'Tamil Nadu', 'Karnataka', 'Delhi', 'Gujarat', 'Rajasthan', 'Uttar Pradesh', 'West Bengal', 'Kerala', 'Telangana'].map(s => (
-                                <option key={s} value={s} style={{ background: 'var(--bb-surface)' }}>{s}</option>
-                              ))}
-                            </select>
-                            {errors.state && <p className="text-danger mt-1 mb-0" style={{ fontSize: '0.75rem' }}>{errors.state.message}</p>}
+                            <Select
+                              name="state"
+                              value={watch('state') || ''}
+                              onChange={(e) => setValue('state', e.target.value, { shouldValidate: true })}
+                              placeholder="Select State"
+                              searchable={true}
+                              error={errors.state?.message}
+                              options={['Maharashtra', 'Tamil Nadu', 'Karnataka', 'Delhi', 'Gujarat', 'Rajasthan', 'Uttar Pradesh', 'West Bengal', 'Kerala', 'Telangana'].map(s => ({ value: s, label: s }))}
+                              aria-label="State"
+                            />
                           </div>
                           <div className="col-12 col-sm-4">
                             <label className="form-label text-theme-muted small fw-semibold">PIN Code *</label>
@@ -588,7 +592,7 @@ export default function Checkout() {
                       <span className="fw-bold">-₹{couponDiscount.toLocaleString('en-IN')}</span>
                     </div>
                   )}
-                  {appliedPromo && appliedPromo.isFreeShipping && (
+                  {appliedPromo && (appliedPromo.isFreeShipping || appliedPromo.discountType === 'Shipping' || appliedPromo.code === 'FREESHIP') && (
                     <div className="d-flex justify-content-between small text-success">
                       <span className="fw-bold">Promo ({appliedPromo.code})</span>
                       <span className="fw-bold">Free Shipping</span>

@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import { fetchProducts } from '../../redux/productSlice'
 import VariantModal from '../../components/admin/VariantModal'
+import Select from '../../components/ui/Select'
 
 export default function EditProduct() {
   const { id } = useParams()
@@ -196,12 +197,15 @@ export default function EditProduct() {
 
               <div className="col-md-12">
                 <label className="form-label text-theme-muted small fw-bold">Category *</label>
-                <select className="form-select" name="categoryId" value={formData.categoryId} onChange={handleProductChange} required style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }}>
-                  <option value="">Select Category</option>
-                  {categories.map(cat => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
-                  ))}
-                </select>
+                <Select
+                  name="categoryId"
+                  value={formData.categoryId}
+                  onChange={handleProductChange}
+                  placeholder="Select Category"
+                  required
+                  options={categories.map(cat => ({ value: cat.id, label: cat.name }))}
+                  aria-label="Category"
+                />
               </div>
 
               <div className="col-md-6">

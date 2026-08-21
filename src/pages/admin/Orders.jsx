@@ -5,6 +5,7 @@ import { orderService } from '../../services/orderService'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import DataTable from '../../components/admin/DataTable'
+import Select from '../../components/ui/Select'
 import { getPaymentMethodLabel } from '../../utils/paymentUtils'
 
 const STATUS_CONFIG = {
@@ -106,17 +107,16 @@ export default function Orders() {
       )
     }},
     { key: 'actions', label: 'Update Status', render: (row) => (
-      <select 
-        className="form-select form-select-sm premium-search-input"
-        style={{ width: '130px', background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}
-        value={row.status}
-        onChange={(e) => handleStatusChange(row.orderId, e.target.value)}
-        disabled={updatingId === row.orderId}
-      >
-        {Object.keys(STATUS_CONFIG).map(s => (
-          <option key={s} value={s}>{s}</option>
-        ))}
-      </select>
+      <div style={{ width: '140px' }}>
+        <Select
+          size="sm"
+          value={row.status}
+          onChange={(e) => handleStatusChange(row.orderId, e.target.value)}
+          disabled={updatingId === row.orderId}
+          options={Object.keys(STATUS_CONFIG).map(s => ({ value: s, label: s }))}
+          aria-label={`Update status for order ${row.orderId}`}
+        />
+      </div>
     )},
     { key: 'details', label: 'Details', render: (row) => (
       <button 

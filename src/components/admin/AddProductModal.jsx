@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Save, AlertCircle, Plus, Trash2, Upload } from 'lucide-react'
 import { productService } from '../../services/productService'
 import { toast } from 'react-hot-toast'
+import Select from '../ui/Select'
 
 export default function AddProductModal({ isOpen, onClose, onProductAdded, editingProduct }) {
   const navigate = useNavigate()
@@ -205,12 +206,15 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
 
               <div className="col-12 col-md-6">
                 <label className="form-label text-theme-muted small fw-bold">Category *</label>
-                <select className="form-select" name="categoryId" value={formData.categoryId} onChange={handleChange} required style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)' }}>
-                  <option value="">Select Category</option>
-                  {categories.map(cat => (
-                    <option key={cat.id} value={cat.id}>{cat.name}</option>
-                  ))}
-                </select>
+                <Select
+                  name="categoryId"
+                  value={formData.categoryId}
+                  onChange={handleChange}
+                  placeholder="Select Category"
+                  required
+                  options={categories.map(cat => ({ value: cat.id, label: cat.name }))}
+                  aria-label="Category"
+                />
               </div>
 
               <div className="col-12 col-sm-4">
@@ -228,19 +232,20 @@ export default function AddProductModal({ isOpen, onClose, onProductAdded, editi
 
               <div className="col-12 col-sm-4">
                 <label className="form-label text-theme-muted small fw-bold">Color</label>
-               <select
-  className="form-select"
-  name="color"
-  value={formData.color}
-  onChange={handleChange}
->
-  <option value="">Select Color</option>
-  <option value="Black">Black</option>
-  <option value="White">White</option>
-  <option value="Blue">Blue</option>
-  <option value="Red">Red</option>
-  <option value="Green">Green</option>
-</select>
+                <Select
+                  name="color"
+                  value={formData.color}
+                  onChange={handleChange}
+                  placeholder="Select Color"
+                  options={[
+                    { value: 'Black', label: 'Black' },
+                    { value: 'White', label: 'White' },
+                    { value: 'Blue', label: 'Blue' },
+                    { value: 'Red', label: 'Red' },
+                    { value: 'Green', label: 'Green' }
+                  ]}
+                  aria-label="Color"
+                />
               </div>
               <div className="col-12 col-sm-4">
                 <label className="form-label text-theme-muted small fw-bold">Battery Life</label>

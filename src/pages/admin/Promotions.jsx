@@ -5,6 +5,7 @@ import {
   ToggleLeft, ToggleRight, Copy, X, Filter, RefreshCw, TrendingUp
 } from 'lucide-react'
 import DataTable from '../../components/admin/DataTable'
+import Select from '../../components/ui/Select'
 import adminService from '../../services/adminService'
 import { toast } from 'react-hot-toast'
 
@@ -157,11 +158,16 @@ function CouponModal({ coupon, onClose, onSaved }) {
           {/* Discount Type */}
           <div className="col-12 col-md-6">
             <label className="form-label fw-bold text-theme-title" style={{ fontSize: '0.83rem' }}>Discount Type</label>
-            <select className="form-select" value={form.discountType} onChange={e => set('discountType', e.target.value)} style={inputStyle}>
-              <option value="Percentage">Percentage (%)</option>
-              <option value="Fixed">Fixed Amount (₹)</option>
-              <option value="Shipping">Free Shipping</option>
-            </select>
+            <Select
+              value={form.discountType}
+              onChange={e => set('discountType', e.target.value)}
+              options={[
+                { value: 'Percentage', label: 'Percentage (%)' },
+                { value: 'Fixed', label: 'Fixed Amount (₹)' },
+                { value: 'Shipping', label: 'Free Shipping' }
+              ]}
+              aria-label="Discount Type"
+            />
           </div>
 
           {/* Discount Value */}
@@ -396,7 +402,7 @@ export default function Promotions() {
       key: 'discountValue', label: 'Discount', sortable: false,
       render: (row) => {
         if (row.discountType === 'Percentage') return <span className="fw-bold text-theme-title">{row.discountPercentage}%</span>
-        if (row.discountType === 'Shipping') return <span className="fw-bold" style={{ color: '#10b981' }}>Free Ship</span>
+        if (row.discountType === 'Shipping' || row.discountType === 'FreeShipping' || row.code === 'FREESHIP') return <span className="fw-bold" style={{ color: '#10b981' }}>Free Shipping</span>
         return <span className="fw-bold text-theme-title">{fmtCurrency(row.discountAmount)}</span>
       }
     },
@@ -472,23 +478,35 @@ export default function Promotions() {
 
   // Filter slot for DataTable
   const filterSlot = (
-    <div className="d-flex gap-2 flex-wrap">
-      <select className="form-select form-select-sm fw-bold"
-        style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-text)', border: '1px solid var(--bb-border)', borderRadius: 8, minWidth: 120 }}
-        value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-        <option value="All">All Status</option>
-        <option value="Active">Active</option>
-        <option value="Expired">Expired</option>
-        <option value="Scheduled">Scheduled</option>
-      </select>
-      <select className="form-select form-select-sm fw-bold"
-        style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-text)', border: '1px solid var(--bb-border)', borderRadius: 8, minWidth: 130 }}
-        value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
-        <option value="All">All Types</option>
-        <option value="Percentage">Percentage</option>
-        <option value="Fixed">Fixed</option>
-        <option value="Shipping">Shipping</option>
-      </select>
+    <div className="d-flex gap-2 flex-wrap" style={{ minWidth: 260 }}>
+      <div style={{ minWidth: 120 }}>
+        <Select
+          size="sm"
+          value={statusFilter}
+          onChange={e => setStatusFilter(e.target.value)}
+          options={[
+            { value: 'All', label: 'All Status' },
+            { value: 'Active', label: 'Active' },
+            { value: 'Expired', label: 'Expired' },
+            { value: 'Scheduled', label: 'Scheduled' }
+          ]}
+          aria-label="Filter by status"
+        />
+      </div>
+      <div style={{ minWidth: 130 }}>
+        <Select
+          size="sm"
+          value={typeFilter}
+          onChange={e => setTypeFilter(e.target.value)}
+          options={[
+            { value: 'All', label: 'All Types' },
+            { value: 'Percentage', label: 'Percentage' },
+            { value: 'Fixed', label: 'Fixed' },
+            { value: 'Shipping', label: 'Shipping' }
+          ]}
+          aria-label="Filter by type"
+        />
+      </div>
     </div>
   )
 

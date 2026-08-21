@@ -5,6 +5,7 @@ import {
   Eye, MessageSquare, Package, RotateCcw, X, ChevronDown, ChevronRight
 } from 'lucide-react'
 import DataTable from '../../components/admin/DataTable'
+import Select from '../../components/ui/Select'
 import adminService from '../../services/adminService'
 import { toast } from 'react-hot-toast'
 
@@ -143,14 +144,12 @@ function ReturnDetailModal({ returnReq, onClose, onUpdate }) {
         {/* Status Update */}
         <div className="mb-3">
           <label className="form-label fw-bold text-theme-title" style={{ fontSize: '0.85rem' }}>Update Status</label>
-          <select
-            className="form-select"
+          <Select
             value={newStatus}
             onChange={e => setNewStatus(e.target.value)}
-            style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-text)', border: '1px solid var(--bb-border)', borderRadius: 10 }}
-          >
-            {STATUS_FLOW.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
+            options={STATUS_FLOW.map(s => ({ value: s, label: s }))}
+            aria-label="Update return status"
+          />
         </div>
 
         {/* Admin Notes */}

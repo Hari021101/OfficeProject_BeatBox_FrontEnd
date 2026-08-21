@@ -409,8 +409,12 @@ export default function Cart() {
                   
                   {appliedPromo && (
                     <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="d-flex justify-content-between align-items-center text-success mt-2">
-                      <span className="fw-bold d-flex align-items-center gap-1"><Tag size={14} /> Discount ({appliedPromo.code})</span>
-                      <span className="fw-black">-₹{couponDiscount.toLocaleString('en-IN')}</span>
+                      <span className="fw-bold d-flex align-items-center gap-1"><Tag size={14} /> Coupon ({appliedPromo.code})</span>
+                      <span className="fw-black">
+                        {appliedPromo.isFreeShipping || appliedPromo.discountType === 'Shipping' || appliedPromo.code === 'FREESHIP'
+                          ? 'Free Shipping'
+                          : `-₹${couponDiscount.toLocaleString('en-IN')}`}
+                      </span>
                     </motion.div>
                   )}
                   

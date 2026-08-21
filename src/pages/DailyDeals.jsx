@@ -14,6 +14,8 @@ import { IMAGE_MAP } from '../data/products'
 import { toast } from 'react-hot-toast'
 import ProductCard from '../components/ui/ProductCard'
 import RecentlyViewed from '../components/ui/RecentlyViewed'
+import Select from '../components/ui/Select'
+import { getPromotionHeadline } from '../utils/promotionUtils'
 import logo from '../assets/beatbox_logo.png'
 
 export default function DailyDeals() {
@@ -562,7 +564,7 @@ export default function DailyDeals() {
                     </div>
 
                     <h3 className="fw-black text-theme-title mb-1" style={{ color: 'var(--bb-primary)' }}>
-                      {coupon.discountPercentage ? `EXTRA ${coupon.discountPercentage}% OFF` : `EXTRA ₹${coupon.discountAmount} OFF`}
+                      {getPromotionHeadline(coupon)}
                     </h3>
                     <h6 className="fw-black text-accent mb-2 uppercase-label tracking-wide">{coupon.code}</h6>
                     <p className="text-theme-muted small mb-0">Minimum Purchase: ₹{coupon.minimumOrderAmount.toLocaleString('en-IN')}</p>
@@ -638,37 +640,31 @@ export default function DailyDeals() {
                   {/* Category Filter */}
                   <div className="col-12 col-md-3 text-start">
                     <label className="small text-theme-muted mb-1 fw-bold uppercase-label">Category</label>
-                    <div className="position-relative">
-                      <select 
-                        value={activeCategory} 
-                        onChange={e => setActiveCategory(e.target.value)}
-                        className="form-select form-select-sm"
-                        style={{ background: 'var(--bb-surface-2)', color: '#fff', border: '1px solid var(--bb-border)', borderRadius: '8px' }}
-                      >
-                        <option value="all">All Categories</option>
-                        {uniqueCategories.filter(c => c !== 'all').map(cat => (
-                          <option key={cat} value={cat}>{cat}</option>
-                        ))}
-                      </select>
-                    </div>
+                    <Select
+                      size="sm"
+                      value={activeCategory}
+                      onChange={e => setActiveCategory(e.target.value)}
+                      options={[
+                        { value: 'all', label: 'All Categories' },
+                        ...uniqueCategories.filter(c => c !== 'all').map(cat => ({ value: cat, label: cat }))
+                      ]}
+                      aria-label="Filter by category"
+                    />
                   </div>
 
                   {/* Brand Filter */}
                   <div className="col-12 col-md-3 text-start">
                     <label className="small text-theme-muted mb-1 fw-bold uppercase-label">Brand</label>
-                    <div className="position-relative">
-                      <select 
-                        value={activeBrand} 
-                        onChange={e => setActiveBrand(e.target.value)}
-                        className="form-select form-select-sm"
-                        style={{ background: 'var(--bb-surface-2)', color: '#fff', border: '1px solid var(--bb-border)', borderRadius: '8px' }}
-                      >
-                        <option value="all">All Brands</option>
-                        {uniqueBrands.filter(b => b !== 'all').map(br => (
-                          <option key={br} value={br}>{br}</option>
-                        ))}
-                      </select>
-                    </div>
+                    <Select
+                      size="sm"
+                      value={activeBrand}
+                      onChange={e => setActiveBrand(e.target.value)}
+                      options={[
+                        { value: 'all', label: 'All Brands' },
+                        ...uniqueBrands.filter(b => b !== 'all').map(br => ({ value: br, label: br }))
+                      ]}
+                      aria-label="Filter by brand"
+                    />
                   </div>
 
                   {/* Price range selector */}
@@ -690,20 +686,19 @@ export default function DailyDeals() {
                   {/* Sort Selection */}
                   <div className="col-12 col-md-3 text-start">
                     <label className="small text-theme-muted mb-1 fw-bold uppercase-label">Sort By</label>
-                    <div className="position-relative">
-                      <select 
-                        value={activeSort} 
-                        onChange={e => setActiveSort(e.target.value)}
-                        className="form-select form-select-sm"
-                        style={{ background: 'var(--bb-surface-2)', color: '#fff', border: '1px solid var(--bb-border)', borderRadius: '8px' }}
-                      >
-                        <option value="discount_desc">Highest Discount</option>
-                        <option value="popularity">Popularity (SoldCount)</option>
-                        <option value="price_asc">Price: Low to High</option>
-                        <option value="price_desc">Price: High to Low</option>
-                        <option value="rating_desc">Highest Rating</option>
-                      </select>
-                    </div>
+                    <Select
+                      size="sm"
+                      value={activeSort}
+                      onChange={e => setActiveSort(e.target.value)}
+                      options={[
+                        { value: 'discount_desc', label: 'Highest Discount' },
+                        { value: 'popularity', label: 'Popularity (SoldCount)' },
+                        { value: 'price_asc', label: 'Price: Low to High' },
+                        { value: 'price_desc', label: 'Price: High to Low' },
+                        { value: 'rating_desc', label: 'Highest Rating' },
+                      ]}
+                      aria-label="Sort products"
+                    />
                   </div>
                 </div>
 

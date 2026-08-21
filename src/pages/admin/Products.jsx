@@ -7,6 +7,7 @@ import { IMAGE_MAP } from '../../data/products'
 import DataTable from '../../components/admin/DataTable'
 import StockBadge from '../../components/admin/StockBadge'
 import AddProductModal from '../../components/admin/AddProductModal'
+import Select from '../../components/ui/Select'
 
 export default function Products() {
   const navigate = useNavigate()
@@ -241,24 +242,15 @@ export default function Products() {
             }
           ]}
           filterSlot={
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-center gap-2" style={{ minWidth: 160 }}>
               <span className="text-theme-muted fw-bold d-none d-sm-inline" style={{ fontSize: '0.85rem' }}>Category:</span>
-              <select 
-                className="form-select fw-bold text-theme-title" 
-                style={{ 
-                  background: 'var(--bb-surface-2)', 
-                  border: '1px solid var(--bb-border)', 
-                  borderRadius: '10px',
-                  minWidth: '150px',
-                  cursor: 'pointer'
-                }}
+              <Select
+                size="sm"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
+                options={categories.map(cat => ({ value: cat, label: cat }))}
+                aria-label="Filter by category"
+              />
             </div>
           }
         />

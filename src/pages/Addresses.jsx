@@ -206,10 +206,7 @@ export default function Addresses() {
                       {/* Default Badge */}
                       {addr.isDefault && (
                         <div className="position-absolute top-0 end-0 m-3">
-                          <span 
-                            className="badge rounded-pill px-3 py-1 fw-bold d-flex align-items-center gap-1"
-                            style={{ background: 'rgba(0, 243, 255, 0.15)', color: 'var(--bb-accent)', border: '1px solid var(--bb-accent)' }}
-                          >
+                          <span className="badge rounded-pill px-3 py-1 fw-bold d-flex align-items-center gap-1 address-default-badge">
                             <CheckCircle size={12} /> Default Address
                           </span>
                         </div>

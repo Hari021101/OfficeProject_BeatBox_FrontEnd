@@ -6,6 +6,7 @@ import { IMAGE_MAP } from '../data/products'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectAllProducts, selectProductStatus, fetchProducts } from '../redux/productSlice'
 import ProductCard from '../components/ui/ProductCard'
+import Select from '../components/ui/Select'
 import { categoryService } from '../services/categoryService'
 
 const SORT_OPTIONS = [
@@ -285,20 +286,13 @@ export default function ProductListing() {
             </button>
 
             {/* Sort dropdown */}
-            <div className="position-relative">
-              <select
+            <div style={{ minWidth: 190 }}>
+              <Select
                 value={activeSort}
                 onChange={e => setActiveSort(e.target.value)}
-                className="form-select fw-semibold"
-                style={{
-                  background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)',
-                  borderRadius: 10, height: 44, paddingLeft: 16, paddingRight: 36, fontSize: '0.9rem',
-                  appearance: 'none', cursor: 'pointer', minWidth: 190
-                }}
-              >
-                {SORT_OPTIONS.map(o => <option key={o.id} value={o.id} style={{ background: 'var(--bb-surface)' }}>{o.label}</option>)}
-              </select>
-              <ArrowUpDown size={14} className="position-absolute" style={{ right: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--bb-muted)', pointerEvents: 'none' }} />
+                options={SORT_OPTIONS.map(o => ({ value: o.id, label: o.label }))}
+                aria-label="Sort products"
+              />
             </div>
           </div>
         </div>
