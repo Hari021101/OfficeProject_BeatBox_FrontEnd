@@ -586,7 +586,7 @@ export default function DailyDeals() {
               </div>
             </div>
 
-            <div className="row g-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
+            <div className="row g-3 row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
               {topDealsList.map((prod, idx) => (
                 <div key={`top-deal-${prod.id}`} className="col">
                   <ProductCard product={prod} index={idx} />
@@ -624,15 +624,16 @@ export default function DailyDeals() {
             >
               {/* ── FILTER & SORT CONTROLS ── */}
               <div className="glass-card p-3 rounded-4 mb-4 border border-secondary border-opacity-10 d-flex flex-column gap-3">
-                <div className="d-flex align-items-center justify-content-between">
+                <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
                   <span className="fw-bold text-white d-flex align-items-center gap-2">
                     <Filter size={16} className="text-accent" /> Filter & Refine Deals
                   </span>
                   <button 
-                    className="btn btn-sm d-md-none border-0 text-accent font-semibold p-0"
+                    className="btn btn-sm btn-glow rounded-pill px-3 py-1 fw-bold d-inline-flex align-items-center gap-2 ms-auto d-md-none"
+                    style={{ fontSize: '0.8rem' }}
                     onClick={() => setShowMobileFilters(!showMobileFilters)}
                   >
-                    <SlidersHorizontal size={16} /> Filters Menu
+                    <SlidersHorizontal size={14} /> {showMobileFilters ? 'Hide Filters' : 'Filter & Refine'}
                   </button>
                 </div>
 
@@ -759,7 +760,7 @@ export default function DailyDeals() {
                   </button>
                 </div>
               ) : (
-                <motion.div layout className="row g-4 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
+                <motion.div layout className="row g-3 row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-5">
                   <AnimatePresence mode="popLayout">
                     {filteredLiveProducts.map((prod, idx) => (
                       <motion.div

@@ -603,9 +603,26 @@ export default function OrderDetail() {
                           <p className="fw-bold text-theme-title mb-0 text-truncate" style={{ fontSize: '0.9rem' }}>
                             {item.productName}
                           </p>
-                          <p className="text-theme-muted mb-0" style={{ fontSize: '0.75rem' }}>
-                            Qty: {item.quantity} × ₹{fmt(item.unitPrice + (item.isPersonalised ? (item.engravingPrice || 0) : 0))}
-                          </p>
+                          <div className="d-flex align-items-center gap-3 flex-wrap">
+                            <span className="text-theme-muted" style={{ fontSize: '0.75rem' }}>
+                              Qty: {item.quantity} × ₹{fmt(item.unitPrice + (item.isPersonalised ? (item.engravingPrice || 0) : 0))}
+                            </span>
+                            {item.color && (
+                              <div className="d-flex align-items-center gap-1">
+                                <span
+                                  style={{
+                                    width: 12,
+                                    height: 12,
+                                    borderRadius: '50%',
+                                    background: item.colorCode,
+                                    border: '1px solid #ccc',
+                                    display: 'inline-block'
+                                  }}
+                                />
+                                <small className="text-theme-muted" style={{ fontSize: '0.75rem' }}>{item.color}</small>
+                              </div>
+                            )}
+                          </div>
                           {item.isPersonalised && (
                             <div
                               className="mt-2 p-2 px-3 rounded-3"
@@ -640,20 +657,6 @@ export default function OrderDetail() {
                             </div>
                           )}
                         </div>
-                        {item.color && (
-                          <div className="d-flex align-items-center gap-2 mt-1">
-                            <span
-                              style={{
-                                width: 14,
-                                height: 14,
-                                borderRadius: '50%',
-                                background: item.colorCode,
-                                border: '1px solid #ccc'
-                              }}
-                            />
-                            <small>{item.color}</small>
-                          </div>
-                        )}
 
                         {/* Line total */}
                         <div className="text-end flex-shrink-0">

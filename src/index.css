@@ -1258,6 +1258,24 @@ body {
   .storefront-wrapper {
     padding-top: 120px;
   }
+
+  .hero-img-box {
+    height: 500px;
+  }
+
+  .hero-img-element {
+    width: 100%;
+    max-width: 500px;
+    height: 500px;
+    object-fit: contain;
+  }
+
+  .featured-deal-img {
+    width: 100%;
+    max-width: 420px;
+    height: 420px;
+    object-fit: contain;
+  }
 }
 
 
@@ -1849,25 +1867,664 @@ video {
     padding: 24px 16px !important;
   }
 
-  .product-card-frame {
-    height: 180px !important;
+  /* ── Mobile Product Card Fixed Image Stage Normalization ── */
+  .product-card-frame,
+  .side-deal-img-frame,
+  .featured-product-image-stage {
+    width: 100% !important;
+    height: 145px !important;
+    min-height: 145px !important;
+    max-height: 145px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    overflow: hidden !important;
+    margin: 0 auto !important;
   }
 
-  .product-card-img {
-    height: 110px !important;
+  .product-card-img,
+  .side-deal-img-frame img,
+  .featured-deal-img,
+  .featured-product-image-stage img {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: 88% !important;
+    max-height: 88% !important;
+    object-fit: contain !important;
+    margin: 0 auto !important;
   }
 
   .product-card-body {
-    padding: 12px !important;
+    padding: 10px 8px 12px 8px !important;
   }
 
   .product-card-name {
-    font-size: 0.78rem !important;
+    font-size: 0.8rem !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    height: 2.5em !important;
+    margin-bottom: 4px !important;
   }
 
   .product-card-cta {
+    padding: 7px 6px !important;
+    font-size: 0.76rem !important;
+    border-radius: 8px !important;
+  }
+
+  /* Mobile Product Card & Grid Optimizations */
+  .product-card {
+    border-radius: 16px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .side-deal-img-frame {
+    height: 135px !important;
+  }
+  .side-deal-img-frame img {
+    height: 100px !important;
+  }
+
+  /* Bootstrap Grid Overrides on Mobile to force 2 columns */
+  .product-results-panel .row,
+  #newlaunches .row,
+  #bestsellers .row,
+  .daily-deals-grid .row {
+    --bs-gutter-x: 10px !important;
+    --bs-gutter-y: 10px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+  }
+
+  .product-results-panel .row-cols-1 > *,
+  #newlaunches .row-cols-1 > *,
+  .daily-deals-grid .row-cols-1 > * {
+    flex: 0 0 50% !important;
+    width: 50% !important;
+    max-width: 50% !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
+  /* ── Root Cause Fix: Viewport & Layout Width Limits ── */
+  html,
+  body {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  #root,
+  main,
+  header,
+  footer,
+  .storefront-wrapper,
+  .layout-main-offset,
+  .page-wrapper,
+  .main-layout,
+  .page-content,
+  .min-vh-100 {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Standardize Bootstrap Containers on Mobile */
+  .container,
+  .container-fluid {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Standardize Bootstrap Rows on Mobile */
+  .row {
+    --bs-gutter-x: 10px !important;
+    --bs-gutter-y: 10px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Hide background glow orbs on mobile to eliminate offscreen scrollWidth expansion */
+  .bg-glow-orb,
+  .position-absolute.bg-glow-orb {
+    display: none !important;
+  }
+
+  /* ── Home Hero Section & Hero Card Mobile Optimization ── */
+  .hero-carousel-card {
+    padding: 16px 12px !important;
+    border-radius: 16px !important;
+  }
+
+  .hero-title-text {
+    font-size: 1.35rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 6px !important;
+  }
+
+  .hero-subtitle-text {
+    font-size: 0.85rem !important;
+    margin-bottom: 10px !important;
+  }
+
+  .hero-desc-text {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    margin-bottom: 12px !important;
+  }
+
+  .hero-price-text {
+    font-size: 1.3rem !important;
+  }
+
+  .hero-oldprice-text {
+    font-size: 0.9rem !important;
+  }
+
+  .hero-cta-btn {
+    height: 44px !important;
+    padding: 8px 16px !important;
+    font-size: 0.85rem !important;
+    border-radius: 10px !important;
+  }
+
+  .hero-img-box,
+  #gravity-hero-image {
+    height: 155px !important;
+    min-height: 155px !important;
+    max-height: 155px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    overflow: hidden !important;
+    margin: 0 auto !important;
+  }
+
+  .hero-img-element,
+  #gravity-hero-image img {
+    position: static !important;
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: 88% !important;
+    max-height: 135px !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    margin: 0 auto !important;
+    transform: none !important;
+  }
+
+  .hero-circle-lg {
+    width: 220px !important;
+    height: 220px !important;
+  }
+
+  .hero-circle-sm {
+    width: 160px !important;
+    height: 160px !important;
+  }
+
+  /* ── Hero Carousel Indicators & Buttons ── */
+  .hero-carousel-console {
+    gap: 8px !important;
+    margin-top: 10px !important;
+  }
+
+  .hero-console-btn {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .hero-console-btn svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  .hero-dots-wrapper {
+    gap: 4px !important;
+  }
+
+  .hero-dot-btn {
+    height: 6px !important;
+  }
+
+  /* ── Daily Deals / Featured Deals Mobile Optimization ── */
+  #newlaunches .glass-card {
+    padding: 16px 12px !important;
+    border-radius: 16px !important;
+  }
+
+  #newlaunches h2 {
+    font-size: 1.5rem !important;
+  }
+
+  #newlaunches .col-lg-5 img,
+  .featured-deal-img {
+    height: 150px !important;
+    max-width: 200px !important;
+    object-fit: contain !important;
+  }
+
+  #newlaunches h1,
+  .featured-deal-title {
+    font-size: 1.4rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 8px !important;
+  }
+
+  #newlaunches h4 {
+    font-size: 0.9rem !important;
+    margin-bottom: 8px !important;
+  }
+
+  #newlaunches p.text-theme-muted {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Timer boxes */
+  #newlaunches .glass-card.py-3 {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+  }
+
+  #newlaunches .glass-card.py-3 h3 {
+    font-size: 1rem !important;
+  }
+
+  /* ── ShopByCategories & BeatBoxCollections Containers ── */
+  #shop-by-categories > div,
+  #beatbox-collections > div {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Compact Top Controls & Badges */
+  .product-card-badge {
+    font-size: 0.55rem !important;
+    padding: 3px 6px !important;
+  }
+
+  .product-card button[aria-label="Add to compare"],
+  .product-card button[aria-label="Toggle wishlist"] {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .product-card-body .product-color-swatch {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  .product-card-body .d-flex.gap-2.mb-2 {
+    gap: 4px !important;
+    margin-bottom: 4px !important;
+  }
+
+  /* ── Footer Newsletter Form Mobile Polish ── */
+  .footer-newsletter-form {
+    flex-direction: column !important;
+    border-radius: 16px !important;
     padding: 8px !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+
+  .footer-newsletter-form input {
+    width: 100% !important;
+    padding: 10px 14px !important;
+    border-radius: 12px !important;
+    font-size: 0.85rem !important;
+  }
+
+  .footer-newsletter-form button {
+    width: 100% !important;
+    border-radius: 12px !important;
+    height: 42px !important;
+    justify-content: center !important;
+  }
+
+  .footer-newsletter-form button span {
+    display: inline !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* ── Corporate Orders Page Mobile Spacing & 2-Column Grid Polish ── */
+  .bb-corporate-page {
+    padding-top: 0 !important;
+  }
+
+  .bb-corporate-page section {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  .bb-corporate-page h2 {
+    font-size: 1.35rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .corp-hero-section {
+    padding-top: 16px !important;
+    padding-bottom: 20px !important;
+  }
+
+  .corp-hero-section h1 {
+    font-size: 1.35rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  .corp-hero-section h2 {
+    font-size: 1.6rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  .corp-hero-section h3 {
+    font-size: 1.2rem !important;
+    margin-bottom: 10px !important;
+  }
+
+  .corp-hero-section p {
+    font-size: 0.8rem !important;
+    margin-bottom: 14px !important;
+  }
+
+  .corporate-hero-badge {
+    margin-bottom: 10px !important;
+  }
+
+  /* 1. Benefits 2-Column Mobile Grid */
+  .bb-corporate-page .row.g-4 > .col-12.col-sm-6.col-lg-3 {
+    flex: 0 0 50% !important;
+    width: 50% !important;
+    max-width: 50% !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
+  .corp-benefit-card {
+    padding: 12px 10px !important;
+    border-radius: 14px !important;
+  }
+
+  .corp-benefit-icon-wrapper {
+    width: 42px !important;
+    height: 42px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .corp-benefit-card h5 {
+    font-size: 0.85rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  .corp-benefit-card p {
+    font-size: 0.72rem !important;
+    line-height: 1.3 !important;
+  }
+
+  /* 2. Gift Collections 2-Column Compact Mobile Grid */
+  .bb-corporate-page .row.g-4.justify-content-center > .col-12.col-sm-6.col-md-4.col-lg {
+    flex: 0 0 50% !important;
+    width: 50% !important;
+    max-width: 50% !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
+  .corp-collection-card {
+    border-radius: 14px !important;
+    overflow: hidden !important;
+  }
+
+  .corp-collection-img-box {
+    height: 100px !important;
+    min-height: 100px !important;
+    max-height: 100px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  .corp-collection-img {
+    max-height: 85px !important;
+    max-width: 85% !important;
+    object-fit: contain !important;
+  }
+
+  .corp-collection-card h6 {
+    font-size: 0.82rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  .corp-collection-card p {
+    font-size: 0.7rem !important;
+  }
+
+  /* 3. Top Picks For Corporate Gifting 2-Column Product Grid & Stage */
+  #corporate-products .row.g-4 > .col-12.col-sm-6.col-lg-3 {
+    flex: 0 0 50% !important;
+    width: 50% !important;
+    max-width: 50% !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
+  #corporate-products .bestseller-card {
+    border-radius: 16px !important;
+  }
+
+  #corporate-products .product-frame {
+    height: 125px !important;
+    min-height: 125px !important;
+    max-height: 125px !important;
+    padding: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  #corporate-products .product-img {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: 95px !important;
+    max-width: 88% !important;
+    object-fit: contain !important;
+    margin: 0 auto !important;
+  }
+
+  #corporate-products .card-body {
+    padding: 10px 8px 12px 8px !important;
+  }
+
+  #corporate-products .card-title {
+    font-size: 0.8rem !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    height: 2.3em !important;
+  }
+
+  #corporate-products .card-body p.text-theme-muted {
+    display: none !important;
+  }
+
+  #corporate-products .card-body button {
+    height: 36px !important;
+    padding: 6px 10px !important;
+    font-size: 0.78rem !important;
+    border-radius: 10px !important;
+  }
+
+  /* 4. Personalisation Page Mobile 2-Column Product Grid Polish */
+  #personalisable-catalog .row.g-4 > .col-12.col-sm-6.col-lg-3 {
+    flex: 0 0 50% !important;
+    width: 50% !important;
+    max-width: 50% !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
+  #personalisable-catalog .bestseller-card {
+    border-radius: 16px !important;
+  }
+
+  #personalisable-catalog .product-frame {
+    height: 125px !important;
+    min-height: 125px !important;
+    max-height: 125px !important;
+    padding: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  #personalisable-catalog .product-img {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: 95px !important;
+    max-width: 88% !important;
+    object-fit: contain !important;
+    margin: 0 auto !important;
+  }
+
+  #personalisable-catalog .card-body {
+    padding: 10px 8px 12px 8px !important;
+  }
+
+  #personalisable-catalog .card-title {
+    font-size: 0.8rem !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    height: 2.3em !important;
+  }
+
+  #personalisable-catalog .card-body p.text-theme-muted {
+    display: none !important;
+  }
+
+  #personalisable-catalog .card-body button,
+  #personalisable-catalog .card-body a.btn {
+    height: 36px !important;
+    padding: 6px 10px !important;
+    font-size: 0.78rem !important;
+    border-radius: 10px !important;
+  }
+
+  /* 5. Daily Deals Mobile Grid & Card Polish */
+  .daily-deals-grid .col,
+  .row-cols-2 > .col {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
+  .border-danger.border-opacity-20.glass-card {
+    padding: 16px 12px !important;
+  }
+
+  .border-danger.border-opacity-20.glass-card img.hero-float {
+    max-height: 155px !important;
+    object-fit: contain !important;
+  }
+
+  .border-danger.border-opacity-20.glass-card p.text-theme-muted {
+    display: none !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .product-results-panel .row,
+  #newlaunches .row,
+  #bestsellers .row,
+  .daily-deals-grid .row {
+    --bs-gutter-x: 8px !important;
+    --bs-gutter-y: 8px !important;
+  }
+
+  .product-results-panel .row-cols-1 > *,
+  #newlaunches .row-cols-1 > *,
+  .daily-deals-grid .row-cols-1 > * {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+
+  .product-card-frame,
+  .side-deal-img-frame,
+  .featured-product-image-stage {
+    height: 132px !important;
+    min-height: 132px !important;
+    max-height: 132px !important;
+  }
+
+  .product-card-img,
+  .side-deal-img-frame img,
+  .featured-deal-img,
+  .featured-product-image-stage img {
+    width: auto !important;
+    height: auto !important;
+    max-width: 85% !important;
+    max-height: 85% !important;
+    object-fit: contain !important;
+  }
+
+  .product-card-body {
+    padding: 8px !important;
+  }
+
+  .product-card-name {
     font-size: 0.75rem !important;
+  }
+
+  .product-card-cta {
+    padding: 6px 4px !important;
+    font-size: 0.72rem !important;
   }
 }
 
@@ -2947,10 +3604,10 @@ select option {
   }
 }
 
-@media (max-width: 575.98px) {
+@media (max-width: 767.98px) {
   .related-products-container {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
   }
 }
 

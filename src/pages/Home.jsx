@@ -411,9 +411,9 @@ export default function Home() {
 
   // --- MODULAR RENDER CLOSURES TO RENDER BOTH IN GRID AND IN FREE SPACE ---
   const renderHeroText = () => (
-    <div style={{ zIndex: 10 }} className="text-start">
+    <div style={{ zIndex: 10 }} className="text-start hero-text-container">
       {/* Launch Pill */}
-      <div className="d-flex align-items-center gap-2 mb-3">
+      <div className="d-flex align-items-center gap-2 mb-2 mb-md-3">
         <span
           className="badge text-white px-3 py-2 fw-black text-uppercase tracking-wider"
           style={{
@@ -429,35 +429,35 @@ export default function Home() {
 
       {/* Headline titles */}
       <h2
-        className="display-5 fw-black text-theme-title mb-2"
+        className="display-5 fw-black text-theme-title mb-2 hero-title-text"
         style={{ letterSpacing: '-1.5px', lineHeight: '1.1' }}
       >
         {currentSlideData.title || ''}
       </h2>
       <h4
-        className="gradient-text fw-extrabold mb-4 fs-4 text-uppercase tracking-wide"
+        className="gradient-text fw-extrabold mb-3 mb-md-4 fs-4 text-uppercase tracking-wide hero-subtitle-text"
       >
         {currentSlideData.subtitle || ''}
       </h4>
 
       {/* Description */}
-      <p className="text-theme-muted fs-6 mb-4" style={{ lineHeight: '1.7', maxWidth: '520px' }}>
+      <p className="text-theme-muted fs-6 mb-3 mb-md-4 hero-desc-text" style={{ lineHeight: '1.7', maxWidth: '520px' }}>
         {currentSlideData.description || ''}
       </p>
 
       {/* Price and Action Section */}
-      <div className="d-flex flex-wrap align-items-center gap-4 mb-3">
+      <div className="d-flex flex-wrap align-items-center gap-3 gap-md-4 mb-3 hero-action-box">
         <div>
           <div className="d-flex align-items-baseline gap-2">
-            <span className="fs-1 fw-black text-theme-title">{currentSlideData.price}</span>
-            <span className="text-decoration-line-through text-theme-muted fs-5">{currentSlideData.oldPrice}</span>
+            <span className="fs-1 fw-black text-theme-title hero-price-text">{currentSlideData.price}</span>
+            <span className="text-decoration-line-through text-theme-muted fs-5 hero-oldprice-text">{currentSlideData.oldPrice}</span>
           </div>
           <span className="badge bb-badge-success px-2 py-1 small fw-bold">
             {currentSlideData.discount}
           </span>
         </div>
         
-        <div className="d-flex gap-3 w-100 mt-2">
+        <div className="d-flex gap-3 w-100 mt-2 hero-cta-box">
           <motion.button 
             whileHover={{ scale: 1.03, y: -2 }}
             whileTap={{ scale: 0.98 }}
@@ -465,7 +465,7 @@ export default function Home() {
               if (!currentSlideData.productId) return
               navigate(`/products/${currentSlideData.productId}`)
             }}
-            className="btn btn-glow d-flex align-items-center justify-content-center gap-2 py-3 fw-bold w-100 w-sm-auto px-sm-5"
+            className="btn btn-glow d-flex align-items-center justify-content-center gap-2 py-3 fw-bold w-100 w-sm-auto px-sm-5 hero-cta-btn"
             style={{ borderRadius: '12px', height: '55px', border: 'none' }}
           >
             View Product <ArrowRight size={18} />
@@ -477,11 +477,10 @@ export default function Home() {
 
   const renderHeroImage = () => (
     <div
-      className="position-relative text-center w-100 hover-scale transition-all d-flex justify-content-center align-items-center"
+      className="position-relative text-center w-100 hover-scale transition-all d-flex justify-content-center align-items-center hero-img-box"
       style={{
         zIndex: 5,
-        cursor: 'pointer',
-        height: '500px'
+        cursor: 'pointer'
       }}
       onClick={() =>
         navigate(`/products/${currentSlideData.productId}`)
@@ -490,13 +489,7 @@ export default function Home() {
       <img
         src={currentSlideData.image || '/placeholder-product.png'}
         alt={currentSlideData.title}
-        className="hero-float"
-        style={{
-          width: '100%',
-          maxWidth: '500px',
-          height: '500px',
-          objectFit: 'contain'
-        }}
+        className="hero-float hero-img-element"
         onError={(e) => {
           e.target.src = '/placeholder-product.png';
         }}
@@ -756,11 +749,11 @@ export default function Home() {
 
                   {/* Cybernetic Grid design circles in background */}
                   <div
-                    className="position-absolute rounded-circle border border-info border-opacity-10"
+                    className="position-absolute rounded-circle border border-info border-opacity-10 hero-circle-lg"
                     style={{ width: '450px', height: '450px', zIndex: 1, animation: 'spin 30s linear infinite' }}
                   ></div>
                   <div
-                    className="position-absolute rounded-circle border border-primary border-opacity-10"
+                    className="position-absolute rounded-circle border border-primary border-opacity-10 hero-circle-sm"
                     style={{ width: '320px', height: '320px', zIndex: 1, animation: 'spin 20s linear infinite reverse' }}
                   ></div>
                 </div>
@@ -768,23 +761,23 @@ export default function Home() {
               </div>
 
               {/* Slider Nav & Indicators Console (Unified Bottom Row) */}
-              <div className="d-flex align-items-center justify-content-center gap-3 mt-4" style={{ zIndex: 30 }}>
+              <div className="d-flex align-items-center justify-content-center gap-2 gap-md-3 mt-3 mt-md-4 hero-carousel-console" style={{ zIndex: 30 }}>
                 {/* Left Arrow Button */}
                 <button
                   onClick={prevSlide}
-                  className="rounded-circle console-btn d-flex align-items-center justify-content-center"
+                  className="rounded-circle console-btn hero-console-btn d-flex align-items-center justify-content-center"
                   style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)', width: '36px', height: '36px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' }}
                 >
                   <ChevronLeft size={18} />
                 </button>
 
                 {/* Slide Indicators / Dots */}
-                <div className="d-flex align-items-center gap-2">
+                <div className="d-flex align-items-center gap-2 hero-dots-wrapper">
                   {(slides || []).map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentSlide(index)}
-                      className="btn p-0 rounded-circle transition-all"
+                      className="btn p-0 rounded-circle transition-all hero-dot-btn"
                       style={{
                         width: currentSlide === index ? '20px' : '8px',
                         height: '8px',
@@ -801,7 +794,7 @@ export default function Home() {
                 {/* Right Arrow Button */}
                 <button
                   onClick={nextSlide}
-                  className="rounded-circle console-btn d-flex align-items-center justify-content-center"
+                  className="rounded-circle console-btn hero-console-btn d-flex align-items-center justify-content-center"
                   style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)', width: '36px', height: '36px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)' }}
                 >
                   <ChevronRight size={18} />
@@ -965,12 +958,8 @@ export default function Home() {
                   <img
                     src={dealProduct?.imageUrl}
                     alt={dealProduct?.name}
-                    className="img-fluid"
+                    className="img-fluid featured-deal-img"
                     style={{
-                      width: '100%',
-                      maxWidth: '420px',
-                      height: '420px',
-                      objectFit: 'contain',
                       filter:
                         'drop-shadow(0 25px 50px rgba(0,0,0,.25))'
                     }}
@@ -1138,20 +1127,20 @@ export default function Home() {
 
               {/* OTHER DEALS */}
 
-              <div className="row g-4">
+              <div className="row g-3 g-md-4">
 
                 {sideDeals.map(product => (
 
                   <div
                     key={product.id}
-                    className="col-12 col-md-6 col-xl-3"
+                    className="col-6 col-md-6 col-xl-3"
                   >
                     <motion.div
                       whileHover={{
                         y: -10,
                         scale: 1.03
                       }}
-                      className="glass-card p-3 h-100"
+                      className="glass-card p-2 p-md-3 h-100"
                       style={{
                         cursor: 'pointer',
                         border:
@@ -1165,7 +1154,7 @@ export default function Home() {
                     >
 
                       <div
-                        className="d-flex justify-content-center align-items-center mb-3"
+                        className="d-flex justify-content-center align-items-center mb-2 mb-md-3 side-deal-img-frame"
                         style={{
                           height: '220px'
                         }}

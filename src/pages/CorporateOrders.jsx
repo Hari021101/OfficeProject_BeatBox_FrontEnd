@@ -173,7 +173,7 @@ export default function CorporateOrders() {
   }
 
   return (
-    <div className="bb-corporate-page min-vh-100" style={{ paddingTop: '80px' }}>
+    <div className="bb-corporate-page min-vh-100">
 
       {/* ── 1. PREMIUM SPLIT HERO SECTION ── */}
       <section className="corp-hero-section">

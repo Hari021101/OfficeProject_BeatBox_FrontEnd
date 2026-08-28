@@ -107,7 +107,7 @@ export default function Footer() {
               {/* Newsletter subscription form */}
               <form
                 onSubmit={handleSubscribe}
-                className="position-relative w-100 mb-4 d-flex align-items-center"
+                className="position-relative w-100 mb-4 d-flex align-items-center footer-newsletter-form"
                 style={{
                   background: 'var(--bb-surface-2)',
                   border: '1px solid var(--bb-border)',
