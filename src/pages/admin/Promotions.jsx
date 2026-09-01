@@ -461,8 +461,15 @@ export default function Promotions() {
             style={{ background: 'rgba(0,243,255,0.1)', border: '1px solid rgba(0,243,255,0.3)', color: 'var(--bb-accent)', borderRadius: 6 }}>
             <Edit3 size={13} />
           </button>
-          <button className="btn btn-sm p-1" title="Duplicate"
-            onClick={() => handleDuplicate(row)}
+          <button className="btn btn-sm p-1" title="Copy Code"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(row.code)
+                toast.success(`Coupon code "${row.code}" copied to clipboard!`)
+              } catch {
+                toast.error('Failed to copy coupon code')
+              }
+            }}
             style={{ background: 'rgba(168,32,255,0.1)', border: '1px solid rgba(168,32,255,0.3)', color: '#d161ff', borderRadius: 6 }}>
             <Copy size={13} />
           </button>

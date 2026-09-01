@@ -52,10 +52,9 @@ export default function Checkout() {
   const [orderId] = useState(`BB${Date.now().toString().slice(-8)}`)
   const [createdOrderId, setCreatedOrderId] = useState(null)
 
-  const shipping = appliedPromo?.isFreeShipping ? 0 : (subtotal >= 999 ? 0 : 79)
-  const gst = Math.round(subtotal * 0.18)
+  const shipping = (appliedPromo?.code === 'FREESHIP' && (appliedPromo?.isFreeShipping || appliedPromo?.discountType === 'Shipping')) ? 0 : 49
   const couponDiscount = appliedPromo?.discountAmount != null ? Number(appliedPromo.discountAmount) : (appliedPromo?.discountPercentage ? Math.round(subtotal * (appliedPromo.discountPercentage / 100)) : 0)
-  const total = Math.max(0, subtotal + shipping + gst - couponDiscount)
+  const total = Math.max(0, subtotal + shipping - couponDiscount)
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
     resolver: zodResolver(checkoutSchema)
@@ -118,7 +117,6 @@ export default function Checkout() {
   }
   console.log({
     subtotal,
-    gst,
     shipping,
     couponDiscount,
     total,
@@ -581,7 +579,6 @@ export default function Checkout() {
                 </div>
                 <div className="d-flex flex-column gap-1 pt-3" style={{ borderTop: '1px solid var(--bb-border)' }}>
                   <div className="d-flex justify-content-between text-theme-muted small"><span>Subtotal</span><span>₹{subtotal.toLocaleString('en-IN')}</span></div>
-                  <div className="d-flex justify-content-between text-theme-muted small"><span>GST (18%)</span><span>₹{gst.toLocaleString('en-IN')}</span></div>
                   <div className="d-flex justify-content-between small">
                     <span className="text-theme-muted">Shipping</span>
                     <span style={{ color: shipping === 0 ? '#39ff14' : 'var(--bb-muted)', fontWeight: 600 }}>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span>

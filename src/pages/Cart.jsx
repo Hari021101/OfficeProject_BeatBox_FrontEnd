@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSelector, useDispatch } from 'react-redux'
-import { X, Plus, Minus, ShoppingBag, ArrowRight, Tag, Package, ChevronRight, Shield, Truck } from 'lucide-react'
+import { X, Plus, Minus, ShoppingBag, ArrowRight, Tag, Package, ChevronRight, Shield, Truck, Sparkles } from 'lucide-react'
 import { removeFromCart, updateQuantity, clearCart, selectCartItems, selectCartSubtotal, selectCartCount, selectAppliedPromo, applyPromo, removePromo } from '../redux/cartSlice'
+import { selectIsAuthenticated } from '../redux/authSlice'
+import { fetchMyOrders, selectAllOrders } from '../redux/orderSlice'
 import { IMAGE_MAP } from '../data/products'
 import { toast } from 'react-hot-toast'
 import logo from '../assets/beatbox_logo.png'
@@ -18,14 +20,29 @@ export default function Cart() {
   const subtotal = useSelector(selectCartSubtotal)
   const count = useSelector(selectCartCount)
   const appliedPromo = useSelector(selectAppliedPromo)
+  const isAuthenticated = useSelector(selectIsAuthenticated)
+  const myOrders = useSelector(selectAllOrders)
+
   const [couponInput, setCouponInput] = useState('')
   const [couponError, setCouponError] = useState('')
   const [isValidatingPromo, setIsValidatingPromo] = useState(false)
 
-  const shipping = appliedPromo?.isFreeShipping ? 0 : (subtotal >= 999 ? 0 : 79)
-  const gst = Math.round(subtotal * 0.18)
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchMyOrders())
+    }
+  }, [dispatch, isAuthenticated])
+
+  const hasPreviousValidOrder = useMemo(() => {
+    if (!isAuthenticated || !myOrders || myOrders.length === 0) return false
+    return myOrders.some(o => o.status !== 'Cancelled' && o.status !== 'Failed')
+  }, [isAuthenticated, myOrders])
+
+  const isFirstOrderEligible = isAuthenticated && !hasPreviousValidOrder
+
+  const shipping = (appliedPromo?.code === 'FREESHIP' && (appliedPromo?.isFreeShipping || appliedPromo?.discountType === 'Shipping')) ? 0 : 49
   const couponDiscount = appliedPromo?.discountAmount != null ? Number(appliedPromo.discountAmount) : (appliedPromo?.discountPercentage ? Math.round(subtotal * (appliedPromo.discountPercentage / 100)) : 0)
-  const total = Math.max(0, subtotal + shipping + gst - couponDiscount)
+  const total = Math.max(0, subtotal + shipping - couponDiscount)
 
   const handleApplyCoupon = async () => {
     const code = couponInput.toUpperCase().trim()
@@ -35,13 +52,21 @@ export default function Cart() {
     setCouponError('');
     try {
       const result = await validatePromoCode(code, subtotal);
+      if (!result || result.isValid === false) {
+        throw new Error(result?.message || result?.Message || 'Invalid coupon code');
+      }
       dispatch(applyPromo(result));
       setCouponInput('');
       toast.success(`🎉 ${result.message}`, {
         style: { background: '#060b19', color: '#39ff14', border: '1px solid rgba(39,255,20,0.3)', borderRadius: '10px' }
       })
     } catch (error) {
-      setCouponError(error.message || 'Invalid coupon code.');
+      dispatch(removePromo());
+      const errorMsg = error.message || 'Invalid coupon code.';
+      setCouponError(errorMsg);
+      toast.error(errorMsg, {
+        style: { background: '#060b19', color: '#ef4444', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '10px' }
+      })
     } finally {
       setIsValidatingPromo(false);
     }
@@ -65,73 +90,100 @@ export default function Cart() {
             <div className="d-flex align-items-center justify-content-center rounded-3" style={{ width: 48, height: 48, background: 'linear-gradient(135deg, rgba(0,243,255,0.1), rgba(168,32,255,0.1))', border: '1px solid rgba(0,243,255,0.2)' }}>
               <ShoppingBag size={24} style={{ color: 'var(--bb-accent)' }} />
             </div>
-            <h1 className="fw-black text-theme-title mb-0" style={{ fontSize: 'clamp(2rem, 4vw, 2.5rem)', letterSpacing: '-1.5px' }}>
-              Your <span className="gradient-text">Cart</span>
-            </h1>
-            {count > 0 && (
-              <span className="badge rounded-pill px-3 py-2 ms-2 fw-bold shadow-sm" style={{ background: 'linear-gradient(135deg,var(--bb-primary),var(--bb-accent))', fontSize: '0.9rem', letterSpacing: '0.5px' }}>
-                {count} {count === 1 ? 'Item' : 'Items'}
-              </span>
-            )}
+            <div>
+              <h1 className="fw-black mb-0 text-theme-title" style={{ fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', letterSpacing: '-1px' }}>
+                Shopping <span className="gradient-text">Cart</span>
+              </h1>
+              <p className="text-theme-muted mb-0" style={{ fontSize: '0.95rem' }}>
+                Review your high-performance audio items before checkout
+              </p>
+            </div>
           </div>
-          <nav aria-label="breadcrumb">
-            <ol className="breadcrumb mb-0" style={{ fontSize: '0.85rem' }}>
-              <li className="breadcrumb-item"><Link to="/" className="text-theme-muted text-decoration-none transition-colors hover-text-accent">Home</Link></li>
-              <li className="breadcrumb-item"><Link to="/products" className="text-theme-muted text-decoration-none transition-colors hover-text-accent">Products</Link></li>
-              <li className="breadcrumb-item active text-theme-title fw-semibold" aria-current="page">Cart</li>
-            </ol>
-          </nav>
         </div>
 
-        {/* Free shipping banner */}
-        {subtotal > 0 && subtotal < 999 && (
-          <motion.div
+        {/* ── Dynamic BeatBox Benefits Banner ── */}
+        {isAuthenticated && isFirstOrderEligible && (
+          <motion.div 
             initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-            className="d-flex align-items-center gap-3 gap-md-4 p-3 p-md-4 rounded-4 mb-5 position-relative overflow-hidden"
-            style={{ background: 'var(--bb-surface)', border: '1px solid rgba(0,243,255,0.15)', boxShadow: '0 10px 30px rgba(0,0,0,0.2)' }}
+            className="d-flex align-items-center gap-3 p-3 p-md-4 rounded-4 mb-5 position-relative overflow-hidden flex-wrap" 
+            style={{ background: 'linear-gradient(90deg, rgba(168,32,255,0.12), rgba(0,243,255,0.08))', border: '1px solid rgba(0,243,255,0.3)', boxShadow: '0 10px 30px rgba(0,0,0,0.2)' }}
           >
-            <div className="position-absolute top-0 start-0 w-100 h-100" style={{ background: 'linear-gradient(90deg, rgba(0,243,255,0.05) 0%, transparent 100%)', zIndex: 0 }} />
-            
-            <div className="rounded-circle d-flex align-items-center justify-content-center position-relative" style={{ width: 44, height: 44, background: 'rgba(0,243,255,0.1)', zIndex: 1 }}>
+            <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: 44, height: 44, background: 'rgba(0,243,255,0.15)', flexShrink: 0 }}>
               <Truck size={22} style={{ color: 'var(--bb-accent)' }} />
             </div>
-            
-            <div className="flex-grow-1 position-relative" style={{ zIndex: 1 }}>
-              <div className="d-flex justify-content-between mb-2">
-                <span className="text-theme-title fw-semibold" style={{ fontSize: '0.95rem' }}>
-                  Add <span className="fw-black" style={{ color: 'var(--bb-accent)' }}>₹{(999 - subtotal).toLocaleString('en-IN')}</span> more for FREE shipping!
-                </span>
-                <span className="text-theme-muted small fw-bold">₹999 Goal</span>
-              </div>
-              <div className="rounded-pill overflow-hidden" style={{ height: 8, background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
-                <div 
-                  className="progress-glow" 
-                  style={{ 
-                    width: `${Math.min((subtotal / 999) * 100, 100)}%`, 
-                    height: '100%', 
-                    background: 'linear-gradient(90deg, var(--bb-primary), var(--bb-accent))',
-                    boxShadow: '0 0 10px var(--bb-accent-glow)',
-                    transition: 'width 0.6s cubic-bezier(0.165, 0.84, 0.44, 1)' 
-                  }} 
-                />
-              </div>
+            <div className="flex-grow-1">
+              <h5 className="fw-black mb-1 text-theme-title d-flex align-items-center gap-2" style={{ fontSize: '1rem', letterSpacing: '-0.3px' }}>
+                🚚 FREE SHIPPING ON YOUR FIRST ORDER
+              </h5>
+              <span className="text-theme-muted" style={{ fontSize: '0.85rem' }}>
+                New here? Use code <span className="fw-bold text-accent" style={{ fontFamily: 'monospace' }}>FREESHIP</span> at checkout and enjoy free delivery.
+              </span>
             </div>
+            <button
+              onClick={async () => {
+                await navigator.clipboard.writeText('FREESHIP');
+                setCouponInput('FREESHIP');
+                toast.success('Code FREESHIP copied & set!');
+              }}
+              className="btn btn-sm fw-bold px-3 py-2 ms-auto text-nowrap"
+              style={{ background: 'linear-gradient(135deg, var(--bb-primary), var(--bb-accent))', color: '#000', borderRadius: 10, fontSize: '0.8rem' }}
+            >
+              COPY CODE
+            </button>
           </motion.div>
         )}
-        
-        {subtotal >= 999 && (
+
+        {isAuthenticated && !isFirstOrderEligible && (
           <motion.div 
-            initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
-            className="d-flex align-items-center gap-3 p-3 p-md-4 rounded-4 mb-5" 
-            style={{ background: 'linear-gradient(90deg, rgba(57,255,20,0.08), transparent)', border: '1px solid rgba(57,255,20,0.2)', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
+            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+            className="d-flex align-items-center gap-3 p-3 p-md-4 rounded-4 mb-5 position-relative overflow-hidden flex-wrap" 
+            style={{ background: 'linear-gradient(90deg, rgba(0,243,255,0.08), rgba(57,255,20,0.06))', border: '1px solid rgba(0,243,255,0.2)', boxShadow: '0 10px 30px rgba(0,0,0,0.2)' }}
           >
-            <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: 40, height: 40, background: 'rgba(57,255,20,0.15)' }}>
-              <Truck size={20} style={{ color: '#39ff14' }} />
+            <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: 44, height: 44, background: 'rgba(0,243,255,0.12)', flexShrink: 0 }}>
+              <Sparkles size={22} style={{ color: 'var(--bb-accent)' }} />
             </div>
-            <div>
-              <h5 className="fw-black mb-1" style={{ color: '#39ff14', letterSpacing: '-0.5px' }}>Free Shipping Unlocked!</h5>
-              <span className="text-theme-muted" style={{ fontSize: '0.85rem' }}>Your order qualifies for complimentary premium delivery.</span>
+            <div className="flex-grow-1">
+              <h5 className="fw-black mb-1 text-theme-title d-flex align-items-center gap-2" style={{ fontSize: '1rem', letterSpacing: '-0.3px' }}>
+                ⚡ TODAY'S BEST DEALS
+              </h5>
+              <span className="text-theme-muted" style={{ fontSize: '0.85rem' }}>
+                Discover exclusive discounts, new arrivals & 1-Year warranty on all gear.
+              </span>
             </div>
+            <button
+              onClick={() => navigate('/daily-deals')}
+              className="btn btn-sm fw-bold px-3 py-2 ms-auto text-nowrap"
+              style={{ background: 'rgba(0,243,255,0.12)', color: 'var(--bb-accent)', border: '1px solid rgba(0,243,255,0.3)', borderRadius: 10, fontSize: '0.8rem' }}
+            >
+              SHOP DEALS
+            </button>
+          </motion.div>
+        )}
+
+        {!isAuthenticated && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+            className="d-flex align-items-center gap-3 p-3 p-md-4 rounded-4 mb-5 position-relative overflow-hidden flex-wrap" 
+            style={{ background: 'linear-gradient(90deg, rgba(168,32,255,0.12), rgba(0,243,255,0.08))', border: '1px solid rgba(168,32,255,0.3)', boxShadow: '0 10px 30px rgba(0,0,0,0.2)' }}
+          >
+            <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: 44, height: 44, background: 'rgba(168,32,255,0.15)', flexShrink: 0 }}>
+              <Shield size={22} style={{ color: '#d161ff' }} />
+            </div>
+            <div className="flex-grow-1">
+              <h5 className="fw-black mb-1 text-theme-title" style={{ fontSize: '1rem', letterSpacing: '-0.3px' }}>
+                🎧 NEW TO BEATBOX?
+              </h5>
+              <span className="text-theme-muted" style={{ fontSize: '0.85rem' }}>
+                Get <span className="fw-bold text-accent">FREE SHIPPING</span> on your first order with code <span className="fw-bold text-accent" style={{ fontFamily: 'monospace' }}>FREESHIP</span> when you sign in.
+              </span>
+            </div>
+            <button
+              onClick={() => navigate('/login')}
+              className="btn btn-sm fw-bold px-3 py-2 ms-auto text-nowrap"
+              style={{ background: 'linear-gradient(135deg, var(--bb-primary), var(--bb-accent))', color: '#000', borderRadius: 10, fontSize: '0.8rem' }}
+            >
+              SIGN IN & SHOP
+            </button>
           </motion.div>
         )}
 
@@ -251,16 +303,23 @@ export default function Cart() {
                               <div className="d-flex flex-wrap align-items-center gap-3 mt-2">
                                 {item.selectedColor && (
                                   <div className="d-flex align-items-center gap-2 px-2 py-1 rounded-pill" style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}>
-                                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: item.selectedColorCode || '#888', border: '1px solid rgba(255,255,255,0.2)' }} />
+                                    <div style={{
+                                      width: 12,
+                                      height: 12,
+                                      borderRadius: '50%',
+                                      background: item.selectedColorCode || '#888',
+                                      border: (item.selectedColorCode === '#000' || item.selectedColorCode === '#000000' || item.selectedColor?.toLowerCase() === 'black')
+                                        ? '1px solid #64748b'
+                                        : (item.selectedColorCode === '#fff' || item.selectedColorCode === '#ffffff' || item.selectedColor?.toLowerCase() === 'white')
+                                          ? '1px solid #94a3b8'
+                                          : '1px solid rgba(255,255,255,0.2)'
+                                    }} />
                                     <span
-  className="fw-semibold"
-  style={{
-    fontSize: '0.75rem',
-    color: item.selectedColorCode || 'var(--bb-title-color)'
-  }}
->
-  {item.selectedColor}
-</span>
+                                      className="fw-semibold text-theme-title"
+                                      style={{ fontSize: '0.75rem' }}
+                                    >
+                                      {item.selectedColor}
+                                    </span>
                                   </div>
                                 )}
                                 {item.isPersonalised && (
@@ -395,10 +454,6 @@ export default function Cart() {
                   <div className="d-flex justify-content-between align-items-center text-theme-muted">
                     <span className="fw-medium">Subtotal <span className="small">({count} items)</span></span>
                     <span className="fw-semibold text-theme-title">₹{subtotal.toLocaleString('en-IN')}</span>
-                  </div>
-                  <div className="d-flex justify-content-between align-items-center text-theme-muted">
-                    <span className="fw-medium">Estimated GST <span className="small">(18%)</span></span>
-                    <span className="fw-semibold text-theme-title">₹{gst.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="d-flex justify-content-between align-items-center">
                     <span className="fw-medium text-theme-muted">Shipping</span>

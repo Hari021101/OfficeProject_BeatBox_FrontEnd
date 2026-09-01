@@ -458,22 +458,29 @@ export default function DailyDeals() {
                     <div className="mb-4">
                       <span className="small text-theme-muted d-block mb-2 fw-bold uppercase-label">Select Color Variant:</span>
                       <div className="d-flex gap-2">
-                        {heroDeal.colors.map((clr, i) => (
-                          <button
-                            key={i}
-                            onClick={() => setHeroSelectedColor(clr)}
-                            className="btn p-0 rounded-circle border-0 transition-all"
-                            style={{
-                              width: 28, height: 28,
-                              background: clr.code || clr.colorCode,
-                              outline: (heroDetails.colorObj?.name === clr.name || heroDetails.colorObj?.color === clr.color) ? `2px solid white` : 'none',
-                              outlineOffset: 2,
-                              boxShadow: (heroDetails.colorObj?.name === clr.name || heroDetails.colorObj?.color === clr.color) ? `0 0 10px ${clr.code || clr.colorCode}` : 'none'
-                            }}
-                            title={clr.name}
-                            aria-label={`Select ${clr.name}`}
-                          />
-                        ))}
+                        {heroDeal.colors.map((clr, i) => {
+                          const isSelected = (heroDetails.colorObj?.name === clr.name || heroDetails.colorObj?.color === clr.color);
+                          const colorCode = clr.code || clr.colorCode || '#888';
+                          const isWhite = colorCode === '#fff' || colorCode === '#ffffff' || clr.name?.toLowerCase() === 'white';
+                          const isBlack = colorCode === '#000' || colorCode === '#000000' || clr.name?.toLowerCase() === 'black';
+                          return (
+                            <button
+                              key={i}
+                              onClick={() => setHeroSelectedColor(clr)}
+                              className={`btn p-0 rounded-circle transition-all ${isSelected ? 'selected' : ''}`}
+                              style={{
+                                width: 28, height: 28,
+                                background: colorCode,
+                                border: isWhite ? '1px solid #94a3b8' : isBlack ? '1px solid #64748b' : '1px solid var(--bb-border, rgba(0,0,0,0.15))',
+                                outline: isSelected ? '2px solid var(--bb-accent, #00f3ff)' : 'none',
+                                outlineOffset: 2,
+                                boxShadow: isSelected ? '0 0 10px var(--bb-accent-glow, rgba(0,243,255,0.4))' : 'none'
+                              }}
+                              title={clr.name}
+                              aria-label={`Select ${clr.name}`}
+                            />
+                          );
+                        })}
                       </div>
                     </div>
                   )}

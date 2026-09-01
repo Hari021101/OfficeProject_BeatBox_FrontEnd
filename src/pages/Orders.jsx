@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  Package, ShoppingBag, ChevronRight, Clock, CheckCircle,
+  Package, ShoppingBag, ChevronRight, ChevronLeft, Clock, CheckCircle,
   Truck, XCircle, RefreshCw, ArrowRight, Filter
 } from 'lucide-react'
 import { fetchMyOrders, selectAllOrders, selectOrderStatus } from '../redux/orderSlice'
@@ -125,15 +125,15 @@ function OrderCard({ order, index }) {
               }}
             >
               <div className="text-center px-1">
- <img
-  src={getImageUrl(item.productImageUrl)}
-  alt={item.productName}
-  style={{
-    width: '100%',
-    height: '100%',
-    objectFit: 'contain'
-  }}
-/>
+                <img
+                  src={getImageUrl(item.productImageUrl)}
+                  alt={item.productName}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain'
+                  }}
+                />
                 <div style={{ fontSize: '0.55rem', marginTop: 2, color: 'var(--bb-muted)', lineHeight: 1.2 }}>
                   {item.productName?.split(' ')[0] || 'Item'}
                 </div>
@@ -245,6 +245,8 @@ export default function Orders() {
   const allOrders = useSelector(selectAllOrders)
   const status = useSelector(selectOrderStatus)
   const [activeTab, setActiveTab] = useState('All')
+  const [currentPage, setCurrentPage] = useState(1)
+  const ORDERS_PER_PAGE = 8
 
   useEffect(() => {
     dispatch(fetchMyOrders())
@@ -254,6 +256,24 @@ export default function Orders() {
     if (activeTab === 'All') return allOrders
     return allOrders.filter(o => o.status === activeTab)
   }, [allOrders, activeTab])
+
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / ORDERS_PER_PAGE))
+  const safePage = Math.min(currentPage, totalPages)
+
+  const paginatedOrders = useMemo(() => {
+    const start = (safePage - 1) * ORDERS_PER_PAGE
+    return filteredOrders.slice(start, start + ORDERS_PER_PAGE)
+  }, [filteredOrders, safePage])
+
+  const getPageNumbers = () => {
+    const pages = []
+    const maxVisible = window.innerWidth < 576 ? 3 : 5
+    let start = Math.max(1, safePage - Math.floor(maxVisible / 2))
+    let end = Math.min(totalPages, start + maxVisible - 1)
+    if (end - start + 1 < maxVisible) start = Math.max(1, end - maxVisible + 1)
+    for (let i = start; i <= end; i++) pages.push(i)
+    return pages
+  }
 
   const isLoading = status === 'loading'
   const isFailed = status === 'failed'
@@ -317,7 +337,10 @@ export default function Orders() {
               <button
                 key={tab}
                 id={`order-tab-${tab.toLowerCase()}`}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => {
+                  setActiveTab(tab)
+                  setCurrentPage(1)
+                }}
                 className="btn fw-bold d-flex align-items-center gap-1"
                 style={{
                   borderRadius: 50,
@@ -376,7 +399,7 @@ export default function Orders() {
           </motion.div>
         ) : (
           <AnimatePresence mode="wait">
-            <div className="row g-4" key={activeTab}>
+            <div className="row g-4" key={`${activeTab}-${safePage}`}>
               {isLoading ? (
                 [1, 2, 3].map(i => (
                   <div key={i} className="col-12 col-md-6 col-xl-4">
@@ -388,7 +411,7 @@ export default function Orders() {
                   <EmptyState activeTab={activeTab} />
                 </div>
               ) : (
-                filteredOrders.map((order, idx) => (
+                paginatedOrders.map((order, idx) => (
                   <div key={order.orderId} className="col-12 col-md-6 col-xl-4">
                     <OrderCard order={order} index={idx} />
                   </div>
@@ -396,6 +419,75 @@ export default function Orders() {
               )}
             </div>
           </AnimatePresence>
+        )}
+
+        {/* ── Pagination Controls ───────────────────────────────────────────── */}
+        {!isLoading && filteredOrders.length > 0 && totalPages > 1 && (
+          <div
+            className="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-4 pt-4 px-2"
+            style={{ borderTop: '1px solid var(--bb-border)' }}
+          >
+            <span className="text-theme-muted fw-bold" style={{ fontSize: '0.82rem' }}>
+              Showing {((safePage - 1) * ORDERS_PER_PAGE) + 1}–{Math.min(safePage * ORDERS_PER_PAGE, filteredOrders.length)} of {filteredOrders.length} orders
+            </span>
+
+            <div className="d-flex align-items-center gap-1">
+              <button
+                className="btn btn-sm d-flex align-items-center justify-content-center text-theme-title"
+                disabled={safePage === 1}
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                style={{
+                  width: '36px', height: '36px',
+                  background: 'var(--bb-surface-2)',
+                  border: '1px solid var(--bb-border)',
+                  borderRadius: '10px',
+                  padding: 0,
+                  opacity: safePage === 1 ? 0.4 : 1
+                }}
+                aria-label="Previous Page"
+              >
+                <ChevronLeft size={16} />
+              </button>
+
+              {getPageNumbers().map(n => (
+                <button
+                  key={n}
+                  className="btn btn-sm fw-bold"
+                  onClick={() => setCurrentPage(n)}
+                  style={{
+                    width: '36px', height: '36px', padding: 0,
+                    borderRadius: '10px', fontSize: '0.85rem',
+                    background: safePage === n
+                      ? 'linear-gradient(135deg, rgba(0,243,255,0.2), rgba(168,32,255,0.15))'
+                      : 'var(--bb-surface-2)',
+                    color: safePage === n ? 'var(--bb-accent)' : 'var(--bb-title-color)',
+                    border: safePage === n ? '1px solid var(--bb-accent)' : '1px solid var(--bb-border)',
+                    boxShadow: safePage === n ? '0 0 12px rgba(0,243,255,0.2)' : 'none',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  {n}
+                </button>
+              ))}
+
+              <button
+                className="btn btn-sm d-flex align-items-center justify-content-center text-theme-title"
+                disabled={safePage === totalPages}
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                style={{
+                  width: '36px', height: '36px',
+                  background: 'var(--bb-surface-2)',
+                  border: '1px solid var(--bb-border)',
+                  borderRadius: '10px',
+                  padding: 0,
+                  opacity: safePage === totalPages ? 0.4 : 1
+                }}
+                aria-label="Next Page"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

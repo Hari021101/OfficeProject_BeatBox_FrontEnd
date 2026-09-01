@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { Edit2, Trash2, MoreVertical, Star } from 'lucide-react'
 import { productService } from '../../services/productService'
@@ -8,6 +9,143 @@ import DataTable from '../../components/admin/DataTable'
 import StockBadge from '../../components/admin/StockBadge'
 import AddProductModal from '../../components/admin/AddProductModal'
 import Select from '../../components/ui/Select'
+
+function ActionDropdownMenu({ row, handleDelete }) {
+  const [isOpen, setIsOpen] = useState(false)
+  const [coords, setCoords] = useState({ top: 0, left: 0 })
+  const buttonRef = useRef(null)
+  const menuRef = useRef(null)
+
+  const updatePosition = () => {
+    if (!buttonRef.current) return
+    const rect = buttonRef.current.getBoundingClientRect()
+    const menuWidth = 160
+    const menuHeight = 150
+
+    const spaceBelow = window.innerHeight - rect.bottom
+    const spaceAbove = rect.top
+
+    const isUpward = spaceBelow < menuHeight + 20 && spaceAbove > spaceBelow
+
+    const left = Math.max(10, rect.right - menuWidth)
+    const top = isUpward
+      ? Math.max(10, rect.top - menuHeight - 6)
+      : rect.bottom + 6
+
+    setCoords({ top, left })
+  }
+
+  const toggleDropdown = (e) => {
+    e.stopPropagation()
+    if (!isOpen) {
+      updatePosition()
+    }
+    setIsOpen(prev => !prev)
+  }
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handleScrollOrResize = () => {
+      updatePosition()
+    }
+
+    const handleClickOutside = (event) => {
+      if (
+        buttonRef.current && !buttonRef.current.contains(event.target) &&
+        menuRef.current && !menuRef.current.contains(event.target)
+      ) {
+        setIsOpen(false)
+      }
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScrollOrResize, true)
+    window.addEventListener('resize', handleScrollOrResize)
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      window.removeEventListener('scroll', handleScrollOrResize, true)
+      window.removeEventListener('resize', handleScrollOrResize)
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isOpen])
+
+  return (
+    <div className="d-inline-block">
+      <button
+        ref={buttonRef}
+        className="btn border-0 p-2 text-theme-muted hover-scale"
+        type="button"
+        onClick={toggleDropdown}
+        aria-expanded={isOpen}
+        title="More Options"
+      >
+        <MoreVertical size={16} />
+      </button>
+      {isOpen && createPortal(
+        <ul
+          ref={menuRef}
+          className="dropdown-menu show shadow-sm"
+          style={{
+            display: 'block',
+            position: 'fixed',
+            top: `${coords.top}px`,
+            left: `${coords.left}px`,
+            background: 'var(--bb-surface)',
+            border: '1px solid var(--bb-border)',
+            zIndex: 99999,
+            minWidth: '160px',
+            margin: 0
+          }}
+        >
+          <li>
+            <a
+              className="dropdown-item text-theme-title d-flex align-items-center gap-2"
+              href={`/#/products/${row.id}`}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => setIsOpen(false)}
+            >
+              View in Store
+            </a>
+          </li>
+          <li>
+            <button
+              className="dropdown-item text-theme-title d-flex align-items-center gap-2"
+              onClick={() => {
+                toast.success('Duplicate feature coming soon!')
+                setIsOpen(false)
+              }}
+            >
+              Duplicate Product
+            </button>
+          </li>
+          <li><hr className="dropdown-divider" style={{ borderColor: 'var(--bb-border)' }} /></li>
+          <li>
+            <button
+              className="dropdown-item text-danger d-flex align-items-center gap-2"
+              onClick={() => {
+                handleDelete(row.id)
+                setIsOpen(false)
+              }}
+            >
+              Delete
+            </button>
+          </li>
+        </ul>,
+        document.body
+      )}
+    </div>
+  )
+}
 
 export default function Products() {
   const navigate = useNavigate()
@@ -148,29 +286,7 @@ export default function Products() {
           <button className="btn border-0 p-2 text-danger hover-scale me-1" title="Delete" onClick={() => handleDelete(row.id)}>
             <Trash2 size={16} />
           </button>
-          <div className="dropdown d-inline-block">
-            <button className="btn border-0 p-2 text-theme-muted hover-scale" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="More Options">
-              <MoreVertical size={16} />
-            </button>
-            <ul className="dropdown-menu dropdown-menu-end shadow-sm" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
-              <li>
-                <a className="dropdown-item text-theme-title d-flex align-items-center gap-2" href={`/product/${row.slug}`} target="_blank" rel="noreferrer">
-                  View in Store
-                </a>
-              </li>
-              <li>
-                <button className="dropdown-item text-theme-title d-flex align-items-center gap-2" onClick={() => toast.success('Duplicate feature coming soon!')}>
-                  Duplicate Product
-                </button>
-              </li>
-              <li><hr className="dropdown-divider" style={{ borderColor: 'var(--bb-border)' }} /></li>
-              <li>
-                <button className="dropdown-item text-danger d-flex align-items-center gap-2" onClick={() => handleDelete(row.id)}>
-                  Delete
-                </button>
-              </li>
-            </ul>
-          </div>
+          <ActionDropdownMenu row={row} handleDelete={handleDelete} />
         </div>
       )
     }

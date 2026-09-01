@@ -102,9 +102,9 @@ function PrintInvoice({ order }) {
   if (!order) return null
   const items = order.items || []
   const subtotal = items.reduce((s, i) => s + (i.unitPrice + (i.isPersonalised ? (i.engravingPrice || 0) : 0)) * i.quantity, 0)
-  const gst = Math.round(subtotal * 0.18)
-  const shipping = subtotal >= 999 ? 0 : 79
-  const total = subtotal + gst + shipping
+  const shipping = order?.shippingAmount != null ? Number(order.shippingAmount) : ((order?.promoCode === 'FREESHIP' || order?.isFreeShipping) ? 0 : 49)
+  const promoDiscount = order.discountAmount ? Number(order.discountAmount) : 0
+  const total = order.totalAmount != null ? Number(order.totalAmount) : Math.max(0, subtotal + shipping - promoDiscount)
 
   return (
     <div className="invoice-print-only">
@@ -170,7 +170,6 @@ function PrintInvoice({ order }) {
       <div style={{ marginLeft: 'auto', maxWidth: 280 }}>
         {[
           ['Subtotal', `₹${fmt(subtotal)}`],
-          ['GST (18%)', `₹${fmt(gst)}`],
           ['Shipping', shipping === 0 ? 'FREE' : `₹${fmt(shipping)}`],
         ].map(([label, val]) => (
           <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', fontSize: '0.85rem', color: '#555' }}>
@@ -428,9 +427,8 @@ export default function OrderDetail() {
   const subtotal = items.reduce((s, i) => s + (i.unitPrice + (i.isPersonalised ? (i.engravingPrice || 0) : 0)) * i.quantity, 0)
   const promoCode = order?.promoCode || null
   const promoDiscount = order?.discountAmount ? Number(order.discountAmount) : 0
-  const gst = Math.round(subtotal * 0.18)
-  const total = order?.totalAmount != null ? Number(order.totalAmount) : Math.max(0, subtotal + gst - promoDiscount)
-  const shipping = subtotal >= 999 ? 0 : 79
+  const shipping = order?.shippingAmount != null ? Number(order.shippingAmount) : ((promoCode === 'FREESHIP' || order?.isFreeShipping) ? 0 : 49)
+  const total = order?.totalAmount != null ? Number(order.totalAmount) : Math.max(0, subtotal + shipping - promoDiscount)
 
   const cfg = order ? (STATUS_CONFIG[order.status] || STATUS_CONFIG.Pending) : null
 
@@ -685,9 +683,6 @@ export default function OrderDetail() {
                         <span>Promo ({promoCode})</span><span>-₹{fmt(promoDiscount)}</span>
                       </div>
                     )}
-                    <div className="d-flex justify-content-between text-theme-muted" style={{ fontSize: '0.88rem' }}>
-                      <span>GST (18%)</span><span>₹{fmt(gst)}</span>
-                    </div>
                     <div className="d-flex justify-content-between" style={{ fontSize: '0.88rem' }}>
                       <span className="text-theme-muted">Shipping</span>
                       <span style={{ color: shipping === 0 ? '#39ff14' : 'var(--bb-muted)', fontWeight: 600 }}>

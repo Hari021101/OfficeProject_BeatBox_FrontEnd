@@ -621,6 +621,29 @@ body {
   outline-offset: 2px;
 }
 
+/* Color Swatch Contrast Enhancements for White & Black variants */
+.product-color-swatch.white {
+  background: #ffffff !important;
+  border: 1px solid #94a3b8 !important;
+}
+
+.product-color-swatch.white.selected {
+  outline: 2px solid var(--bb-accent, #00f3ff) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 8px var(--bb-accent-glow, rgba(0, 243, 255, 0.4)) !important;
+}
+
+[data-theme="dark"] .product-color-swatch.black {
+  background: #000000 !important;
+  border: 1px solid #64748b !important;
+}
+
+[data-theme="dark"] .product-color-swatch.black.selected {
+  outline: 2px solid var(--bb-accent, #00f3ff) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 8px var(--bb-accent-glow, rgba(0, 243, 255, 0.4)) !important;
+}
+
 [data-theme="light"] body {
   background-image:
     linear-gradient(rgba(0, 153, 184, 0.04) 1px, transparent 1px),
@@ -1906,6 +1929,7 @@ video {
     white-space: normal !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
+    line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
     height: 2.5em !important;
@@ -2035,6 +2059,7 @@ video {
     line-height: 1.4 !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
+    line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
     margin-bottom: 12px !important;
@@ -2152,6 +2177,7 @@ video {
     line-height: 1.4 !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
+    line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
     margin-bottom: 12px !important;
@@ -2381,6 +2407,7 @@ video {
     white-space: normal !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
+    line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
     height: 2.3em !important;
@@ -2441,6 +2468,7 @@ video {
     white-space: normal !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
+    line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
     height: 2.3em !important;

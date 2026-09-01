@@ -243,7 +243,7 @@ export default function ProductListing() {
               Shop <span className="gradient-text">Premium Audio</span>
             </h1>
             <p className="text-theme-muted mb-0">
-              {allProducts.length} products · Free shipping above ₹999 · 1-Year warranty on all gear
+              {allProducts.length} products · Free shipping on 1st order · 1-Year warranty on all gear
             </p>
           </motion.div>
         </section>
