@@ -49,10 +49,11 @@ export default function EditProduct() {
       const data = await productService.getProductById(id)
       if (data) {
         setProduct(data)
-        setFormData({
+        setFormData(prev => ({
+          ...prev,
           name: data.name || '',
           description: data.description || '',
-          categoryId: data.categoryId || '',
+          categoryId: data.categoryId || prev.categoryId || '',
           brand: data.brand || 'BeatBox',
           batteryLife: data.batteryLife || '',
           connectivity: data.connectivity || '',
@@ -60,7 +61,7 @@ export default function EditProduct() {
           isEngravingAvailable: data.isEngravingAvailable || false,
           engravingPrice: data.engravingPrice !== undefined ? data.engravingPrice : 99,
           faqs: data.faqs || []
-        })
+        }))
       } else {
         toast.error('Product not found')
         navigate('/admin/products')
@@ -77,6 +78,26 @@ export default function EditProduct() {
     loadCategories()
     loadProduct()
   }, [id])
+
+  // Sync categoryId whenever categories or product loads, ensuring dropdown pre-selects correct category
+  useEffect(() => {
+    if (categories.length > 0 && product) {
+      const targetCatId = product.categoryId;
+      const targetCatName = product.categoryName;
+      let matchedCategory = null;
+
+      if (targetCatId) {
+        matchedCategory = categories.find(c => String(c.id) === String(targetCatId));
+      }
+      if (!matchedCategory && targetCatName) {
+        matchedCategory = categories.find(c => c.name.toLowerCase() === targetCatName.toLowerCase());
+      }
+
+      if (matchedCategory) {
+        setFormData(prev => ({ ...prev, categoryId: matchedCategory.id }));
+      }
+    }
+  }, [categories, product])
 
   const handleProductChange = (e) => {
     const { name, value, type, checked } = e.target

@@ -188,47 +188,60 @@ export default function VariantModal({ isOpen, onClose, productId, variant, onSa
       const activeVariantId = variant?.id || savedVariant.id
 
       // 1. Upload new files if any
-      const filesToUpload = images.filter(img => img.id.startsWith('temp-')).map(img => img.file)
+      const tempImages = images.filter(img => img.id.startsWith('temp-'))
+      const filesToUpload = tempImages.map(img => img.file)
       if (filesToUpload.length > 0) {
         await productService.uploadVariantImages(activeVariantId, filesToUpload)
       }
 
-      // 2. Update display orders & primary flag for remaining/updated images
-      // Fetch latest images lists to handle correct UUID matching
+      // 2. Fetch fresh product details to get DB image UUIDs for newly uploaded and existing images
       const freshVariant = await productService.getProductById(productId)
-      const freshVariantDetails = freshVariant.variants.find(v => v.id === activeVariantId)
-      
-      if (freshVariantDetails && freshVariantDetails.images && freshVariantDetails.images.length > 0) {
-        // Map local sorting orders back to DB images (matching by matching image names or paths if possible)
-        const reorderPayload = []
-        let primaryImageId = null
+      const freshVariantDetails = freshVariant?.variants?.find(v => v.id === activeVariantId)
+      const dbImages = freshVariantDetails?.images || []
 
-        // Find primary image ID
-        const localPrimary = images.find(img => img.isPrimary)
-        
-        freshVariantDetails.images.forEach((dbImg) => {
-          // Find matching local image by matching filename or image URL suffix
-          const localMatch = images.find(li => li.imageUrl.endsWith(dbImg.imageUrl.split('/').pop()))
-          const displayOrder = localMatch ? localMatch.displayOrder : dbImg.displayOrder
+      if (dbImages.length > 0) {
+        const localToDbMap = new Map()
 
-          reorderPayload.push({
-            imageId: dbImg.id,
-            displayOrder: displayOrder
+        // Match existing DB images (IDs that do not start with 'temp-')
+        images.filter(img => !img.id.startsWith('temp-')).forEach(img => {
+          localToDbMap.set(img.id, img.id)
+        })
+
+        // Match newly uploaded temp images
+        const existingDbIds = new Set(images.filter(img => !img.id.startsWith('temp-')).map(img => img.id))
+        const newDbImages = dbImages.filter(dbImg => !existingDbIds.has(dbImg.id))
+
+        tempImages.forEach((tempImg, idx) => {
+          const localFileName = (tempImg.file?.name || '').toLowerCase()
+          const matchedDbImg = newDbImages.find(dbImg => {
+            const dbFileName = (dbImg.imageUrl || '').split('/').pop().toLowerCase()
+            return dbFileName.includes(localFileName) || localFileName.includes(dbFileName)
           })
 
-          if (localMatch?.isPrimary || (localPrimary && dbImg.imageUrl.endsWith(localPrimary.imageUrl.split('/').pop()))) {
-            primaryImageId = dbImg.id
+          if (matchedDbImg) {
+            localToDbMap.set(tempImg.id, matchedDbImg.id)
+          } else if (newDbImages[idx]) {
+            localToDbMap.set(tempImg.id, newDbImages[idx].id)
           }
         })
 
-        // Reorder call
+        // Reorder images according to current images list order
+        const reorderPayload = images.map((img, index) => {
+          const dbId = localToDbMap.get(img.id)
+          return dbId ? { imageId: dbId, displayOrder: index + 1 } : null
+        }).filter(Boolean)
+
         if (reorderPayload.length > 0) {
           await productService.reorderImages(reorderPayload)
         }
 
-        // Primary call
-        if (primaryImageId) {
-          await productService.setPrimaryImage(primaryImageId)
+        // Set primary image
+        const localPrimary = images.find(img => img.isPrimary) || images[0]
+        if (localPrimary) {
+          const primaryDbId = localToDbMap.get(localPrimary.id)
+          if (primaryDbId) {
+            await productService.setPrimaryImage(primaryDbId)
+          }
         }
       }
 

@@ -212,7 +212,7 @@ export default function Header() {
         }}
       >
         <span className="d-flex align-items-center gap-2">
-          ⚡ GRAB THE LOOT: Free Shipping & 1-Year Warranty on All Gear! ⚡
+          ⚡ GRAB THE LOOT: Free Shipping for First Order & 1-Year Warranty on All Gear! ⚡
         </span>
       </div>
 
@@ -237,18 +237,18 @@ export default function Header() {
             >
               {isOpen ? <X size={26} /> : <Menu size={26} />}
             </button>
-            
+
             {/* Logo & Brand */}
-          <Link to="/" className="navbar-brand d-flex align-items-center gap-1 gap-sm-2 me-2 premium-brand text-truncate" style={{ flexShrink: 1, minWidth: 0 }}>
-            <img
-              src={logo}
-              alt="BeatBox Logo"
-              className="rounded-3"
-              style={{ width: '40px', height: '40px', boxShadow: '0 4px 15px rgba(0, 243, 255, 0.2)' }}
-            />
-            <span className="fw-black fs-4 tracking-tight text-theme-title mb-0">
-              BEAT<span className="gradient-text">BOX</span>
-            </span>
+            <Link to="/" className="navbar-brand d-flex align-items-center gap-1 gap-sm-2 me-2 premium-brand text-truncate" style={{ flexShrink: 1, minWidth: 0 }}>
+              <img
+                src={logo}
+                alt="BeatBox Logo"
+                className="rounded-3"
+                style={{ width: '40px', height: '40px', boxShadow: '0 4px 15px rgba(0, 243, 255, 0.2)' }}
+              />
+              <span className="fw-black fs-4 tracking-tight text-theme-title mb-0">
+                BEAT<span className="gradient-text">BOX</span>
+              </span>
             </Link>
           </div>
 
@@ -256,72 +256,72 @@ export default function Header() {
           <div className="d-flex align-items-center gap-1 gap-sm-2 ms-auto d-xl-none">
             {/* Mobile Widgets */}
             <div className="d-flex align-items-center gap-1 gap-sm-2 me-1">
-            {/* Mobile Search Toggle */}
-            <button
-              className="btn border-0 p-1 position-relative text-theme-muted hover-scale"
-              onClick={() => setShowMobileSearch(!showMobileSearch)}
-              aria-label="Toggle mobile search"
-              style={{ background: 'transparent' }}
-            >
-              <Search size={22} />
-            </button>
-            
-            {/* Mobile Profile Dropdown */}
-            {user ? (
-              <div className="dropdown">
-                <button
-                  className="btn border-0 p-1 dropdown-toggle profile-trigger-btn text-theme-muted hover-scale"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                  style={{ background: 'transparent' }}
-                >
-                  <div
-                    className="rounded-circle d-flex align-items-center justify-content-center"
+              {/* Mobile Search Toggle */}
+              <button
+                className="btn border-0 p-1 position-relative text-theme-muted hover-scale"
+                onClick={() => setShowMobileSearch(!showMobileSearch)}
+                aria-label="Toggle mobile search"
+                style={{ background: 'transparent' }}
+              >
+                <Search size={22} />
+              </button>
+
+              {/* Mobile Profile Dropdown */}
+              {user ? (
+                <div className="dropdown">
+                  <button
+                    className="btn border-0 p-1 dropdown-toggle profile-trigger-btn text-theme-muted hover-scale"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    style={{ background: 'transparent' }}
+                  >
+                    <div
+                      className="rounded-circle d-flex align-items-center justify-content-center"
+                      style={{
+                        width: '28px',
+                        height: '28px',
+                        background: 'linear-gradient(135deg, #00f3ff, #a820ff)'
+                      }}
+                    >
+                      <User size={15} color="#fff" />
+                    </div>
+                  </button>
+                  <ul
+                    className="dropdown-menu dropdown-menu-end p-2 border-0 mt-3 premium-profile-dropdown mobile-profile-dropdown-panel"
                     style={{
-                      width: '28px',
-                      height: '28px',
-                      background: 'linear-gradient(135deg, #00f3ff, #a820ff)'
+                      width: '240px',
+                      background: 'var(--bb-bg-navy)',
+                      border: '1px solid var(--bb-border)',
+                      borderRadius: '16px',
+                      boxShadow: '0 20px 45px rgba(0,0,0,0.25)',
+                      zIndex: 1060
                     }}
                   >
-                    <User size={15} color="#fff" />
-                  </div>
-                </button>
-                <ul
-                  className="dropdown-menu dropdown-menu-end p-2 border-0 mt-3 premium-profile-dropdown mobile-profile-dropdown-panel"
-                  style={{
-                    width: '240px',
-                    background: 'var(--bb-bg-navy)',
-                    border: '1px solid var(--bb-border)',
-                    borderRadius: '16px',
-                    boxShadow: '0 20px 45px rgba(0,0,0,0.25)',
-                    zIndex: 1060
-                  }}
-                >
-                  {renderProfileMenu()}
-                </ul>
-              </div>
-            ) : (
-              <Link to="/login" className="btn border-0 p-1 text-theme-muted hover-scale">
-                <User size={22} />
-              </Link>
-            )}
-
-            <button
-              className="btn border-0 p-1 position-relative text-theme-muted"
-              onClick={() => navigate('/cart')}
-              aria-label="Open cart mobile"
-              style={{ background: 'transparent' }}
-            >
-              <ShoppingBag size={24} />
-              {cartCount > 0 && (
-                <span
-                  className="position-absolute translate-middle badge rounded-pill cart-pulse-badge"
-                  style={{ top: '4px', right: '-4px', fontSize: '0.65rem', padding: '3px 6px' }}
-                >
-                  {cartCount}
-                </span>
+                    {renderProfileMenu()}
+                  </ul>
+                </div>
+              ) : (
+                <Link to="/login" className="btn border-0 p-1 text-theme-muted hover-scale">
+                  <User size={22} />
+                </Link>
               )}
-            </button>
+
+              <button
+                className="btn border-0 p-1 position-relative text-theme-muted"
+                onClick={() => navigate('/cart')}
+                aria-label="Open cart mobile"
+                style={{ background: 'transparent' }}
+              >
+                <ShoppingBag size={24} />
+                {cartCount > 0 && (
+                  <span
+                    className="position-absolute translate-middle badge rounded-pill cart-pulse-badge"
+                    style={{ top: '4px', right: '-4px', fontSize: '0.65rem', padding: '3px 6px' }}
+                  >
+                    {cartCount}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
 
@@ -397,8 +397,8 @@ export default function Header() {
                 <img src={logo} alt="BeatBox" style={{ width: '30px', height: '30px' }} className="rounded-3" />
                 BEAT<span className="gradient-text">BOX</span>
               </span>
-              <button 
-                className="btn border-0 text-theme-muted p-2 hover-scale" 
+              <button
+                className="btn border-0 text-theme-muted p-2 hover-scale"
                 onClick={() => setIsOpen(false)}
                 aria-label="Close menu"
               >
@@ -445,7 +445,7 @@ export default function Header() {
                         overflowY: 'auto'
                       }}
                     >
-                      <div 
+                      <div
                         className="mega-menu-grid"
                         style={{
                           display: 'grid',
@@ -464,56 +464,56 @@ export default function Header() {
                               {col.items.slice(0, megaMenuExpanded ? col.items.length : 5).map((item, i) => (
                                 <li key={i}>
                                   <Link
-    to={`/products?category=${item.slug}`}
-    className="text-decoration-none text-theme-title transition-all d-flex align-items-center gap-3 mega-menu-item"
-    style={{ fontSize: '0.85rem', fontWeight: 600 }}
-    onClick={() => {
-        setShowCategories(false)
-        setIsOpen(false)
-        setMegaMenuExpanded(false)
-    }}
->
-    <div
-        className="rounded-circle d-flex align-items-center justify-content-center"
-        style={{
-            width: '40px',
-            height: '40px',
-            background: 'var(--bb-surface-2)',
-            border: '1px solid var(--bb-border)',
-            flexShrink: 0
-        }}
-    >
-        <img
-            src={getCategoryCover(item.name, item.imageUrl)}
-            alt={item.name}
-            style={{
-                width: '32px',
-                height: '32px',
-                objectFit: 'contain',
-                objectPosition: 'center'
-            }}
-        />
-    </div>
+                                    to={`/products?category=${item.slug}`}
+                                    className="text-decoration-none text-theme-title transition-all d-flex align-items-center gap-3 mega-menu-item"
+                                    style={{ fontSize: '0.85rem', fontWeight: 600 }}
+                                    onClick={() => {
+                                      setShowCategories(false)
+                                      setIsOpen(false)
+                                      setMegaMenuExpanded(false)
+                                    }}
+                                  >
+                                    <div
+                                      className="rounded-circle d-flex align-items-center justify-content-center"
+                                      style={{
+                                        width: '40px',
+                                        height: '40px',
+                                        background: 'var(--bb-surface-2)',
+                                        border: '1px solid var(--bb-border)',
+                                        flexShrink: 0
+                                      }}
+                                    >
+                                      <img
+                                        src={getCategoryCover(item.name, item.imageUrl)}
+                                        alt={item.name}
+                                        style={{
+                                          width: '32px',
+                                          height: '32px',
+                                          objectFit: 'contain',
+                                          objectPosition: 'center'
+                                        }}
+                                      />
+                                    </div>
 
-    <span
-        className="text-theme-muted transition-all text-start mega-menu-text"
-        style={{ lineHeight: '1.2' }}
-    >
-        {item.name}
-    </span>
-</Link>
+                                    <span
+                                      className="text-theme-muted transition-all text-start mega-menu-text"
+                                      style={{ lineHeight: '1.2' }}
+                                    >
+                                      {item.name}
+                                    </span>
+                                  </Link>
                                 </li>
                               ))}
                             </ul>
                           </div>
                         ))}
                       </div>
-                      
+
                       <div className="d-flex justify-content-center mt-5 mb-2">
                         <button
                           className="btn d-flex align-items-center justify-content-center gap-2 rounded-pill border-0 hover-scale"
-                          style={{ 
-                            fontSize: '0.9rem', 
+                          style={{
+                            fontSize: '0.9rem',
                             fontWeight: 'bold',
                             background: 'linear-gradient(135deg, var(--bb-primary), var(--bb-accent))',
                             color: '#fff',
@@ -521,12 +521,12 @@ export default function Header() {
                             boxShadow: '0 8px 25px rgba(0, 243, 255, 0.3)',
                             transition: 'all 0.3s ease'
                           }}
-                          onClick={(e) => { 
+                          onClick={(e) => {
                             e.preventDefault();
                             if (!megaMenuExpanded) {
                               setMegaMenuExpanded(true);
                             } else {
-                              setShowCategories(false); 
+                              setShowCategories(false);
                               setIsOpen(false);
                               setMegaMenuExpanded(false);
                               navigate('/products');
@@ -618,7 +618,7 @@ export default function Header() {
                   )}
                 </AnimatePresence>
               </li>
-              
+
             </ul>
 
             {/* Mobile Sidebar Navigation */}
@@ -627,9 +627,9 @@ export default function Header() {
               <ul className="list-unstyled d-flex flex-column gap-1 mb-4">
                 {megaMenuCategories.map((col, idx) => (
                   <li key={idx} className="border-bottom border-secondary border-opacity-25 pb-1 mb-1">
-                    <div 
-                      className="d-flex align-items-center justify-content-between p-2 rounded-3 text-theme-title" 
-                      style={{ cursor: 'pointer' }} 
+                    <div
+                      className="d-flex align-items-center justify-content-between p-2 rounded-3 text-theme-title"
+                      style={{ cursor: 'pointer' }}
                       onClick={() => setExpandedMobileCategory(expandedMobileCategory === idx ? null : idx)}
                     >
                       <div className="d-flex align-items-center gap-3">
@@ -640,17 +640,17 @@ export default function Header() {
                       </div>
                       <ChevronDown size={18} className={`transition-all text-theme-muted ${expandedMobileCategory === idx ? 'rotate-180' : ''}`} />
                     </div>
-                    
+
                     <AnimatePresence>
                       {expandedMobileCategory === idx && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                           <ul className="list-unstyled ps-5 ms-3 pe-2 py-2 mb-0 d-flex flex-column gap-3">
                             {col.items.map((item, i) => (
                               <li key={i}>
-                                <Link 
-                                  to={`/products?category=${item.slug}`} 
-                                  className="text-decoration-none text-theme-muted text-truncate d-block fw-semibold hover-text-primary" 
-                                  onClick={() => setIsOpen(false)} 
+                                <Link
+                                  to={`/products?category=${item.slug}`}
+                                  className="text-decoration-none text-theme-muted text-truncate d-block fw-semibold hover-text-primary"
+                                  onClick={() => setIsOpen(false)}
                                   style={{ fontSize: '0.85rem' }}
                                 >
                                   {item.name}

@@ -98,6 +98,7 @@ const imageKey = mapImageKey(
     name: bp.name,
     brand: bp.brand || 'BeatBox',
 
+    categoryId: bp.categoryId || bp.category?.id || '',
     category: (() => {
       const cat = (bp.categoryName || 'headphones').toLowerCase();
       if (cat.includes('watch') || cat.includes('wearable')) return 'smartwatches';

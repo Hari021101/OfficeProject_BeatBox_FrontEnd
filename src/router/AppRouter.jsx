@@ -3,6 +3,7 @@ import { HashRouter, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import Layout from '../components/layout/Layout'
 import AdminLayout from '../components/layout/AdminLayout'
+import ScrollToTop from '../components/ScrollToTop'
 
 // Lazy Load Pages
 const App = React.lazy(() => import('../App'))
@@ -67,6 +68,7 @@ export default function AppRouter() {
 
   return (
     <HashRouter>
+      <ScrollToTop />
       <Toaster 
         position="top-right" 
         containerStyle={{ zIndex: 99999, top: '125px' }}

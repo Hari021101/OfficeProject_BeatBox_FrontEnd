@@ -28,6 +28,7 @@ import { productService } from '../../services/productService'
 import StatWidget from '../../components/admin/StatWidget'
 import ChartCard from '../../components/admin/ChartCard'
 import DataTable from '../../components/admin/DataTable'
+import { exportToExcel, exportToCSV, exportToPDF, formatReportDate, formatReportCurrency } from '../../utils/exportUtils'
 import { useSignalR } from '../../hooks/useSignalR'
 import { toast } from 'react-hot-toast'
 
@@ -235,21 +236,33 @@ export default function Dashboard() {
 
       if (reportType === 'Sales' || reportType === 'Orders') {
         const ordersList = await orderService.getAllOrders()
+        const usersList = await adminService.getAllUsers().catch(() => [])
+        const userMap = {}
+        if (Array.isArray(usersList)) {
+          usersList.forEach(u => {
+            if (u.id) userMap[u.id] = u
+          })
+        }
         const filtered = filterByDateRange(ordersList, 'createdDate')
-        reportData = filtered.map(o => ({
-          'Order ID': o.orderId,
-          'Customer': o.userId,
-          'Total Amount': `₹${Number(o.totalAmount).toFixed(2)}`,
-          'Status': o.status,
-          'Date': new Date(o.createdDate).toLocaleDateString('en-IN')
-        }))
-        headers = ['Order ID', 'Customer', 'Total Amount', 'Status', 'Date']
+        reportData = filtered.map(o => {
+          const user = userMap[o.userId]
+          return {
+            'Order ID': o.orderId,
+            'Customer Name': user?.name || (o.shippingAddress ? o.shippingAddress.split(',')[0] : 'N/A'),
+            'Customer Email': user?.email || 'N/A',
+            'Customer ID': o.userId,
+            'Total Amount': formatReportCurrency(o.totalAmount),
+            'Status': o.status,
+            'Date': formatReportDate(o.createdDate, true)
+          }
+        })
+        headers = ['Order ID', 'Customer Name', 'Customer Email', 'Customer ID', 'Total Amount', 'Status', 'Date']
       }
       else if (reportType === 'Revenue') {
         const revenue = await adminService.getRevenueChart()
         reportData = revenue.map(r => ({
           'Month': new Date(2026, r.month - 1).toLocaleString('default', { month: 'long' }),
-          'Revenue': `₹${Number(r.revenue).toFixed(2)}`
+          'Revenue': formatReportCurrency(r.revenue)
         }))
         headers = ['Month', 'Revenue']
       }
@@ -260,7 +273,7 @@ export default function Dashboard() {
           'Product Name': p.name,
           'Category': p.categoryName || 'Uncategorized',
           'Stock Level': p.stockQuantity,
-          'Price': `₹${Number(p.discountPrice || p.price).toFixed(2)}`
+          'Price': formatReportCurrency(p.discountPrice || p.price)
         }))
         headers = ['Product ID', 'Product Name', 'Category', 'Stock Level', 'Price']
       }
@@ -271,17 +284,17 @@ export default function Dashboard() {
           'Name': u.name,
           'Email': u.email,
           'Role': u.role,
-          'Join Date': new Date(u.joinDate).toLocaleDateString('en-IN')
+          'Join Date': formatReportDate(u.joinDate)
         }))
         headers = ['Customer ID', 'Name', 'Email', 'Role', 'Join Date']
       }
       else if (reportType === 'Product Performance') {
         const productsAnalytics = await adminService.getProductAnalytics()
-        reportData = productsAnalytics.topProducts.map(p => ({
+        reportData = (productsAnalytics?.topProducts || []).map(p => ({
           'Product ID': p.productId,
           'Product Name': p.productName,
           'Units Sold': p.unitsSold,
-          'Revenue Generated': `₹${Number(p.revenue).toFixed(2)}`
+          'Revenue Generated': formatReportCurrency(p.revenue)
         }))
         headers = ['Product ID', 'Product Name', 'Units Sold', 'Revenue Generated']
       }
@@ -291,11 +304,11 @@ export default function Dashboard() {
         reportData = filtered.map(r => ({
           'RMA ID': r.id,
           'Order ID': r.orderId,
-          'Customer': r.customerName,
-          'Product': r.productName,
-          'Reason': r.reason,
+          'Customer': r.customerName || 'N/A',
+          'Product': r.productName || 'N/A',
+          'Reason': r.reason || 'N/A',
           'Status': r.status,
-          'Request Date': new Date(r.requestDate).toLocaleDateString('en-IN')
+          'Request Date': formatReportDate(r.requestDate, true)
         }))
         headers = ['RMA ID', 'Order ID', 'Customer', 'Product', 'Reason', 'Status', 'Request Date']
       }
@@ -306,7 +319,7 @@ export default function Dashboard() {
           'Code': c.code,
           'Discount Percent': `${c.discountPercent}%`,
           'Status': c.isActive ? 'Active' : 'Expired',
-          'Expiry Date': new Date(c.expiryDate).toLocaleDateString('en-IN')
+          'Expiry Date': formatReportDate(c.expiryDate)
         }))
         headers = ['Coupon ID', 'Code', 'Discount Percent', 'Status', 'Expiry Date']
       }
@@ -318,7 +331,7 @@ export default function Dashboard() {
           'Target': l.target,
           'Admin Name': l.adminName,
           'Details': l.details,
-          'Date/Time': new Date(l.timestamp).toLocaleString('en-IN')
+          'Date/Time': formatReportDate(l.timestamp, true)
         }))
         headers = ['Action', 'Target', 'Admin Name', 'Details', 'Date/Time']
       }
@@ -330,100 +343,16 @@ export default function Dashboard() {
       }
 
       if (exportFormat === 'CSV') {
-        const csvRows = [
-          headers.join(','),
-          ...reportData.map(row => 
-            headers.map(f => `"${('' + (row[f] ?? '')).replace(/"/g, '""')}"`).join(',')
-          )
-        ]
-        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' })
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement("a")
-        link.setAttribute("href", url)
-        link.setAttribute("download", `${filename}.csv`)
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+        exportToCSV(headers, reportData, filename)
         toast.success('CSV Report downloaded! 📊')
       }
       else if (exportFormat === 'Excel') {
-        const tsvRows = [
-          headers.join('\t'),
-          ...reportData.map(row => 
-            headers.map(f => ('' + (row[f] ?? '')).replace(/\t/g, ' ')).join('\t')
-          )
-        ]
-        const blob = new Blob([tsvRows.join('\n')], { type: 'application/vnd.ms-excel;charset=utf-8;' })
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement("a")
-        link.setAttribute("href", url)
-        link.setAttribute("download", `${filename}.xls`)
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        toast.success('Excel Report downloaded! 📈')
+        exportToExcel(headers, reportData, filename)
+        toast.success('Excel Report (.xlsx) downloaded! 📈')
       }
       else if (exportFormat === 'PDF') {
-        const printWindow = window.open('', '_blank')
-        if (!printWindow) {
-          toast.error('Please allow popups to generate PDF reports')
-          setGenerating(false)
-          return
-        }
-
-        const htmlContent = `
-          <html>
-            <head>
-              <title>${reportType} Report</title>
-              <style>
-                body { font-family: system-ui, sans-serif; color: #0b0f19; padding: 40px; }
-                .header { border-bottom: 2px solid #820df2; padding-bottom: 20px; margin-bottom: 30px; }
-                .logo { font-size: 22px; font-weight: 900; color: #060b19; }
-                .logo span { color: #820df2; }
-                .title { font-size: 26px; font-weight: 800; margin: 10px 0; }
-                .meta { font-size: 13px; color: #5e6b7e; margin-bottom: 20px; }
-                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                th { background: #f1f5f9; color: #0b0f19; font-weight: bold; text-align: left; padding: 10px; font-size: 12px; border-bottom: 2px solid #e2e8f0; }
-                td { padding: 10px; font-size: 12px; border-bottom: 1px solid #e2e8f0; }
-                tr:nth-child(even) { background: #f8fafc; }
-                .footer { margin-top: 40px; font-size: 11px; color: #5e6b7e; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px; }
-              </style>
-            </head>
-            <body>
-              <div class="header">
-                <div class="logo">BEAT<span>BOX</span> PARTNER PORTAL</div>
-                <div class="title">${reportType} Business Report</div>
-                <div class="meta">Generated: ${new Date().toLocaleString('en-IN')} | Filter Scope: ${dateRange}</div>
-              </div>
-              <table>
-                <thead>
-                  <tr>
-                    ${headers.map(h => `<th>${h}</th>`).join('')}
-                  </tr>
-                </thead>
-                <tbody>
-                  ${reportData.map(row => `
-                    <tr>
-                      ${headers.map(h => `<td>${row[h] ?? '-'}</td>`).join('')}
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-              <div class="footer">
-                Confidential Document — BeatBox Lifestyle Internal Systems.
-              </div>
-              <script>
-                window.onload = function() {
-                  window.print();
-                  setTimeout(function() { window.close(); }, 500);
-                }
-              </script>
-            </body>
-          </html>
-        `
-        printWindow.document.write(htmlContent)
-        printWindow.document.close()
-        toast.success('PDF Report generated! 📄')
+        exportToPDF(reportType, dateRange, headers, reportData, filename)
+        toast.success('PDF Report (.pdf) downloaded! 📄')
       }
       setIsReportModalOpen(false)
     } catch (err) {
