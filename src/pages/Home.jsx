@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchProducts, selectAllProducts, selectProductStatus } from '../redux/productSlice'
 import { addToCart } from '../redux/cartSlice'
@@ -72,6 +72,13 @@ export default function Home() {
   // 1. HERO CAROUSEL STATE
   const [currentSlide, setCurrentSlide] = useState(0)
   const [activeDealIndex, setActiveDealIndex] = useState(0)
+
+  // Drag & Swipe gesture state for Hero Featured Carousel
+  const [dragOffset, setDragOffset] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const pointerStartRef = useRef({ x: 0, y: 0 })
+  const isPointerDownRef = useRef(false)
+  const hasDraggedRef = useRef(false)
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -160,16 +167,16 @@ export default function Home() {
   }, [allProducts])
 
 
-  // Auto slide effect
+  // Auto slide effect (pauses while user is dragging)
   useEffect(() => {
-    if (!slides.length) return
+    if (!slides.length || isDragging) return
 
     const timer = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % slides.length)
     }, 6000)
 
     return () => clearInterval(timer)
-  }, [slides.length])
+  }, [slides.length, isDragging])
 
   const nextSlide = () => {
     if (!slides.length) return
@@ -179,6 +186,62 @@ export default function Home() {
   const prevSlide = () => {
     if (!slides.length) return
     setCurrentSlide(prev => (prev - 1 + slides.length) % slides.length)
+  }
+
+  const handlePointerDown = (e) => {
+    if (e.button !== undefined && e.button !== 0) return
+    if (e.target.closest('.hero-carousel-console') || e.target.closest('.btn')) return
+
+    pointerStartRef.current = { x: e.clientX, y: e.clientY }
+    isPointerDownRef.current = true
+    hasDraggedRef.current = false
+  }
+
+  const handlePointerMove = (e) => {
+    if (!isPointerDownRef.current) return
+
+    const deltaX = e.clientX - pointerStartRef.current.x
+    const deltaY = e.clientY - pointerStartRef.current.y
+
+    if (!hasDraggedRef.current) {
+      if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 8) {
+        // Vertical page scroll: abort carousel drag gesture
+        isPointerDownRef.current = false
+        return
+      }
+      if (Math.abs(deltaX) > 8) {
+        hasDraggedRef.current = true
+        setIsDragging(true)
+      }
+    }
+
+    if (hasDraggedRef.current) {
+      const clampedOffset = Math.max(-150, Math.min(150, deltaX))
+      setDragOffset(clampedOffset)
+    }
+  }
+
+  const handlePointerUp = (e) => {
+    if (!isPointerDownRef.current && !isDragging) return
+
+    const deltaX = e.clientX - pointerStartRef.current.x
+    const threshold = 45
+
+    if (hasDraggedRef.current) {
+      if (deltaX < -threshold) {
+        nextSlide()
+      } else if (deltaX > threshold) {
+        prevSlide()
+      }
+    }
+
+    isPointerDownRef.current = false
+    setIsDragging(false)
+    setDragOffset(0)
+
+    setTimeout(() => {
+      hasDraggedRef.current = false
+    }, 60)
   }
 
   // 2. BEST SELLERS STATE & COLOR SWATCH HANDLING
@@ -461,7 +524,9 @@ export default function Home() {
           <motion.button 
             whileHover={{ scale: 1.03, y: -2 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation()
+              if (hasDraggedRef.current) return
               if (!currentSlideData.productId) return
               navigate(`/products/${currentSlideData.productId}`)
             }}
@@ -482,9 +547,12 @@ export default function Home() {
         zIndex: 5,
         cursor: 'pointer'
       }}
-      onClick={() =>
+      onClick={(e) => {
+        e.stopPropagation()
+        if (hasDraggedRef.current) return
+        if (!currentSlideData.productId) return
         navigate(`/products/${currentSlideData.productId}`)
-      }
+      }}
     >
       <img
         src={currentSlideData.image || '/placeholder-product.png'}
@@ -731,7 +799,20 @@ export default function Home() {
     paddingBottom: '2rem'
 }}>
           <div className="container-fluid px-lg-5">
-            <div className="position-relative rounded-4 p-4 p-md-5 glass-card hero-carousel-card" style={{ border: '1px solid rgba(0, 243, 255, 0.15)', height: 'auto' }}>
+            <div 
+              className={`position-relative rounded-4 p-4 p-md-5 glass-card hero-carousel-card ${isDragging ? 'is-dragging' : ''}`}
+              style={{
+                border: '1px solid rgba(0, 243, 255, 0.15)',
+                height: 'auto',
+                transform: `translateX(${dragOffset}px)`,
+                transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1)',
+                touchAction: 'pan-y'
+              }}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+            >
 
               {/* Slide background glow ring */}
               <div className="position-absolute rounded-circle bg-glow-orb" style={{ width: '400px', height: '400px', background: currentSlideData.color || '#00f3ff', top: '20%', right: '20%', filter: 'blur(100px)', opacity: 0.3 }}></div>
@@ -772,22 +853,19 @@ export default function Home() {
                 </button>
 
                 {/* Slide Indicators / Dots */}
-                <div className="d-flex align-items-center gap-2 hero-dots-wrapper">
+                <div className="d-flex align-items-center hero-dots-wrapper" role="tablist" aria-label="Featured Products Slide Indicators">
                   {(slides || []).map((_, index) => (
                     <button
                       key={index}
+                      type="button"
+                      role="tab"
+                      aria-selected={currentSlide === index}
+                      aria-label={`Go to slide ${index + 1}`}
                       onClick={() => setCurrentSlide(index)}
-                      className="btn p-0 rounded-circle transition-all hero-dot-btn"
-                      style={{
-                        width: currentSlide === index ? '20px' : '8px',
-                        height: '8px',
-                        backgroundColor: currentSlide === index ? 'var(--bb-accent)' : 'var(--bb-title-color)',
-                        opacity: currentSlide === index ? 1 : 0.2,
-                        border: 'none',
-                        borderRadius: '4px',
-                        transition: 'all 0.3s ease'
-                      }}
-                    ></button>
+                      className={`hero-dot-btn ${currentSlide === index ? 'active' : ''}`}
+                    >
+                      <span className="hero-dot-inner"></span>
+                    </button>
                   ))}
                 </div>
 

@@ -2136,11 +2136,23 @@ video {
   }
 
   .hero-dots-wrapper {
-    gap: 4px !important;
+    gap: 5px !important;
   }
 
   .hero-dot-btn {
-    height: 6px !important;
+    padding: 2px !important;
+  }
+
+  .hero-dot-inner {
+    width: 4px !important;
+    height: 4px !important;
+    border-radius: 50% !important;
+  }
+
+  .hero-dot-btn.active .hero-dot-inner {
+    width: 14px !important;
+    height: 4px !important;
+    border-radius: 999px !important;
   }
 
   /* ── Daily Deals / Featured Deals Mobile Optimization ── */
@@ -2566,7 +2578,115 @@ video {
   }
 }
 
-/* ── Hero Carousel ──────────────────────────────────────────────────────────── */
+/* ── Hero Carousel & Featured Products Carousel Drag & Gestures ───────────── */
+.hero-carousel-card {
+  cursor: grab;
+  user-select: none;
+  touch-action: pan-y;
+  will-change: transform;
+}
+
+.hero-carousel-card.is-dragging {
+  cursor: grabbing !important;
+}
+
+.hero-carousel-card img {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ── Hero Carousel & Featured Products Carousel Dots ──────────────────────── */
+.hero-dots-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.hero-dot-btn {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  box-shadow: none;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.hero-dot-btn:focus-visible {
+  outline: 2px solid var(--bb-accent);
+  border-radius: 4px;
+}
+
+.hero-dot-inner {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--bb-title-color);
+  opacity: 0.25;
+  transition: all 0.3s ease;
+}
+
+.hero-dot-btn.active .hero-dot-inner {
+  width: 22px;
+  height: 8px;
+  border-radius: 999px;
+  background-color: var(--bb-accent);
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+}
+
+@media (max-width: 768px) {
+  .hero-dots-wrapper {
+    gap: 6px !important;
+  }
+
+  .hero-dot-btn {
+    padding: 3px !important;
+  }
+
+  .hero-dot-inner {
+    width: 5px !important;
+    height: 5px !important;
+    border-radius: 50% !important;
+  }
+
+  .hero-dot-btn.active .hero-dot-inner {
+    width: 16px !important;
+    height: 5px !important;
+    border-radius: 999px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-dots-wrapper {
+    gap: 5px !important;
+  }
+
+  .hero-dot-btn {
+    padding: 2px !important;
+  }
+
+  .hero-dot-inner {
+    width: 4px !important;
+    height: 4px !important;
+    border-radius: 50% !important;
+  }
+
+  .hero-dot-btn.active .hero-dot-inner {
+    width: 14px !important;
+    height: 4px !important;
+    border-radius: 999px !important;
+  }
+}
+
 @media (max-width: 991.98px) {
   #gravity-hero-image {
     order: -1;

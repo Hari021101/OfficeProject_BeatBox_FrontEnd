@@ -10,13 +10,21 @@ import {
   Menu,
   X,
   ChevronDown,
+  ChevronRight,
   LogOut,
   Sparkles,
   Headphones,
   Package,
   Link2,
   Scale,
-  MapPin
+  MapPin,
+  Zap,
+  Flame,
+  Gift,
+  ShieldCheck,
+  Truck,
+  Bell,
+  HelpCircle
 } from 'lucide-react'
 import logo from '../../assets/beatbox_logo.png'
 import { getCategoryCover } from '../../utils/categoryImageHelper'
@@ -461,7 +469,7 @@ export default function Header() {
                               {col.title}
                             </h6>
                             <ul className="list-unstyled mb-0 d-flex flex-column gap-3">
-                              {col.items.slice(0, megaMenuExpanded ? col.items.length : 5).map((item, i) => (
+                              {col.items.map((item, i) => (
                                 <li key={i}>
                                   <Link
                                     to={`/products?category=${item.slug}`}
@@ -470,7 +478,6 @@ export default function Header() {
                                     onClick={() => {
                                       setShowCategories(false)
                                       setIsOpen(false)
-                                      setMegaMenuExpanded(false)
                                     }}
                                   >
                                     <div
@@ -507,34 +514,6 @@ export default function Header() {
                             </ul>
                           </div>
                         ))}
-                      </div>
-
-                      <div className="d-flex justify-content-center mt-5 mb-2">
-                        <button
-                          className="btn d-flex align-items-center justify-content-center gap-2 rounded-pill border-0 hover-scale"
-                          style={{
-                            fontSize: '0.9rem',
-                            fontWeight: 'bold',
-                            background: 'linear-gradient(135deg, var(--bb-primary), var(--bb-accent))',
-                            color: '#fff',
-                            padding: '12px 36px',
-                            boxShadow: '0 8px 25px rgba(0, 243, 255, 0.3)',
-                            transition: 'all 0.3s ease'
-                          }}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            if (!megaMenuExpanded) {
-                              setMegaMenuExpanded(true);
-                            } else {
-                              setShowCategories(false);
-                              setIsOpen(false);
-                              setMegaMenuExpanded(false);
-                              navigate('/products');
-                            }
-                          }}
-                        >
-                          {megaMenuExpanded ? 'Go To Product Catalog' : 'Explore All Categories'} <Sparkles size={16} />
-                        </button>
                       </div>
                     </motion.div>
                   )}
@@ -623,7 +602,11 @@ export default function Header() {
 
             {/* Mobile Sidebar Navigation */}
             <div className="d-xl-none w-100 pb-5">
-              <div className="fw-bold text-theme-title mb-3" style={{ fontSize: '1rem' }}>Categories</div>
+              
+              {/* 1. CATEGORIES */}
+              <div className="text-uppercase text-theme-muted fw-bold mb-3 px-1" style={{ fontSize: '0.75rem', letterSpacing: '1px' }}>
+                Categories
+              </div>
               <ul className="list-unstyled d-flex flex-column gap-1 mb-4">
                 {megaMenuCategories.map((col, idx) => (
                   <li key={idx} className="border-bottom border-secondary border-opacity-25 pb-1 mb-1">
@@ -633,23 +616,23 @@ export default function Header() {
                       onClick={() => setExpandedMobileCategory(expandedMobileCategory === idx ? null : idx)}
                     >
                       <div className="d-flex align-items-center gap-3">
-                        <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: '45px', height: '45px', border: '1px solid var(--bb-border)', backgroundColor: 'var(--bb-surface-2)', flexShrink: 0 }}>
-                          <img src={getCategoryCover(col.items[0]?.name || '', col.items[0]?.imageUrl || '')} alt="" style={{ width: '32px', height: '32px', objectFit: 'contain', objectPosition: 'center' }} />
+                        <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px', border: '1px solid var(--bb-border)', backgroundColor: 'var(--bb-surface-2)', flexShrink: 0 }}>
+                          <img src={getCategoryCover(col.items[0]?.name || '', col.items[0]?.imageUrl || '')} alt="" style={{ width: '28px', height: '28px', objectFit: 'contain', objectPosition: 'center' }} />
                         </div>
-                        <span className="fw-bold text-uppercase" style={{ fontSize: '0.9rem', letterSpacing: '0.5px' }}>{col.title}</span>
+                        <span className="fw-bold text-uppercase" style={{ fontSize: '0.85rem', letterSpacing: '0.5px' }}>{col.title}</span>
                       </div>
-                      <ChevronDown size={18} className={`transition-all text-theme-muted ${expandedMobileCategory === idx ? 'rotate-180' : ''}`} />
+                      <ChevronRight size={18} className={`transition-all text-theme-muted ${expandedMobileCategory === idx ? 'rotate-90 text-primary' : ''}`} />
                     </div>
 
                     <AnimatePresence>
                       {expandedMobileCategory === idx && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                          <ul className="list-unstyled ps-5 ms-3 pe-2 py-2 mb-0 d-flex flex-column gap-3">
+                          <ul className="list-unstyled ps-5 ms-2 pe-2 py-2 mb-0 d-flex flex-column gap-2">
                             {col.items.map((item, i) => (
                               <li key={i}>
                                 <Link
                                   to={`/products?category=${item.slug}`}
-                                  className="text-decoration-none text-theme-muted text-truncate d-block fw-semibold hover-text-primary"
+                                  className="text-decoration-none text-theme-muted text-truncate d-block fw-semibold hover-text-primary py-1"
                                   onClick={() => setIsOpen(false)}
                                   style={{ fontSize: '0.85rem' }}
                                 >
@@ -665,14 +648,104 @@ export default function Header() {
                 ))}
               </ul>
 
-              {/* Other Links */}
-              <ul className="list-unstyled d-flex flex-column gap-3 border-top border-secondary border-opacity-25 pt-4 ps-2">
-                <li><Link to="/products?category=new" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>New Arrivals</Link></li>
-                <li><Link to="/gifting" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Corporate Gifting</Link></li>
-                <li><Link to="/warranty" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Warranty Registration</Link></li>
-                <li><Link to="/support" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Support</Link></li>
-                {!user && <li><Link to="/login" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Login</Link></li>}
-                <li><Link to="/orders" className="text-decoration-none text-theme-title fw-semibold d-block" onClick={() => setIsOpen(false)}>Track your order</Link></li>
+              {/* 2. SHOP */}
+              <div className="text-uppercase text-theme-muted fw-bold mb-3 pt-2 px-1 border-top border-secondary border-opacity-25" style={{ fontSize: '0.75rem', letterSpacing: '1px' }}>
+                Shop
+              </div>
+              <ul className="list-unstyled d-flex flex-column gap-3 mb-4 ps-2">
+                <li>
+                  <Link to="/daily-deals" className="text-decoration-none text-theme-title fw-semibold d-flex align-items-center gap-3 py-1" onClick={() => setIsOpen(false)}>
+                    <Zap size={18} className="text-danger" /> Daily Deals
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/products?category=bestsellers" className="text-decoration-none text-theme-title fw-semibold d-flex align-items-center gap-3 py-1" onClick={() => setIsOpen(false)}>
+                    <Flame size={18} className="text-warning" /> Best Sellers
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/gifting" className="text-decoration-none text-theme-title fw-semibold d-flex align-items-center gap-3 py-1" onClick={() => setIsOpen(false)}>
+                    <Gift size={18} className="text-info" /> Gifting Store
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/products?category=new" className="text-decoration-none text-theme-title fw-semibold d-flex align-items-center gap-3 py-1" onClick={() => setIsOpen(false)}>
+                    <Sparkles size={18} className="text-accent" /> New Arrivals
+                  </Link>
+                </li>
+              </ul>
+
+              {/* 3. BEATBOX */}
+              <div className="text-uppercase text-theme-muted fw-bold mb-3 pt-2 px-1 border-top border-secondary border-opacity-25" style={{ fontSize: '0.75rem', letterSpacing: '1px' }}>
+                BeatBox
+              </div>
+              <ul className="list-unstyled d-flex flex-column gap-3 mb-4 ps-2">
+                <li>
+                  <Link to="/personalisation" className="text-decoration-none text-theme-title fw-semibold d-flex align-items-center gap-3 py-1" onClick={() => setIsOpen(false)}>
+                    <Sparkles size={18} className="text-primary" /> Personalisation
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/studio" className="text-decoration-none text-theme-title fw-semibold d-flex align-items-center gap-3 py-1" onClick={() => setIsOpen(false)}>
+                    <Headphones size={18} className="text-accent" /> BeatBox Studio
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/compare" className="text-decoration-none text-theme-title fw-semibold d-flex align-items-center gap-3 py-1" onClick={() => setIsOpen(false)}>
+                    <Scale size={18} className="text-info" /> Compare Products
+                  </Link>
+                </li>
+              </ul>
+
+              {/* 4. SERVICES & ACCOUNT */}
+              <div className="text-uppercase text-theme-muted fw-bold mb-3 pt-2 px-1 border-top border-secondary border-opacity-25" style={{ fontSize: '0.75rem', letterSpacing: '1px' }}>
+                Services & Account
+              </div>
+              <ul className="list-unstyled d-flex flex-column gap-3 mb-2 ps-2">
+                <li>
+                  <Link to="/corporate" className="text-decoration-none text-theme-title fw-semibold d-flex align-items-center gap-3 py-1" onClick={() => setIsOpen(false)}>
+                    <Package size={18} className="text-theme-muted" /> Corporate Gifting
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/warranty" className="text-decoration-none text-theme-title fw-semibold d-flex align-items-center gap-3 py-1" onClick={() => setIsOpen(false)}>
+                    <ShieldCheck size={18} className="text-theme-muted" /> Warranty Registration
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/orders" className="text-decoration-none text-theme-title fw-semibold d-flex align-items-center gap-3 py-1" onClick={() => setIsOpen(false)}>
+                    <Truck size={18} className="text-theme-muted" /> Track Your Order
+                  </Link>
+                </li>
+                <li>
+                  <div
+                    className="text-decoration-none text-theme-title fw-semibold d-flex align-items-center gap-3 py-1"
+                    onClick={() => {
+                      setIsOpen(false);
+                      const notifBtn = document.querySelector('.notifications-trigger-btn');
+                      if (notifBtn) notifBtn.click();
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <Bell size={18} className="text-theme-muted" /> Notifications
+                  </div>
+                </li>
+                <li>
+                  <Link to="/support" className="text-decoration-none text-theme-title fw-semibold d-flex align-items-center gap-3 py-1" onClick={() => setIsOpen(false)}>
+                    <HelpCircle size={18} className="text-theme-muted" /> Support
+                  </Link>
+                </li>
+                <li>
+                  {user ? (
+                    <Link to="/settings" className="text-decoration-none text-theme-title fw-semibold d-flex align-items-center gap-3 py-1" onClick={() => setIsOpen(false)}>
+                      <User size={18} className="text-primary" /> My Account / Profile
+                    </Link>
+                  ) : (
+                    <Link to="/login" className="text-decoration-none text-theme-title fw-semibold d-flex align-items-center gap-3 py-1" onClick={() => setIsOpen(false)}>
+                      <User size={18} className="text-primary" /> My Account / Login
+                    </Link>
+                  )}
+                </li>
               </ul>
             </div>
 
