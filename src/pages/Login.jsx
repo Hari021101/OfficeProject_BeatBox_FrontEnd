@@ -7,6 +7,7 @@ import logo from '../assets/Logo.png'
 import ParticleBackground from '../components/ui/ParticleBackground'
 import ThemeToggle from '../components/ui/ThemeToggle'
 import { loginUser, resetState } from '../redux/authSlice'
+import { referralService } from '../services/referralService'
 import { toast } from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -43,7 +44,16 @@ export default function Login() {
       dispatch(resetState())
     }
     if (isSuccess && user) {
-      toast.success(`Welcome back, ${user.fullName}! --`)
+      toast.success(`Welcome back, ${user.fullName}! 🎉`)
+      const savedRef = localStorage.getItem('bb_referral_code')
+      if (savedRef) {
+        referralService.applyReferral(savedRef).then(res => {
+          if (res.success) {
+            toast.success('Referral code linked to your account! 🎉')
+          }
+          localStorage.removeItem('bb_referral_code')
+        }).catch(() => {})
+      }
       navigate('/')
       dispatch(resetState())
     }

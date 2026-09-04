@@ -89,6 +89,16 @@ export const referralService = {
       console.warn('Backend referral apply error:', error);
       return { success: false, message: error.response?.data?.message || 'Could not apply referral' };
     }
+  },
+
+  getEligibility: async () => {
+    try {
+      const response = await api.get('/referral/eligibility');
+      return response.data;
+    } catch (error) {
+      console.warn('Backend referral eligibility error:', error);
+      return { isEligible: false, discountAmount: 0, message: 'Not eligible' };
+    }
   }
 };
 

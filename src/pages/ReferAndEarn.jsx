@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Share2, Gift, Coins, Copy, CheckCircle2, Sparkles, ShieldCheck, ArrowUpRight, Award } from 'lucide-react'
+import { Share2, Gift, Coins, Copy, CheckCircle2, Sparkles, ShieldCheck, ArrowUpRight, Award, UserCheck, Ticket, ArrowRight } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import referralService from '../services/referralService'
 
@@ -52,7 +52,7 @@ export default function ReferAndEarn() {
       }
       
       setCopied(true)
-      toast.success('✓ Link copied to clipboard!', {
+      toast.success('✓ Referral link copied.', {
         icon: '📋',
         style: {
           background: 'var(--bb-surface-2)',
@@ -68,7 +68,7 @@ export default function ReferAndEarn() {
 
   const handleWhatsAppShare = () => {
     const text = encodeURIComponent(
-      `Hey! Get ₹500 off your first purchase at BeatBox audio. Use my link: ${dashboardData.referralLink}`
+      `Hey! Get ₹500 OFF your first order at BeatBox audio. Use my link: ${dashboardData.referralLink}`
     )
     window.open(`https://wa.me/?text=${text}`, '_blank')
   }
@@ -89,17 +89,19 @@ export default function ReferAndEarn() {
 
   const getStatusBadge = (status) => {
     switch (status?.toLowerCase()) {
+      case 'coupon issued':
       case 'rewardcredited':
       case 'credited':
-        return <span className="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-3 py-2 fw-semibold">Reward Credited</span>
+        return <span className="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-3 py-1.5 fw-semibold">Coupon Issued</span>
+      case 'completed':
       case 'qualified':
-        return <span className="badge rounded-pill bg-info-subtle text-info border border-info-subtle px-3 py-2 fw-semibold">Qualified</span>
+        return <span className="badge rounded-pill bg-info-subtle text-info border border-info-subtle px-3 py-1.5 fw-semibold">Completed</span>
       case 'pending':
-        return <span className="badge rounded-pill bg-warning-subtle text-warning border border-warning-subtle px-3 py-2 fw-semibold">Pending</span>
+        return <span className="badge rounded-pill bg-warning-subtle text-warning border border-warning-subtle px-3 py-1.5 fw-semibold">Pending</span>
       case 'expired':
-        return <span className="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary-subtle px-3 py-2 fw-semibold">Expired</span>
+        return <span className="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary-subtle px-3 py-1.5 fw-semibold">Expired</span>
       default:
-        return <span className="badge rounded-pill bg-light text-dark px-3 py-2 fw-semibold">{status}</span>
+        return <span className="badge rounded-pill bg-light text-dark px-3 py-1.5 fw-semibold">{status}</span>
     }
   }
 
@@ -123,33 +125,33 @@ export default function ReferAndEarn() {
             className="col-12 col-lg-6"
           >
             <div className="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3" style={{ background: 'rgba(0, 243, 255, 0.1)', border: '1px solid rgba(0, 243, 255, 0.3)', color: 'var(--bb-accent)' }}>
-              <Coins size={16} />
-              <span className="fw-bold" style={{ fontSize: '0.85rem', letterSpacing: '1px' }}>BEATBOX REWARDS</span>
+              <Ticket size={16} />
+              <span className="fw-bold" style={{ fontSize: '0.85rem', letterSpacing: '1px' }}>REFERRAL / REWARDS</span>
             </div>
             
-            <h1 className="fw-black text-theme-title mb-3" style={{ fontSize: 'clamp(2.5rem, 5vw, 3.8rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>
-              Refer & Earn
+            <h1 className="fw-black text-theme-title mb-3" style={{ fontSize: 'clamp(2.4rem, 5vw, 3.8rem)', letterSpacing: '-1px', lineHeight: 1.1 }}>
+              Refer a Friend. Both Win.
             </h1>
             
             <p className="fs-5 text-theme-muted mb-4" style={{ maxWidth: '540px' }}>
-              Share BeatBox with your friends. They get a special discount, and you earn BeatBox rewards when they complete their first purchase.
+              Share BeatBox with your friends. They get ₹500 OFF on their eligible first order, and you get a ₹500 coupon for your next purchase.
             </p>
             
-            {/* 3 Simple Benefit Cards */}
+            {/* Benefit Cards */}
             <div className="row g-3 mb-4">
-              <div className="col-4">
+              <div className="col-12 col-sm-4">
                 <div className="p-3 rounded-4 h-100 text-center" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
                   <div className="fw-black text-theme-title fs-4" style={{ color: 'var(--bb-accent)' }}>₹500 OFF</div>
-                  <div className="text-theme-muted extra-small mt-1" style={{ fontSize: '0.75rem' }}>Friend's first order</div>
+                  <div className="text-theme-muted extra-small mt-1" style={{ fontSize: '0.75rem' }}>Your friend's first order</div>
                 </div>
               </div>
-              <div className="col-4">
+              <div className="col-12 col-sm-4">
                 <div className="p-3 rounded-4 h-100 text-center" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
-                  <div className="fw-black text-theme-title fs-4" style={{ color: '#a820ff' }}>₹500 REWARD</div>
-                  <div className="text-theme-muted extra-small mt-1" style={{ fontSize: '0.75rem' }}>You earn on purchase</div>
+                  <div className="fw-black text-theme-title fs-4" style={{ color: '#a820ff' }}>₹500 COUPON</div>
+                  <div className="text-theme-muted extra-small mt-1" style={{ fontSize: '0.75rem' }}>For your next purchase</div>
                 </div>
               </div>
-              <div className="col-4">
+              <div className="col-12 col-sm-4">
                 <div className="p-3 rounded-4 h-100 text-center" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
                   <div className="fw-black text-theme-title fs-5 mt-1" style={{ color: '#39ff14' }}>EASY SHARING</div>
                   <div className="text-theme-muted extra-small mt-1" style={{ fontSize: '0.75rem' }}>Share link anywhere</div>
@@ -205,7 +207,7 @@ export default function ReferAndEarn() {
 
           </motion.div>
 
-          {/* Right Column: ONE Clean Studio Photography Hero Visual */}
+          {/* Right Column: Single Professional BeatBox Audio Photography Hero Visual */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -223,21 +225,21 @@ export default function ReferAndEarn() {
               >
                 <img 
                   src={heroBanner} 
-                  alt="BeatBox Premium Studio Audio Lineup" 
+                  alt="BeatBox Premium Audio Lineup" 
                   className="img-fluid w-100 d-block"
                   style={{ objectFit: 'cover', maxHeight: '420px' }}
                 />
 
-                {/* Subtle Overlay Overlay Badges */}
+                {/* Overlay Badges */}
                 <div 
                   className="position-absolute bottom-0 start-0 w-100 p-3 d-flex justify-content-between align-items-center"
                   style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)' }}
                 >
                   <span className="badge rounded-pill px-3 py-2 fw-semibold text-white d-flex align-items-center gap-1.5" style={{ background: 'rgba(0, 243, 255, 0.25)', backdropFilter: 'blur(8px)', border: '1px solid rgba(0, 243, 255, 0.4)' }}>
-                    <Award size={14} className="text-info" /> Friend Gets ₹500
+                    <Award size={14} className="text-info" /> Friend Gets ₹500 OFF
                   </span>
                   <span className="badge rounded-pill px-3 py-2 fw-semibold text-white d-flex align-items-center gap-1.5" style={{ background: 'rgba(168, 32, 255, 0.25)', backdropFilter: 'blur(8px)', border: '1px solid rgba(168, 32, 255, 0.4)' }}>
-                    <Gift size={14} style={{ color: '#a820ff' }} /> You Earn ₹500
+                    <Gift size={14} style={{ color: '#a820ff' }} /> You Get ₹500 Coupon
                   </span>
                 </div>
               </div>
@@ -246,42 +248,56 @@ export default function ReferAndEarn() {
 
         </div>
 
-        {/* 2. HOW IT WORKS SECTION */}
+        {/* 2. HOW IT WORKS 4-STEP FLOW */}
         <div className="my-5 pt-5 border-top" style={{ borderColor: 'var(--bb-border)' }}>
           <div className="text-center mb-5">
             <h2 className="fw-black text-theme-title mb-2">How It Works</h2>
-            <p className="text-theme-muted fs-6">3 simple steps to start earning store rewards</p>
+            <p className="text-theme-muted fs-6">4 simple steps to give ₹500 & earn ₹500 coupon</p>
           </div>
 
           <div className="row g-4 text-center">
             
-            <div className="col-12 col-md-4">
+            <div className="col-12 col-md-3">
               <div className="p-4 rounded-4 h-100 position-relative" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
                 <div className="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-3" style={{ background: 'rgba(0,243,255,0.1)', color: 'var(--bb-accent)' }}>
-                  <Share2 size={28} />
+                  <Share2 size={26} />
                 </div>
-                <h5 className="fw-bold text-theme-title mb-2">01 — Share</h5>
-                <p className="text-theme-muted small mb-0">Copy your unique BeatBox referral link and share it with friends via WhatsApp, social media, or email.</p>
+                <div className="fw-black text-info small mb-1">01</div>
+                <h5 className="fw-bold text-theme-title mb-2" style={{ fontSize: '1rem' }}>Share Your Link</h5>
+                <p className="text-theme-muted small mb-0">Copy your unique referral link and share it with your friends.</p>
               </div>
             </div>
 
-            <div className="col-12 col-md-4">
+            <div className="col-12 col-md-3">
               <div className="p-4 rounded-4 h-100 position-relative" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
                 <div className="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-3" style={{ background: 'rgba(168,32,255,0.1)', color: '#a820ff' }}>
-                  <Gift size={28} />
+                  <UserCheck size={26} />
                 </div>
-                <h5 className="fw-bold text-theme-title mb-2">02 — Friend Shops</h5>
-                <p className="text-theme-muted small mb-0">Your friend signs up using your link and receives ₹500 OFF their very first qualifying BeatBox order.</p>
+                <div className="fw-black text-purple small mb-1" style={{ color: '#a820ff' }}>02</div>
+                <h5 className="fw-bold text-theme-title mb-2" style={{ fontSize: '1rem' }}>Friend Signs Up & Logs In</h5>
+                <p className="text-theme-muted small mb-0">Your friend creates a BeatBox account using your referral link.</p>
               </div>
             </div>
 
-            <div className="col-12 col-md-4">
+            <div className="col-12 col-md-3">
               <div className="p-4 rounded-4 h-100 position-relative" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
                 <div className="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-3" style={{ background: 'rgba(57,255,20,0.1)', color: '#39ff14' }}>
-                  <Coins size={28} />
+                  <Gift size={26} />
                 </div>
-                <h5 className="fw-bold text-theme-title mb-2">03 — Earn</h5>
-                <p className="text-theme-muted small mb-0">Once their qualifying order is confirmed, you automatically receive ₹500 in BeatBox reward credit.</p>
+                <div className="fw-black text-success small mb-1">03</div>
+                <h5 className="fw-bold text-theme-title mb-2" style={{ fontSize: '1rem' }}>Friend Gets ₹500 OFF</h5>
+                <p className="text-theme-muted small mb-0">After registration and validation, your friend receives a ₹500 welcome coupon for their eligible first order.</p>
+              </div>
+            </div>
+
+            <div className="col-12 col-md-3">
+              <div className="p-4 rounded-4 h-100 position-relative" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
+                <div className="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-3" style={{ background: 'rgba(255,193,7,0.1)', color: '#ffc107' }}>
+                  <Ticket size={26} />
+                </div>
+                <div className="fw-black text-warning small mb-1">04</div>
+                <h5 className="fw-bold text-theme-title mb-2" style={{ fontSize: '1rem' }}>You Get ₹500 Coupon</h5>
+                <p className="text-theme-muted small mb-0">After the referral is successfully completed, you receive a ₹500 coupon for your next eligible purchase.</p>
               </div>
             </div>
 
@@ -311,7 +327,7 @@ export default function ReferAndEarn() {
 
             <div className="col-12 col-md-4">
               <div className="p-4 rounded-4" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
-                <span className="text-theme-muted fw-semibold small d-block mb-1">Rewards Earned</span>
+                <span className="text-theme-muted fw-semibold small d-block mb-1">Coupons Earned</span>
                 <div className="fw-black fs-2 text-success">₹{dashboardData.totalRewardsEarned?.toLocaleString('en-IN')}</div>
               </div>
             </div>
@@ -334,7 +350,8 @@ export default function ReferAndEarn() {
                     <tr style={{ borderColor: 'var(--bb-border)', color: 'var(--bb-text-muted)', fontSize: '0.85rem' }}>
                       <th className="fw-bold py-3">FRIEND</th>
                       <th className="fw-bold py-3">STATUS</th>
-                      <th className="fw-bold py-3 text-end">REWARD</th>
+                      <th className="fw-bold py-3">COUPON</th>
+                      <th className="fw-bold py-3 text-end">DATE</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -342,7 +359,16 @@ export default function ReferAndEarn() {
                       <tr key={item.id} style={{ borderColor: 'var(--bb-border)' }}>
                         <td className="fw-semibold py-3">{item.friendName}</td>
                         <td className="py-3">{getStatusBadge(item.status)}</td>
-                        <td className="fw-bold py-3 text-end text-success">₹{item.rewardAmount}</td>
+                        <td className="py-3">
+                          {item.couponCode ? (
+                            <code className="px-2 py-1 rounded bg-dark text-info fw-bold" style={{ fontSize: '0.85rem' }}>{item.couponCode}</code>
+                          ) : (
+                            <span className="text-theme-muted small">—</span>
+                          )}
+                        </td>
+                        <td className="fw-medium py-3 text-end text-theme-muted small">
+                          {new Date(item.createdDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -352,7 +378,7 @@ export default function ReferAndEarn() {
               <div className="text-center py-5 text-theme-muted">
                 <Sparkles className="mb-2 text-secondary" size={32} />
                 <h6>No referrals yet</h6>
-                <p className="small mb-0">Share your link above to invite your friends and earn rewards!</p>
+                <p className="small mb-0">Share your link above to invite your friends and earn ₹500 coupons!</p>
               </div>
             )}
           </div>
@@ -366,11 +392,11 @@ export default function ReferAndEarn() {
             </h5>
             
             <ul className="text-theme-muted small mb-0 lh-lg" style={{ paddingLeft: '1.2rem' }}>
-              <li>Reward applies only to qualifying first orders placed by new eligible customers.</li>
+              <li>Referral coupons apply only to qualifying first orders placed by new eligible customers.</li>
               <li>Self-referrals (referring yourself using alternate accounts) are strictly prohibited and will be disqualified.</li>
-              <li>Cancelled, failed, or refunded orders do not qualify for referral rewards.</li>
-              <li>Rewards are credited to your BeatBox balance after the qualifying order is confirmed.</li>
-              <li>One referral discount and reward per eligible customer.</li>
+              <li>Cancelled, failed, or refunded orders do not qualify for referral coupon issuance.</li>
+              <li>Referrer coupons are issued automatically after the referred friend completes their first qualifying order.</li>
+              <li>Friend welcome coupons are valid for 14 days; Referrer reward coupons are valid for 30 days.</li>
               <li>BeatBox reserves the right to review, reject, or cancel fraudulent or duplicate referral attempts.</li>
             </ul>
           </div>

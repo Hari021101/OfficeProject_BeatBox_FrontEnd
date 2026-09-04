@@ -5,9 +5,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { MapPin, CreditCard, CheckCircle, ArrowRight, ArrowLeft, Lock, Truck, Package } from 'lucide-react'
+import { MapPin, CreditCard, CheckCircle, ArrowRight, ArrowLeft, Lock, Truck, Package, Gift } from 'lucide-react'
 import { clearCart, removePromo, selectCartItems, selectCartSubtotal, selectCartCount, selectAppliedPromo } from '../redux/cartSlice'
 import { orderService } from '../services/orderService'
+import { referralService } from '../services/referralService'
 import { toast } from 'react-hot-toast'
 import { fetchAddresses } from '../redux/profileSlice'
 import { useEffect } from 'react'
@@ -51,6 +52,7 @@ export default function Checkout() {
   const [ordered, setOrdered] = useState(false)
   const [orderId] = useState(`BB${Date.now().toString().slice(-8)}`)
   const [createdOrderId, setCreatedOrderId] = useState(null)
+  const [referralBenefit, setReferralBenefit] = useState(null)
 
   const shipping = (appliedPromo?.code === 'FREESHIP' && (appliedPromo?.isFreeShipping || appliedPromo?.discountType === 'Shipping')) ? 0 : 49
   const couponDiscount = appliedPromo?.discountAmount != null ? Number(appliedPromo.discountAmount) : (appliedPromo?.discountPercentage ? Math.round(subtotal * (appliedPromo.discountPercentage / 100)) : 0)
@@ -62,6 +64,17 @@ export default function Checkout() {
 
   useEffect(() => {
     dispatch(fetchAddresses())
+    async function checkReferral() {
+      try {
+        const res = await referralService.getEligibility()
+        if (res && res.isEligible) {
+          setReferralBenefit(res)
+        }
+      } catch {
+        // non-blocking
+      }
+    }
+    checkReferral()
   }, [dispatch])
 
   useEffect(() => {
@@ -548,6 +561,18 @@ export default function Checkout() {
                   <span className="fw-black text-theme-title small">Order Summary</span>
                   <span className="badge ms-auto rounded-pill" style={{ background: 'linear-gradient(135deg,var(--bb-primary),var(--bb-accent))', fontSize: '0.65rem' }}>{count} item{count !== 1 && 's'}</span>
                 </div>
+
+                {referralBenefit?.isEligible && (
+                  <div className="p-3 rounded-3 mb-3 border border-success-subtle bg-success-subtle text-success">
+                    <div className="d-flex align-items-center justify-content-between mb-1">
+                      <span className="fw-bold small d-flex align-items-center gap-1.5"><Gift size={15} /> Referral First-Order Benefit</span>
+                      <span className="badge bg-success text-white" style={{ fontSize: '0.65rem' }}>ELIGIBLE</span>
+                    </div>
+                    <div className="extra-small" style={{ fontSize: '0.75rem' }}>
+                      ₹500 store reward credit will be awarded to your referrer upon order delivery.
+                    </div>
+                  </div>
+                )}
                 <div className="d-flex flex-column gap-2 mb-3" style={{ maxHeight: 200, overflowY: 'auto' }}>
                   {items.map(item => (
                     <div key={item.cartKey} className="d-flex align-items-center gap-2">
