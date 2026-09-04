@@ -21,6 +21,7 @@ const Wishlist = React.lazy(() => import('../pages/Wishlist'))
 const Personalisation = React.lazy(() => import('../pages/Personalisation'))
 const CorporateOrders = React.lazy(() => import('../pages/CorporateOrders'))
 const ReferAndEarn = React.lazy(() => import('../pages/ReferAndEarn'))
+const ReferralRedirect = React.lazy(() => import('../components/referral/ReferralRedirect'))
 const Gifting = React.lazy(() => import('../pages/Gifting'))
 const Support = React.lazy(() => import('../pages/Support'))
 const SoundMatch = React.lazy(() => import('../pages/SoundMatch'))
@@ -150,6 +151,7 @@ export default function AppRouter() {
           <Route path="/personalisation" element={<Layout><Personalisation /></Layout>} />
           <Route path="/corporate" element={<Layout><CorporateOrders /></Layout>} />
           <Route path="/refer" element={<Layout><ReferAndEarn /></Layout>} />
+          <Route path="/ref/:code" element={<ReferralRedirect />} />
           <Route path="/gifting" element={<Layout><Gifting /></Layout>} />
           <Route path="/support" element={<Layout><Support /></Layout>} />
           <Route path="/soundmatch" element={<Layout><SoundMatch /></Layout>} />

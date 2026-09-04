@@ -8,6 +8,7 @@ import ParticleBackground from '../components/ui/ParticleBackground'
 import ThemeToggle from '../components/ui/ThemeToggle'
 import { registerUser, resetState, setOtpStep, setAuthFromOtp } from '../redux/authSlice'
 import { otpService } from '../services/otpService'
+import { referralService } from '../services/referralService'
 import { toast } from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -193,7 +194,18 @@ export default function Register() {
       
       // Store JWT and set auth state
       dispatch(setAuthFromOtp({ fullName: data.fullName, email: data.email, token: data.token }))
-      toast.success('-- Account verified! Welcome to BeatBox.')
+      
+      const savedRefCode = localStorage.getItem('bb_referral_code')
+      if (savedRefCode) {
+        try {
+          await referralService.applyReferral(savedRefCode)
+          toast.success(`Referral code ${savedRefCode} linked to your new account! 🎉`)
+        } catch {
+          // non-blocking
+        }
+      }
+
+      toast.success('Account verified! Welcome to BeatBox.')
       navigate('/')
     } catch (err) {
       toast.error(err.response?.data?.message || 'Invalid OTP. Please try again.')
