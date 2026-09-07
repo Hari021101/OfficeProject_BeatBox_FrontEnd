@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Share2, Gift, Coins, Copy, CheckCircle2, Sparkles, ShieldCheck, ArrowUpRight, Award, UserCheck, Ticket, ArrowRight } from 'lucide-react'
+import { Share2, Gift, Coins, Copy, CheckCircle2, Sparkles, ShieldCheck, ArrowUpRight, Award, UserCheck, Ticket, ArrowRight, Clock, XCircle } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import referralService from '../services/referralService'
 
@@ -11,11 +11,11 @@ export default function ReferAndEarn() {
   const [copied, setCopied] = useState(false)
   const [loading, setLoading] = useState(true)
   const [dashboardData, setDashboardData] = useState({
-    referralCode: 'BASS2026',
-    referralLink: `${window.location.origin}${window.location.pathname}#/ref/BASS2026`,
+    referralCode: '',
+    referralLink: '',
     friendsInvited: 0,
     successfulReferrals: 0,
-    totalRewardsEarned: 0,
+    couponsEarned: 0,
     history: []
   })
 
@@ -88,21 +88,52 @@ export default function ReferAndEarn() {
   }
 
   const getStatusBadge = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'coupon issued':
-      case 'rewardcredited':
-      case 'credited':
-        return <span className="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-3 py-1.5 fw-semibold">Coupon Issued</span>
-      case 'completed':
-      case 'qualified':
-        return <span className="badge rounded-pill bg-info-subtle text-info border border-info-subtle px-3 py-1.5 fw-semibold">Completed</span>
-      case 'pending':
-        return <span className="badge rounded-pill bg-warning-subtle text-warning border border-warning-subtle px-3 py-1.5 fw-semibold">Pending</span>
-      case 'expired':
-        return <span className="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary-subtle px-3 py-1.5 fw-semibold">Expired</span>
-      default:
-        return <span className="badge rounded-pill bg-light text-dark px-3 py-1.5 fw-semibold">{status}</span>
+    const s = status?.toLowerCase() || '';
+    if (s.includes('coupon') || s.includes('credited')) {
+      return (
+        <span 
+          className="badge rounded-pill px-3 py-1.5 fw-bold d-inline-flex align-items-center gap-1.5"
+          style={{ background: '#10b981', color: '#ffffff', boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)', fontSize: '0.78rem' }}
+        >
+          <Ticket size={14} /> Coupon Issued
+        </span>
+      );
     }
+    if (s.includes('completed') || s.includes('qualified')) {
+      return (
+        <span 
+          className="badge rounded-pill px-3 py-1.5 fw-bold d-inline-flex align-items-center gap-1.5"
+          style={{ background: '#0284c7', color: '#ffffff', boxShadow: '0 2px 8px rgba(2, 132, 199, 0.25)', fontSize: '0.78rem' }}
+        >
+          <CheckCircle2 size={14} /> Completed
+        </span>
+      );
+    }
+    if (s.includes('pending')) {
+      return (
+        <span 
+          className="badge rounded-pill px-3 py-1.5 fw-bold d-inline-flex align-items-center gap-1.5"
+          style={{ background: '#f59e0b', color: '#0f172a', boxShadow: '0 2px 8px rgba(245, 158, 11, 0.25)', fontSize: '0.78rem' }}
+        >
+          <Clock size={14} /> Pending
+        </span>
+      );
+    }
+    if (s.includes('expired')) {
+      return (
+        <span 
+          className="badge rounded-pill px-3 py-1.5 fw-bold d-inline-flex align-items-center gap-1.5"
+          style={{ background: '#ef4444', color: '#ffffff', boxShadow: '0 2px 8px rgba(239, 68, 68, 0.25)', fontSize: '0.78rem' }}
+        >
+          <XCircle size={14} /> Expired
+        </span>
+      );
+    }
+    return (
+      <span className="badge rounded-pill px-3 py-1.5 fw-bold bg-secondary text-white" style={{ fontSize: '0.78rem' }}>
+        {status}
+      </span>
+    );
   }
 
   return (
@@ -328,7 +359,7 @@ export default function ReferAndEarn() {
             <div className="col-12 col-md-4">
               <div className="p-4 rounded-4" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)' }}>
                 <span className="text-theme-muted fw-semibold small d-block mb-1">Coupons Earned</span>
-                <div className="fw-black fs-2 text-success">₹{dashboardData.totalRewardsEarned?.toLocaleString('en-IN')}</div>
+                <div className="fw-black fs-2 text-success">₹{(dashboardData.couponsEarned ?? dashboardData.totalRewardsEarned ?? 0).toLocaleString('en-IN')}</div>
               </div>
             </div>
 
@@ -377,8 +408,8 @@ export default function ReferAndEarn() {
             ) : (
               <div className="text-center py-5 text-theme-muted">
                 <Sparkles className="mb-2 text-secondary" size={32} />
-                <h6>No referrals yet</h6>
-                <p className="small mb-0">Share your link above to invite your friends and earn ₹500 coupons!</p>
+                <h6 className="fw-bold text-theme-title">No referrals yet</h6>
+                <p className="small mb-0">Share your referral link with friends to get started.</p>
               </div>
             )}
           </div>

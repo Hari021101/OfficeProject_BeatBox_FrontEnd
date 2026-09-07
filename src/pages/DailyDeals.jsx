@@ -48,18 +48,32 @@ export default function DailyDeals() {
 
   // Coupons state from database
   const [coupons, setCoupons] = useState([])
+  const [myReferralCoupon, setMyReferralCoupon] = useState(null)
   const [loadingCoupons, setLoadingCoupons] = useState(true)
   const [copiedCode, setCopiedCode] = useState(null)
 
   // Hero selected color variant
   const [heroSelectedColor, setHeroSelectedColor] = useState(null)
 
-  // Fetch active coupons
+  // Fetch active coupons & user referral coupon
   useEffect(() => {
     const loadCoupons = async () => {
       try {
-        const activeCoupons = await productService.getActiveCoupons()
+        const [activeCoupons, userCoupons] = await Promise.all([
+          productService.getActiveCoupons(),
+          productService.getMyCoupons()
+        ])
         setCoupons(activeCoupons || [])
+
+        // Find active referral coupon if available for current user
+        if (userCoupons && userCoupons.length > 0) {
+          const refCpn = userCoupons.find(c =>
+            c.status === 'Active' &&
+            c.isActive &&
+            (c.code?.startsWith('REF-') || c.code?.startsWith('WELCOME-') || c.description?.toLowerCase().includes('referral') || c.description?.toLowerCase().includes('welcome'))
+          )
+          setMyReferralCoupon(refCpn || null)
+        }
       } catch (err) {
         console.error('Error fetching coupons from backend:', err)
         setCoupons([])
@@ -538,14 +552,55 @@ export default function DailyDeals() {
         )}
 
         {/* ── DEALS COUPONS SECTION ────────────────── */}
-        {!loadingCoupons && coupons.length > 0 && (
+        {!loadingCoupons && (coupons.length > 0 || myReferralCoupon) && (
           <section className="mb-5">
             <div className="text-center mb-4">
-              <h4 className="fw-black text-theme-title mb-1">Active Store Promotions</h4>
+              <h4 className="fw-black text-theme-title mb-1">Active Store Promotions & Rewards</h4>
               <p className="text-theme-muted small">Click any coupon below to copy and apply at checkout for extra savings!</p>
             </div>
             
             <div className="row g-3 row-cols-1 row-cols-md-3">
+              {/* Dedicated Referral Reward Card (Rendered ONLY if user holds active referral coupon) */}
+              {myReferralCoupon && (
+                <div className="col">
+                  <div 
+                    className="coupon-card h-100 position-relative p-4 rounded-4"
+                    onClick={() => copyCouponCode(myReferralCoupon.code)}
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(168, 32, 255, 0.2), rgba(0, 243, 255, 0.15))',
+                      border: '1px dashed #a820ff',
+                      boxShadow: '0 10px 30px rgba(168, 32, 255, 0.25)',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    <div className="coupon-notch-left"></div>
+                    <div className="coupon-notch-right"></div>
+
+                    <div className="d-flex justify-content-between align-items-start mb-3">
+                      <span className="badge rounded-pill px-3 py-1 fw-bold text-white" style={{ background: '#a820ff', fontSize: '0.65rem' }}>
+                        REFER & EARN REWARD
+                      </span>
+                      <div className="text-theme-muted">
+                        {copiedCode === myReferralCoupon.code ? <Check size={16} className="text-success" /> : <Copy size={16} />}
+                      </div>
+                    </div>
+
+                    <h3 className="fw-black text-theme-title mb-1" style={{ color: '#00f3ff' }}>
+                      ₹{myReferralCoupon.discountAmount || 500} OFF
+                    </h3>
+                    <h6 className="fw-black text-accent mb-2 uppercase-label tracking-wide">{myReferralCoupon.code}</h6>
+                    <p className="text-theme-title fw-bold small mb-1">Your referral coupon is ready!</p>
+                    <p className="text-theme-muted small mb-0" style={{ fontSize: '0.7rem' }}>
+                      Valid until: {new Date(myReferralCoupon.expiryDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    </p>
+                    <div className="mt-3">
+                      <span className="btn btn-glow btn-sm w-100 fw-bold">Use Coupon</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {coupons.map((coupon) => (
                 <div key={coupon.id} className="col">
                   <div 

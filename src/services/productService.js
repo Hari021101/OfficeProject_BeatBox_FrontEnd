@@ -411,4 +411,14 @@ getProductById: async (id) => {
     const response = await api.get('/coupon');
     return response.data;
   },
+
+  getMyCoupons: async () => {
+    try {
+      const response = await api.get('/coupon/my-coupons');
+      return response.data;
+    } catch (error) {
+      console.warn('Error fetching my-coupons from backend:', error);
+      return [];
+    }
+  },
 };
