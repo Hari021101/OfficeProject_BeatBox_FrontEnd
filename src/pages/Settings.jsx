@@ -7,7 +7,8 @@ import * as z from 'zod';
 import { fetchProfile, updateProfile, fetchAddresses, changePassword } from '../redux/profileSlice';
 import { addressService } from '../services/addressService';
 import { toast } from 'react-hot-toast';
-import { User, MapPin, Shield, Plus, Edit2, Trash2, CheckCircle, Save } from 'lucide-react';
+import { User, MapPin, Shield, Plus, Edit2, Trash2, CheckCircle, Save, AlertTriangle } from 'lucide-react';
+import { authService } from '../services/authService';
 
 const profileSchema = z.object({
   fullName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -40,6 +41,24 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleSelfDeleteAccount = async () => {
+    try {
+      setDeleting(true);
+      await authService.deleteSelfAccount();
+      toast.success('Your account has been deleted successfully.');
+      authService.logout();
+      setShowDeleteModal(false);
+      window.location.href = '#/login';
+    } catch (err) {
+      console.error('Failed to delete account:', err);
+      toast.error(err.response?.data?.message || err.message || 'Failed to delete account. Please try again.');
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const { register: registerProfile, handleSubmit: handleProfileSubmitForm, formState: { errors: profileErrors } } = useForm({
     resolver: zodResolver(profileSchema),
@@ -363,6 +382,24 @@ export default function Settings() {
                         </div>
                       </div>
                     </form>
+
+                    {/* Danger Zone: Delete Account */}
+                    <div className="mt-5 pt-4 border-top border-danger border-opacity-25">
+                      <h5 className="fw-bold text-danger mb-2 d-flex align-items-center gap-2">
+                        <Trash2 size={18} /> Danger Zone
+                      </h5>
+                      <p className="text-theme-muted small mb-3">
+                        Permanently remove your BeatBox account and associated personal information. This action cannot be undone.
+                      </p>
+                      <button 
+                        type="button" 
+                        onClick={() => setShowDeleteModal(true)} 
+                        className="btn btn-outline-danger fw-bold py-2 px-4 rounded-3 d-flex align-items-center gap-2"
+                      >
+                        <Trash2 size={16} /> Delete Account
+                      </button>
+                    </div>
+
                   </div>
                 </motion.div>
               )}
@@ -370,6 +407,60 @@ export default function Settings() {
           </div>
         </div>
       </div>
+
+      {/* Self Account Deletion Confirmation Modal */}
+      <AnimatePresence>
+        {showDeleteModal && (
+          <div className="modal-backdrop-custom position-fixed d-flex align-items-center justify-content-center p-3" style={{ background: 'rgba(0,0,0,0.75)', zIndex: 1050, top: 0, left: 0, right: 0, bottom: 0 }}>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} 
+              animate={{ scale: 1, opacity: 1 }} 
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="p-4 rounded-4 shadow-lg max-w-md w-100" 
+              style={{ background: 'var(--bb-surface)', border: '1px solid rgba(239,68,68,0.3)', maxWidth: 440 }}
+            >
+              <div className="d-flex align-items-center gap-3 mb-3 text-danger">
+                <div className="p-3 rounded-circle bg-danger bg-opacity-10 d-flex align-items-center justify-content-center">
+                  <AlertTriangle size={24} />
+                </div>
+                <h5 className="fw-bold mb-0 text-theme-title">Delete your account?</h5>
+              </div>
+
+              <p className="text-theme-muted small lh-base mb-4">
+                This action will permanently remove your BeatBox account and associated personal data. This cannot be undone.
+              </p>
+
+              <div className="d-flex align-items-center justify-content-end gap-3 pt-3 border-top border-secondary border-opacity-25">
+                <button 
+                  type="button" 
+                  onClick={() => setShowDeleteModal(false)}
+                  disabled={deleting}
+                  className="btn btn-sm btn-outline-secondary px-4 py-2 fw-semibold rounded-3 text-theme-title"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="button" 
+                  onClick={handleSelfDeleteAccount}
+                  disabled={deleting}
+                  className="btn btn-sm btn-danger px-4 py-2 fw-bold rounded-3 d-flex align-items-center gap-2"
+                >
+                  {deleting ? (
+                    <>
+                      <div className="spinner-border spinner-border-sm" role="status"></div>
+                      Deleting Account...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 size={15} /> Delete My Account
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -77,6 +77,11 @@ export const authService = {
   getToken: () => {
     return localStorage.getItem('bb_token');
   },
+
+  deleteSelfAccount: async () => {
+    const response = await api.delete('/account');
+    return response.data;
+  },
 };
 
 export default api;

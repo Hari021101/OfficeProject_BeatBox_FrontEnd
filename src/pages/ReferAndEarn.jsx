@@ -10,6 +10,7 @@ import heroBanner from '../assets/referral_hero_banner.jpg'
 export default function ReferAndEarn() {
   const [copied, setCopied] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [dashboardData, setDashboardData] = useState({
     referralCode: '',
     referralLink: '',
@@ -26,10 +27,16 @@ export default function ReferAndEarn() {
     async function fetchReferralInfo() {
       try {
         setLoading(true)
+        setError(null)
         const data = await referralService.getDashboard()
         setDashboardData(data)
       } catch (err) {
         console.error('Failed to load referral dashboard:', err)
+        if (err.response && err.response.status === 401) {
+          setError('Please log in to your BeatBox account to view and share your referral link.')
+        } else {
+          setError(err.response?.data?.message || err.message || 'Unable to load referral dashboard. Please check API server or network configuration.')
+        }
       } finally {
         setLoading(false)
       }
@@ -190,29 +197,44 @@ export default function ReferAndEarn() {
               </div>
             </div>
 
-            {/* Compact Referral Link Box with SINGLE Copy Action */}
+            {/* Compact Referral Link Box */}
             <div className="p-4 rounded-4 mb-4" style={{ background: 'var(--bb-surface)', border: '1px solid var(--bb-border)', boxShadow: '0 10px 30px var(--bb-shadow)' }}>
               <label className="fw-bold text-theme-title mb-2 d-block">Your Referral Link</label>
-              <div className="d-flex flex-column flex-sm-row align-items-stretch gap-2">
-                <input 
-                  type="text" 
-                  value={dashboardData.referralLink} 
-                  readOnly 
-                  className="form-control fw-semibold" 
-                  style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)', fontSize: '0.95rem' }}
-                />
-                <button 
-                  onClick={handleCopy}
-                  className={`btn ${copied ? 'btn-success' : 'btn-glow'} fw-bold px-4 py-2 text-nowrap d-flex align-items-center justify-content-center`}
-                  style={{ minWidth: '130px', transition: 'all 0.3s ease' }}
-                >
-                  {copied ? (
-                    <><CheckCircle2 size={18} className="me-2" /> COPIED</>
-                  ) : (
-                    <><Copy size={18} className="me-2" /> COPY LINK</>
+              {loading ? (
+                <div className="d-flex align-items-center gap-2 text-theme-muted py-2">
+                  <div className="spinner-border spinner-border-sm text-info" role="status"></div>
+                  <span className="small">Generating your unique referral link...</span>
+                </div>
+              ) : error ? (
+                <div className="p-3 rounded-3 bg-danger bg-opacity-10 border border-danger border-opacity-25 text-danger small d-flex align-items-center justify-content-between gap-3">
+                  <span>{error}</span>
+                  {error.includes('log in') && (
+                    <a href="#/login" className="btn btn-sm btn-outline-danger text-nowrap fw-bold">Log In</a>
                   )}
-                </button>
-              </div>
+                </div>
+              ) : (
+                <div className="d-flex flex-column flex-sm-row align-items-stretch gap-2">
+                  <input 
+                    type="text" 
+                    value={dashboardData.referralLink} 
+                    readOnly 
+                    className="form-control fw-semibold" 
+                    style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)', color: 'var(--bb-title-color)', fontSize: '0.95rem' }}
+                  />
+                  <button 
+                    onClick={handleCopy}
+                    className={`btn ${copied ? 'btn-success' : 'btn-glow'} fw-bold px-4 py-2 text-nowrap d-flex align-items-center justify-content-center`}
+                    style={{ minWidth: '130px', transition: 'all 0.3s ease' }}
+                    disabled={!dashboardData.referralLink}
+                  >
+                    {copied ? (
+                      <><CheckCircle2 size={18} className="me-2" /> COPIED</>
+                    ) : (
+                      <><Copy size={18} className="me-2" /> COPY LINK</>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Sharing Buttons: WhatsApp + Optional Native Web Share (NO Duplicate Copy Button) */}

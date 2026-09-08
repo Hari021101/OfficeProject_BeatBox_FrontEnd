@@ -3,13 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Users, UserCheck, UserX, ShieldCheck, Mail, Phone,
   Calendar, Search, X, ChevronRight, RefreshCw,
-  Crown, Ban, CheckCircle, Eye, TrendingUp, Lock
+  Crown, Ban, CheckCircle, Eye, TrendingUp, Lock, Trash2, AlertTriangle
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import adminService from '../../services/adminService'
 import StatWidget from '../../components/admin/StatWidget'
 import Select from '../../components/ui/Select'
-import api from '../../services/authService'
+import api, { authService } from '../../services/authService'
 
 // ─── helpers ──────────────────────────────────────────────
 const avatar = (name, isAdmin) => (
@@ -41,10 +41,11 @@ const RoleBadge = ({ role }) => (
 )
 
 // ─── Detail Drawer ────────────────────────────────────────
-function UserDetailDrawer({ user, onClose, onToggleStatus, onToggleRole, actionLoading }) {
+function UserDetailDrawer({ user, onClose, onToggleStatus, onToggleRole, onDeleteUser, actionLoading, currentAdminId }) {
   if (!user) return null
   const isAdmin = user.role === 'Admin'
   const isActive = user.status === 'Active'
+  const isSelf = user.id === currentAdminId
 
   return (
     <>
@@ -153,6 +154,28 @@ function UserDetailDrawer({ user, onClose, onToggleStatus, onToggleRole, actionL
               <p className="mb-0 opacity-75" style={{ fontSize: '0.75rem' }}>{isAdmin ? 'Remove admin privileges' : 'Grant admin access'}</p>
             </div>
           </button>
+
+          {/* Delete Account */}
+          <button
+            disabled={actionLoading || isSelf}
+            onClick={() => onDeleteUser(user)}
+            className="btn w-100 d-flex align-items-center gap-3 p-3 rounded-3 fw-bold"
+            style={{
+              background: 'rgba(239,68,68,0.08)',
+              color: '#ef4444',
+              border: '1px solid rgba(239,68,68,0.25)',
+              textAlign: 'left',
+              opacity: isSelf ? 0.5 : 1
+            }}
+          >
+            <Trash2 size={18} />
+            <div>
+              <p className="mb-0 fw-bold" style={{ fontSize: '0.9rem' }}>Delete Account</p>
+              <p className="mb-0 opacity-75" style={{ fontSize: '0.75rem' }}>
+                {isSelf ? 'Cannot delete your own admin account here' : 'Permanently remove customer account'}
+              </p>
+            </div>
+          </button>
         </div>
 
         {/* Footer note */}
@@ -171,12 +194,16 @@ export default function AccountManagement() {
   const [users, setUsers] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedUser, setSelectedUser] = useState(null)
+  const [deleteConfirmUser, setDeleteConfirmUser] = useState(null)
   const [actionLoading, setActionLoading] = useState(false)
   const [search, setSearch] = useState('')
   const [filterRole, setFilterRole] = useState('All')
   const [filterStatus, setFilterStatus] = useState('All')
   const [sortBy, setSortBy] = useState('joinDate')
   const [sortDir, setSortDir] = useState('desc')
+
+  const currentUser = authService.getCurrentUser()
+  const currentAdminId = currentUser?.id || currentUser?.userId
 
   const load = async () => {
     setIsLoading(true)
@@ -266,6 +293,22 @@ export default function AccountManagement() {
       toast.success(`${user.name} is now a ${wasAdmin ? 'Customer' : 'Admin'}.`)
     } catch {
       toast.error('Role update failed. Please try again.')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleDeleteUserConfirm = async () => {
+    if (!deleteConfirmUser) return
+    setActionLoading(true)
+    try {
+      await adminService.deleteUserAccount(deleteConfirmUser.id)
+      setUsers(prev => prev.filter(u => u.id !== deleteConfirmUser.id))
+      toast.success(`Account for ${deleteConfirmUser.name} deleted successfully.`)
+      setDeleteConfirmUser(null)
+      setSelectedUser(null)
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message || 'Failed to delete user account.')
     } finally {
       setActionLoading(false)
     }
@@ -476,8 +519,64 @@ export default function AccountManagement() {
             onClose={() => setSelectedUser(null)}
             onToggleStatus={handleToggleStatus}
             onToggleRole={handleToggleRole}
+            onDeleteUser={(u) => setDeleteConfirmUser(u)}
             actionLoading={actionLoading}
+            currentAdminId={currentAdminId}
           />
+        )}
+      </AnimatePresence>
+
+      {/* Admin Account Deletion Confirmation Modal */}
+      <AnimatePresence>
+        {deleteConfirmUser && (
+          <div className="modal-backdrop-custom position-fixed d-flex align-items-center justify-content-center p-3" style={{ background: 'rgba(0,0,0,0.75)', zIndex: 1060, top: 0, left: 0, right: 0, bottom: 0 }}>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} 
+              animate={{ scale: 1, opacity: 1 }} 
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="p-4 rounded-4 shadow-lg max-w-md w-100" 
+              style={{ background: 'var(--bb-surface)', border: '1px solid rgba(239,68,68,0.3)', maxWidth: 440 }}
+            >
+              <div className="d-flex align-items-center gap-3 mb-3 text-danger">
+                <div className="p-3 rounded-circle bg-danger bg-opacity-10 d-flex align-items-center justify-content-center">
+                  <AlertTriangle size={24} />
+                </div>
+                <h5 className="fw-bold mb-0 text-theme-title">Delete Customer Account?</h5>
+              </div>
+
+              <p className="text-theme-muted small lh-base mb-4">
+                Are you sure you want to permanently delete account for <strong className="text-theme-title">{deleteConfirmUser.name}</strong> ({deleteConfirmUser.email})? This action cannot be undone.
+              </p>
+
+              <div className="d-flex align-items-center justify-content-end gap-3 pt-3 border-top border-secondary border-opacity-25">
+                <button 
+                  type="button" 
+                  onClick={() => setDeleteConfirmUser(null)}
+                  disabled={actionLoading}
+                  className="btn btn-sm btn-outline-secondary px-4 py-2 fw-semibold rounded-3 text-theme-title"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="button" 
+                  onClick={handleDeleteUserConfirm}
+                  disabled={actionLoading}
+                  className="btn btn-sm btn-danger px-4 py-2 fw-bold rounded-3 d-flex align-items-center gap-2"
+                >
+                  {actionLoading ? (
+                    <>
+                      <div className="spinner-border spinner-border-sm" role="status"></div>
+                      Deleting Account...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 size={15} /> Delete Account
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
 

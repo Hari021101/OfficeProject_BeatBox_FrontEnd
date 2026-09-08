@@ -93,6 +93,16 @@ const adminService = {
     }
   },
 
+  deleteUserAccount: async (userId) => {
+    try {
+      const response = await api.delete(`/account/users/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting user account:', error);
+      throw error;
+    }
+  },
+
   // --- Returns ---
   getAllReturns: async () => {
     try {

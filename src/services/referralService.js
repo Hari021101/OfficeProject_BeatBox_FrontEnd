@@ -7,20 +7,8 @@ export const referralService = {
   },
 
   getDashboard: async () => {
-    try {
-      const response = await api.get('/referral/dashboard');
-      return response.data;
-    } catch (error) {
-      console.warn('Backend referral dashboard error:', error);
-      return {
-        referralCode: '',
-        referralLink: '',
-        friendsInvited: 0,
-        successfulReferrals: 0,
-        couponsEarned: 0,
-        history: []
-      };
-    }
+    const response = await api.get('/referral/dashboard');
+    return response.data;
   },
 
   validateCode: async (code) => {
