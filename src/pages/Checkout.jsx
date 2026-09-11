@@ -128,13 +128,6 @@ export default function Checkout() {
       setStep(2);
     }
   }
-  console.log({
-    subtotal,
-    shipping,
-    couponDiscount,
-    total,
-    appliedPromo
-  });
   const onPlaceOrder = async () => {
     try {
 

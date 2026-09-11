@@ -601,7 +601,9 @@ export default function DailyDeals() {
                 </div>
               )}
 
-              {coupons.map((coupon) => (
+              {coupons
+                .filter(coupon => !myReferralCoupon || coupon.code !== myReferralCoupon.code)
+                .map((coupon) => (
                 <div key={coupon.id} className="col">
                   <div 
                     className="coupon-card h-100 position-relative p-4 rounded-4"

@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createSelector } from '@reduxjs/toolkit'
 
 const MAX_ITEMS = 8
 const STORAGE_KEY = 'bb_recently_viewed'
@@ -52,12 +52,15 @@ const recentlyViewedSlice = createSlice({
 
 export const { addRecentlyViewed, clearRecentlyViewed } = recentlyViewedSlice.actions
 
-export const selectRecentlyViewedIds = (state) => state.recentlyViewed.ids || []
+export const selectRecentlyViewedIds = (state) => state.recentlyViewed?.ids || []
 
-export const selectRecentlyViewed = (state) => {
-  const ids = state.recentlyViewed.ids || []
-  const products = state.products.items || []
-  return ids.map(id => products.find(p => p.id === id)).filter(Boolean)
-}
+const selectProductsItems = (state) => state.products?.items || []
+
+export const selectRecentlyViewed = createSelector(
+  [selectRecentlyViewedIds, selectProductsItems],
+  (ids, products) => {
+    return ids.map(id => products.find(p => p.id === id)).filter(Boolean)
+  }
+)
 
 export default recentlyViewedSlice.reducer

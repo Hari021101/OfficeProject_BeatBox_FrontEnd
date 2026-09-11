@@ -45,16 +45,6 @@ export default function ProductListing() {
 
   const dispatch = useDispatch()
   const allProducts = useSelector(selectAllProducts)
-  console.log("activeCategory:", activeCategory, typeof activeCategory);
-
-  console.table(
-    allProducts.slice(0, 10).map(p => ({
-      name: p.name,
-      categoryId: p.categoryId,
-      type: typeof p.categoryId,
-      categoryName: p.categoryName
-    }))
-  );
   const [dbCategories, setDbCategories] = useState([])
 
   useEffect(() => {

@@ -13,11 +13,11 @@ import logo from '../assets/beatbox_logo.png'
 // ─── Status config ────────────────────────────────────────────────────────────
 
 const STATUS_CONFIG = {
-  Pending:    { label: 'Pending',    color: '#f59e0b', glow: 'rgba(245,158,11,0.25)',  bg: 'rgba(245,158,11,0.1)',   Icon: Clock },
-  Processing: { label: 'Processing', color: '#a820ff', glow: 'rgba(168,32,255,0.25)', bg: 'rgba(168,32,255,0.1)',  Icon: RefreshCw },
-  Shipped:    { label: 'Shipped',    color: '#00f3ff', glow: 'rgba(0,243,255,0.25)',  bg: 'rgba(0,243,255,0.1)',   Icon: Truck },
-  Delivered:  { label: 'Delivered',  color: '#39ff14', glow: 'rgba(57,255,20,0.25)',  bg: 'rgba(57,255,20,0.08)', Icon: CheckCircle },
-  Cancelled:  { label: 'Cancelled',  color: '#ef4444', glow: 'rgba(239,68,68,0.25)',  bg: 'rgba(239,68,68,0.08)', Icon: XCircle },
+  Pending: { label: 'Pending', color: '#f59e0b', glow: 'rgba(245,158,11,0.25)', bg: 'rgba(245,158,11,0.1)', Icon: Clock },
+  Processing: { label: 'Processing', color: '#a820ff', glow: 'rgba(168,32,255,0.25)', bg: 'rgba(168,32,255,0.1)', Icon: RefreshCw },
+  Shipped: { label: 'Shipped', color: '#00f3ff', glow: 'rgba(0,243,255,0.25)', bg: 'rgba(0,243,255,0.1)', Icon: Truck },
+  Delivered: { label: 'Delivered', color: '#39ff14', glow: 'rgba(57,255,20,0.25)', bg: 'rgba(57,255,20,0.08)', Icon: CheckCircle },
+  Cancelled: { label: 'Cancelled', color: '#ef4444', glow: 'rgba(239,68,68,0.25)', bg: 'rgba(239,68,68,0.08)', Icon: XCircle },
 }
 
 const TABS = ['All', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled']
@@ -50,14 +50,14 @@ function SkeletonCard() {
 
 // ─── Order Card ───────────────────────────────────────────────────────────────
 
-function OrderCard({ order, index }) {
+function OrderCard({ order, index, userSeq }) {
   const navigate = useNavigate()
   const cfg = STATUS_CONFIG[order.status] || STATUS_CONFIG.Pending
   const StatusIcon = cfg.Icon
   const formattedDate = order.orderDate
     ? new Date(order.orderDate).toLocaleDateString('en-IN', {
-        day: 'numeric', month: 'short', year: 'numeric',
-      })
+      day: 'numeric', month: 'short', year: 'numeric',
+    })
     : 'N/A'
 
   const items = order.items || []
@@ -80,11 +80,9 @@ function OrderCard({ order, index }) {
       <div className="d-flex justify-content-between align-items-start gap-2 mb-2 flex-wrap">
         <div>
           <p className="text-theme-muted mb-0" style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' }}>
-            Order ID
+            Order #{userSeq || 1}
           </p>
-          <span className="fw-black" style={{ fontFamily: 'monospace', fontSize: '0.9rem', color: 'var(--bb-accent)' }}>
-            #{order.orderId?.toString().slice(-10) || order.orderId}
-          </span>
+
         </div>
         {/* Status Badge */}
         <div
@@ -252,6 +250,15 @@ export default function Orders() {
     dispatch(fetchMyOrders())
   }, [dispatch])
 
+  const userOrderSeqMap = useMemo(() => {
+    const sortedAsc = [...allOrders].sort((a, b) => (a.orderId - b.orderId));
+    const map = {};
+    sortedAsc.forEach((o, i) => {
+      map[o.orderId] = i + 1;
+    });
+    return map;
+  }, [allOrders]);
+
   const filteredOrders = useMemo(() => {
     if (activeTab === 'All') return allOrders
     return allOrders.filter(o => o.status === activeTab)
@@ -413,7 +420,7 @@ export default function Orders() {
               ) : (
                 paginatedOrders.map((order, idx) => (
                   <div key={order.orderId} className="col-12 col-md-6 col-xl-4">
-                    <OrderCard order={order} index={idx} />
+                    <OrderCard order={order} index={idx} userSeq={userOrderSeqMap[order.orderId]} />
                   </div>
                 ))
               )}

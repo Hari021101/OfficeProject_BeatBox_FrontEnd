@@ -4,50 +4,87 @@ import { getSignalRUrl } from '../config/api';
 class SignalRService {
     constructor() {
         this.connection = null;
-        this.isConnecting = false;
+        this.startPromise = null;
+        this.listeners = new Map(); // eventName -> Set(callbacks)
     }
 
     async startConnection() {
-        // Prevent multiple connection attempts
-        if (this.connection?.state === signalR.HubConnectionState.Connected || this.isConnecting) {
+        const token = localStorage.getItem('bb_token');
+        if (!token) return;
+
+        // Return existing in-flight start promise if currently connecting
+        if (this.startPromise) {
+            return this.startPromise;
+        }
+
+        // If already connected, do nothing
+        if (this.connection && this.connection.state === signalR.HubConnectionState.Connected) {
             return;
         }
 
-        this.isConnecting = true;
-
-        try {
-            const token = localStorage.getItem('bb_token');
+        // Build connection if null or disconnected
+        if (!this.connection || this.connection.state === signalR.HubConnectionState.Disconnected) {
             this.connection = new signalR.HubConnectionBuilder()
                 .withUrl(getSignalRUrl('/hubs/notifications'), {
-                    skipNegotiation: true,
-                    transport: signalR.HttpTransportType.WebSockets,
-                    accessTokenFactory: () => token || ''
+                    accessTokenFactory: () => localStorage.getItem('bb_token') || ''
                 })
-                .withAutomaticReconnect()
                 .configureLogging(signalR.LogLevel.Warning)
+                .withAutomaticReconnect()
                 .build();
 
-            await this.connection.start();
-            console.log('⚡ SignalR Connected: Listening for live updates.');
-        } catch (err) {
-            console.error('SignalR Connection Error:', err);
-            // It might fail if backend is off, that's okay, withAutomaticReconnect will handle retries
-        } finally {
-            this.isConnecting = false;
+            // Register all stored event listeners onto the connection
+            for (const [eventName, callbacks] of this.listeners.entries()) {
+                callbacks.forEach(cb => {
+                    this.connection.on(eventName, cb);
+                });
+            }
+        }
+
+        this.startPromise = (async () => {
+            try {
+                await this.connection.start();
+                console.log('⚡ SignalR Notification Hub Connected');
+            } catch (err) {
+                if (this.connection?.state !== signalR.HubConnectionState.Connected) {
+                    console.error('SignalR Connection Error:', err);
+                }
+            } finally {
+                this.startPromise = null;
+            }
+        })();
+
+        return this.startPromise;
+    }
+
+    async stopConnection() {
+        if (this.connection) {
+            try {
+                await this.connection.stop();
+            } catch (e) {
+                // ignore stop errors on unmount
+            }
+            this.connection = null;
         }
     }
 
     on(eventName, callback) {
-        if (!this.connection) {
-            console.warn('SignalR: Cannot subscribe, connection is null.');
-            return;
+        if (!this.listeners.has(eventName)) {
+            this.listeners.set(eventName, new Set());
         }
-        this.connection.on(eventName, callback);
+        this.listeners.get(eventName).add(callback);
+
+        if (this.connection) {
+            this.connection.on(eventName, callback);
+        }
     }
 
     off(eventName, callback) {
-        if (!this.connection) return;
-        this.connection.off(eventName, callback);
+        if (this.listeners.has(eventName)) {
+            this.listeners.get(eventName).delete(callback);
+        }
+        if (this.connection) {
+            this.connection.off(eventName, callback);
+        }
     }
 }
 

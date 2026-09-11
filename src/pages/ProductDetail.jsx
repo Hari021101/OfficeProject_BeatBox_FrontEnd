@@ -473,10 +473,6 @@ export default function ProductDetail() {
 
 
   const handleAddToCart = () => {
-
-    console.log("Selected Variant:", selectedVariant);
-    console.log("Variant Id:", selectedVariant?.id);
-    console.log("Color:", selectedVariant?.color);
     if (selectedVariant?.stockQuantity <= 0) return
     setAdding(true)
 

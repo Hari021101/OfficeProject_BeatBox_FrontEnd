@@ -4,9 +4,8 @@ import { Bell, X, Package, Tag, Heart, Info, CheckCheck, Trash2, AlertTriangle }
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import notificationService from '../../services/notificationService'
-import * as signalR from '@microsoft/signalr'
+import signalrService from '../../services/signalrService'
 import toast from 'react-hot-toast'
-import { getSignalRUrl } from '../../config/api'
 
 // ─── Notification types config ────────────────────────────────────────────────
 const TYPE_CONFIG = {
@@ -63,22 +62,14 @@ export default function NotificationsPanel() {
     loadNotifs();
   }, [user, open]);
 
-  // Setup SignalR Real-time Connection
+  // Setup SignalR Real-time Connection via shared singleton
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
 
-    const token = localStorage.getItem('bb_token');
     let isMounted = true;
-    
-    const connection = new signalR.HubConnectionBuilder()
-      .withUrl(getSignalRUrl('/hubs/notifications'), {
-        accessTokenFactory: () => token
-      })
-      .configureLogging(signalR.LogLevel.Warning) // Hides Information logs
-      .withAutomaticReconnect()
-      .build();
 
-    connection.on("ReceiveNotification", (n) => {
+    const handleNotification = (n) => {
+      if (!isMounted) return;
       const mapped = {
         id: n.id,
         type: (n.type || 'info').toLowerCase(),
@@ -92,9 +83,10 @@ export default function NotificationsPanel() {
       };
       setNotifs(prev => [mapped, ...prev]);
       toast(n.title, { icon: mapped.type === 'order' ? '📦' : '🔔' });
-    });
+    };
 
-    connection.on("NewOrderPlaced", (data) => {
+    const handleNewOrder = (data) => {
+      if (!isMounted) return;
       setNotifs(prev => [{
         id: `order-${data.orderId}-${Date.now()}`, type: 'order',
         title: 'New Order Placed!', body: `Order #${data.orderId} has been successfully placed.`,
@@ -102,9 +94,10 @@ export default function NotificationsPanel() {
         navigationUrl: `/admin/orders`
       }, ...prev]);
       toast('New Order Placed!', { icon: '📦' });
-    });
+    };
 
-    connection.on("LowStockAlert", (data) => {
+    const handleLowStock = (data) => {
+      if (!isMounted) return;
       setNotifs(prev => [{
         id: `stock-${data.productId}-${Date.now()}`, type: 'alert',
         title: 'Low Stock Alert', body: `Product is running low!`,
@@ -112,28 +105,20 @@ export default function NotificationsPanel() {
         navigationUrl: `/admin/inventory`
       }, ...prev]);
       toast.error(`Low Stock Alert!`);
-    });
-
-    const startConnection = async () => {
-      try {
-        await connection.start();
-        if (isMounted) console.log("SignalR Notification Hub Connected");
-      } catch (err) {
-        if (err.name === 'AbortError' || err.message?.includes('negotiation')) {
-          // Ignore StrictMode abort errors
-          return;
-        }
-        console.error("SignalR Connection Error: ", err);
-      }
     };
 
-    startConnection();
+    signalrService.startConnection();
+    signalrService.on("ReceiveNotification", handleNotification);
+    signalrService.on("NewOrderPlaced", handleNewOrder);
+    signalrService.on("LowStockAlert", handleLowStock);
 
     return () => {
       isMounted = false;
-      connection.stop();
+      signalrService.off("ReceiveNotification", handleNotification);
+      signalrService.off("NewOrderPlaced", handleNewOrder);
+      signalrService.off("LowStockAlert", handleLowStock);
     };
-  }, [user]);
+  }, [user?.id]);
 
   // Close on outside click
   useEffect(() => {

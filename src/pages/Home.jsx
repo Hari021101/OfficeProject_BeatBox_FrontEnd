@@ -45,7 +45,7 @@ function ScrollReveal({ children, id, className, style }) {
   )
 }
 
-const MotionLink = motion(Link)
+const MotionLink = motion.create ? motion.create(Link) : motion(Link)
 
 // Asset imports
 import heroHeadphones from '../assets/hero_headphones.png'
@@ -153,18 +153,6 @@ export default function Home() {
       badge: 'Popular',
       color: '#00f3ff'
     }
-  useEffect(() => {
-    const categories = [
-      ...new Set(
-        allProducts.map(
-          p => (p.categoryName || p.category || '').toLowerCase()
-        )
-      )
-    ]
-
-    console.log('CATEGORIES:')
-    console.log(categories)
-  }, [allProducts])
 
 
   // Auto slide effect (pauses while user is dragging)

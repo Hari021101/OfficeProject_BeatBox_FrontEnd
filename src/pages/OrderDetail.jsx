@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-hot-toast'
@@ -13,7 +12,9 @@ import {
   clearCurrentOrder,
   selectCurrentOrder,
   selectOrderDetailStatus,
-  cancelOrderThunk
+  cancelOrderThunk,
+  selectAllOrders,
+  fetchMyOrders
 } from '../redux/orderSlice'
 import { selectUserId, selectUser } from '../redux/authSlice'
 import OrderTimeline from '../components/ui/OrderTimeline'
@@ -22,7 +23,7 @@ import logo from '../assets/beatbox_logo.png'
 import { orderService } from '../services/orderService'
 import { getImageUrl } from '../config/api'
 import { getPaymentMethodLabel } from '../utils/paymentUtils'
-
+import { useEffect, useState, useMemo } from 'react';
 
 // ─── Status config ────────────────────────────────────────────────────────────
 
@@ -380,7 +381,9 @@ export default function OrderDetail() {
   const { id } = useParams()
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const location = useLocation()
   const order = useSelector(selectCurrentOrder)
+  const allOrders = useSelector(selectAllOrders)
   const detailStatus = useSelector(selectOrderDetailStatus)
   const user = useSelector(selectUser)
 
@@ -389,6 +392,22 @@ export default function OrderDetail() {
   const [showReturnModal, setShowReturnModal] = useState(false)
   const [existingReturn, setExistingReturn] = useState(null)
   const [returnCheckDone, setReturnCheckDone] = useState(false)
+
+  // Ensure allOrders is fetched if accessed directly via URL
+  useEffect(() => {
+    if (!allOrders || allOrders.length === 0) {
+      dispatch(fetchMyOrders())
+    }
+  }, [dispatch, allOrders])
+
+  const userSeq = useMemo(() => {
+    if (location.state?.userSeq) return location.state.userSeq
+    if (!order) return 1
+    if (!allOrders || allOrders.length === 0) return 1
+    const sortedAsc = [...allOrders].sort((a, b) => a.orderId - b.orderId)
+    const idx = sortedAsc.findIndex(o => o.orderId === order.orderId)
+    return idx !== -1 ? idx + 1 : 1
+  }, [location.state, order, allOrders])
 
   const handleCancelOrder = async () => {
     setIsCancelling(true);
@@ -456,7 +475,7 @@ export default function OrderDetail() {
           </button>
           <span style={{ color: 'var(--bb-border)' }}>/</span>
           <span className="text-theme-muted" style={{ fontSize: '0.88rem' }}>
-            #{id?.toString().slice(-10) || id}
+            Order #{userSeq}
           </span>
         </motion.div>
 
@@ -493,8 +512,8 @@ export default function OrderDetail() {
                   </span>
                 </div>
                 <h1 className="fw-black text-theme-title mb-1" style={{ fontSize: 'clamp(1.2rem,2.5vw,1.8rem)', letterSpacing: '-1px' }}>
-                  Order <span className="gradient-text" style={{ fontFamily: 'monospace' }}>
-                    #{order.orderId?.toString().slice(-10) || order.orderId}
+                  Order <span className="gradient-text">
+                    #{userSeq}
                   </span>
                 </h1>
                 <p className="text-theme-muted mb-0" style={{ fontSize: '0.82rem' }}>

@@ -322,9 +322,7 @@ export default function Products() {
           onAdd={() => { setEditingProduct(null); setIsAddModalOpen(true); }}
           addLabel="Add New Product"
           selectable={true}
-          onSelectionChange={(selectedIds) => {
-            console.log("Selected Product IDs:", selectedIds);
-          }}
+          onSelectionChange={() => {}}
           bulkActions={[
             {
               label: 'Delete Selected',

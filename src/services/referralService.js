@@ -13,7 +13,7 @@ export const referralService = {
 
   validateCode: async (code) => {
     try {
-      const response = await api.post(`/referral/validate/${code}`);
+      const response = await api.get(`/referral/validate/${encodeURIComponent(code)}`);
       return response.data;
     } catch (error) {
       return {
