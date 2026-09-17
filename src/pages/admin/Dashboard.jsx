@@ -114,11 +114,13 @@ export default function Dashboard() {
         }))
       )
 
-      // Load top products
+      // Load top products (top 5 by units sold)
       const products = await adminService.getProductAnalytics()
+      const top5Products = (products?.topProducts || []).slice(0, 5)
       setProductData(
-        products.topProducts.map(p => ({
-          name: p.productName.length > 12 ? p.productName.substring(0, 12) + "..." : p.productName,
+        top5Products.map(p => ({
+          name: p.productName,
+          fullName: p.productName,
           value: p.unitsSold
         }))
       )
@@ -432,16 +434,24 @@ export default function Dashboard() {
           <ChartCard title="Revenue Overview (This Year)" data={revenueData} type="line" dataKey="value" colors={['#00f3ff']} height={260} />
         </div>
         <div className="col-12 col-xl-4">
-          <ChartCard title="Product Distribution" data={productData} type="pie" dataKey="value" colors={[
-            '#00f3ff',
-            '#a820ff',
-            '#0025fa',
-            '#f59e0b',
-            '#0dd406',
-            '#ac90ec4f',
-            '#ec4899',
-            '#b8142a'
-          ]} />
+          <ChartCard
+            title="Top Products"
+            subtitle="Best-selling products by units sold"
+            data={productData}
+            type="horizontalBar"
+            dataKey="value"
+            colors={['var(--bb-accent)']}
+            emptyMessage="No product sales yet"
+            footerAction={
+              <button
+                className="btn btn-link text-decoration-none p-0 fw-bold text-theme-muted d-inline-flex align-items-center gap-1 hover-opacity"
+                style={{ fontSize: '0.85rem' }}
+                onClick={() => navigate('/admin/product-sales')}
+              >
+                View Sales Report <ArrowRight size={14} />
+              </button>
+            }
+          />
         </div>
       </div>
 

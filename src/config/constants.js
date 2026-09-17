@@ -1,0 +1,1 @@
+export const MAX_NORMAL_ORDER_QUANTITY = 15;

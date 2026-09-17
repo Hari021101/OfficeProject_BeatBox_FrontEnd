@@ -49,6 +49,7 @@ const AdminReturns = React.lazy(() => import('../pages/admin/Returns'))
 const AdminPromotions = React.lazy(() => import('../pages/admin/Promotions'))
 const AdminAuditLogs = React.lazy(() => import('../pages/admin/AuditLogs'))
 const AdminAccountManagement = React.lazy(() => import('../pages/admin/AccountManagement'))
+const AdminProductSales = React.lazy(() => import('../pages/admin/ProductSales'))
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
@@ -182,6 +183,7 @@ export default function AppRouter() {
             <Route path="promotions" element={<AdminPromotions />} />
             <Route path="audit-logs" element={<AdminAuditLogs />} />
             <Route path="accounts" element={<AdminAccountManagement />} />
+            <Route path="product-sales" element={<AdminProductSales />} />
           </Route>
         </Routes>
       </Suspense>

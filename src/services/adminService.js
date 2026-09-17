@@ -24,6 +24,11 @@ const adminService = {
     return response.data;
   },
 
+  getProductSalesReport: async () => {
+    const response = await api.get('/admin/dashboard/product-sales');
+    return response.data;
+  },
+
   // --- Users ---
   getAllUsers: async () => {
     try {

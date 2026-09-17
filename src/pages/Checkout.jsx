@@ -16,6 +16,7 @@ import { IMAGE_MAP } from '../data/products'
 import logo from '../assets/beatbox_logo.png'
 import { paymentService } from '../services/paymentService'
 import Select from '../components/ui/Select'
+import { MAX_NORMAL_ORDER_QUANTITY } from '../config/constants'
 
 const checkoutSchema = z.object({
   fullName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -61,6 +62,13 @@ export default function Checkout() {
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
     resolver: zodResolver(checkoutSchema)
   })
+
+  useEffect(() => {
+    if (!ordered && items.some(item => item.quantity > MAX_NORMAL_ORDER_QUANTITY)) {
+      toast.error(`Maximum quantity per product is ${MAX_NORMAL_ORDER_QUANTITY}. Please reduce item quantity before checkout.`);
+      navigate('/cart');
+    }
+  }, [items, ordered, navigate])
 
   useEffect(() => {
     dispatch(fetchAddresses())

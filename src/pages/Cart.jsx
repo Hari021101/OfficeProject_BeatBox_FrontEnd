@@ -12,6 +12,7 @@ import logo from '../assets/beatbox_logo.png'
 
 import { validatePromoCode } from '../services/promoService'
 import { getImageUrl } from '../config/api'
+import { MAX_NORMAL_ORDER_QUANTITY } from '../config/constants'
 
 export default function Cart() {
   const dispatch = useDispatch()
@@ -22,6 +23,10 @@ export default function Cart() {
   const appliedPromo = useSelector(selectAppliedPromo)
   const isAuthenticated = useSelector(selectIsAuthenticated)
   const myOrders = useSelector(selectAllOrders)
+
+  const hasInvalidQuantity = useMemo(() => {
+    return items.some(item => item.quantity > MAX_NORMAL_ORDER_QUANTITY)
+  }, [items])
 
   const [couponInput, setCouponInput] = useState('')
   const [couponError, setCouponError] = useState('')
@@ -210,6 +215,16 @@ export default function Cart() {
             {/* ── CART ITEMS ─────────────────────────────── */}
             <div className="col-12 col-lg-7 col-xl-8">
               <div className="d-flex flex-column gap-4">
+                {hasInvalidQuantity && (
+                  <div className="p-3 p-md-4 rounded-4" style={{ background: 'rgba(220,53,69,0.1)', border: '1px solid rgba(220,53,69,0.3)', color: '#ff4d7d' }}>
+                    <div className="fw-bold d-flex align-items-center gap-2 mb-1">
+                      <span>⚠️ Quantity Limit Exceeded</span>
+                    </div>
+                    <div className="small" style={{ fontSize: '0.85rem' }}>
+                      One or more items in your cart exceeds the maximum normal order limit of {MAX_NORMAL_ORDER_QUANTITY} units per product. Please reduce the quantity to {MAX_NORMAL_ORDER_QUANTITY} or less to proceed, or contact us for <Link to="/corporate" className="text-info fw-bold text-decoration-none">Corporate & Bulk Orders →</Link>.
+                    </div>
+                  </div>
+                )}
                 <AnimatePresence initial={false}>
                   {items.map((item) => (
                     <motion.div
@@ -371,6 +386,7 @@ export default function Cart() {
                                     style={{ color: 'var(--bb-title-color)', background: 'transparent' }}
                                     onMouseEnter={e => e.currentTarget.style.background = 'var(--bb-surface-2)'}
                                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                                    aria-label="Decrease quantity"
                                   >
                                     <Minus size={14} strokeWidth={2.5} />
                                   </button>
@@ -379,14 +395,26 @@ export default function Cart() {
                                   </span>
                                   <button
                                     onClick={() => dispatch(updateQuantity({ cartKey: item.cartKey, quantity: item.quantity + 1 }))}
+                                    disabled={item.quantity >= MAX_NORMAL_ORDER_QUANTITY}
                                     className="btn border-0 py-1 px-3 transition-colors"
                                     style={{ color: 'var(--bb-accent)', background: 'transparent' }}
                                     onMouseEnter={e => e.currentTarget.style.background = 'var(--bb-surface-2)'}
                                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                                    aria-label="Increase quantity"
+                                    title={item.quantity >= MAX_NORMAL_ORDER_QUANTITY ? `Maximum normal quantity per product is ${MAX_NORMAL_ORDER_QUANTITY}` : 'Increase quantity'}
                                   >
                                     <Plus size={14} strokeWidth={2.5} />
                                   </button>
                                 </div>
+
+                                {item.quantity >= MAX_NORMAL_ORDER_QUANTITY && (
+                                  <div className="mt-2" style={{ fontSize: '0.75rem' }}>
+                                    <span className="text-theme-muted d-block">Bulk order? Need 15+?</span>
+                                    <Link to="/corporate" className="text-info fw-bold text-decoration-none d-inline-flex align-items-center gap-1">
+                                      Corporate & Bulk Orders →
+                                    </Link>
+                                  </div>
+                                )}
                               </div>
 
                               {/* Price Display */}
@@ -545,9 +573,16 @@ export default function Cart() {
 
                 {/* Checkout CTA */}
                 <button
-                  onClick={() => navigate('/checkout')}
+                  onClick={() => {
+                    if (hasInvalidQuantity) {
+                      toast.error(`Maximum quantity per product is ${MAX_NORMAL_ORDER_QUANTITY}. Please reduce item quantity to proceed.`);
+                      return;
+                    }
+                    navigate('/checkout');
+                  }}
+                  disabled={hasInvalidQuantity}
                   className="btn btn-glow w-100 py-3 fw-black d-flex align-items-center justify-content-center gap-2 mb-4 hover-lift shadow-lg"
-                  style={{ borderRadius: '14px', fontSize: '1.1rem', letterSpacing: '0.5px' }}
+                  style={{ borderRadius: '14px', fontSize: '1.1rem', letterSpacing: '0.5px', opacity: hasInvalidQuantity ? 0.6 : 1, cursor: hasInvalidQuantity ? 'not-allowed' : 'pointer' }}
                 >
                   Proceed to Checkout <ArrowRight size={20} />
                 </button>

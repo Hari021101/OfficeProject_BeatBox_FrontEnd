@@ -21,6 +21,7 @@ import { addRecentlyViewed, selectRecentlyViewedIds } from '../redux/recentlyVie
 import { toggleWishlistItem } from '../redux/wishlistSlice'
 import { selectAllProducts, selectProductStatus, fetchProducts } from '../redux/productSlice'
 import { Sparkles } from "lucide-react"
+import { MAX_NORMAL_ORDER_QUANTITY } from '../config/constants'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -812,7 +813,7 @@ export default function ProductDetail() {
               <p className="text-theme-muted small fw-semibold mb-3">
                 COLOR —
                 <span className="text-theme-title ms-2">
-                  {selectedVariant?.color} ({selectedVariant?.stockQuantity > 0 ? `${selectedVariant.stockQuantity} left` : 'Out of Stock'})
+                  {selectedVariant?.color}
                 </span>
               </p>
 
@@ -892,36 +893,76 @@ export default function ProductDetail() {
             )}
 
             {/* Quantity */}
-            <div className="d-flex align-items-center gap-4 mb-4">
-              <span className="text-theme-muted small fw-semibold">QUANTITY</span>
-              <div className="d-flex align-items-center rounded-3" style={{ border: '1px solid var(--bb-border)', background: 'var(--bb-surface)' }}>
-                <button
-                  type="button"
-                  disabled={quantity <= 1 || (selectedVariant?.stockQuantity || 0) <= 0}
-                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  className="btn border-0 px-3 py-2"
-                  style={{ color: 'var(--bb-muted)', background: 'transparent' }}
-                >
-                  <Minus size={16} />
-                </button>
-                <span className="fw-black text-theme-title px-4" style={{ fontSize: '1.1rem', minWidth: 50, textAlign: 'center' }}>
-                  {(selectedVariant?.stockQuantity || 0) <= 0 ? 0 : quantity}
-                </span>
-                <button
-                  type="button"
-                  disabled={quantity >= (selectedVariant?.stockQuantity || 0) || (selectedVariant?.stockQuantity || 0) <= 0}
-                  onClick={() => setQuantity(q => Math.min((selectedVariant?.stockQuantity || 0), q + 1))}
-                  className="btn border-0 px-3 py-2"
-                  style={{ color: 'var(--bb-accent)', background: 'transparent' }}
-                >
-                  <Plus size={16} />
-                </button>
+            <div className="d-flex flex-column gap-2 mb-4">
+              <div className="d-flex align-items-center gap-4">
+                <span className="text-theme-muted small fw-semibold">QUANTITY</span>
+                <div className="d-flex align-items-center rounded-3" style={{ border: '1px solid var(--bb-border)', background: 'var(--bb-surface)' }}>
+                  <button
+                    type="button"
+                    aria-label="Decrease quantity"
+                    disabled={quantity <= 1 || (selectedVariant?.stockQuantity || 0) <= 0}
+                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                    className="btn border-0 px-3 py-2"
+                    style={{ color: 'var(--bb-muted)', background: 'transparent' }}
+                  >
+                    <Minus size={16} />
+                  </button>
+                  <span className="fw-black text-theme-title px-4" style={{ fontSize: '1.1rem', minWidth: 50, textAlign: 'center' }}>
+                    {(selectedVariant?.stockQuantity || 0) <= 0 ? 0 : quantity}
+                  </span>
+                  <button
+                    type="button"
+                    aria-label="Increase quantity"
+                    title={quantity >= MAX_NORMAL_ORDER_QUANTITY ? `Maximum normal quantity per product is ${MAX_NORMAL_ORDER_QUANTITY}` : 'Increase quantity'}
+                    disabled={quantity >= Math.min(MAX_NORMAL_ORDER_QUANTITY, selectedVariant?.stockQuantity || 0) || (selectedVariant?.stockQuantity || 0) <= 0}
+                    onClick={() => setQuantity(q => Math.min(Math.min(MAX_NORMAL_ORDER_QUANTITY, selectedVariant?.stockQuantity || 0), q + 1))}
+                    className="btn border-0 px-3 py-2"
+                    style={{ color: 'var(--bb-accent)', background: 'transparent' }}
+                  >
+                    <Plus size={16} />
+                  </button>
+                </div>
               </div>
+
+              {/* Bulk Order Inline Message */}
+              {quantity >= MAX_NORMAL_ORDER_QUANTITY ? (
+                <div 
+                  className="p-3 rounded-3 mt-1 d-flex align-items-center justify-content-between gap-3 flex-wrap" 
+                  style={{ 
+                    background: 'linear-gradient(135deg, rgba(0, 243, 255, 0.06), rgba(168, 32, 255, 0.06))', 
+                    border: '1px solid rgba(0, 243, 255, 0.2)' 
+                  }}
+                >
+                  <div>
+                    <div className="fw-bold text-theme-title small">Bulk order? Need more than {MAX_NORMAL_ORDER_QUANTITY}?</div>
+                    <div className="text-theme-muted" style={{ fontSize: '0.78rem' }}>Contact us for Corporate & Bulk Orders</div>
+                  </div>
+                  <Link 
+                    to="/corporate" 
+                    className="btn btn-sm fw-bold text-nowrap d-inline-flex align-items-center gap-1"
+                    style={{ 
+                      background: 'rgba(0, 243, 255, 0.12)', 
+                      color: 'var(--bb-accent)', 
+                      border: '1px solid rgba(0, 243, 255, 0.3)', 
+                      borderRadius: 8,
+                      fontSize: '0.8rem'
+                    }}
+                  >
+                    Corporate & Bulk Orders →
+                  </Link>
+                </div>
+              ) : (
+                <div className="mt-1">
+                  <Link to="/corporate" className="small text-theme-muted hover-text-accent text-decoration-none" style={{ fontSize: '0.8rem' }}>
+                    Need {MAX_NORMAL_ORDER_QUANTITY}+ units? Corporate & Bulk Orders →
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* CTAs */}
             <div className="d-flex gap-3 mb-4 flex-wrap">
-              
+
               {(selectedVariant?.stockQuantity || 0) <= 0 ? (
                 <button
                   onClick={handleNotifyMe}
