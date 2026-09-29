@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Gift, Tag, ChevronRight, ShoppingCart, Info } from 'lucide-react';
+import { Gift, Tag, ChevronRight, ShoppingCart, Info, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectAllProducts, selectProductStatus, fetchProducts } from '../redux/productSlice';
@@ -85,8 +85,13 @@ export default function Gifting() {
                 <p className="lead text-white-50 mb-4">
                   Surprise them with studio-grade audio and premium smart wearables wrapped in luxury.
                 </p>
-                <button className="btn btn-glow px-5 py-3 rounded-pill fw-bold fs-5">
-                  Shop Gifts Now <ChevronRight size={20} className="ms-1" />
+                <button
+                  onClick={() => {
+                    document.getElementById('gifting-categories')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="btn btn-glow px-5 py-3 rounded-pill fw-bold fs-5 d-inline-flex align-items-center gap-2"
+                >
+                  Shop Gifts Now <ChevronRight size={20} />
                 </button>
               </motion.div>
             </div>
@@ -94,38 +99,142 @@ export default function Gifting() {
         </div>
       </section>
 
-      {/* 2. Offers Section */}
-      <section className="container mb-5 pb-4">
-        <h2 className="text-center fw-bold text-theme-title mb-4 d-flex align-items-center justify-content-center gap-2">
-          <Tag className="text-accent" /> Choose Your Offer
-        </h2>
+      {/* 2. Gifting Experience Section (Replaces static promotional offer cards) */}
+      <section className="container mb-5 pb-2" id="gifting-experience-section">
+        <div className="text-center mb-4">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <span
+              className="px-3 py-1 rounded-pill fw-bold text-uppercase mb-2 d-inline-flex align-items-center gap-2"
+              style={{
+                fontSize: '0.75rem',
+                letterSpacing: '1px',
+                background: 'rgba(0,243,255,0.08)',
+                color: 'var(--bb-accent)',
+                border: '1px solid rgba(0,243,255,0.2)'
+              }}
+            >
+              <Gift size={14} /> Premium Gifting
+            </span>
+            <h2 className="display-6 fw-black text-theme-title mb-2 mt-2">
+              Gift Something They’ll Love
+            </h2>
+            <p className="text-theme-muted mx-auto" style={{ maxWidth: '600px', fontSize: '0.95rem' }}>
+              Find the perfect audio gift for birthdays, celebrations, and special occasions.
+            </p>
+          </motion.div>
+        </div>
+
         <div className="row g-4 justify-content-center">
-          {[
-            { discount: '₹400', code: 'GRAB400', color: 'var(--bb-primary)' },
-            { discount: '₹300', code: 'GRAB300', color: 'var(--bb-accent)' },
-            { discount: '₹100', code: 'GRAB100', color: '#ff2a6d' }
-          ].map((offer, idx) => (
-            <div className="col-12 col-md-4" key={idx}>
-              <motion.div 
-                whileHover={{ y: -5 }}
-                className="glass-card p-4 text-center rounded-4 position-relative overflow-hidden"
-                style={{ border: `1px solid ${offer.color}40` }}
+          <div className="col-12 col-md-4">
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="p-4 rounded-4 text-center h-100 d-flex flex-column align-items-center justify-content-between"
+              style={{
+                background: 'var(--bb-surface)',
+                border: '1px solid var(--bb-border)',
+                boxShadow: '0 8px 24px var(--bb-shadow)'
+              }}
+            >
+              <div className="mb-3 p-3 rounded-circle" style={{ background: 'rgba(168,32,255,0.1)', color: 'var(--bb-primary)' }}>
+                <Gift size={28} />
+              </div>
+              <div>
+                <h4 className="fw-bold text-theme-title mb-2" style={{ fontSize: '1.1rem' }}>Browse Gift Picks</h4>
+                <p className="text-theme-muted small mb-4">
+                  Explore handpicked audio bestsellers curated specifically for gifting.
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setActiveCategory('Gifting Deals');
+                  document.getElementById('gifting-categories')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="btn btn-sm w-100 py-2 rounded-pill fw-bold d-inline-flex align-items-center justify-content-center gap-1"
+                style={{
+                  background: 'rgba(168,32,255,0.12)',
+                  color: 'var(--bb-primary-light)',
+                  border: '1px solid rgba(168,32,255,0.3)',
+                  transition: 'all 0.2s'
+                }}
               >
-                <div className="position-absolute top-0 start-0 w-100 h-100" style={{ background: `radial-gradient(circle at top right, ${offer.color}20, transparent 70%)` }}></div>
-                <h3 className="fw-black mb-2" style={{ color: offer.color }}>Extra {offer.discount} Off</h3>
-                <p className="text-theme-muted mb-0 fw-semibold">Using Code: <span
-    className="px-2 py-1 rounded ms-1 fw-bold"
-    style={{
-        background: "var(--bb-surface-2)",
-        color: "var(--bb-title-color)",
-        border: "1px solid var(--bb-border)"
-    }}
->
-    {offer.code}
-</span></p>
-              </motion.div>
-            </div>
-          ))}
+                View Picks <ChevronRight size={16} />
+              </button>
+            </motion.div>
+          </div>
+
+          <div className="col-12 col-md-4">
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="p-4 rounded-4 text-center h-100 d-flex flex-column align-items-center justify-content-between"
+              style={{
+                background: 'var(--bb-surface)',
+                border: '1px solid var(--bb-border)',
+                boxShadow: '0 8px 24px var(--bb-shadow)'
+              }}
+            >
+              <div className="mb-3 p-3 rounded-circle" style={{ background: 'rgba(0,243,255,0.1)', color: 'var(--bb-accent)' }}>
+                <Tag size={28} />
+              </div>
+              <div>
+                <h4 className="fw-bold text-theme-title mb-2" style={{ fontSize: '1.1rem' }}>Gift by Category</h4>
+                <p className="text-theme-muted small mb-4">
+                  Find earbuds, headphones, smartwatches or speakers for every recipient.
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  document.getElementById('gifting-categories')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="btn btn-sm w-100 py-2 rounded-pill fw-bold d-inline-flex align-items-center justify-content-center gap-1"
+                style={{
+                  background: 'rgba(0,243,255,0.12)',
+                  color: 'var(--bb-accent)',
+                  border: '1px solid rgba(0,243,255,0.3)',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Browse Categories <ChevronRight size={16} />
+              </button>
+            </motion.div>
+          </div>
+
+          <div className="col-12 col-md-4">
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="p-4 rounded-4 text-center h-100 d-flex flex-column align-items-center justify-content-between"
+              style={{
+                background: 'var(--bb-surface)',
+                border: '1px solid var(--bb-border)',
+                boxShadow: '0 8px 24px var(--bb-shadow)'
+              }}
+            >
+              <div className="mb-3 p-3 rounded-circle" style={{ background: 'rgba(255,42,109,0.1)', color: '#ff2a6d' }}>
+                <Sparkles size={28} />
+              </div>
+              <div>
+                <h4 className="fw-bold text-theme-title mb-2" style={{ fontSize: '1.1rem' }}>Personalised Audio</h4>
+                <p className="text-theme-muted small mb-4">
+                  Add custom laser-engraved names or messages to create unforgettable gifts.
+                </p>
+              </div>
+              <Link
+                to="/personalisation"
+                className="btn btn-sm w-100 py-2 rounded-pill fw-bold d-inline-flex align-items-center justify-content-center gap-1 text-decoration-none"
+                style={{
+                  background: 'rgba(255,42,109,0.12)',
+                  color: '#ff2a6d',
+                  border: '1px solid rgba(255,42,109,0.3)',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Personalise Gifts <ChevronRight size={16} />
+              </Link>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -159,21 +268,43 @@ export default function Gifting() {
       </section>
 
       {/* 4. Category Filters */}
-      <section className="container mb-4">
-        <div className="d-flex overflow-auto pb-3 hide-scrollbar gap-3 justify-content-lg-center" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <section className="container mb-4" id="gifting-categories">
+        <div
+          className="d-flex overflow-x-auto pb-3 hide-scrollbar gap-2 gap-md-3 align-items-center w-100"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            WebkitOverflowScrolling: 'touch',
+            scrollBehavior: 'smooth',
+          }}
+        >
           <style>{`
             .hide-scrollbar::-webkit-scrollbar { display: none; }
           `}</style>
-          {categories.map((cat, idx) => (
-            <button
-              key={idx}
-              onClick={() => setActiveCategory(cat)}
-              className={`btn rounded-pill px-4 py-2 fw-semibold text-nowrap transition-all ${activeCategory === cat ? 'btn-glow' : 'glass-card text-theme-muted hover-text-white'}`}
-              style={{ border: activeCategory !== cat ? '1px solid rgba(255,255,255,0.1)' : 'none' }}
-            >
-              {cat}
-            </button>
-          ))}
+          {categories.map((cat, idx) => {
+            const isActive = activeCategory === cat;
+            return (
+              <button
+                key={idx}
+                onClick={() => setActiveCategory(cat)}
+                className={`btn rounded-pill px-4 py-2 fw-bold text-nowrap transition-all ${
+                  isActive ? 'btn-glow text-white' : 'text-theme-muted'
+                }`}
+                style={{
+                  flexShrink: 0,
+                  whiteSpace: 'nowrap',
+                  background: isActive ? undefined : 'var(--bb-surface)',
+                  border: isActive ? 'none' : '1px solid var(--bb-border)',
+                  color: isActive ? '#ffffff' : 'var(--bb-text-muted)',
+                  fontSize: '0.88rem',
+                  boxShadow: isActive ? '0 0 20px var(--bb-primary-glow)' : 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                {cat}
+              </button>
+            );
+          })}
         </div>
 
         {/* Collection Grid */}

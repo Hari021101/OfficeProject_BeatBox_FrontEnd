@@ -131,7 +131,7 @@ export default function ProductSales() {
       label: 'Category',
       sortable: true,
       render: (row) => (
-        <span className="badge px-2.5 py-1 rounded-2" style={{ background: 'var(--bb-surface-2)', color: 'var(--bb-muted)', border: '1px solid var(--bb-border)', fontSize: '0.78rem' }}>
+        <span className="category-badge">
           {row.categoryName || 'General'}
         </span>
       )

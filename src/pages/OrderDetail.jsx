@@ -586,103 +586,113 @@ export default function OrderDetail() {
                 {/* Order Items */}
                 <SectionCard title="Order Items" icon={ShoppingBag} id="order-items-section">
                   <div className="d-flex flex-column gap-3">
-                    {items.map((item, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.06 }}
-                        className="d-flex align-items-center gap-3 p-3 rounded-3"
-                        style={{ background: 'var(--bb-surface-2)', border: '1px solid var(--bb-border)' }}
-                      >
-                        {/* Icon placeholder */}
-                        <div
-                          className="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
+                    {items.map((item, idx) => {
+                      const effectiveUnitPrice = item.unitPrice + (item.isPersonalised ? (item.engravingPrice || 0) : 0)
+                      const lineTotal = effectiveUnitPrice * item.quantity
+
+                      return (
+                        <motion.div
+                          key={idx}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.06 }}
+                          className="d-flex align-items-start align-items-sm-center gap-3 p-3 rounded-3 w-100 position-relative"
                           style={{
-                            width: 56, height: 56,
-                            background: 'radial-gradient(circle, rgba(0,243,255,0.08), transparent)',
+                            background: 'var(--bb-surface-2)',
                             border: '1px solid var(--bb-border)',
+                            maxWidth: '100%',
+                            boxSizing: 'border-box'
                           }}
                         >
-                          <img
-                            src={getImageUrl(item.productImageUrl)}
-                            alt={item.productName}
+                          {/* Product Image */}
+                          <div
+                            className="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
                             style={{
-                              width: 50,
-                              height: 50,
-                              objectFit: 'contain'
+                              width: 56, height: 56,
+                              background: 'radial-gradient(circle, rgba(0,243,255,0.08), transparent)',
+                              border: '1px solid var(--bb-border)',
                             }}
-                          />
-                        </div>
+                          >
+                            <img
+                              src={getImageUrl(item.productImageUrl)}
+                              alt={item.productName}
+                              style={{
+                                width: 50,
+                                height: 50,
+                                objectFit: 'contain'
+                              }}
+                            />
+                          </div>
 
-                        {/* Name & meta */}
-                        <div className="flex-grow-1 min-width-0">
-                          <p className="fw-bold text-theme-title mb-0 text-truncate" style={{ fontSize: '0.9rem' }}>
-                            {item.productName}
-                          </p>
-                          <div className="d-flex align-items-center gap-3 flex-wrap">
-                            <span className="text-theme-muted" style={{ fontSize: '0.75rem' }}>
-                              Qty: {item.quantity} × ₹{fmt(item.unitPrice + (item.isPersonalised ? (item.engravingPrice || 0) : 0))}
-                            </span>
-                            {item.color && (
-                              <div className="d-flex align-items-center gap-1">
-                                <span
-                                  style={{
-                                    width: 12,
-                                    height: 12,
-                                    borderRadius: '50%',
-                                    background: item.colorCode,
-                                    border: '1px solid #ccc',
-                                    display: 'inline-block'
-                                  }}
-                                />
-                                <small className="text-theme-muted" style={{ fontSize: '0.75rem' }}>{item.color}</small>
+                          {/* Name & meta & prices inside item card */}
+                          <div className="flex-grow-1 min-width-0" style={{ minWidth: 0 }}>
+                            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-1 gap-sm-2 mb-1">
+                              <p className="fw-bold text-theme-title mb-0" style={{ fontSize: '0.9rem', wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
+                                {item.productName}
+                              </p>
+                              <div className="fw-black text-theme-title text-nowrap mt-1 mt-sm-0" style={{ fontSize: '0.95rem', color: 'var(--bb-title-color)' }}>
+                                ₹{fmt(lineTotal)}
+                              </div>
+                            </div>
+
+                            <div className="d-flex align-items-center gap-2 gap-sm-3 flex-wrap">
+                              <span className="text-theme-muted fw-medium" style={{ fontSize: '0.78rem' }}>
+                                Qty: {item.quantity} × ₹{fmt(effectiveUnitPrice)}
+                              </span>
+                              {item.color && (
+                                <div className="d-flex align-items-center gap-1 ms-1">
+                                  <span
+                                    style={{
+                                      width: 12,
+                                      height: 12,
+                                      borderRadius: '50%',
+                                      background: item.colorCode,
+                                      border: '1px solid var(--bb-border)',
+                                      display: 'inline-block'
+                                    }}
+                                  />
+                                  <small className="text-theme-muted" style={{ fontSize: '0.75rem' }}>{item.color}</small>
+                                </div>
+                              )}
+                            </div>
+
+                            {item.isPersonalised && (
+                              <div
+                                className="mt-2 p-2 px-3 rounded-3"
+                                style={{
+                                  background: 'rgba(0, 243, 255, 0.04)',
+                                  border: '1px dashed rgba(0, 243, 255, 0.25)',
+                                  maxWidth: '100%'
+                                }}
+                              >
+                                <div className="d-flex align-items-center gap-2 mb-1 text-info fw-bold" style={{ fontSize: '0.72rem' }}>
+                                  <span>✨ Laser Engraving</span>
+                                  <span className="ms-auto font-mono">₹{item.engravingPrice || 99}</span>
+                                </div>
+                                <div className="row g-1 small" style={{ fontSize: '0.75rem' }}>
+                                  <div className="col-6">
+                                    <span className="text-theme-muted d-block" style={{ fontSize: '0.65rem' }}>NAME:</span>
+                                    <span className="fw-bold text-theme-title text-uppercase" style={{ wordBreak: 'break-all' }}>{item.engravingName}</span>
+                                  </div>
+                                  {item.engravingDate && (
+                                    <div className="col-6">
+                                      <span className="text-theme-muted d-block" style={{ fontSize: '0.65rem' }}>DATE:</span>
+                                      <span className="fw-bold text-theme-title">{item.engravingDate}</span>
+                                    </div>
+                                  )}
+                                  {item.engravingMessage && (
+                                    <div className="col-12">
+                                      <span className="text-theme-muted d-block" style={{ fontSize: '0.65rem' }}>MESSAGE:</span>
+                                      <span className="fw-bold text-theme-title text-uppercase" style={{ wordBreak: 'break-all' }}>{item.engravingMessage}</span>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             )}
                           </div>
-                          {item.isPersonalised && (
-                            <div
-                              className="mt-2 p-2 px-3 rounded-3"
-                              style={{
-                                background: 'rgba(0, 243, 255, 0.04)',
-                                border: '1px dashed rgba(0, 243, 255, 0.25)',
-                                maxWidth: '300px'
-                              }}
-                            >
-                              <div className="d-flex align-items-center gap-2 mb-1 text-info fw-bold" style={{ fontSize: '0.72rem' }}>
-                                <span>✨ Laser Engraving</span>
-                                <span className="ms-auto font-mono">₹{item.engravingPrice || 99}</span>
-                              </div>
-                              <div className="row g-1 small" style={{ fontSize: '0.75rem' }}>
-                                <div className="col-6">
-                                  <span className="text-theme-muted d-block" style={{ fontSize: '0.65rem' }}>NAME:</span>
-                                  <span className="fw-bold text-white text-uppercase">{item.engravingName}</span>
-                                </div>
-                                {item.engravingDate && (
-                                  <div className="col-6">
-                                    <span className="text-theme-muted d-block" style={{ fontSize: '0.65rem' }}>DATE:</span>
-                                    <span className="fw-bold text-white">{item.engravingDate}</span>
-                                  </div>
-                                )}
-                                {item.engravingMessage && (
-                                  <div className="col-12">
-                                    <span className="text-theme-muted d-block" style={{ fontSize: '0.65rem' }}>MESSAGE:</span>
-                                    <span className="fw-bold text-white text-uppercase">{item.engravingMessage}</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Line total */}
-                        <div className="text-end flex-shrink-0">
-                          <p className="fw-black text-theme-title mb-0" style={{ fontSize: '0.95rem' }}>
-                            ₹{fmt((item.unitPrice + (item.isPersonalised ? (item.engravingPrice || 0) : 0)) * item.quantity)}
-                          </p>
-                        </div>
-                      </motion.div>
-                    ))}
+                        </motion.div>
+                      )
+                    })}
                   </div>
                 </SectionCard>
 

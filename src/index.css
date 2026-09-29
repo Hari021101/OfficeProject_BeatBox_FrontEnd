@@ -107,6 +107,10 @@
   color: var(--bb-title-color) !important;
 }
 
+.text-theme-muted {
+  color: var(--bb-text-muted) !important;
+}
+
 .rating-badge {
     background: #111827;
     color: #fbbf24;
@@ -3638,6 +3642,29 @@ select option {
   gap: 6px !important;
   text-transform: uppercase !important;
   letter-spacing: 0.5px !important;
+}
+
+/* Category Badge (Theme-aware badge for tables and listings) */
+.category-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 4px 10px !important;
+  border-radius: 8px !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  background: rgba(0, 243, 255, 0.08) !important;
+  color: var(--bb-text) !important;
+  border: 1px solid rgba(0, 243, 255, 0.2) !important;
+  white-space: nowrap !important;
+  transition: all 0.2s ease !important;
+}
+
+[data-theme="light"] .category-badge {
+  background: rgba(0, 153, 184, 0.08) !important;
+  color: var(--bb-text) !important;
+  border-color: rgba(0, 153, 184, 0.25) !important;
 }
 
 /* ==========================================================================
