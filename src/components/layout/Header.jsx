@@ -207,7 +207,7 @@ export default function Header() {
     <header className="fixed-top w-100" style={{ zIndex: 10000 }}>
       {/* 1. TOP MARQUEE BANNER */}
       <div
-        className="d-flex align-items-center justify-content-center text-center px-3"
+        className="top-promo-banner d-flex align-items-center justify-content-center text-center px-3"
         style={{
           background: 'linear-gradient(90deg, #7c3aed, #06b6d4, #7c3aed)',
           backgroundSize: '200% 200%',
