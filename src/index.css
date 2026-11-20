@@ -737,6 +737,46 @@ body {
   background: #f1f5f9;
 }
 
+.engraving-modal-body-row {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.engraving-modal-preview-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+[data-theme="light"] .engraving-modal-preview-card {
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] .engraving-modal-preview-card {
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 243, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 768px) {
+  .engraving-modal-dialog {
+    max-height: 760px;
+    height: 88vh;
+  }
+  .engraving-modal-body-row {
+    overflow-y: hidden;
+  }
+  .engraving-modal-left {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .engraving-modal-preview-stage {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
 /* Product Color Swatch Contrast & Theme Styling */
 .product-color-swatch {
   width: 16px !important;

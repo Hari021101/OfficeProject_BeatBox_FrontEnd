@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Sparkles, ShoppingCart } from 'lucide-react'
+import { X, Sparkles, ShoppingCart, ArrowLeft } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { addToCart } from '../../redux/cartSlice'
 import { toast } from 'react-hot-toast'
@@ -18,7 +18,7 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
 
     const originalOverflow = document.body.style.overflow
 
-    // Prevent the background page from scrolling
+    // Prevent background page from scrolling
     document.body.style.overflow = 'hidden'
 
     return () => {
@@ -118,19 +118,19 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
           {/* Header */}
           <div className="engraving-modal-header">
             {/* Back + Title */}
-            <div className="d-flex align-items-center gap-3">
+            <div className="d-flex align-items-center gap-2 gap-sm-3">
               <button
                 type="button"
                 onClick={onClose}
                 className="btn d-flex align-items-center gap-2 engraving-modal-back-btn"
               >
-                <span style={{ fontSize: '18px', lineHeight: 1 }}>←</span>
-                Back
+                <ArrowLeft size={16} />
+                <span>Back</span>
               </button>
 
               <h5
                 className="mb-0 fw-black text-theme-title d-flex align-items-center gap-2"
-                style={{ letterSpacing: '0.5px' }}
+                style={{ letterSpacing: '0.5px', fontSize: '1.05rem' }}
               >
                 <Sparkles className="text-info animate-pulse" size={20} />
                 Personalise Your Product
@@ -148,14 +148,7 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
             </button>
           </div>
 
-          <div
-            className="row g-0 flex-grow-1"
-            style={{
-              minHeight: 0,
-              overflowY: 'auto',
-              overflowX: 'hidden'
-            }}
-          >
+          <div className="row g-0 engraving-modal-body-row">
             {/* Left: Input Panel */}
             <div className="col-12 col-md-6 p-3 p-md-4 d-flex flex-column engraving-modal-left">
               <div>
@@ -166,7 +159,7 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
                 {/* Form Fields */}
                 <div className="d-flex flex-column gap-3 mb-4">
                   <div>
-                    <label className="form-label text-theme-title small fw-bold d-flex justify-content-between">
+                    <label className="form-label text-theme-title small fw-bold d-flex justify-content-between mb-1">
                       <span>Name (Required) *</span>
                       <span className="text-theme-muted small">{name.length}/12</span>
                     </label>
@@ -176,22 +169,24 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
                       onChange={handleNameChange}
                       placeholder="e.g. VIKRAM"
                       className="form-control personalisation-input"
+                      maxLength={12}
                     />
                   </div>
 
                   <div>
-                    <label className="form-label text-theme-title small fw-bold">Date (Optional)</label>
+                    <label className="form-label text-theme-title small fw-bold mb-1">Date (Optional)</label>
                     <input
                       type="text"
                       value={date}
                       onChange={(e) => setDate(e.target.value.slice(0, 12))}
                       placeholder="e.g. 14.07.2026"
                       className="form-control personalisation-input"
+                      maxLength={12}
                     />
                   </div>
 
                   <div>
-                    <label className="form-label text-theme-title small fw-bold d-flex justify-content-between">
+                    <label className="form-label text-theme-title small fw-bold d-flex justify-content-between mb-1">
                       <span>Short Message (Optional)</span>
                       <span className="text-theme-muted small">{message.length}/40</span>
                     </label>
@@ -201,24 +196,25 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
                       onChange={handleMessageChange}
                       placeholder="e.g. NEVER GIVE UP"
                       className="form-control personalisation-input"
+                      maxLength={40}
                     />
                   </div>
                 </div>
 
                 {/* Price Breakdown */}
                 <div className="engraving-modal-price-box mb-4">
-                  <div className="d-flex justify-content-between small text-theme-muted mb-2">
+                  <div className="d-flex justify-content-between align-items-center small text-theme-muted mb-2">
                     <span>Base Price ({quantity}x)</span>
-                    <span>₹{(basePrice * quantity).toLocaleString('en-IN')}</span>
+                    <span className="fw-semibold">₹{(basePrice * quantity).toLocaleString('en-IN')}</span>
                   </div>
-                  <div className="d-flex justify-content-between small text-theme-muted mb-2">
+                  <div className="d-flex justify-content-between align-items-center small text-theme-muted mb-2">
                     <span>Laser Engraving Fee</span>
                     <span className="text-info fw-bold">+ ₹{engravingPrice}</span>
                   </div>
-                  <hr className="my-2" style={{ borderColor: 'var(--bb-border, rgba(255,255,255,0.1))' }} />
-                  <div className="d-flex justify-content-between fw-bold text-theme-title">
+                  <hr className="my-2" style={{ borderColor: 'var(--bb-border, rgba(255,255,255,0.1))', opacity: 0.5 }} />
+                  <div className="d-flex justify-content-between align-items-center fw-bold text-theme-title">
                     <span>Total Amount</span>
-                    <span className="text-accent">₹{totalPrice.toLocaleString('en-IN')}</span>
+                    <span className="text-accent" style={{ fontSize: '1.1rem' }}>₹{totalPrice.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
               </div>
@@ -232,15 +228,16 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
                   className="btn btn-glow w-100 py-3 fw-bold d-flex align-items-center justify-content-center gap-2"
                   style={{
                     borderRadius: '12px',
-                    height: '54px'
+                    height: '52px',
+                    fontSize: '0.95rem'
                   }}
                 >
                   {isSubmitting ? (
-                    <span className="spinner-border spinner-border-sm" />
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
                   ) : (
                     <>
                       <ShoppingCart size={18} />
-                      Add Personalised Product
+                      <span>Add Personalised Product</span>
                     </>
                   )}
                 </button>
@@ -248,19 +245,37 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
             </div>
 
             {/* Right: Immersive Live Preview */}
-            <div className="col-12 col-md-6 p-3 p-md-4 d-flex align-items-center justify-content-center engraving-modal-preview-stage position-relative">
+            <div className="col-12 col-md-6 p-3 p-md-4 d-flex flex-column align-items-center justify-content-center engraving-modal-preview-stage position-relative">
+              {/* Badge */}
               <div
-                className="position-relative w-100 h-100 d-flex align-items-center justify-content-center overflow-hidden"
+                className="badge px-3 py-1 mb-3 fw-bold text-uppercase d-inline-flex align-items-center gap-1"
                 style={{
+                  background: 'var(--bb-info-bg, rgba(0, 243, 255, 0.12))',
+                  color: 'var(--bb-accent, #00f3ff)',
+                  border: '1px solid var(--bb-border, rgba(0, 243, 255, 0.2))',
+                  borderRadius: '999px',
+                  letterSpacing: '0.8px',
+                  fontSize: '0.72rem'
+                }}
+              >
+                <Sparkles size={12} />
+                Live Laser Simulation
+              </div>
+
+              {/* Live Preview Card */}
+              <div
+                className="position-relative w-100 overflow-hidden engraving-modal-preview-card"
+                style={{
+                  maxWidth: '480px',
                   containerType: 'inline-size',
                   borderRadius: '18px',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.35)'
+                  lineHeight: 0
                 }}
               >
                 <img
                   src={engravingBanner}
                   alt="Custom Engraved Product Live Preview"
-                  className="img-fluid w-100 h-auto d-block"
+                  className="w-100 h-auto d-block"
                   style={{
                     borderRadius: '18px',
                     objectFit: 'cover'
@@ -281,7 +296,8 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
                       width: '23%',
                       height: '4.5%',
                       transform: 'translate(-50%, -50%)',
-                      zIndex: 10
+                      zIndex: 10,
+                      lineHeight: 1
                     }}
                   >
                     <span
@@ -315,7 +331,8 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
                       width: '23%',
                       height: '3.5%',
                       transform: 'translate(-50%, -50%)',
-                      zIndex: 10
+                      zIndex: 10,
+                      lineHeight: 1
                     }}
                   >
                     <span
@@ -348,7 +365,8 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
                       width: '23%',
                       height: '6.5%',
                       transform: 'translate(-50%, -50%)',
-                      zIndex: 10
+                      zIndex: 10,
+                      lineHeight: 1.2
                     }}
                   >
                     <span
@@ -373,6 +391,11 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
                   </motion.div>
                 )}
               </div>
+
+              {/* Sub-caption below banner */}
+              <p className="text-theme-muted small mt-3 mb-0 text-center" style={{ fontSize: '0.8rem' }}>
+                Etched with precision on the metallic strip
+              </p>
             </div>
           </div>
         </motion.div>
