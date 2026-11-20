@@ -88,10 +88,16 @@ export const authService = {
     return response.data;
   },
 
-  resetPassword: async (userId, code, newPassword) => {
+  verifyResetCode: async (userId, code) => {
+    const response = await api.post('/account/verify-reset-code', { userId, code });
+    return response.data;
+  },
+
+  resetPassword: async (userId, code, newPassword, resetToken = null) => {
     const response = await api.post('/account/reset-password', {
       userId,
       code,
+      resetToken,
       newPassword,
     });
     return response.data;
