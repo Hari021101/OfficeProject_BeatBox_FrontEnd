@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react'
-import { HashRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import Layout from '../components/layout/Layout'
 import AdminLayout from '../components/layout/AdminLayout'
@@ -187,6 +187,9 @@ export default function AppRouter() {
             <Route path="accounts" element={<AdminAccountManagement />} />
             <Route path="product-sales" element={<AdminProductSales />} />
           </Route>
+
+          {/* Catch-all Wildcard Route */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
     </HashRouter>

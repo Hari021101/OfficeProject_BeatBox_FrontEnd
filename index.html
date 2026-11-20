@@ -27,6 +27,11 @@
     <script>
       (function() {
         try {
+          var p = window.location.pathname;
+          if (p && p !== '/' && !p.startsWith('/assets') && !p.includes('.')) {
+            window.location.replace('/#' + p + window.location.search + window.location.hash);
+            return;
+          }
           var savedTheme = localStorage.getItem('bb_theme');
           if (savedTheme) {
             document.documentElement.setAttribute('data-theme', savedTheme);
