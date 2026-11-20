@@ -9,6 +9,7 @@ import ScrollToTop from '../components/ScrollToTop'
 const App = React.lazy(() => import('../App'))
 const Login = React.lazy(() => import('../pages/Login'))
 const Register = React.lazy(() => import('../pages/Register'))
+const ForgotPassword = React.lazy(() => import('../pages/ForgotPassword'))
 const Home = React.lazy(() => import('../pages/Home'))
 const ProductListing = React.lazy(() => import('../pages/ProductListing'))
 const ProductDetail = React.lazy(() => import('../pages/ProductDetail'))
@@ -141,6 +142,7 @@ export default function AppRouter() {
           <Route path="/welcome" element={<App />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/products" element={<Layout><ProductListing /></Layout>} />
           <Route path="/products/:id" element={<Layout><ProductDetail /></Layout>} />
           <Route path="/cart" element={<Layout><Cart /></Layout>} />
