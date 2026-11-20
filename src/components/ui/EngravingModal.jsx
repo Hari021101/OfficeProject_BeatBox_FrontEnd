@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Sparkles, ShoppingCart } from 'lucide-react'
 import { useDispatch } from 'react-redux'
@@ -90,7 +89,12 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
       await dispatch(addToCart(payload)).unwrap()
 
       toast.success(`🎸 Personalised ${product.name} added to cart!`, {
-        style: { background: '#060b19', color: '#fff', border: '1px solid rgba(0,243,255,0.3)', borderRadius: '10px' }
+        style: {
+          background: 'var(--bb-surface, #060b19)',
+          color: 'var(--bb-text, #fff)',
+          border: '1px solid var(--bb-border, rgba(0,243,255,0.3))',
+          borderRadius: '10px'
+        }
       })
       onClose()
     } catch (err) {
@@ -103,105 +107,41 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
 
   return (
     <AnimatePresence>
-      <div
-        className="engraving-modal-backdrop"
-        style={{
-          position: 'fixed',
-          inset: 0,
-          width: '100vw',
-          height: '100dvh',
-          backgroundColor: 'rgba(3, 5, 12, 0.85)',
-          zIndex: 99999,
-          backdropFilter: 'blur(10px)',
-
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-
-          padding: '16px',
-          overflow: 'hidden',
-          boxSizing: 'border-box'
-        }}
-      >
+      <div className="engraving-modal-backdrop">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.3, ease: 'easeOut' }}
-          className="container-fluid p-0"
-          style={{
-            background: 'linear-gradient(135deg, rgba(10, 15, 30, 0.98), rgba(5, 7, 15, 0.99))',
-            border: '1px solid rgba(0, 243, 255, 0.18)',
-            borderRadius: '24px',
-
-            width: '100%',
-            maxWidth: '1050px',
-
-            height: 'calc(100dvh - 32px)',
-            maxHeight: 'calc(100dvh - 32px)',
-
-            display: 'flex',
-            flexDirection: 'column',
-
-            overflow: 'hidden',
-
-            boxShadow: '0 24px 60px rgba(0, 243, 255, 0.12), 0 0 2px rgba(255, 255, 255, 0.3)'
-          }}
+          className="container-fluid p-0 engraving-modal-dialog"
         >
           {/* Header */}
-          <div
-            className="d-flex align-items-center justify-content-between p-3 px-md-4 border-bottom"
-            style={{
-              borderColor: 'rgba(255,255,255,0.08)',
-              flexShrink: 0
-            }}
-          >
+          <div className="engraving-modal-header">
             {/* Back + Title */}
             <div className="d-flex align-items-center gap-3">
-
               <button
                 type="button"
                 onClick={onClose}
-                className="btn d-flex align-items-center gap-2"
-                style={{
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  color: '#fff',
-                  borderRadius: '10px',
-                  padding: '7px 12px',
-                  fontSize: '0.8rem',
-                  fontWeight: 700
-                }}
+                className="btn d-flex align-items-center gap-2 engraving-modal-back-btn"
               >
                 <span style={{ fontSize: '18px', lineHeight: 1 }}>←</span>
                 Back
               </button>
 
               <h5
-                className="mb-0 fw-black text-white d-flex align-items-center gap-2"
-                style={{
-                  letterSpacing: '0.5px'
-                }}
+                className="mb-0 fw-black text-theme-title d-flex align-items-center gap-2"
+                style={{ letterSpacing: '0.5px' }}
               >
-                <Sparkles
-                  className="text-info animate-pulse"
-                  size={20}
-                />
-
+                <Sparkles className="text-info animate-pulse" size={20} />
                 Personalise Your Product
               </h5>
-
             </div>
 
             {/* X button */}
             <button
               type="button"
               onClick={onClose}
-              className="btn border-0 p-2"
-              style={{
-                background: 'transparent',
-                color: '#aaa'
-              }}
+              className="btn border-0 p-2 engraving-modal-close-btn"
               aria-label="Close personalisation"
             >
               <X size={22} />
@@ -209,97 +149,74 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
           </div>
 
           <div
-            className="row g-0"
+            className="row g-0 flex-grow-1"
             style={{
-              flex: 1,
               minHeight: 0,
               overflowY: 'auto',
               overflowX: 'hidden'
             }}
           >
             {/* Left: Input Panel */}
-            <div
-              className="col-12 col-md-6 p-3 p-md-4 d-flex flex-column"
-              style={{
-                borderRight: '1px solid rgba(255,255,255,0.08)',
-                minHeight: '100%'
-              }}
-            >
+            <div className="col-12 col-md-6 p-3 p-md-4 d-flex flex-column engraving-modal-left">
               <div>
-                <p className="text-secondary small mb-4">Make it uniquely yours. Enter your name, date, or a custom message to be custom laser engraved.</p>
+                <p className="text-theme-muted small mb-4">
+                  Make it uniquely yours. Enter your name, date, or a custom message to be custom laser engraved.
+                </p>
 
                 {/* Form Fields */}
                 <div className="d-flex flex-column gap-3 mb-4">
                   <div>
-                    <label className="form-label text-white small fw-bold d-flex justify-content-between">
+                    <label className="form-label text-theme-title small fw-bold d-flex justify-content-between">
                       <span>Name (Required) *</span>
-                      <span className="text-secondary small">{name.length}/12</span>
+                      <span className="text-theme-muted small">{name.length}/12</span>
                     </label>
                     <input
                       type="text"
                       value={name}
                       onChange={handleNameChange}
                       placeholder="e.g. VIKRAM"
-                      className="form-control premium-search-input py-2"
-                      style={{
-                        background: 'rgba(255,255,255,0.03)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        color: '#fff',
-                        borderRadius: '12px'
-                      }}
+                      className="form-control personalisation-input"
                     />
                   </div>
 
                   <div>
-                    <label className="form-label text-white small fw-bold">Date (Optional)</label>
+                    <label className="form-label text-theme-title small fw-bold">Date (Optional)</label>
                     <input
                       type="text"
                       value={date}
                       onChange={(e) => setDate(e.target.value.slice(0, 12))}
                       placeholder="e.g. 14.07.2026"
-                      className="form-control premium-search-input py-2"
-                      style={{
-                        background: 'rgba(255,255,255,0.03)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        color: '#fff',
-                        borderRadius: '12px'
-                      }}
+                      className="form-control personalisation-input"
                     />
                   </div>
 
                   <div>
-                    <label className="form-label text-white small fw-bold d-flex justify-content-between">
+                    <label className="form-label text-theme-title small fw-bold d-flex justify-content-between">
                       <span>Short Message (Optional)</span>
-                      <span className="text-secondary small">{message.length}/40</span>
+                      <span className="text-theme-muted small">{message.length}/40</span>
                     </label>
                     <input
                       type="text"
                       value={message}
                       onChange={handleMessageChange}
                       placeholder="e.g. NEVER GIVE UP"
-                      className="form-control premium-search-input py-2"
-                      style={{
-                        background: 'rgba(255,255,255,0.03)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        color: '#fff',
-                        borderRadius: '12px'
-                      }}
+                      className="form-control personalisation-input"
                     />
                   </div>
                 </div>
 
                 {/* Price Breakdown */}
-                <div className="p-3 rounded-3 mb-4" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div className="d-flex justify-content-between small text-secondary mb-2">
+                <div className="engraving-modal-price-box mb-4">
+                  <div className="d-flex justify-content-between small text-theme-muted mb-2">
                     <span>Base Price ({quantity}x)</span>
                     <span>₹{(basePrice * quantity).toLocaleString('en-IN')}</span>
                   </div>
-                  <div className="d-flex justify-content-between small text-secondary mb-2">
+                  <div className="d-flex justify-content-between small text-theme-muted mb-2">
                     <span>Laser Engraving Fee</span>
                     <span className="text-info fw-bold">+ ₹{engravingPrice}</span>
                   </div>
-                  <hr style={{ borderColor: 'rgba(255,255,255,0.1)' }} />
-                  <div className="d-flex justify-content-between fw-bold text-white">
+                  <hr className="my-2" style={{ borderColor: 'var(--bb-border, rgba(255,255,255,0.1))' }} />
+                  <div className="d-flex justify-content-between fw-bold text-theme-title">
                     <span>Total Amount</span>
                     <span className="text-accent">₹{totalPrice.toLocaleString('en-IN')}</span>
                   </div>
@@ -307,16 +224,7 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
               </div>
 
               {/* Action Button */}
-              <div
-                className="mt-4"
-                style={{
-                  position: 'sticky',
-                  bottom: 0,
-                  paddingTop: '12px',
-                  paddingBottom: '4px',
-                  background: 'linear-gradient(to top, rgba(5,7,15,1) 70%, rgba(5,7,15,0))'
-                }}
-              >
+              <div className="engraving-modal-footer-sticky mt-auto">
                 <button
                   type="button"
                   onClick={handleAddPersonalised}
@@ -340,18 +248,13 @@ export default function EngravingModal({ isOpen, onClose, product, selectedVaria
             </div>
 
             {/* Right: Immersive Live Preview */}
-            <div
-              className="col-12 col-md-6 p-3 p-md-4 d-flex align-items-center justify-content-center bg-black position-relative"
-              style={{
-                minHeight: '340px'
-              }}
-            >
+            <div className="col-12 col-md-6 p-3 p-md-4 d-flex align-items-center justify-content-center engraving-modal-preview-stage position-relative">
               <div
                 className="position-relative w-100 h-100 d-flex align-items-center justify-content-center overflow-hidden"
                 style={{
                   containerType: 'inline-size',
                   borderRadius: '18px',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.6)'
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.35)'
                 }}
               >
                 <img

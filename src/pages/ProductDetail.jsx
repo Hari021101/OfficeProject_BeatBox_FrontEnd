@@ -858,7 +858,7 @@ export default function ProductDetail() {
               >
                 <div className="d-flex justify-content-between align-items-center mb-3">
                   <div>
-                    <h5 className="fw-black mb-1 text-white d-flex align-items-center gap-2">
+                    <h5 className="fw-black mb-1 text-theme-title d-flex align-items-center gap-2">
                       <Sparkles className="text-info animate-pulse" size={18} /> ✨ Personalise Your Product
                     </h5>
                     <p className="text-theme-muted small mb-0">Make it uniquely yours with high-precision custom laser engraving.</p>
@@ -868,7 +868,7 @@ export default function ProductDetail() {
                   </span>
                 </div>
 
-                <div className="row g-2 mb-3 text-secondary small">
+                <div className="row g-2 mb-3 text-theme-muted small">
                   <div className="col-6 col-sm-4 d-flex align-items-center gap-2">
                     <span className="text-info">✓</span> Custom Name
                   </div>

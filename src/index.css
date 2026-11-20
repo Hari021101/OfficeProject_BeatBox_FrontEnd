@@ -581,6 +581,162 @@ body {
   outline: none !important;
 }
 
+/* ==========================================================================
+   Engraving / Personalisation Modal Theme Styling
+   ========================================================================== */
+.engraving-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  background-color: rgba(3, 5, 12, 0.8);
+  z-index: 99999;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+[data-theme="light"] .engraving-modal-backdrop {
+  background-color: rgba(15, 23, 42, 0.65);
+}
+
+.engraving-modal-dialog {
+  background: linear-gradient(135deg, rgba(10, 15, 30, 0.98), rgba(5, 7, 15, 0.99));
+  border: 1px solid rgba(0, 243, 255, 0.18);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 1050px;
+  height: calc(100dvh - 32px);
+  max-height: calc(100dvh - 32px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="light"] .engraving-modal-dialog {
+  background: #ffffff;
+  border: 1px solid rgba(0, 153, 184, 0.25);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.15), 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.engraving-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  background: rgba(6, 11, 25, 0.95);
+}
+
+[data-theme="light"] .engraving-modal-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+}
+
+.engraving-modal-back-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.engraving-modal-back-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+[data-theme="light"] .engraving-modal-back-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+}
+
+[data-theme="light"] .engraving-modal-back-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.engraving-modal-close-btn {
+  background: transparent;
+  border: none;
+  color: #8496ae;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.engraving-modal-close-btn:hover {
+  color: var(--bb-title-color);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="light"] .engraving-modal-close-btn {
+  color: #64748b;
+}
+
+[data-theme="light"] .engraving-modal-close-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #0f172a;
+}
+
+.engraving-modal-left {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(6, 11, 25, 0.6);
+  min-height: 100%;
+}
+
+[data-theme="light"] .engraving-modal-left {
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+}
+
+.engraving-modal-price-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+[data-theme="light"] .engraving-modal-price-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.engraving-modal-footer-sticky {
+  position: sticky;
+  bottom: 0;
+  padding-top: 14px;
+  padding-bottom: 4px;
+  background: linear-gradient(to top, rgba(6, 11, 25, 1) 75%, rgba(6, 11, 25, 0));
+}
+
+[data-theme="light"] .engraving-modal-footer-sticky {
+  background: linear-gradient(to top, rgba(255, 255, 255, 1) 75%, rgba(255, 255, 255, 0));
+}
+
+.engraving-modal-preview-stage {
+  background: #040814;
+  min-height: 340px;
+}
+
+[data-theme="light"] .engraving-modal-preview-stage {
+  background: #f1f5f9;
+}
+
 /* Product Color Swatch Contrast & Theme Styling */
 .product-color-swatch {
   width: 16px !important;
